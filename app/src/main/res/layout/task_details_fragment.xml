@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txt_details"
+        style="@style/TextView.Description"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/txt_timer"
+        style="@style/TextView.Title.Timer"
+        android:layout_below="@+id/txt_details"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/txt_minutes_left"
+        style="@style/TextView.Title.Multiline"
+        android:layout_below="@+id/txt_timer"
+        android:layout_centerHorizontal="true"
+        android:text="@string/task_details_time_left"/>
+
+    <ImageView
+        android:id="@+id/image_map"
+        style="@style/ImageView"
+        android:layout_below="@+id/txt_minutes_left"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher"
+        />
+    <TextView
+        android:id="@+id/txt_end_point"
+        style="@style/TextView"
+        android:layout_below="@+id/image_map"
+        android:layout_centerHorizontal="true"
+        android:drawableLeft="@android:drawable/ic_menu_compass"
+        android:text="@string/task_details_time_left"/>
+</RelativeLayout>

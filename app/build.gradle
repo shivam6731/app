@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "urbanninja.foodpanda.com"
+        applicationId "com.foodpanda.urbanninja"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
@@ -16,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
+        textReport true
     }
 }
 
