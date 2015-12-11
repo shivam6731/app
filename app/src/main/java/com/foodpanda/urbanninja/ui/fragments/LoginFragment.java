@@ -41,9 +41,15 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         loginActivityCallback = (LoginActivityCallback) context;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        loginActivityCallback = null;
+    }
+
     public static LoginFragment newInstance() {
         LoginFragment loginFragment = new LoginFragment();
-        
+
         return loginFragment;
     }
 
@@ -62,6 +68,7 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         ViewGroup container,
         Bundle savedInstanceState
     ) {
+
         return inflater.inflate(R.layout.login_fragment, container, false);
     }
 
@@ -106,7 +113,8 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
 
     @Override
     public void onSuccess(Token token) {
-        loginActivityCallback.onLoginSuccess();
+        if (loginActivityCallback != null)
+            loginActivityCallback.onLoginSuccess();
     }
 
     @Override

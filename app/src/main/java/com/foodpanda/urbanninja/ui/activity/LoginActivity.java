@@ -19,6 +19,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         storageManager = App.STORAGE_MANAGER;
         if (checkIsLogged()) {
             openMainActivity();
+
             return;
         }
         hideActionBar();
@@ -34,6 +35,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     private boolean checkIsLogged() {
+
         return storageManager.getToken() != null;
     }
 

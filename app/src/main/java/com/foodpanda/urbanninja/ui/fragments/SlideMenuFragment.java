@@ -13,6 +13,7 @@ public class SlideMenuFragment extends BaseFragment {
 
     public static SlideMenuFragment newInstance() {
         SlideMenuFragment loginFragment = new SlideMenuFragment();
+
         return loginFragment;
     }
 
@@ -23,6 +24,7 @@ public class SlideMenuFragment extends BaseFragment {
         ViewGroup container,
         Bundle savedInstanceState
     ) {
+
         return inflater.inflate(R.layout.slide_menu_fragment, container, false);
     }
 

@@ -2,10 +2,13 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+import android.util.Base64;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Token;
+import com.foodpanda.urbanninja.model.TokenData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -19,7 +22,8 @@ public class StorageManager implements Managable {
     @Override
     public void init(Context context) {
         sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
-        gson = new GsonBuilder().create();
+        gson = new GsonBuilder().
+            create();
     }
 
     public void storeToken(Token token) {
@@ -37,5 +41,18 @@ public class StorageManager implements Managable {
         }
 
         return token;
+    }
+
+    public TokenData getTokenData() {
+        if (getToken() != null && !TextUtils.isEmpty(getToken().getAccessToken())) {
+            byte[] bytes = getToken().getAccessToken().split("\\.")[1].getBytes();
+            byte[] valueDecoded = Base64.decode(bytes, Base64.DEFAULT);
+
+            return gson.fromJson(new String(valueDecoded), TokenData.class);
+        } else {
+
+            return null;
+        }
+
     }
 }
