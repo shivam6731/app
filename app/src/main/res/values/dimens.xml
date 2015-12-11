@@ -13,5 +13,6 @@
     <dimen name="margin_default">10dp</dimen>
     <dimen name="margin_large">15dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-
+    <!--Menu -->
+    <dimen name="menu_width">240dp</dimen>
 </resources>

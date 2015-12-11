@@ -17,6 +17,10 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity_container);
         storageManager = App.STORAGE_MANAGER;
+        if (checkIsLogged()) {
+            openMainActivity();
+            return;
+        }
         hideActionBar();
         if (savedInstanceState == null) {
             fragmentManager.beginTransaction().
@@ -26,6 +30,14 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
 
     @Override
     public void onLoginSuccess() {
+        openMainActivity();
+    }
+
+    private boolean checkIsLogged() {
+        return storageManager.getToken() != null;
+    }
+
+    private void openMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

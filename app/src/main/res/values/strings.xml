@@ -17,4 +17,8 @@
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
     <string name="title_activity_main">MainActivity</string>
+    <!-- Side Menu -->
+    <string name="side_menu_logout">Logout</string>
+    <string name="side_menu_profile">Profile</string>
+    <string name="side_menu_settings">Settings</string>
 </resources>
