@@ -3,7 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="main_background_color">#314a82</color>
     <color name="main_button_disable">#aaa</color>
-    <color name="main_button_enable">#ffcc0000</color>
-    <color name="main_button_enable_selected">#ff0000</color>
+    <color name="main_button_enable">#43d490</color>
+    <color name="main_button_enable_selected">#0cc76f</color>
 </resources>

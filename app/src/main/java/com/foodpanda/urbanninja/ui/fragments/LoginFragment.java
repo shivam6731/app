@@ -79,6 +79,12 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         // Set up the login form.
         editEmail = (EditText) view.findViewById(R.id.edit_username);
         editPassword = (EditText) view.findViewById(R.id.edit_password);
+        view.findViewById(R.id.edit_country).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginActivityCallback.onSelectCountryClicked();
+            }
+        });
 
         Button mEmailSignInButton = (Button) view.findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.ui.fragments.CountryListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoginFragment;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
@@ -25,13 +26,23 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         hideActionBar();
         if (savedInstanceState == null) {
             fragmentManager.beginTransaction().
-                add(R.id.container, LoginFragment.newInstance()).commit();
+                add(R.id.container, LoginFragment.newInstance()).
+                commit();
         }
     }
 
     @Override
     public void onLoginSuccess() {
         openMainActivity();
+    }
+
+    @Override
+    public void onSelectCountryClicked() {
+        fragmentManager.beginTransaction().
+            add(R.id.container, CountryListFragment.newInstance()).
+            addToBackStack(CountryListFragment.class.getSimpleName()).
+            commit();
+
     }
 
     private boolean checkIsLogged() {
