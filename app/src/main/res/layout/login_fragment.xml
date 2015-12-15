@@ -22,7 +22,6 @@
         android:layout_centerHorizontal="true"
         android:text="@string/login_title"/>
 
-
     <EditText
         android:id="@+id/edit_username"
         style="@style/TextView"
@@ -32,7 +31,6 @@
         android:inputType="textPersonName"
         android:maxLines="1"
         android:singleLine="true"/>
-
 
     <EditText
         android:id="@+id/edit_password"
@@ -46,7 +44,6 @@
         android:inputType="textPassword"
         android:maxLines="1"
         android:singleLine="true"/>
-
 
     <EditText
         android:id="@+id/edit_country"
