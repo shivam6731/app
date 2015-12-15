@@ -5,11 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.foodpanda.urbanninja.ui.interfaces.ErrorCallback;
-
 import java.net.HttpURLConnection;
 
-public abstract class BaseActivity extends AppCompatActivity implements ErrorCallback {
+public abstract class BaseActivity extends AppCompatActivity  {
     protected FragmentManager fragmentManager;
 
     @Override
@@ -24,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity implements ErrorCal
         }
     }
 
-    @Override
+
     public void onError(int status, String message) {
         switch (status) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:

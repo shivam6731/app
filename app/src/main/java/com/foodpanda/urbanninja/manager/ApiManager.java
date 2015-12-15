@@ -1,15 +1,18 @@
 package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.Token;
-import com.google.gson.FieldNamingPolicy;
+import com.foodpanda.urbanninja.model.TokenData;
+import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Interceptor;
@@ -62,7 +65,7 @@ public class ApiManager implements Managable {
 
     private Gson createGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         return gsonBuilder.create();
     }
@@ -70,7 +73,7 @@ public class ApiManager implements Managable {
     public void login(
         String username,
         String password,
-        final BaseApiCallback<Token> tokenBaseApiCallback
+        @NonNull final BaseApiCallback<Token> tokenBaseApiCallback
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
         service.auth(authRequest).enqueue(new BaseCallback<Token>(tokenBaseApiCallback) {
@@ -85,5 +88,30 @@ public class ApiManager implements Managable {
             }
 
         });
+    }
+
+    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
+        TokenData tokenData = storageManager.getTokenData();
+
+        service.getRider(tokenData.getUserId()).enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback) {
+            @Override
+            public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                riderBundleBaseApiCallback.onSuccess(response.body());
+            }
+        });
+    }
+
+    public void getRoute(@NonNull final BaseApiCallback<RouteWrapper> baseApiCallback,
+                         int vehicleId
+    ) {
+        service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<RouteWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                baseApiCallback.onSuccess(response.body());
+            }
+        });
+
     }
 }
