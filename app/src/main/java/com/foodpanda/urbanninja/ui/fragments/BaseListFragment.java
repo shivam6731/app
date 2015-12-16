@@ -13,7 +13,7 @@ import com.foodpanda.urbanninja.ui.adapter.SimpleBaseAdapter;
 import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
 import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
-public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends BaseFragment implements SimpleBaseAdapter
+public abstract class  BaseListFragment<U extends SimpleBaseAdapter> extends BaseFragment implements SimpleBaseAdapter
     .OnItemClickListener {
     private RecyclerViewEmpty recyclerView;
     private View emptyView;

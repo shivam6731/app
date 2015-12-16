@@ -16,7 +16,7 @@
     <string name="login_issue"><u>Issue with login?</u></string>
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
-    <string name="login_username_country">Username</string>
+    <string name="login_country_hint">Country</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- Side Menu -->
     <string name="side_menu_logout">Logout</string>
@@ -43,6 +43,7 @@
 
     <!-- Errors -->
     <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
+    <string name="dialog_please_wait">Please wait…</string>
 
     <!-- Country -->
     <string name="country_select_title">Select Country</string>
