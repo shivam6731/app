@@ -9,11 +9,13 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.ui.fragments.CountryListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoginFragment;
+import com.foodpanda.urbanninja.ui.interfaces.CountrySelectedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
 public class LoginActivity extends BaseActivity implements LoginActivityCallback {
     private StorageManager storageManager;
     private Country country;
+    private CountrySelectedCallback countrySelectedCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     @Override
-    public void onSelectCountryClicked() {
+    public void onSelectCountryClicked(CountrySelectedCallback countrySelectedCallback) {
+        this.countrySelectedCallback = countrySelectedCallback;
         fragmentManager.beginTransaction().
             add(R.id.container, CountryListFragment.newInstance()).
             addToBackStack(CountryListFragment.class.getSimpleName()).
@@ -51,6 +54,9 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     public void onCountrySelected(Country country) {
         fragmentManager.popBackStack();
         this.country = country;
+        if (countrySelectedCallback != null) {
+            countrySelectedCallback.onCountrySelected(country);
+        }
     }
 
     private boolean checkIsLogged() {

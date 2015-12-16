@@ -3,20 +3,21 @@ package com.foodpanda.urbanninja.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Token;
-import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
+import com.foodpanda.urbanninja.ui.interfaces.CountrySelectedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -25,13 +26,14 @@ import com.mobsandgeeks.saripaar.annotation.Password;
 
 import java.util.List;
 
-public class LoginFragment extends BaseFragment implements Validator.ValidationListener, BaseApiCallback<Token> {
+public class LoginFragment extends BaseFragment implements Validator.ValidationListener, BaseApiCallback<Token>, CountrySelectedCallback {
     private ApiManager apiManager;
 
     @NotEmpty
     private EditText editEmail;
     @Password(min = 6, scheme = Password.Scheme.ALPHA)
     private EditText editPassword;
+    private TextView txtCountry;
 
     private Validator validator;
 
@@ -81,10 +83,11 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         // Set up the login form.
         editEmail = (EditText) view.findViewById(R.id.edit_username);
         editPassword = (EditText) view.findViewById(R.id.edit_password);
+        txtCountry = (TextView) view.findViewById(R.id.edit_country);
         view.findViewById(R.id.edit_country).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginActivityCallback.onSelectCountryClicked();
+                loginActivityCallback.onSelectCountryClicked(LoginFragment.this);
             }
         });
 
@@ -131,5 +134,10 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
     public void onError(ErrorMessage errorMessage) {
         hideProgressDialog();
         activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+    }
+
+    @Override
+    public void onCountrySelected(Country country) {
+        txtCountry.setText(country.getTitle());
     }
 }
