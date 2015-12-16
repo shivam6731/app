@@ -8,4 +8,8 @@ public class ApiTags {
 
     public static final String USER_TAG = "rider_id";
     public static final String VEHICLE_TAG = "vehicle_id";
+
+    public class Country {
+        public static final String PARAMS = "getmobilecountries?environment=staging&version=1.0&component=urbanninja";
+    }
 }

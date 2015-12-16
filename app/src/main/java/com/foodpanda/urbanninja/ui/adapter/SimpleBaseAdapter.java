@@ -18,6 +18,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
 
     private OnItemClickListener onItemClickListener;
     protected Context context;
+    private View selectedView;
 
     public SimpleBaseAdapter(final List<T> objects, Context context) {
         mObjects = objects;
@@ -106,6 +107,12 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
             if (onItemClickListener != null) {
                 onItemClickListener.onItemClick(view, getAdapterPosition());
             }
+            if (selectedView != null) {
+                selectedView.setSelected(false);
+                selectedView = view;
+            }
+            view.setSelected(true);
+            notifyItemChanged(getAdapterPosition());
         }
 
     }

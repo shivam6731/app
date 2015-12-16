@@ -7,4 +7,6 @@
     <color name="main_button_disable">#aaa</color>
     <color name="main_button_enable">#43d490</color>
     <color name="main_button_enable_selected">#0cc76f</color>
+    <color name="default_selected">#40D3D3D3</color>
+
 </resources>

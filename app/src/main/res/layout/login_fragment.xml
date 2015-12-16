@@ -27,6 +27,7 @@
             style="@style/TextView.Title"
             android:layout_below="@+id/image_header"
             android:layout_centerHorizontal="true"
+            android:paddingTop="@dimen/padding_large"
             android:text="@string/login_title"/>
 
         <EditText

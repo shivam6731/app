@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.adapter.SimpleBaseAdapter;
+import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
 import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
 public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends BaseFragment implements SimpleBaseAdapter
@@ -34,6 +35,8 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerViewEmpty) view.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setLayoutManager(provideLayoutManager());
 
         emptyView = view.findViewById(R.id.empty_view);

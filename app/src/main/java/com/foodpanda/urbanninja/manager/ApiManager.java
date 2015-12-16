@@ -8,11 +8,14 @@ import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.CountryWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Interceptor;
@@ -27,6 +30,7 @@ import retrofit.Retrofit;
 
 public class ApiManager implements Managable {
     private LogisticsService service;
+    private CountryService countryService;
     private StorageManager storageManager;
 
     @Override
@@ -61,11 +65,24 @@ public class ApiManager implements Managable {
             .build();
 
         service = retrofit.create(LogisticsService.class);
+
+        retrofit = new Retrofit.Builder().
+            baseUrl(ApiUrl.Country.BASE_URL).
+            addConverterFactory(GsonConverterFactory.create(createCountryGson())).
+            build();
+        countryService = retrofit.create(CountryService.class);
     }
 
     private Gson createGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        return gsonBuilder.create();
+    }
+
+    private Gson createCountryGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES);
 
         return gsonBuilder.create();
     }
@@ -113,5 +130,15 @@ public class ApiManager implements Managable {
             }
         });
 
+    }
+
+    public void getCountries(final BaseApiCallback<CountryWrapper> baseApiCallback) {
+        countryService.getCountries().enqueue(new BaseCallback<CountryWrapper>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<CountryWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                baseApiCallback.onSuccess(response.body());
+            }
+        });
     }
 }
