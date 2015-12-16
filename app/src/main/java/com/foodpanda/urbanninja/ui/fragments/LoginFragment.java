@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.ui.interfaces.CountrySelectedCallback;
@@ -28,16 +30,21 @@ import java.util.List;
 
 public class LoginFragment extends BaseFragment implements Validator.ValidationListener, BaseApiCallback<Token>, CountrySelectedCallback {
     private ApiManager apiManager;
+    private StorageManager storageManager;
 
     @NotEmpty
     private EditText editEmail;
     @Password(min = 6, scheme = Password.Scheme.ALPHA)
     private EditText editPassword;
+    @NotEmpty
     private TextView txtCountry;
 
     private Validator validator;
 
     private LoginActivityCallback loginActivityCallback;
+
+    private String username;
+    private String password;
 
     @Override
     public void onAttach(Context context) {
@@ -61,6 +68,7 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = App.API_MANAGER;
+        storageManager = App.STORAGE_MANAGER;
         validator = new Validator(this);
         validator.setValidationListener(this);
     }
@@ -87,6 +95,8 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         view.findViewById(R.id.edit_country).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                editPassword.setError(null);
+                editEmail.setError(null);
                 loginActivityCallback.onSelectCountryClicked(LoginFragment.this);
             }
         });
@@ -100,6 +110,16 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
         });
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        editEmail.setText(storageManager.getUsername());
+        editPassword.setText(storageManager.getPassword());
+        if (storageManager.getCountry() != null) {
+            txtCountry.setText(storageManager.getCountry().getTitle());
+        }
+    }
+
     private void attemptLogin() {
         validator.validate();
     }
@@ -107,8 +127,10 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
     @Override
     public void onValidationSucceeded() {
         showProgressDialog();
-        apiManager.login(editEmail.getText().toString(),
-            editPassword.getText().toString(), this);
+        username = editEmail.getText().toString();
+        password = editPassword.getText().toString();
+
+        apiManager.login(username, password, this);
     }
 
     @Override
@@ -118,7 +140,15 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
             String message = error.getCollatedErrorMessage(activity);
 
             if (view instanceof EditText) {
-                ((EditText) view).setError(message);
+
+                if (view.getId() == R.id.edit_country) {
+                    Toast.makeText(activity,
+                        getResources().getString(R.string.error_field_required),
+                        Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    ((EditText) view).setError(message);
+                }
             }
         }
     }
@@ -127,7 +157,7 @@ public class LoginFragment extends BaseFragment implements Validator.ValidationL
     public void onSuccess(Token token) {
         hideProgressDialog();
         if (loginActivityCallback != null)
-            loginActivityCallback.onLoginSuccess();
+            loginActivityCallback.onLoginSuccess(username, password);
     }
 
     @Override

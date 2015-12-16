@@ -28,9 +28,11 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
         loginActivityCallback = (LoginActivityCallback) context;
     }
 
-    public static CountryListFragment newInstance() {
+    public static CountryListFragment newInstance(Country country) {
         CountryListFragment fragment = new CountryListFragment();
-
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Country.class.getSimpleName(), country);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -38,6 +40,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = App.API_MANAGER;
+        selectedCountry = getArguments().getParcelable(Country.class.getSimpleName());
     }
 
     @Override
@@ -80,6 +83,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         apiManager.getCountries(this);
+        adapter.setSelectedCountry(selectedCountry);
     }
 
     @Override

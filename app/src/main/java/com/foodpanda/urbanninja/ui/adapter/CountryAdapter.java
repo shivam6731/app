@@ -33,7 +33,8 @@ public class CountryAdapter extends SimpleBaseAdapter<Country, CountryAdapter.Vi
         if (!TextUtils.isEmpty(country.getTitle())) {
             holder.txtName.setText(country.getTitle());
         }
-        if (selectedCountry == getItem(position)) {
+        if (selectedCountry != null &&
+            selectedCountry.getCode().equalsIgnoreCase(getItem(position).getCode())) {
             holder.imageSelected.setVisibility(View.VISIBLE);
         } else {
             holder.imageSelected.setVisibility(View.INVISIBLE);

@@ -36,7 +36,10 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess(String username, String password) {
+        storageManager.storeUserName(username);
+        storageManager.storePassword(password);
+        storageManager.storeCountry(country);
         openMainActivity();
     }
 
@@ -44,7 +47,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     public void onSelectCountryClicked(CountrySelectedCallback countrySelectedCallback) {
         this.countrySelectedCallback = countrySelectedCallback;
         fragmentManager.beginTransaction().
-            add(R.id.container, CountryListFragment.newInstance()).
+            add(R.id.container, CountryListFragment.newInstance(country)).
             addToBackStack(CountryListFragment.class.getSimpleName()).
             commit();
 
