@@ -16,6 +16,9 @@ import com.foodpanda.urbanninja.ui.adapter.CountryAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryWrapper> {
     private ApiManager apiManager;
@@ -88,12 +91,22 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
 
     @Override
     public void onSuccess(CountryWrapper countryWrapper) {
-        adapter.addAll(countryWrapper.getData());
+        adapter.addAll(sortCountries(countryWrapper.getData()));
         adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onError(ErrorMessage errorMessage) {
         activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+    }
+
+    private List<Country> sortCountries(List<Country> list) {
+        Collections.sort(list, new Comparator<Country>() {
+            @Override
+            public int compare(Country lhs, Country rhs) {
+                return lhs.getTitle().compareTo(rhs.getTitle());
+            }
+        });
+        return list;
     }
 }

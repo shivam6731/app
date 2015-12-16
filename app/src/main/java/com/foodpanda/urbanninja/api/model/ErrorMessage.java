@@ -5,6 +5,14 @@ public class ErrorMessage {
     private String message;
     private String developerMessage;
 
+    public ErrorMessage(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    public ErrorMessage() {
+    }
+
     public int getStatus() {
         return status;
     }

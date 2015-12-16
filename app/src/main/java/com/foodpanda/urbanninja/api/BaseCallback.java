@@ -35,5 +35,6 @@ public abstract class BaseCallback<T> implements Callback<T> {
     @Override
     public void onFailure(Throwable t) {
         Log.e("onFailure", t.getMessage());
+        baseApiCallback.onError(new ErrorMessage(500, t.getMessage()));
     }
 }
