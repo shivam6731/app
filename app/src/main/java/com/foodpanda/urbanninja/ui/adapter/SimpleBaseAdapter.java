@@ -51,14 +51,17 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
 
     @Override
     public int getItemCount() {
+
         return mObjects.size();
     }
 
     public T getItem(final int position) {
+
         return mObjects.get(position);
     }
 
     public long getItemId(final int position) {
+
         return position;
     }
 
@@ -69,6 +72,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      * @return The position of the specified item.
      */
     public int getPosition(final T item) {
+
         return mObjects.indexOf(item);
     }
 
@@ -81,7 +85,6 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
     public void insert(final T object, int index) {
         mObjects.add(index, object);
         notifyItemInserted(index);
-
     }
 
     /**

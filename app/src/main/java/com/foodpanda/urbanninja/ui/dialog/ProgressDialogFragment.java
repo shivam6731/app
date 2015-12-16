@@ -21,6 +21,7 @@ public class ProgressDialogFragment extends DialogFragment {
         dialog.setTitle(getString(R.string.dialog_please_wait));
         dialog.setIndeterminate(true);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        
         return dialog;
     }
 }
