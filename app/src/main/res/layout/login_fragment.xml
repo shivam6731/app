@@ -2,71 +2,85 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/main_background_color"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ui.activity.LoginActivity">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/image_header"
-        style="@style/ImageView"
-        android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_launcher"/>
-
-    <TextView
-        android:id="@+id/txt_title"
-        style="@style/TextView.Title"
-        android:layout_below="@+id/image_header"
-        android:layout_centerHorizontal="true"
-        android:text="@string/login_title"/>
-
-    <EditText
-        android:id="@+id/edit_username"
-        style="@style/TextView"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_above="@+id/email_sign_in_button"
         android:layout_width="match_parent"
-        android:layout_below="@+id/txt_title"
-        android:hint="@string/login_username_hint"
-        android:inputType="textPersonName"
-        android:maxLines="1"
-        android:singleLine="true"/>
+        android:layout_height="match_parent"
+        android:background="@color/main_background_color"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin"
+        tools:context=".ui.activity.LoginActivity">
 
-    <EditText
-        android:id="@+id/edit_password"
-        style="@style/TextView"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/edit_username"
-        android:hint="@string/login_password_hint"
-        android:imeActionId="@+id/login"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionUnspecified"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"/>
+        <ImageView
+            android:id="@+id/image_header"
+            style="@style/ImageView"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ninja"/>
 
-    <EditText
-        android:id="@+id/edit_country"
-        style="@style/TextView"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/edit_password"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:hint="@string/login_password_hint"/>
+        <TextView
+            android:id="@+id/txt_title"
+            style="@style/TextView.Title"
+            android:layout_below="@+id/image_header"
+            android:layout_centerHorizontal="true"
+            android:text="@string/login_title"/>
+
+        <EditText
+            android:id="@+id/edit_username"
+            style="@style/TextView"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/txt_title"
+            android:drawableLeft="@drawable/ico_email"
+            android:hint="@string/login_username_hint"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:singleLine="true"/>
+
+        <EditText
+            android:id="@+id/edit_password"
+            style="@style/TextView"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/edit_username"
+            android:drawableLeft="@drawable/ico_password"
+            android:hint="@string/login_password_hint"
+            android:imeActionId="@+id/login"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true"/>
+
+        <EditText
+            android:id="@+id/edit_country"
+            style="@style/TextView"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/edit_password"
+            android:cursorVisible="false"
+            android:drawableLeft="@drawable/ico_country"
+            android:drawableRight="@drawable/arrow_form"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/login_password_hint"/>
 
 
-    <TextView
-        android:id="@+id/txt_login_issue"
-        style="@style/TextView"
-        android:layout_below="@+id/edit_country"
-        android:layout_centerHorizontal="true"
-        android:text="@string/login_issue"/>
+        <TextView
+            android:id="@+id/txt_login_issue"
+            style="@style/TextView"
+            android:layout_below="@+id/edit_country"
+            android:layout_centerHorizontal="true"
+            android:text="@string/login_issue"
+            android:visibility="gone"/>
+
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/email_sign_in_button"
         style="@style/ButtonMainAction"
         android:layout_alignParentBottom="true"
         android:text="@string/logic_action"/>
-
 </RelativeLayout>

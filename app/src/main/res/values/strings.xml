@@ -16,6 +16,7 @@
     <string name="login_issue"><u>Issue with login?</u></string>
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
+    <string name="login_username_country">Username</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- Side Menu -->
     <string name="side_menu_logout">Logout</string>
