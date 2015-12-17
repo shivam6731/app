@@ -4,7 +4,7 @@ import com.foodpanda.urbanninja.model.Country;
 
 import java.util.List;
 
-public class CountryWrapper {
+public class CountryListWrapper {
     private List<Country> data;
 
     public List<Country> getData() {

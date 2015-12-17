@@ -51,11 +51,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         setActionBarDrawerToggle(toolbar);
 
         if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().
-                add(R.id.container, LoadDataFragment.newIntance()).commit();
+            fragmentManager.
+                beginTransaction().
+                add(R.id.container, LoadDataFragment.newIntance()).
+                commit();
 
-            fragmentManager.beginTransaction().
-                add(R.id.left_drawer, SlideMenuFragment.newInstance()).commit();
+            fragmentManager.
+                beginTransaction().
+                add(R.id.left_drawer, SlideMenuFragment.newInstance()).
+                commit();
         }
         getCurrentRider();
     }
@@ -135,8 +139,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
     }
 
     private void getRidersSchedule() {
-        fragmentManager.beginTransaction().
-            replace(R.id.container, EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).commit();
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+            commit();
 
     }
 

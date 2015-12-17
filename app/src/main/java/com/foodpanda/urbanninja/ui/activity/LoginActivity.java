@@ -30,10 +30,10 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         this.country = storageManager.getCountry();
         hideActionBar();
         if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().
-                add(R.id.container,
-                    LoginFragment.newInstance())
-                .commit();
+            fragmentManager.
+                beginTransaction().
+                add(R.id.container, LoginFragment.newInstance()).
+                commit();
         }
     }
 
@@ -48,7 +48,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     @Override
     public void onSelectCountryClicked(CountrySelectedCallback countrySelectedCallback) {
         this.countrySelectedCallback = countrySelectedCallback;
-        fragmentManager.beginTransaction().
+        fragmentManager.
+            beginTransaction().
             add(R.id.container, CountryListFragment.newInstance(country)).
             addToBackStack(CountryListFragment.class.getSimpleName()).
             commit();

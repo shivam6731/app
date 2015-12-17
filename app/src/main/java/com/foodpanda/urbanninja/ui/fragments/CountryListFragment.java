@@ -8,7 +8,7 @@ import android.view.View;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.model.CountryWrapper;
+import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.model.Country;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryWrapper> {
+public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryListWrapper> {
     private ApiManager apiManager;
     private Country selectedCountry;
     private LoginActivityCallback loginActivityCallback;
@@ -90,8 +90,8 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     }
 
     @Override
-    public void onSuccess(CountryWrapper countryWrapper) {
-        adapter.addAll(sortCountries(countryWrapper.getData()));
+    public void onSuccess(CountryListWrapper countryListWrapper) {
+        adapter.addAll(sortCountries(countryListWrapper.getData()));
         adapter.notifyDataSetChanged();
     }
 

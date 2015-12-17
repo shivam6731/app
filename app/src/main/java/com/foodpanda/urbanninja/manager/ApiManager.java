@@ -9,7 +9,7 @@ import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
-import com.foodpanda.urbanninja.api.model.CountryWrapper;
+import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
@@ -133,10 +133,10 @@ public class ApiManager implements Managable {
 
     }
 
-    public void getCountries(final BaseApiCallback<CountryWrapper> baseApiCallback) {
-        countryService.getCountries().enqueue(new BaseCallback<CountryWrapper>(baseApiCallback) {
+    public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
+        countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<CountryWrapper> response, Retrofit retrofit) {
+            public void onResponse(Response<CountryListWrapper> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
                 baseApiCallback.onSuccess(response.body());
             }
