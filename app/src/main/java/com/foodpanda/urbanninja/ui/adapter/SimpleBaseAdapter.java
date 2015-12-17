@@ -7,6 +7,14 @@ import android.view.View;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Base abstract class for an RecyclerView.Adapter
+ * <p/>
+ * <p>Adapters provide a basic logic for store, add, remove and get any item from a collection
+ * additionally it contain BaseViewHolder to handle click to the list item
+ * and highlight selected item.</p>
+ */
+
 public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseViewHolder>
     extends RecyclerView.Adapter<VH> {
 
@@ -14,14 +22,14 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
         void onItemClick(View view, int position);
     }
 
-    protected List<T> mObjects;
+    protected List<T> objects;
 
     private OnItemClickListener onItemClickListener;
     protected Context context;
     private View selectedView;
 
     public SimpleBaseAdapter(final List<T> objects, Context context) {
-        mObjects = objects;
+        this.objects = objects;
         this.context = context;
     }
 
@@ -31,7 +39,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      * @param object The object to add at the end of the array.
      */
     public void add(final T object) {
-        mObjects.add(object);
+        objects.add(object);
         notifyItemInserted(getItemCount() - 1);
     }
 
@@ -40,24 +48,24 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      */
     public void clear() {
         final int size = getItemCount();
-        mObjects.clear();
+        objects.clear();
         notifyItemRangeRemoved(0, size);
     }
 
     public void addAll(final Collection<T> collection) {
-        mObjects.addAll(collection);
+        objects.addAll(collection);
         notifyItemRangeInserted(getItemCount() - 1, collection.size());
     }
 
     @Override
     public int getItemCount() {
 
-        return mObjects.size();
+        return objects.size();
     }
 
     public T getItem(final int position) {
 
-        return mObjects.get(position);
+        return objects.get(position);
     }
 
     public long getItemId(final int position) {
@@ -73,7 +81,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      */
     public int getPosition(final T item) {
 
-        return mObjects.indexOf(item);
+        return objects.indexOf(item);
     }
 
     /**
@@ -83,7 +91,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      * @param index  The index at which the object must be inserted.
      */
     public void insert(final T object, int index) {
-        mObjects.add(index, object);
+        objects.add(index, object);
         notifyItemInserted(index);
     }
 
@@ -94,7 +102,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
      */
     public void remove(T object) {
         final int position = getPosition(object);
-        mObjects.remove(position);
+        objects.remove(position);
         notifyItemRemoved(position);
     }
 
