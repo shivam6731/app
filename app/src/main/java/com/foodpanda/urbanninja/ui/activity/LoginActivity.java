@@ -31,8 +31,9 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         hideActionBar();
         if (savedInstanceState == null) {
             fragmentManager.beginTransaction().
-                add(R.id.container, LoginFragment.newInstance()).
-                commit();
+                add(R.id.container,
+                    LoginFragment.newInstance())
+                .commit();
         }
     }
 

@@ -5,12 +5,20 @@ import com.google.gson.annotations.SerializedName;
 public class TokenData {
     @SerializedName("user_id")
     private int userId;
+
+    @SerializedName("iss")
     private String iss;
+
     @SerializedName("user_class")
     private String userClass;
+
     @SerializedName("user_roles")
     private String[] userRoles;
+
+    @SerializedName("exp")
     private long exp;
+
+    @SerializedName("iat")
     private long iat;
 
     public int getUserId() {

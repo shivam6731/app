@@ -28,12 +28,10 @@ public class TimeWindow implements Parcelable {
 
     public static final Parcelable.Creator<TimeWindow> CREATOR = new Parcelable.Creator<TimeWindow>() {
         public TimeWindow createFromParcel(Parcel source) {
-
             return new TimeWindow(source);
         }
 
         public TimeWindow[] newArray(int size) {
-
             return new TimeWindow[size];
         }
     };

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.api.ApiUrbanNinjaUrl;
 import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
@@ -67,7 +68,7 @@ public class ApiManager implements Managable {
         service = retrofit.create(LogisticsService.class);
 
         retrofit = new Retrofit.Builder().
-            baseUrl(ApiUrl.Country.BASE_URL).
+            baseUrl(ApiUrbanNinjaUrl.BASE_URL).
             addConverterFactory(GsonConverterFactory.create(createCountryGson())).
             build();
         countryService = retrofit.create(CountryService.class);

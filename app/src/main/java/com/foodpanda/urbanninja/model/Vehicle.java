@@ -37,12 +37,10 @@ public class Vehicle implements Parcelable {
 
     public static final Parcelable.Creator<Vehicle> CREATOR = new Parcelable.Creator<Vehicle>() {
         public Vehicle createFromParcel(Parcel source) {
-
             return new Vehicle(source);
         }
 
         public Vehicle[] newArray(int size) {
-
             return new Vehicle[size];
         }
     };

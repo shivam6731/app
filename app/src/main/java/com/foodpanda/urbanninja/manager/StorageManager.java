@@ -63,7 +63,6 @@ public class StorageManager implements Managable {
     }
 
     public String getUsername() {
-
         return sharedPreferences.getString(Constants.Preferences.USERNAME, "");
     }
 
@@ -74,7 +73,6 @@ public class StorageManager implements Managable {
     }
 
     public String getPassword() {
-
         return sharedPreferences.getString(Constants.Preferences.PASSWORD, "");
     }
 

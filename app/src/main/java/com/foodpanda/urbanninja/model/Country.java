@@ -6,12 +6,22 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 public class Country implements Parcelable {
+    @SerializedName("code")
     private String code;
+
     @SerializedName("currency_code")
     private String currencyCode;
+
+    @SerializedName("brand")
     private String brand;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("image")
     private String image;
+
+    @SerializedName("url")
     private String url;
 
     @Override
@@ -43,12 +53,10 @@ public class Country implements Parcelable {
 
     public static final Parcelable.Creator<Country> CREATOR = new Parcelable.Creator<Country>() {
         public Country createFromParcel(Parcel source) {
-
             return new Country(source);
         }
 
         public Country[] newArray(int size) {
-
             return new Country[size];
         }
     };

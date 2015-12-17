@@ -28,7 +28,11 @@ import com.mobsandgeeks.saripaar.annotation.Password;
 
 import java.util.List;
 
-public class LoginFragment extends BaseFragment implements Validator.ValidationListener, BaseApiCallback<Token>, CountrySelectedCallback {
+public class LoginFragment extends BaseFragment implements
+    Validator.ValidationListener,
+    BaseApiCallback<Token>,
+    CountrySelectedCallback {
+
     private ApiManager apiManager;
     private StorageManager storageManager;
 

@@ -7,9 +7,4 @@ public class ApiUrl {
 
     public static final String BASE_URL = SCHEME + URL + VERSION;
 
-    public class Country {
-        private static final String URL = "https://api-st.foodpanda.com/";
-        private static final String CONFIG = "configuration/";
-        public static final String BASE_URL = URL + CONFIG;
-    }
 }
