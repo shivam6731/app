@@ -48,13 +48,11 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
 
     @Override
     protected CountryAdapter provideListAdapter() {
-
         return new CountryAdapter(new ArrayList(), activity);
     }
 
     @Override
     protected int provideListLayout() {
-
         return R.layout.select_country_fragment;
     }
 
