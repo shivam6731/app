@@ -86,7 +86,7 @@ public class StorageManager implements Managable {
     }
 
     public Country getCountry() {
-        String json = sharedPreferences.getString(Constants.Preferences.TOKEN, "");
+        String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
 
         return gson.fromJson(json, Country.class);
     }
