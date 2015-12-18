@@ -40,10 +40,33 @@ public abstract class BaseTimerFragment extends BaseFragment {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                provideTimerTextView().setText(DateUtil.timerFormat(new Date()));
+                provideTimerTextView().setText(setTimerValue());
             }
         });
     }
 
+    private String setTimerValue() {
+        String result;
+        Date now = new Date();
+        Date to = provideScheduleDate() == null ? new Date() : provideScheduleDate();
+        if (now.getTime() < to.getTime()) {
+            result = DateUtil.timerFormat(to.getTime() - now.getTime());
+            provideTimerDescriptionTextView().setText(provideLeftString());
+        } else {
+            result = DateUtil.timerFormat(now.getTime() - to.getTime());
+            provideTimerDescriptionTextView().setText(providePassedString());
+        }
+        return result;
+    }
+
     protected abstract TextView provideTimerTextView();
+
+    protected abstract TextView provideTimerDescriptionTextView();
+
+    protected abstract Date provideScheduleDate();
+
+    protected abstract String provideLeftString();
+
+    protected abstract String providePassedString();
 }
+

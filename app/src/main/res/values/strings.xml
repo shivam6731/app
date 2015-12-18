@@ -41,10 +41,12 @@
 
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
+    <string name="task_details_time_passed">MINUTES PASSED</string>
 
     <!-- Errors -->
     <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
     <string name="dialog_please_wait">Please wait…</string>
+    <string name="error_start_point_not_found">Start Point not found</string>
 
     <!-- Country -->
     <string name="country_select_title">Select Country</string>

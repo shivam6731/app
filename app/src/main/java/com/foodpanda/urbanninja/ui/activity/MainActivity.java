@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
@@ -18,16 +20,19 @@ import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
 import java.util.Date;
+import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements SlideMenuCallback {
+public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
     private DrawerLayout drawerLayout;
     private Button btnAction;
 
@@ -132,7 +137,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
     private void getCurrentRider() {
         apiManager.getCurrentRider(
             new BaseApiCallback<VehicleDeliveryAreaRiderBundle>(
-                
+
             ) {
                 @Override
                 public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
@@ -172,7 +177,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
             fragmentManager.
                 beginTransaction().
                 replace(R.id.container,
-                    ReadyToWorkFragment.newInstance()).
+                    ReadyToWorkFragment.newInstance(scheduleWrapper)).
                 commit();
         } else {
             fragmentManager.
@@ -189,5 +194,22 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSeeMapClicked(GeoCoordinate geoCoordinate) {
+        if (geoCoordinate != null) {
+            String uri = String.format(
+                Locale.ENGLISH,
+                "geo:%f,%f",
+                geoCoordinate.getLat(),
+                geoCoordinate.getLon()
+            );
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
