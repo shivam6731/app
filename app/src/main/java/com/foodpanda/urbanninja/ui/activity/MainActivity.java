@@ -15,25 +15,27 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
+import java.util.Date;
+
 public class MainActivity extends BaseActivity implements SlideMenuCallback {
     private DrawerLayout drawerLayout;
     private Button btnAction;
-    private RouteStopStatus routeStopStatus;
 
     private ApiManager apiManager;
     private StorageManager storageManager;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
+    private ScheduleWrapper scheduleWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +45,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         apiManager = App.API_MANAGER;
         storageManager = App.STORAGE_MANAGER;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionButton();
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        setActionBarDrawerToggle(toolbar);
+        setActionButton();
+        setActionBarDrawerToggle(initToolbar());
 
         if (savedInstanceState == null) {
             fragmentManager.
@@ -75,6 +73,13 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
             }
         });
         btnAction.setVisibility(View.GONE);
+    }
+
+    private Toolbar initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        return toolbar;
     }
 
     private void setActionBarDrawerToggle(Toolbar toolbar) {
@@ -140,12 +145,35 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
     }
 
     private void getRidersSchedule() {
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                ReadyToWorkFragment.newInstance()).
-            commit();
+        apiManager.getSchedule(vehicleDeliveryAreaRiderBundle.getRider().getId(), new BaseApiCallback<ScheduleWrapper>() {
+            @Override
+            public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                MainActivity.this.scheduleWrapper = scheduleWrapper;
+                openCorrectFragment();
+            }
 
+            @Override
+            public void onError(ErrorMessage errorMessage) {
+                MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
+            }
+        });
+    }
+
+    private void openCorrectFragment() {
+        if (scheduleWrapper.getTimeWindow().getEnd().getTime() >
+            new Date().getTime()) {
+            fragmentManager.
+                beginTransaction().
+                replace(R.id.container,
+                    ReadyToWorkFragment.newInstance()).
+                commit();
+        } else {
+            fragmentManager.
+                beginTransaction().
+                replace(R.id.container,
+                    EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+                commit();
+        }
     }
 
     @Override

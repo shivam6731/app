@@ -11,6 +11,7 @@ import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.Token;
@@ -133,6 +134,17 @@ public class ApiManager implements Managable {
 
     }
 
+    public void getSchedule(int id, @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback) {
+        service.getRiderSchedule(id).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                baseApiCallback.onSuccess(response.body());
+            }
+        });
+    }
+
+    //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
         countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {
             @Override
