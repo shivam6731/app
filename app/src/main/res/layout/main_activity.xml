@@ -22,7 +22,7 @@
             android:layout_above="@+id/btn_action"
             android:layout_below="@+id/toolbar"/>
 
-        <Button
+        <com.foodpanda.urbanninja.ui.widget.MontserratButton
             android:id="@+id/btn_action"
             style="@style/ButtonMainAction"
             android:layout_alignParentBottom="true"

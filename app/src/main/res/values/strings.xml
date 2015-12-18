@@ -31,7 +31,8 @@
     <!-- Ready to work -->
     <string name="ready_to_work_action">I am ready to work</string>
     <string name="ready_to_work_see_map">See map</string>
-    <string name="ready_to_work_time_fet">MINUTES LEFT\n until your shift starts</string>
+    <string name="ready_to_work_time_left">MINUTES LEFT\n until your shift starts</string>
+    <string name="ready_to_work_time_passed">MINUTES PASSED\n since shift started</string>
 
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox,wear\nyour helmet, take a deep\breath…</string>

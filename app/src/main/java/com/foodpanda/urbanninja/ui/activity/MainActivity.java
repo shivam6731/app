@@ -21,6 +21,7 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
+import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
-                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+                ReadyToWorkFragment.newInstance()).
             commit();
 
     }
