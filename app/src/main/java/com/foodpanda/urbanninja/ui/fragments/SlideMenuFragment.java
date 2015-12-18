@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,13 +9,21 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
 public class SlideMenuFragment extends BaseFragment {
+    private SlideMenuCallback mainActivityCallback;
 
     public static SlideMenuFragment newInstance() {
         SlideMenuFragment loginFragment = new SlideMenuFragment();
 
         return loginFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (SlideMenuCallback) context;
     }
 
     @Nullable
@@ -35,6 +44,7 @@ public class SlideMenuFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(activity, "Logout Clicked", Toast.LENGTH_SHORT).show();
+                mainActivityCallback.onLogoutClicked();
             }
         });
         view.findViewById(R.id.btn_profile).setOnClickListener(new View.OnClickListener() {

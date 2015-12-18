@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,18 +16,21 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements SlideMenuCallback {
     private DrawerLayout drawerLayout;
     private Button btnAction;
     private RouteStopStatus routeStopStatus;
 
     private ApiManager apiManager;
+    private StorageManager storageManager;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
 
@@ -36,6 +40,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main_activity);
 
         apiManager = App.API_MANAGER;
+        storageManager = App.STORAGE_MANAGER;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,11 +51,15 @@ public class MainActivity extends BaseActivity {
         setActionBarDrawerToggle(toolbar);
 
         if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().
-                add(R.id.container, LoadDataFragment.newIntance()).commit();
+            fragmentManager.
+                beginTransaction().
+                add(R.id.container, LoadDataFragment.newIntance()).
+                commit();
 
-            fragmentManager.beginTransaction().
-                add(R.id.left_drawer, SlideMenuFragment.newInstance()).commit();
+            fragmentManager.
+                beginTransaction().
+                add(R.id.left_drawer, SlideMenuFragment.newInstance()).
+                commit();
         }
         getCurrentRider();
     }
@@ -130,8 +139,19 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getRidersSchedule() {
-        fragmentManager.beginTransaction().
-            replace(R.id.container, EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).commit();
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+            commit();
 
+    }
+
+    @Override
+    public void onLogoutClicked() {
+        storageManager.storeToken(null);
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

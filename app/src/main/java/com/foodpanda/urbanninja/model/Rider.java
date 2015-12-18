@@ -43,12 +43,10 @@ public class Rider implements Parcelable {
 
     public static final Parcelable.Creator<Rider> CREATOR = new Parcelable.Creator<Rider>() {
         public Rider createFromParcel(Parcel source) {
-
             return new Rider(source);
         }
 
         public Rider[] newArray(int size) {
-
             return new Rider[size];
         }
     };

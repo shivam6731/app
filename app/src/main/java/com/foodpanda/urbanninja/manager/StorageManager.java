@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.google.gson.Gson;
@@ -53,6 +54,38 @@ public class StorageManager implements Managable {
 
             return null;
         }
+    }
 
+    public void storeUserName(String username) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constants.Preferences.USERNAME, username);
+        editor.commit();
+    }
+
+    public String getUsername() {
+        return sharedPreferences.getString(Constants.Preferences.USERNAME, "");
+    }
+
+    public void storePassword(String password) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constants.Preferences.PASSWORD, password);
+        editor.commit();
+    }
+
+    public String getPassword() {
+        return sharedPreferences.getString(Constants.Preferences.PASSWORD, "");
+    }
+
+    public void storeCountry(Country country) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = gson.toJson(country);
+        editor.putString(Constants.Preferences.COUNTRY, json);
+        editor.commit();
+    }
+
+    public Country getCountry() {
+        String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
+
+        return gson.fromJson(json, Country.class);
     }
 }

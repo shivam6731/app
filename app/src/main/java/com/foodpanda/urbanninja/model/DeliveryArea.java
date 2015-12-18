@@ -28,12 +28,10 @@ public class DeliveryArea implements Parcelable {
 
     public static final Parcelable.Creator<DeliveryArea> CREATOR = new Parcelable.Creator<DeliveryArea>() {
         public DeliveryArea createFromParcel(Parcel source) {
-
             return new DeliveryArea(source);
         }
 
         public DeliveryArea[] newArray(int size) {
-
             return new DeliveryArea[size];
         }
     };

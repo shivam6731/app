@@ -6,7 +6,7 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_field_required">Country field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -16,6 +16,7 @@
     <string name="login_issue"><u>Issue with login?</u></string>
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
+    <string name="login_country_hint">Country</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- Side Menu -->
     <string name="side_menu_logout">Logout</string>
@@ -35,6 +36,16 @@
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox,wear\nyour helmet, take a deep\breath…</string>
     <string name="empty_list_text">New orders\nare coming soon</string>
+    <string name="empty_list_recycle">No data to show</string>
+
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
+
+    <!-- Errors -->
+    <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
+    <string name="dialog_please_wait">Please wait…</string>
+
+    <!-- Country -->
+    <string name="country_select_title">Select Country</string>
+    <string name="country_select">Select</string>
 </resources>

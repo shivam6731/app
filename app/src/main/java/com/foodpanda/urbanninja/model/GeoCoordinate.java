@@ -29,12 +29,10 @@ public class GeoCoordinate implements Parcelable {
 
     public static final Parcelable.Creator<GeoCoordinate> CREATOR = new Parcelable.Creator<GeoCoordinate>() {
         public GeoCoordinate createFromParcel(Parcel source) {
-
             return new GeoCoordinate(source);
         }
 
         public GeoCoordinate[] newArray(int size) {
-
             return new GeoCoordinate[size];
         }
     };
