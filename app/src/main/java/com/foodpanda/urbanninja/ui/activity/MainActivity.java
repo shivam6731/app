@@ -130,33 +130,40 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
     }
 
     private void getCurrentRider() {
-        apiManager.getCurrentRider(new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
-            @Override
-            public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                MainActivity.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
-                getRidersSchedule();
-            }
+        apiManager.getCurrentRider(
+            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>(
+                
+            ) {
+                @Override
+                public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                    MainActivity.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
+                    getRidersSchedule();
+                }
 
-            @Override
-            public void onError(ErrorMessage errorMessage) {
-                MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-            }
-        });
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                }
+            });
     }
 
     private void getRidersSchedule() {
-        apiManager.getSchedule(vehicleDeliveryAreaRiderBundle.getRider().getId(), new BaseApiCallback<ScheduleWrapper>() {
-            @Override
-            public void onSuccess(ScheduleWrapper scheduleWrapper) {
-                MainActivity.this.scheduleWrapper = scheduleWrapper;
-                openCorrectFragment();
-            }
+        apiManager.getSchedule(
+            vehicleDeliveryAreaRiderBundle.getRider().getId(),
+            new BaseApiCallback<ScheduleWrapper>(
 
-            @Override
-            public void onError(ErrorMessage errorMessage) {
-                MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-            }
-        });
+            ) {
+                @Override
+                public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                    MainActivity.this.scheduleWrapper = scheduleWrapper;
+                    openCorrectFragment();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                }
+            });
     }
 
     private void openCorrectFragment() {

@@ -55,7 +55,10 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                apiManager.getRoute(EmptyTaskListFragment.this, vehicleDeliveryAreaRiderBundle.getRider().getId());
+                apiManager.getRoute(
+                    vehicleDeliveryAreaRiderBundle.getRider().getId(),
+                    EmptyTaskListFragment.this
+                );
             }
         });
     }
