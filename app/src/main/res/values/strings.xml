@@ -29,7 +29,6 @@
     <string name="menu_call">Call</string>
 
     <!-- Ready to work -->
-    <string name="ready_to_work_action">I am ready to work</string>
     <string name="ready_to_work_see_map">See map</string>
     <string name="ready_to_work_time_left">MINUTES LEFT\n until your shift starts</string>
     <string name="ready_to_work_time_passed">MINUTES PASSED\n since shift started</string>
@@ -41,12 +40,19 @@
 
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
+    <string name="task_details_time_passed">MINUTES PASSED</string>
 
     <!-- Errors -->
     <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
     <string name="dialog_please_wait">Please wait…</string>
+    <string name="error_start_point_not_found">Start Point not found</string>
 
     <!-- Country -->
     <string name="country_select_title">Select Country</string>
     <string name="country_select">Select</string>
+
+    <!-- Ready to work -->
+    <string name="action_ready_to_work">I am ready to work</string>
+    <string name="action_at_pick_up">I am at pickup</string>
+    <string name="action_at_picked_up">I picked up</string>
 </resources>

@@ -12,6 +12,9 @@ public class Rider implements Parcelable {
     private String picture;
     private boolean deleted;
 
+    public Rider() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -26,9 +29,6 @@ public class Rider implements Parcelable {
         dest.writeString(this.username);
         dest.writeString(this.picture);
         dest.writeByte(deleted ? (byte) 1 : (byte) 0);
-    }
-
-    public Rider() {
     }
 
     protected Rider(Parcel in) {

@@ -8,6 +8,9 @@ public class GeoCoordinate implements Parcelable {
 
     private Double lon;
 
+    public GeoCoordinate() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -17,9 +20,6 @@ public class GeoCoordinate implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.lat);
         dest.writeValue(this.lon);
-    }
-
-    public GeoCoordinate() {
     }
 
     protected GeoCoordinate(Parcel in) {

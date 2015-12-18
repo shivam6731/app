@@ -1,4 +1,4 @@
-package urbanninja.foodpanda.com;
+package com.foodpanda.urbanninja;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

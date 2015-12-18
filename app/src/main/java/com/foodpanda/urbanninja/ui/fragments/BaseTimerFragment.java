@@ -40,10 +40,63 @@ public abstract class BaseTimerFragment extends BaseFragment {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                provideTimerTextView().setText(DateUtil.timerFormat(new Date()));
+                provideTimerTextView().setText(setTimerValue());
             }
         });
     }
 
+    private String setTimerValue() {
+        String result;
+        Date now = new Date();
+        Date to = provideScheduleDate() == null ? new Date() : provideScheduleDate();
+        if (now.getTime() < to.getTime()) {
+            result = DateUtil.timerFormat(to.getTime() - now.getTime());
+            provideTimerDescriptionTextView().setText(provideLeftString());
+        } else {
+            result = DateUtil.timerFormat(now.getTime() - to.getTime());
+            provideTimerDescriptionTextView().setText(providePassedString());
+        }
+        return result;
+    }
+
+    /**
+     * provide TextView for the clock witch we would change every second by timer
+     *
+     * @return TextView with big text size (according to our design)
+     */
     protected abstract TextView provideTimerTextView();
+
+    /**
+     * provide TextView the for the description values where
+     * we would see do we have some extra time or we are late
+     *
+     * @return TextView with big text size (according to our design)
+     * @see #provideLeftString()
+     * @see #providePassedString()
+     */
+    protected abstract TextView provideTimerDescriptionTextView();
+
+    /**
+     * provide start time for any action with timer
+     *
+     * @return Date from the server side
+     */
+    protected abstract Date provideScheduleDate();
+
+    /**
+     * provide description of the left time value for the TextView
+     *
+     * @return String from resources
+     * @see #provideTimerDescriptionTextView()
+     */
+    protected abstract String provideLeftString();
+
+    /**
+     * provide description of the passed time value for the TextView
+     *
+     * @return String from resources
+     * @see #provideTimerDescriptionTextView()
+     */
+    protected abstract String providePassedString();
 }
+

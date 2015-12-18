@@ -24,6 +24,9 @@ public class Country implements Parcelable {
     @SerializedName("url")
     private String url;
 
+    public Country() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -37,9 +40,6 @@ public class Country implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.image);
         dest.writeString(this.url);
-    }
-
-    public Country() {
     }
 
     protected Country(Parcel in) {

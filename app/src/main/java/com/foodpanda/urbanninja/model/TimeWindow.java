@@ -3,9 +3,14 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class TimeWindow implements Parcelable {
-    private String start;
-    private String end;
+    private Date startTime;
+    private Date endTime;
+
+    public TimeWindow() {
+    }
 
     @Override
     public int describeContents() {
@@ -14,19 +19,18 @@ public class TimeWindow implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.start);
-        dest.writeString(this.end);
-    }
-
-    public TimeWindow() {
+        dest.writeLong(startTime != null ? startTime.getTime() : -1);
+        dest.writeLong(endTime != null ? endTime.getTime() : -1);
     }
 
     protected TimeWindow(Parcel in) {
-        this.start = in.readString();
-        this.end = in.readString();
+        long tmpStart = in.readLong();
+        this.startTime = tmpStart == -1 ? null : new Date(tmpStart);
+        long tmpEnd = in.readLong();
+        this.endTime = tmpEnd == -1 ? null : new Date(tmpEnd);
     }
 
-    public static final Parcelable.Creator<TimeWindow> CREATOR = new Parcelable.Creator<TimeWindow>() {
+    public static final Creator<TimeWindow> CREATOR = new Creator<TimeWindow>() {
         public TimeWindow createFromParcel(Parcel source) {
             return new TimeWindow(source);
         }
@@ -36,11 +40,11 @@ public class TimeWindow implements Parcelable {
         }
     };
 
-    public String getStart() {
-        return start;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public String getEnd() {
-        return end;
+    public Date getEndTime() {
+        return endTime;
     }
 }

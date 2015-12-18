@@ -2,38 +2,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/main_background_color"
                 android:orientation="vertical">
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_details"
         style="@style/TextView.Description"
         android:layout_centerHorizontal="true"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_timer"
         style="@style/TextView.Title.Timer"
         android:layout_below="@+id/txt_details"
         android:layout_centerHorizontal="true"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_minutes_left"
         style="@style/TextView.Title.Multiline"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
         android:text="@string/task_details_time_left"/>
 
-    <ImageView
-        android:id="@+id/image_map"
-        style="@style/ImageView"
-        android:layout_below="@+id/txt_minutes_left"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ninja"
-        />
     <TextView
         android:id="@+id/txt_end_point"
         style="@style/TextView"
-        android:layout_below="@+id/image_map"
+        android:layout_below="@+id/txt_minutes_left"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@android:drawable/ic_menu_compass"
+        android:drawableLeft="@android:drawable/ic_lock_lock"
         android:text="@string/task_details_time_left"/>
+
+    <fragment android:id="@+id/map"
+              android:layout_below="@+id/txt_end_point"
+              android:name="com.google.android.gms.maps.SupportMapFragment"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".MapsActivity"/>
 </RelativeLayout>

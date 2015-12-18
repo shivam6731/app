@@ -31,8 +31,10 @@
         android:layout_centerHorizontal="true"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_timer_description"
         style="@style/TextView.Title.Multiline.NotBold"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
         android:text="@string/ready_to_work_time_left"/>
+
 </RelativeLayout>
