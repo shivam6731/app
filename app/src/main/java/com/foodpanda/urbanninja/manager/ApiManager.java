@@ -152,6 +152,20 @@ public class ApiManager implements Managable {
         });
     }
 
+    public void scheduleClockIn(int scheduleId,
+                                @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
+    ) {
+        service.clockInSchedule(scheduleId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
+            }
+        });
+    }
+
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
         countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {

@@ -17,17 +17,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Date;
 
-public class TaskDetailsFragment extends BaseTimerFragment implements OnMapReadyCallback {
+public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallback {
 
     private TextView txtDetails;
     private TextView txtEndPoint;
     private TextView txtTimer;
     private TextView txtTimerDescription;
 
-    public static TaskDetailsFragment newInstance() {
-        TaskDetailsFragment taskDetailsFragment = new TaskDetailsFragment();
+    public static PickUpFragment newInstance() {
+        PickUpFragment pickUpFragment = new PickUpFragment();
 
-        return taskDetailsFragment;
+        return pickUpFragment;
     }
 
     @Nullable

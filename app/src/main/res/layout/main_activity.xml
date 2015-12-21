@@ -26,7 +26,7 @@
             android:id="@+id/btn_action"
             style="@style/ButtonMainAction"
             android:layout_alignParentBottom="true"
-            android:text="@string/ready_to_work_action"/>
+            android:text="@string/action_ready_to_work"/>
     </RelativeLayout>
 
     <FrameLayout

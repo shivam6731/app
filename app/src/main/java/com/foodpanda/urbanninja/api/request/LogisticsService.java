@@ -26,6 +26,9 @@ public interface LogisticsService {
     Call<RouteListWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
-    Call<ScheduleWrapper> getRiderSchedule(@Query(ApiTag.SCHEDULE_TAG) int riderId);
+    Call<ScheduleWrapper> getRiderSchedule(@Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId);
+
+    @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
+    Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
 
 }

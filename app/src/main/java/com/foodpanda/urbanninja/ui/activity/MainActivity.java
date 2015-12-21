@@ -25,13 +25,12 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
+import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
-import com.foodpanda.urbanninja.ui.fragments.TaskDetailsFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
-import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
@@ -163,47 +162,36 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 @Override
                 public void onSuccess(ScheduleWrapper scheduleWrapper) {
                     MainActivity.this.scheduleWrapper = scheduleWrapper;
-                    openCorrectFragment();
+                    if (scheduleWrapper.getId() == 0) {
+                        getRoute();
+                    } else {
+                        openReadyToWork();
+                    }
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    fragmentManager.
-                        beginTransaction().
-                        replace(R.id.container,
-                            TaskDetailsFragment.newInstance()).
-                        commit();
                 }
             });
+    }
+
+    private void getRoute() {
         apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteListWrapper>() {
             @Override
             public void onSuccess(RouteListWrapper routeListWrapper) {
-                openCorrectFragment();
+                if (routeListWrapper.getStops().size() == 0) {
+                    openEmptyListFragment();
+                } else {
+                    openPickUp();
+                }
             }
 
             @Override
             public void onError(ErrorMessage errorMessage) {
-
+                MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
             }
         });
-    }
-
-    private void openCorrectFragment() {
-        if (scheduleWrapper.getTimeWindow().getEnd().getTime() >
-            new Date().getTime()) {
-            fragmentManager.
-                beginTransaction().
-                replace(R.id.container,
-                    ReadyToWorkFragment.newInstance(scheduleWrapper)).
-                commit();
-        } else {
-            fragmentManager.
-                beginTransaction().
-                replace(R.id.container,
-                    EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
-                commit();
-        }
     }
 
     @Override
@@ -230,4 +218,34 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
 
     }
+
+    private void openReadyToWork() {
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                ReadyToWorkFragment.newInstance(scheduleWrapper)).
+            commit();
+        btnAction.setText(R.string.action_ready_to_work);
+        btnAction.setVisibility(View.VISIBLE);
+    }
+
+    private void openEmptyListFragment() {
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+            commit();
+        btnAction.setVisibility(View.GONE);
+    }
+
+    private void openPickUp() {
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                PickUpFragment.newInstance()).
+            commit();
+        btnAction.setText(R.string.action_at_pick_up);
+        btnAction.setVisibility(View.VISIBLE);
+    }
+
 }
