@@ -225,6 +225,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 ReadyToWorkFragment.newInstance(scheduleWrapper)).
             commit();
+
         btnAction.setText(R.string.action_ready_to_work);
         btnAction.setVisibility(View.VISIBLE);
     }
@@ -235,6 +236,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
             commit();
+
         btnAction.setVisibility(View.GONE);
     }
 
@@ -244,6 +246,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 PickUpFragment.newInstance()).
             commit();
+
         btnAction.setText(R.string.action_at_pick_up);
         btnAction.setVisibility(View.VISIBLE);
     }
