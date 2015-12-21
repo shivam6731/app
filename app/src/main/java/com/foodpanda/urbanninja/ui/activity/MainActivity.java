@@ -26,6 +26,7 @@ import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.fragments.TaskDetailsFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
@@ -167,6 +168,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    fragmentManager.
+                        beginTransaction().
+                        replace(R.id.container,
+                            TaskDetailsFragment.newInstance()).
+                        commit();
                 }
             });
     }

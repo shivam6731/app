@@ -8,10 +8,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Date;
 
-public class TaskDetailsFragment extends BaseTimerFragment {
+public class TaskDetailsFragment extends BaseTimerFragment implements OnMapReadyCallback {
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -42,6 +48,11 @@ public class TaskDetailsFragment extends BaseTimerFragment {
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
         txtEndPoint = (TextView) view.findViewById(R.id.txt_end_point);
         txtTimerDescription = (TextView) view.findViewById(R.id.txt_minutes_left);
+        SupportMapFragment mapFragment =
+            (SupportMapFragment) getChildFragmentManager().
+                findFragmentById(R.id.map);
+
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -67,5 +78,12 @@ public class TaskDetailsFragment extends BaseTimerFragment {
     @Override
     protected String providePassedString() {
         return getResources().getString(R.string.task_details_time_passed);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng sydney = new LatLng(-34, 151);
+        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
