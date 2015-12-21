@@ -17,6 +17,7 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.model.RouteListWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
@@ -175,6 +176,17 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                         commit();
                 }
             });
+        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteListWrapper>() {
+            @Override
+            public void onSuccess(RouteListWrapper routeListWrapper) {
+                openCorrectFragment();
+            }
+
+            @Override
+            public void onError(ErrorMessage errorMessage) {
+
+            }
+        });
     }
 
     private void openCorrectFragment() {
