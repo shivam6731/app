@@ -48,7 +48,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
 
     @Override
     protected CountryAdapter provideListAdapter() {
-        return new CountryAdapter(new ArrayList(), activity);
+        return new CountryAdapter(new ArrayList<Country>(), activity);
     }
 
     @Override
