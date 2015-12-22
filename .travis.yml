@@ -15,7 +15,7 @@ android:
     # Additional components
     - extra-android-support
     - extra-google-google_play_service
-    #- extra-google-m2repository
+    - extra-google-m2repository
     - extra-android-m2repository
     #- addon-google_apis-google-19
 
