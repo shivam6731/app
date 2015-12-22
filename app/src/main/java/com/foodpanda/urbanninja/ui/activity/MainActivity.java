@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void setTimer() {
         if (scheduleWrapper != null &&
             scheduleWrapper.getTimeWindow() != null) {
-            long delay = (scheduleWrapper.getTimeWindow().getStart().getTime() - ENABLE_TIME_OUT) - new Date().getTime();
+            long delay = (scheduleWrapper.getTimeWindow().getStartTime().getTime() - ENABLE_TIME_OUT) - new Date().getTime();
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 public void run() {
@@ -271,7 +271,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             return false;
         } else {
             return new Date().getTime() >
-                (scheduleWrapper.getTimeWindow().getStart().getTime() - ENABLE_TIME_OUT);
+                (scheduleWrapper.getTimeWindow().getStartTime().getTime() - ENABLE_TIME_OUT);
         }
     }
 

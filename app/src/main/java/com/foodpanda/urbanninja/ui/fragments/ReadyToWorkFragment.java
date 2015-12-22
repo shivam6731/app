@@ -64,7 +64,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
         view.findViewById(R.id.btn_see_map).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartPoint().getGeoCoordinate());
+                mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate());
             }
         });
     }
@@ -72,7 +72,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        txtStartPoint.setText(scheduleWrapper.getStartPoint().getDescription());
+        txtStartPoint.setText(scheduleWrapper.getStartingPoint().getDescription());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     protected Date provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
-            return scheduleWrapper.getTimeWindow().getStart();
+            return scheduleWrapper.getTimeWindow().getStartTime();
         } else {
 
             return null;

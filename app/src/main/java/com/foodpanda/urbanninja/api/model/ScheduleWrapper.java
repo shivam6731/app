@@ -10,7 +10,7 @@ import com.foodpanda.urbanninja.model.TimeWindow;
 
 public class ScheduleWrapper implements Parcelable {
     private int id;
-    private StartPoint startPoint;
+    private StartPoint startingPoint;
     private Rider rider;
     private DeliveryArea deliveryArea;
     private TimeWindow timeWindow;
@@ -23,7 +23,7 @@ public class ScheduleWrapper implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
-        dest.writeParcelable(this.startPoint, 0);
+        dest.writeParcelable(this.startingPoint, 0);
         dest.writeParcelable(this.rider, 0);
         dest.writeParcelable(this.deliveryArea, 0);
         dest.writeParcelable(this.timeWindow, 0);
@@ -34,7 +34,7 @@ public class ScheduleWrapper implements Parcelable {
 
     protected ScheduleWrapper(Parcel in) {
         this.id = in.readInt();
-        this.startPoint = in.readParcelable(StartPoint.class.getClassLoader());
+        this.startingPoint = in.readParcelable(StartPoint.class.getClassLoader());
         this.rider = in.readParcelable(Rider.class.getClassLoader());
         this.deliveryArea = in.readParcelable(DeliveryArea.class.getClassLoader());
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
@@ -54,8 +54,8 @@ public class ScheduleWrapper implements Parcelable {
         return id;
     }
 
-    public StartPoint getStartPoint() {
-        return startPoint;
+    public StartPoint getStartingPoint() {
+        return startingPoint;
     }
 
     public Rider getRider() {
