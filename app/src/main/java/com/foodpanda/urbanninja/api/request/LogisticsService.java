@@ -7,6 +7,8 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
+import java.util.List;
+
 import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
@@ -26,7 +28,7 @@ public interface LogisticsService {
     Call<RouteListWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
-    Call<ScheduleWrapper> getRiderSchedule(@Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId);
+    Call<List<ScheduleWrapper>> getRiderSchedule(@Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId);
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
     Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);

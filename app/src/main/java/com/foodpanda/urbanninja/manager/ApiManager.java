@@ -25,6 +25,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
@@ -139,11 +140,11 @@ public class ApiManager implements Managable {
     }
 
     public void getSchedule(int riderId,
-                            @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
+                            @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
     ) {
-        service.getRiderSchedule(riderId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
+        service.getRiderSchedule(riderId).enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
             @Override
-            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
+            public void onResponse(Response<List<ScheduleWrapper>> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
                 if (response.isSuccess()) {
                     baseApiCallback.onSuccess(response.body());

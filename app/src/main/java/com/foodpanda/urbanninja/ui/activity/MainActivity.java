@@ -31,9 +31,15 @@ import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
+    private static final int ENABLE_TIME_OUT = 30 * 60 * 1000;
+
     private DrawerLayout drawerLayout;
     private Button btnAction;
 
@@ -42,6 +48,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
+
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,44 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         getCurrentRider();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = null;
+    }
+
+    private void setTimer() {
+        if (scheduleWrapper != null &&
+            scheduleWrapper.getTimeWindow() != null) {
+            long delay = (scheduleWrapper.getTimeWindow().getStart().getTime() - ENABLE_TIME_OUT) - new Date().getTime();
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                public void run() {
+                    enableButton();
+                }
+            }, 0, delay);
+        }
+    }
+
+
+    private void enableButton() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateActionButton(true, true, R.string.action_ready_to_work);
+            }
+        });
+    }
+
     private void setActionButton() {
         btnAction = (Button) findViewById(R.id.btn_action);
         btnAction.setEnabled(false);
@@ -78,7 +124,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
             }
         });
-        btnAction.setVisibility(View.GONE);
+        updateActionButton(false, false, 0);
     }
 
     private Toolbar initToolbar() {
@@ -156,16 +202,17 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void getRidersSchedule() {
         apiManager.getSchedule(
             vehicleDeliveryAreaRiderBundle.getRider().getId(),
-            new BaseApiCallback<ScheduleWrapper>(
-
+            new BaseApiCallback<List<ScheduleWrapper>>(
             ) {
                 @Override
-                public void onSuccess(ScheduleWrapper scheduleWrapper) {
-                    MainActivity.this.scheduleWrapper = scheduleWrapper;
-                    if (scheduleWrapper.getId() == 0) {
-                        getRoute();
-                    } else {
-                        openReadyToWork();
+                public void onSuccess(List<ScheduleWrapper> scheduleWrapper) {
+                    if (scheduleWrapper.size() > 0) {
+                        MainActivity.this.scheduleWrapper = scheduleWrapper.get(0);
+                        if (MainActivity.this.scheduleWrapper.getId() == 0) {
+                            getRoute();
+                        } else {
+                            openReadyToWork();
+                        }
                     }
                 }
 
@@ -216,7 +263,16 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         } else {
             Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private boolean isReadyToClockIn() {
+        if (scheduleWrapper == null ||
+            scheduleWrapper.getTimeWindow() == null) {
+            return false;
+        } else {
+            return new Date().getTime() >
+                (scheduleWrapper.getTimeWindow().getStart().getTime() - ENABLE_TIME_OUT);
+        }
     }
 
     private void openReadyToWork() {
@@ -225,9 +281,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 ReadyToWorkFragment.newInstance(scheduleWrapper)).
             commit();
-
-        btnAction.setText(R.string.action_ready_to_work);
-        btnAction.setVisibility(View.VISIBLE);
+        setTimer();
+        updateActionButton(true, isReadyToClockIn(), R.string.action_ready_to_work);
     }
 
     private void openEmptyListFragment() {
@@ -237,7 +292,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
             commit();
 
-        btnAction.setVisibility(View.GONE);
+        updateActionButton(false, false, 0);
     }
 
     private void openPickUp() {
@@ -247,8 +302,21 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 PickUpFragment.newInstance()).
             commit();
 
-        btnAction.setText(R.string.action_at_pick_up);
-        btnAction.setVisibility(View.VISIBLE);
+        updateActionButton(true, true, R.string.action_at_pick_up);
+    }
+
+    private void updateActionButton(
+        boolean isVisible,
+        boolean isEnable,
+        int textRes) {
+        if (isVisible) {
+            btnAction.setVisibility(View.VISIBLE);
+        } else {
+            btnAction.setVisibility(View.GONE);
+            return;
+        }
+        btnAction.setEnabled(isEnable);
+        btnAction.setText(textRes);
     }
 
 }
