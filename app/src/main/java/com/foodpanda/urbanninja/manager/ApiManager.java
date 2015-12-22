@@ -78,7 +78,7 @@ public class ApiManager implements Managable {
 
     private Gson createGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         return gsonBuilder.create();
     }
