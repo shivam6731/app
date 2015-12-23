@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.ui.fragments;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.utils.DateUtil;
 
@@ -78,10 +79,16 @@ public abstract class BaseTimerFragment extends BaseFragment {
         start.setTime(startDate);
 
         if (now.getTimeInMillis() < start.getTimeInMillis()) {
-            result = DateUtil.timerFormat(start.getTimeInMillis() - now.getTimeInMillis());
-            provideTimerDescriptionTextView().setText(provideLeftString());
+            long date = start.getTimeInMillis() - now.getTimeInMillis();
+            result = DateUtil.timeFormat(date);
+
+            if (date > DateUtil.ONE_DAY) {
+                provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_no_shift));
+            } else {
+                provideTimerDescriptionTextView().setText(provideLeftString());
+            }
         } else {
-            result = DateUtil.timerFormat(now.getTimeInMillis() - start.getTimeInMillis());
+            result = DateUtil.timeFormat(now.getTimeInMillis() - start.getTimeInMillis());
             provideTimerDescriptionTextView().setText(providePassedString());
         }
         return result;
