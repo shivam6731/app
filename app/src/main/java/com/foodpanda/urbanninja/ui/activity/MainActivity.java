@@ -23,6 +23,7 @@ import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
@@ -44,6 +45,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
+
+    private UserStatus userStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +89,20 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                changeStatus();
             }
         });
         updateActionButton(false, false, 0);
+    }
+
+    private void changeStatus() {
+        switch (userStatus) {
+            case CLOCK_IN:
+                clockIn();
+            case EMPTY_LIST:
+            case ARRIVING:
+            case PICK_UP:
+        }
     }
 
     private Toolbar initToolbar() {
@@ -173,11 +186,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 public void onSuccess(List<ScheduleWrapper> scheduleWrapper) {
                     if (scheduleWrapper.size() > 0) {
                         MainActivity.this.scheduleWrapper = scheduleWrapper.get(0);
-                        if (MainActivity.this.scheduleWrapper.getId() == 0) {
-                            getRoute();
-                        } else {
-                            openReadyToWork();
-                        }
+                        openReadyToWork();
                     }
                 }
 
@@ -204,6 +213,22 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
             }
         });
+    }
+
+    private void clockIn() {
+        if (scheduleWrapper != null)
+            apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
+                @Override
+                public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                    Toast.makeText(MainActivity.this, "Clock in", Toast.LENGTH_SHORT).show();
+                    getRoute();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                }
+            });
     }
 
     @Override
@@ -236,6 +261,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private void openReadyToWork() {
+        userStatus = UserStatus.CLOCK_IN;
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
@@ -244,6 +270,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private void openEmptyListFragment() {
+        userStatus = UserStatus.EMPTY_LIST;
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
@@ -254,6 +281,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private void openPickUp() {
+        userStatus = UserStatus.ARRIVING;
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
