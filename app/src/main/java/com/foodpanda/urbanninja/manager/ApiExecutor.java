@@ -29,8 +29,7 @@ public class ApiExecutor {
 
     private void getCurrentRider() {
         apiManager.getCurrentRider(
-            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>(
-            ) {
+            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
                 @Override
                 public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
                     ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
@@ -47,8 +46,7 @@ public class ApiExecutor {
     private void getRidersSchedule() {
         apiManager.getSchedule(
             vehicleDeliveryAreaRiderBundle.getRider().getId(),
-            new BaseApiCallback<List<ScheduleWrapper>>(
-            ) {
+            new BaseApiCallback<List<ScheduleWrapper>>() {
                 @Override
                 public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
                     if (scheduleWrappers.size() > 0) {
