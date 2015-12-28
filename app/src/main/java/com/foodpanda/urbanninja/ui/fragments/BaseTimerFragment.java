@@ -77,19 +77,20 @@ public abstract class BaseTimerFragment extends BaseFragment {
         Date startDate = provideScheduleDate() == null ? new Date() : provideScheduleDate();
         Calendar start = Calendar.getInstance();
         start.setTime(startDate);
-
+        long date = Math.abs(start.getTimeInMillis() - now.getTimeInMillis());
+        result = DateUtil.timeFormat(date);
         if (now.getTimeInMillis() < start.getTimeInMillis()) {
-            long date = start.getTimeInMillis() - now.getTimeInMillis();
-            result = DateUtil.timeFormat(date);
-
             if (date > DateUtil.ONE_DAY) {
                 provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_no_shift));
             } else {
                 provideTimerDescriptionTextView().setText(provideLeftString());
             }
         } else {
-            result = DateUtil.timeFormat(now.getTimeInMillis() - start.getTimeInMillis());
-            provideTimerDescriptionTextView().setText(providePassedString());
+            if (date > DateUtil.ONE_DAY) {
+                provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_shift_expired));
+            } else {
+                provideTimerDescriptionTextView().setText(providePassedString());
+            }
         }
         return result;
     }

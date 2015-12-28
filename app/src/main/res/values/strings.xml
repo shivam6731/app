@@ -56,4 +56,5 @@
     <string name="action_at_pick_up">I am at pickup</string>
     <string name="action_at_picked_up">I picked up</string>
     <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
+    <string name="action_ready_shift_expired">You shift started in more\n then 24 hours ago</string>
 </resources>
