@@ -15,11 +15,8 @@ import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.model.ErrorMessage;
-import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
-import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -32,10 +29,7 @@ import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
     private static final int ENABLE_TIME_OUT = 30 * 60 * 1000;
@@ -43,20 +37,14 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private DrawerLayout drawerLayout;
     private Button btnAction;
 
-    private ApiManager apiManager;
     private StorageManager storageManager;
-
-    private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
-    private ScheduleWrapper scheduleWrapper;
-
-    private Timer timer;
+    private ApiExecutor apiExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        apiManager = App.API_MANAGER;
         storageManager = App.STORAGE_MANAGER;
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -74,37 +62,14 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 add(R.id.left_drawer, SlideMenuFragment.newInstance()).
                 commit();
         }
-        getCurrentRider();
+        apiExecutor = new ApiExecutor(this);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        setTimer();
+    protected void onDestroy() {
+        super.onDestroy();
+        apiExecutor = null;
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = null;
-    }
-
-    private void setTimer() {
-        if (scheduleWrapper != null &&
-            scheduleWrapper.getTimeWindow() != null) {
-            long delay = (scheduleWrapper.getTimeWindow().getStartTime().getTime() - ENABLE_TIME_OUT) - new Date().getTime();
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    enableButton();
-                }
-            }, 0, delay);
-        }
-    }
-
 
     private void enableButton() {
         runOnUiThread(new Runnable() {
@@ -181,64 +146,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         return super.onOptionsItemSelected(item);
     }
 
-    private void getCurrentRider() {
-        apiManager.getCurrentRider(
-            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>(
-            ) {
-                @Override
-                public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                    MainActivity.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
-                    getRidersSchedule();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                }
-            });
-    }
-
-    private void getRidersSchedule() {
-        apiManager.getSchedule(
-            vehicleDeliveryAreaRiderBundle.getRider().getId(),
-            new BaseApiCallback<List<ScheduleWrapper>>(
-            ) {
-                @Override
-                public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
-                    if (scheduleWrappers.size() > 0) {
-                        MainActivity.this.scheduleWrapper = scheduleWrappers.get(0);
-                        if (MainActivity.this.scheduleWrapper.getId() == 0) {
-                            getRoute();
-                        } else {
-                            openReadyToWork();
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                }
-            });
-    }
-
-    private void getRoute() {
-        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
-            @Override
-            public void onSuccess(RouteWrapper routeWrapper) {
-                if (routeWrapper.getStops().size() == 0) {
-                    openEmptyListFragment();
-                } else {
-                    openPickUp();
-                }
-            }
-
-            @Override
-            public void onError(ErrorMessage errorMessage) {
-                MainActivity.this.onError(errorMessage.getStatus(), errorMessage.getMessage());
-            }
-        });
-    }
 
     @Override
     public void onLogoutClicked() {
@@ -264,7 +171,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
     }
 
-    private boolean isReadyToClockIn() {
+    private boolean isReadyToClockIn(ScheduleWrapper scheduleWrapper) {
         if (scheduleWrapper == null ||
             scheduleWrapper.getTimeWindow() == null) {
             return false;
@@ -274,17 +181,18 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
     }
 
-    private void openReadyToWork() {
+    @Override
+    public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
                 ReadyToWorkFragment.newInstance(scheduleWrapper)).
             commit();
-        setTimer();
-        updateActionButton(true, isReadyToClockIn(), R.string.action_ready_to_work);
+        updateActionButton(true, isReadyToClockIn(scheduleWrapper), R.string.action_ready_to_work);
     }
 
-    private void openEmptyListFragment() {
+    @Override
+    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
@@ -294,7 +202,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         updateActionButton(false, false, 0);
     }
 
-    private void openPickUp() {
+    @Override
+    public void openPickUp() {
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
