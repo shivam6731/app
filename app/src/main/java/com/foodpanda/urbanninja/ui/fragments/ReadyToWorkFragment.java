@@ -28,6 +28,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ScheduleWrapper.class.getSimpleName(), scheduleWrapper);
         readyToWorkFragment.setArguments(bundle);
+
         return readyToWorkFragment;
     }
 

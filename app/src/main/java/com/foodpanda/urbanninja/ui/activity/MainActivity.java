@@ -184,7 +184,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void getCurrentRider() {
         apiManager.getCurrentRider(
             new BaseApiCallback<VehicleDeliveryAreaRiderBundle>(
-
             ) {
                 @Override
                 public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
@@ -205,9 +204,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             new BaseApiCallback<List<ScheduleWrapper>>(
             ) {
                 @Override
-                public void onSuccess(List<ScheduleWrapper> scheduleWrapper) {
-                    if (scheduleWrapper.size() > 0) {
-                        MainActivity.this.scheduleWrapper = scheduleWrapper.get(0);
+                public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
+                    if (scheduleWrappers.size() > 0) {
+                        MainActivity.this.scheduleWrapper = scheduleWrappers.get(0);
                         if (MainActivity.this.scheduleWrapper.getId() == 0) {
                             getRoute();
                         } else {
