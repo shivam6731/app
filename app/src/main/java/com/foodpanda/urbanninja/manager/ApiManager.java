@@ -124,8 +124,9 @@ public class ApiManager implements Managable {
         });
     }
 
-    public void getRoute(int vehicleId,
-                         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
+    public void getRoute(
+        int vehicleId,
+        @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
         service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
             @Override
@@ -139,8 +140,9 @@ public class ApiManager implements Managable {
 
     }
 
-    public void getSchedule(int riderId,
-                            @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
+    public void getSchedule(
+        int riderId,
+        @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
     ) {
         service.getRiderSchedule(riderId).enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
             @Override
@@ -153,8 +155,9 @@ public class ApiManager implements Managable {
         });
     }
 
-    public void scheduleClockIn(int scheduleId,
-                                @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
+    public void scheduleClockIn(
+        int scheduleId,
+        @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
         service.clockInSchedule(scheduleId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
             @Override
