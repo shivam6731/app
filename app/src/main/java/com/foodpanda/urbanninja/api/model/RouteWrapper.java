@@ -4,7 +4,7 @@ import com.foodpanda.urbanninja.model.Stop;
 
 import java.util.List;
 
-public class RouteListWrapper {
+public class RouteWrapper {
     private int id;
     private List<Stop> stops;
 
