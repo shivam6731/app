@@ -10,7 +10,7 @@ import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
-import com.foodpanda.urbanninja.api.model.RouteListWrapper;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
@@ -125,11 +125,11 @@ public class ApiManager implements Managable {
     }
 
     public void getRoute(int vehicleId,
-                         @NonNull final BaseApiCallback<RouteListWrapper> baseApiCallback
+                         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
-        service.getRoute(vehicleId).enqueue(new BaseCallback<RouteListWrapper>(baseApiCallback) {
+        service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<RouteListWrapper> response, Retrofit retrofit) {
+            public void onResponse(Response<RouteWrapper> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
                 if (response.isSuccess()) {
                     baseApiCallback.onSuccess(response.body());

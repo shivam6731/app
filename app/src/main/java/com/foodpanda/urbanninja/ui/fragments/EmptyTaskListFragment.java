@@ -11,11 +11,11 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
-import com.foodpanda.urbanninja.api.model.RouteListWrapper;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
-public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallback<RouteListWrapper> {
+public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallback<RouteWrapper> {
     private ApiManager apiManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -64,7 +64,7 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     }
 
     @Override
-    public void onSuccess(RouteListWrapper routeListWrapper) {
+    public void onSuccess(RouteWrapper routeWrapper) {
         swipeRefreshLayout.setRefreshing(false);
     }
 

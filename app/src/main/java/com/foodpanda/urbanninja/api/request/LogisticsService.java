@@ -2,7 +2,7 @@ package com.foodpanda.urbanninja.api.request;
 
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
-import com.foodpanda.urbanninja.api.model.RouteListWrapper;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -25,7 +25,7 @@ public interface LogisticsService {
     Call<VehicleDeliveryAreaRiderBundle> getRider(@Path(ApiTag.USER_TAG) int riderId);
 
     @GET(ApiTag.GET_ROUTE_URL)
-    Call<RouteListWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
+    Call<RouteWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
     Call<List<ScheduleWrapper>> getRiderSchedule(@Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId);

@@ -17,7 +17,7 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
-import com.foodpanda.urbanninja.api.model.RouteListWrapper;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
@@ -224,10 +224,10 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private void getRoute() {
-        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteListWrapper>() {
+        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
             @Override
-            public void onSuccess(RouteListWrapper routeListWrapper) {
-                if (routeListWrapper.getStops().size() == 0) {
+            public void onSuccess(RouteWrapper routeWrapper) {
+                if (routeWrapper.getStops().size() == 0) {
                     openEmptyListFragment();
                 } else {
                     openPickUp();
