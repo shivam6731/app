@@ -9,6 +9,9 @@ public class TimeWindow implements Parcelable {
     private DateTime startTime;
     private DateTime endTime;
 
+    public TimeWindow() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -20,13 +23,11 @@ public class TimeWindow implements Parcelable {
         dest.writeSerializable(this.endTime);
     }
 
-    public TimeWindow() {
-    }
-
     protected TimeWindow(Parcel in) {
         this.startTime = (DateTime) in.readSerializable();
         this.endTime = (DateTime) in.readSerializable();
     }
+
 
     public static final Creator<TimeWindow> CREATOR = new Creator<TimeWindow>() {
         public TimeWindow createFromParcel(Parcel source) {
@@ -43,6 +44,7 @@ public class TimeWindow implements Parcelable {
     }
 
     public DateTime getEndTime() {
-        return endTime;
+        return startTime;
     }
+
 }

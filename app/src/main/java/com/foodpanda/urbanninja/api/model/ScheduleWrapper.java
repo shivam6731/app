@@ -15,6 +15,9 @@ public class ScheduleWrapper implements Parcelable {
     private DeliveryArea deliveryArea;
     private TimeWindow timeWindow;
 
+    public ScheduleWrapper() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -27,9 +30,6 @@ public class ScheduleWrapper implements Parcelable {
         dest.writeParcelable(this.rider, 0);
         dest.writeParcelable(this.deliveryArea, 0);
         dest.writeParcelable(this.timeWindow, 0);
-    }
-
-    public ScheduleWrapper() {
     }
 
     protected ScheduleWrapper(Parcel in) {

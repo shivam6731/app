@@ -20,6 +20,7 @@ public class Stop implements Parcelable {
 
     public Stop() {
     }
+
     @Override
     public int describeContents() {
         return 0;

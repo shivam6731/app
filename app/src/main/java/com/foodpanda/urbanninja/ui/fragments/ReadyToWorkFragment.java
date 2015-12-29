@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
 import org.joda.time.DateTime;
 
@@ -19,6 +21,8 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
 
     private ScheduleWrapper scheduleWrapper;
 
+    private MainActivityCallback mainActivityCallback;
+
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
         ReadyToWorkFragment readyToWorkFragment = new ReadyToWorkFragment();
         Bundle bundle = new Bundle();
@@ -26,6 +30,12 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
         readyToWorkFragment.setArguments(bundle);
 
         return readyToWorkFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
     }
 
     @Override

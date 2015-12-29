@@ -18,20 +18,7 @@ public class Token implements Parcelable {
     @SerializedName("refresh_token")
     private String refreshToken;
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    public int getExpiresIn() {
-        return expiresIn;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
+    public Token() {
     }
 
     @Override
@@ -45,9 +32,6 @@ public class Token implements Parcelable {
         dest.writeString(this.tokenType);
         dest.writeInt(this.expiresIn);
         dest.writeString(this.refreshToken);
-    }
-
-    public Token() {
     }
 
     protected Token(Parcel in) {
@@ -66,4 +50,20 @@ public class Token implements Parcelable {
             return new Token[size];
         }
     };
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public int getExpiresIn() {
+        return expiresIn;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 }

@@ -15,9 +15,9 @@ import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import java.util.List;
 
 public class ApiExecutor {
-    private BaseActivity activity;
-    private ApiManager apiManager;
-    private MainActivityCallback mainActivityCallback;
+    private final BaseActivity activity;
+    private final ApiManager apiManager;
+    private final MainActivityCallback mainActivityCallback;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
@@ -51,8 +51,13 @@ public class ApiExecutor {
             new BaseApiCallback<List<ScheduleWrapper>>() {
                 @Override
                 public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
+                    // Here we get all future and current working schedule
+                    // However we need only first one as current
                     if (scheduleWrappers.size() > 0) {
                         ApiExecutor.this.scheduleWrapper = scheduleWrappers.get(0);
+
+                        // In the future we would have isClockIn flag and depend on this value we
+                        // Would open clock in screen or route related screens
                         if (scheduleWrapper.getId() == 0) {
                             getRoute();
                         } else {

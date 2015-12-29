@@ -10,6 +10,9 @@ public class Vehicle implements Parcelable {
     private float capacityLimit;
     private GeoCoordinate geoCoordinate;
 
+    public Vehicle() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -22,9 +25,6 @@ public class Vehicle implements Parcelable {
         dest.writeString(this.vehicleType);
         dest.writeFloat(this.capacityLimit);
         dest.writeParcelable(this.geoCoordinate, 0);
-    }
-
-    public Vehicle() {
     }
 
     protected Vehicle(Parcel in) {

@@ -9,6 +9,9 @@ public class StartPoint implements Parcelable {
     private String description;
     private GeoCoordinate geoCoordinate;
 
+    public StartPoint() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -20,9 +23,6 @@ public class StartPoint implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeParcelable(this.geoCoordinate, 0);
-    }
-
-    public StartPoint() {
     }
 
     protected StartPoint(Parcel in) {

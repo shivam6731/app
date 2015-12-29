@@ -83,6 +83,10 @@ public class StorageManager implements Managable {
         editor.commit();
     }
 
+    public void cleanToken() {
+        storeToken(null);
+    }
+
     public Country getCountry() {
         String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
 
