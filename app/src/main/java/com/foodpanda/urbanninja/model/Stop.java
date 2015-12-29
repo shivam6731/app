@@ -7,8 +7,6 @@ import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
 public class Stop implements Parcelable {
     private int id;
     private int sequence;

@@ -12,8 +12,6 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
 public class ReadyToWorkFragment extends BaseTimerFragment {
     private TextView txtStartPoint;
     private TextView txtTimer;

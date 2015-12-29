@@ -17,8 +17,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
 public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallback {
 
     private TextView txtDetails;

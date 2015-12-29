@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
 public class TimeWindow implements Parcelable {
     private DateTime startTime;
     private DateTime endTime;
