@@ -16,7 +16,7 @@ import java.util.List;
 public class CountryAdapter extends SimpleBaseAdapter<Country, CountryAdapter.ViewHolder> {
     private Country selectedCountry;
 
-    public CountryAdapter(List objects, Context context) {
+    public CountryAdapter(List<Country> objects, Context context) {
         super(objects, context);
     }
 

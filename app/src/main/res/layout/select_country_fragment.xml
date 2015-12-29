@@ -22,7 +22,7 @@
             android:src="@drawable/ico_country_big"/>
     </RelativeLayout>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.MontserratTextView
         style="@style/TextView.Title"
         android:layout_gravity="center"
         android:text="@string/country_select_title"
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
+        <com.foodpanda.urbanninja.ui.widget.MontserratButton
             android:id="@+id/btn_select"
             style="@style/ButtonMainAction"
             android:text="@string/country_select"

@@ -18,6 +18,9 @@ public class Stop implements Parcelable {
     private int sequenceNumber;
     private RouteStopStatus routeStopStatus;
 
+    public Stop() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -34,9 +37,6 @@ public class Stop implements Parcelable {
         dest.writeLong(arrivalTime != null ? arrivalTime.getTime() : -1);
         dest.writeInt(this.sequenceNumber);
         dest.writeInt(this.routeStopStatus == null ? -1 : this.routeStopStatus.ordinal());
-    }
-
-    public Stop() {
     }
 
     protected Stop(Parcel in) {

@@ -22,7 +22,7 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/ninja"/>
 
-        <TextView
+        <com.foodpanda.urbanninja.ui.widget.MontserratTextView
             android:id="@+id/txt_title"
             style="@style/TextView.Title"
             android:textAllCaps="true"
@@ -31,7 +31,7 @@
             android:paddingTop="@dimen/padding_large"
             android:text="@string/login_title"/>
 
-        <EditText
+        <com.foodpanda.urbanninja.ui.widget.OpenSansEditText
             android:id="@+id/edit_username"
             style="@style/TextView"
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             android:maxLines="1"
             android:singleLine="true"/>
 
-        <EditText
+        <com.foodpanda.urbanninja.ui.widget.OpenSansEditText
             android:id="@+id/edit_password"
             style="@style/TextView"
             android:layout_width="match_parent"
@@ -56,7 +56,7 @@
             android:maxLines="1"
             android:singleLine="true"/>
 
-        <EditText
+        <com.foodpanda.urbanninja.ui.widget.OpenSansEditText
             android:id="@+id/edit_country"
             style="@style/TextView"
             android:layout_width="match_parent"
@@ -80,7 +80,7 @@
 
     </RelativeLayout>
 
-    <Button
+    <com.foodpanda.urbanninja.ui.widget.MontserratButton
         android:id="@+id/email_sign_in_button"
         style="@style/ButtonMainAction"
         android:layout_alignParentBottom="true"

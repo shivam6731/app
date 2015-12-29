@@ -11,6 +11,7 @@ import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.Token;
@@ -24,6 +25,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
@@ -36,8 +38,8 @@ public class ApiManager implements Managable {
 
     @Override
     public void init(Context context) {
-        initService();
         storageManager = App.STORAGE_MANAGER;
+        initService();
     }
 
     private void initService() {
@@ -115,30 +117,68 @@ public class ApiManager implements Managable {
             @Override
             public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
-                riderBundleBaseApiCallback.onSuccess(response.body());
+                if (response.isSuccess()) {
+                    riderBundleBaseApiCallback.onSuccess(response.body());
+                }
             }
         });
     }
 
-    public void getRoute(@NonNull final BaseApiCallback<RouteWrapper> baseApiCallback,
-                         int vehicleId
+    public void getRoute(
+        int vehicleId,
+        @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
         service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
             @Override
             public void onResponse(Response<RouteWrapper> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
-                baseApiCallback.onSuccess(response.body());
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
             }
         });
 
     }
 
+    public void getSchedule(
+        int riderId,
+        @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
+    ) {
+        service.getRiderSchedule(riderId).enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<List<ScheduleWrapper>> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
+            }
+        });
+    }
+
+    public void scheduleClockIn(
+        int scheduleId,
+        @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
+    ) {
+        service.clockInSchedule(scheduleId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
+            @Override
+            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
+            }
+        });
+    }
+
+    //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
         countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {
             @Override
             public void onResponse(Response<CountryListWrapper> response, Retrofit retrofit) {
                 super.onResponse(response, retrofit);
-                baseApiCallback.onSuccess(response.body());
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
             }
         });
     }

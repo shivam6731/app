@@ -7,6 +7,9 @@ public class DeliveryArea implements Parcelable {
     private int id;
     private String name;
 
+    public DeliveryArea() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -16,9 +19,6 @@ public class DeliveryArea implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeString(this.name);
-    }
-
-    public DeliveryArea() {
     }
 
     protected DeliveryArea(Parcel in) {

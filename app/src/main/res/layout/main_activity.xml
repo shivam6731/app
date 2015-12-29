@@ -1,8 +1,9 @@
 <android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_background_color">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,11 +23,11 @@
             android:layout_above="@+id/btn_action"
             android:layout_below="@+id/toolbar"/>
 
-        <Button
+        <com.foodpanda.urbanninja.ui.widget.MontserratButton
             android:id="@+id/btn_action"
             style="@style/ButtonMainAction"
             android:layout_alignParentBottom="true"
-            android:text="@string/ready_to_work_action"/>
+            android:text="@string/action_ready_to_work"/>
     </RelativeLayout>
 
     <FrameLayout

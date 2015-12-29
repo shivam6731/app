@@ -2,35 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/main_background_color"
                 android:orientation="vertical">
 
     <ImageView
         android:id="@+id/image_top_logo"
         style="@style/ImageView"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ninja"/>
+        android:src="@drawable/logo"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_start_point"
-        style="@style/TextView.Title"
+        style="@style/TextView.Title.NotBold"
         android:layout_below="@+id/image_top_logo"
         android:layout_centerHorizontal="true"/>
 
-    <Button
+    <com.foodpanda.urbanninja.ui.widget.MontserratButton
         android:id="@+id/btn_see_map"
-        style="@style/Button"
+        style="@style/Button.NotBold"
         android:layout_below="@+id/txt_start_point"
-        android:drawableLeft="@android:drawable/ic_menu_compass"
+        android:background="@drawable/see_map_btn_background"
         android:text="@string/ready_to_work_see_map"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_timer"
         style="@style/TextView.Title.Timer"
         android:layout_below="@+id/btn_see_map"
         android:layout_centerHorizontal="true"/>
-    <TextView
-        style="@style/TextView.Title.Multiline"
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_timer_description"
+        style="@style/TextView.Title.Multiline.NotBold"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
-        android:text="@string/ready_to_work_time_fet"/>
+        android:text="@string/ready_to_work_time_left"/>
+
 </RelativeLayout>

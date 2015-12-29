@@ -8,6 +8,9 @@ public class VehicleDeliveryAreaRiderBundle implements Parcelable {
     private Vehicle vehicle;
     private Rider rider;
 
+    public VehicleDeliveryAreaRiderBundle() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -18,9 +21,6 @@ public class VehicleDeliveryAreaRiderBundle implements Parcelable {
         dest.writeParcelable(this.deliveryArea, 0);
         dest.writeParcelable(this.vehicle, 0);
         dest.writeParcelable(this.rider, 0);
-    }
-
-    public VehicleDeliveryAreaRiderBundle() {
     }
 
     protected VehicleDeliveryAreaRiderBundle(Parcel in) {
