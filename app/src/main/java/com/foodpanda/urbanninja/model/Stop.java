@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 public class Stop implements Parcelable {
@@ -14,10 +16,12 @@ public class Stop implements Parcelable {
     private int loadDelta;
     private int loadUponArrival;
     private TimeWindow timeWindow;
-    private Date arrivalTime;
+    private DateTime arrivalTime;
     private int sequenceNumber;
     private RouteStopStatus routeStopStatus;
 
+    public Stop() {
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -31,12 +35,9 @@ public class Stop implements Parcelable {
         dest.writeInt(this.loadDelta);
         dest.writeInt(this.loadUponArrival);
         dest.writeParcelable(this.timeWindow, 0);
-        dest.writeLong(arrivalTime != null ? arrivalTime.getTime() : -1);
+        dest.writeSerializable(this.arrivalTime);
         dest.writeInt(this.sequenceNumber);
         dest.writeInt(this.routeStopStatus == null ? -1 : this.routeStopStatus.ordinal());
-    }
-
-    public Stop() {
     }
 
     protected Stop(Parcel in) {
@@ -46,14 +47,13 @@ public class Stop implements Parcelable {
         this.loadDelta = in.readInt();
         this.loadUponArrival = in.readInt();
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
-        long tmpArrivalTime = in.readLong();
-        this.arrivalTime = tmpArrivalTime == -1 ? null : new Date(tmpArrivalTime);
+        this.arrivalTime = (DateTime) in.readSerializable();
         this.sequenceNumber = in.readInt();
-        int tmpStatus = in.readInt();
-        this.routeStopStatus = tmpStatus == -1 ? null : RouteStopStatus.values()[tmpStatus];
+        int tmpRouteStopStatus = in.readInt();
+        this.routeStopStatus = tmpRouteStopStatus == -1 ? null : RouteStopStatus.values()[tmpRouteStopStatus];
     }
 
-    public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
+    public static final Creator<Stop> CREATOR = new Creator<Stop>() {
         public Stop createFromParcel(Parcel source) {
             return new Stop(source);
         }
@@ -87,7 +87,7 @@ public class Stop implements Parcelable {
         return timeWindow;
     }
 
-    public Date getArrivalTime() {
+    public DateTime getArrivalTime() {
         return arrivalTime;
     }
 

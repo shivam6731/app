@@ -15,6 +15,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallback {
@@ -66,8 +68,8 @@ public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallb
     }
 
     @Override
-    protected Date provideScheduleDate() {
-        return new Date();
+    protected DateTime provideScheduleDate() {
+        return new DateTime();
     }
 
     @Override

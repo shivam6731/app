@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 public class ReadyToWorkFragment extends BaseTimerFragment {
@@ -77,7 +79,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
-    protected Date provideScheduleDate() {
+    protected DateTime provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
             return scheduleWrapper.getTimeWindow().getStartTime();

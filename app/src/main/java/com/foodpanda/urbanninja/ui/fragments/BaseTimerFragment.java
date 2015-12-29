@@ -7,9 +7,8 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.utils.DateUtil;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import org.joda.time.DateTime;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,25 +60,22 @@ public abstract class BaseTimerFragment extends BaseFragment {
     }
 
     private void enableActionButton() {
-        Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        DateTime now = new DateTime();
 
-        Date startDate = provideScheduleDate() == null ? new Date() : provideScheduleDate();
-        Calendar start = Calendar.getInstance();
-        start.setTime(startDate);
+        DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
 
-        mainActivityCallback.enableActionButton(now.getTimeInMillis() > start.getTimeInMillis() - ENABLE_TIME_OUT);
+        mainActivityCallback.enableActionButton(now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT);
     }
 
     private String setTimerValue() {
         String result;
-        Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        DateTime now = new DateTime();
 
-        Date startDate = provideScheduleDate() == null ? new Date() : provideScheduleDate();
-        Calendar start = Calendar.getInstance();
-        start.setTime(startDate);
-        long date = Math.abs(start.getTimeInMillis() - now.getTimeInMillis());
+        DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
+
+        long date = Math.abs(startDate.getMillis() - now.getMillis());
         result = DateUtil.timeFormat(date);
-        if (now.getTimeInMillis() < start.getTimeInMillis()) {
+        if (now.getMillis() < startDate.getMillis()) {
             if (date > DateUtil.ONE_DAY) {
                 provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_no_shift));
             } else {
@@ -99,7 +95,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
 
     protected abstract TextView provideTimerDescriptionTextView();
 
-    protected abstract Date provideScheduleDate();
+    protected abstract DateTime provideScheduleDate();
 
     protected abstract String provideLeftString();
 
