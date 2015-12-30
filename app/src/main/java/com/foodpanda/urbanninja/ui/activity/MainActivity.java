@@ -27,6 +27,7 @@ import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
 import java.util.Locale;
@@ -40,6 +41,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private ApiExecutor apiExecutor;
 
     private UserStatus userStatus;
+    private PermissionAccepted permissionAccepted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +145,21 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PickUpFragment.MY_PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length == 2 && permissionAccepted != null) {
+                    permissionAccepted.onPermissionAccepted();
+                } else {
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_call:
@@ -212,10 +229,12 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     @Override
     public void openPickUp() {
         userStatus = UserStatus.ARRIVING;
+        PickUpFragment fragment = PickUpFragment.newInstance();
+        permissionAccepted = fragment;
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
-                PickUpFragment.newInstance()).
+                fragment).
             commit();
 
         updateActionButton(true, true, R.string.action_at_pick_up);

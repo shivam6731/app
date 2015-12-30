@@ -6,12 +6,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -30,7 +32,10 @@ import org.joda.time.DateTime;
 public class PickUpFragment extends BaseTimerFragment implements
     OnMapReadyCallback,
     GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener {
+    GoogleApiClient.OnConnectionFailedListener,
+    PermissionAccepted {
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -131,7 +136,7 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        startLocationUpdates();
+        askForPermissions();
     }
 
     @Override
@@ -144,18 +149,32 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     }
 
-    protected void startLocationUpdates() {
+    private void askForPermissions() {
+        if (ContextCompat.checkSelfPermission(activity,
+            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-            googleApiClient, locationRequest, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                    googleMap.addMarker(new MarkerOptions().position(sydney).
-                        icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
-                        title("My Location"));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                }
-            });
+            ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                googleApiClient, locationRequest, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                        googleMap.addMarker(new MarkerOptions().position(sydney).
+                            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
+                            title("My Location"));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    }
+                });
+        }
+    }
+
+    @Override
+    public void onPermissionAccepted() {
+        askForPermissions();
     }
 }
