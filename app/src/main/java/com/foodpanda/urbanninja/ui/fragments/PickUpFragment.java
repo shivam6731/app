@@ -1,33 +1,77 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.joda.time.DateTime;
 
-public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallback {
+public class PickUpFragment extends BaseTimerFragment implements
+    OnMapReadyCallback,
+    GoogleApiClient.ConnectionCallbacks,
+    GoogleApiClient.OnConnectionFailedListener {
 
     private TextView txtDetails;
     private TextView txtEndPoint;
     private TextView txtTimer;
     private TextView txtTimerDescription;
 
+    private GoogleMap googleMap;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+
     public static PickUpFragment newInstance() {
         PickUpFragment pickUpFragment = new PickUpFragment();
 
         return pickUpFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(activity)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+            locationRequest = new LocationRequest();
+            locationRequest.setInterval(10000);
+            locationRequest.setFastestInterval(5000);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        }
+    }
+
+    public void onStart() {
+        googleApiClient.connect();
+        super.onStart();
+    }
+
+    public void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
     }
 
     @Nullable
@@ -82,8 +126,36 @@ public class PickUpFragment extends BaseTimerFragment implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        this.googleMap = googleMap;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    protected void startLocationUpdates() {
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+            googleApiClient, locationRequest, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.addMarker(new MarkerOptions().position(sydney).
+                        icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
+                        title("My Location"));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                }
+            });
     }
 }
