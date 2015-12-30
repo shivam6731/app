@@ -14,7 +14,7 @@ public class Stop implements Parcelable {
     private int loadDelta;
     private int loadUponArrival;
     private TimeWindow timeWindow;
-    private DateTime arrivalTime;
+//    private DateTime arrivalTime;
     private int sequenceNumber;
     private RouteStopStatus routeStopStatus;
 
@@ -34,7 +34,7 @@ public class Stop implements Parcelable {
         dest.writeInt(this.loadDelta);
         dest.writeInt(this.loadUponArrival);
         dest.writeParcelable(this.timeWindow, 0);
-        dest.writeSerializable(this.arrivalTime);
+//        dest.writeSerializable(this.arrivalTime);
         dest.writeInt(this.sequenceNumber);
         dest.writeInt(this.routeStopStatus == null ? -1 : this.routeStopStatus.ordinal());
     }
@@ -46,7 +46,7 @@ public class Stop implements Parcelable {
         this.loadDelta = in.readInt();
         this.loadUponArrival = in.readInt();
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
-        this.arrivalTime = (DateTime) in.readSerializable();
+//        this.arrivalTime = (DateTime) in.readSerializable();
         this.sequenceNumber = in.readInt();
         int tmpRouteStopStatus = in.readInt();
         this.routeStopStatus = tmpRouteStopStatus == -1 ? null : RouteStopStatus.values()[tmpRouteStopStatus];
@@ -86,9 +86,9 @@ public class Stop implements Parcelable {
         return timeWindow;
     }
 
-    public DateTime getArrivalTime() {
-        return arrivalTime;
-    }
+//    public DateTime getArrivalTime() {
+//        return arrivalTime;
+//    }
 
     public int getSequenceNumber() {
         return sequenceNumber;

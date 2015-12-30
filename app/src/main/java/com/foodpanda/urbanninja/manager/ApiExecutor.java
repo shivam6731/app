@@ -103,6 +103,7 @@ public class ApiExecutor {
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    getRoute();
                 }
             });
     }
