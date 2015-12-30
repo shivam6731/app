@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
@@ -227,9 +228,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openPickUp() {
+    public void openPickUp(RouteWrapper routeWrapper) {
         userStatus = UserStatus.ARRIVING;
-        PickUpFragment fragment = PickUpFragment.newInstance();
+        PickUpFragment fragment = PickUpFragment.newInstance(routeWrapper);
         permissionAccepted = fragment;
         fragmentManager.
             beginTransaction().

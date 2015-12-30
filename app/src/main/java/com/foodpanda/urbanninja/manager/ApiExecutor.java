@@ -80,7 +80,7 @@ public class ApiExecutor {
                 if (routeWrapper.getStops().size() == 0) {
                     mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
                 } else {
-                    mainActivityCallback.openPickUp();
+                    mainActivityCallback.openPickUp(routeWrapper);
                 }
             }
 

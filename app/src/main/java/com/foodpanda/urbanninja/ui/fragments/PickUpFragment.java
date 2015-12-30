@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,9 +35,11 @@ public class PickUpFragment extends BaseTimerFragment implements
     OnMapReadyCallback,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
-    PermissionAccepted {
+    PermissionAccepted,
+    LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    private static final int DEFAULT_ZOOM_LEVEL = 15;
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -46,15 +50,22 @@ public class PickUpFragment extends BaseTimerFragment implements
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
 
-    public static PickUpFragment newInstance() {
-        PickUpFragment pickUpFragment = new PickUpFragment();
+    private RouteWrapper routeWrapper;
+    private Location location;
 
+    public static PickUpFragment newInstance(RouteWrapper routeWrapper) {
+        PickUpFragment pickUpFragment = new PickUpFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(RouteWrapper.class.getSimpleName(), routeWrapper);
+        pickUpFragment.setArguments(bundle);
         return pickUpFragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        routeWrapper = getArguments().getParcelable(RouteWrapper.class.getSimpleName());
+
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(activity)
                 .addConnectionCallbacks(this)
@@ -146,7 +157,17 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(getContext(), connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        drawMarkers(location);
+    }
+
+    @Override
+    public void onPermissionAccepted() {
+        askForPermissions();
     }
 
     private void askForPermissions() {
@@ -160,21 +181,28 @@ public class PickUpFragment extends BaseTimerFragment implements
                 MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, locationRequest, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(sydney).
-                            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
-                            title("My Location"));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                    }
-                });
+                googleApiClient, locationRequest, this);
         }
     }
 
-    @Override
-    public void onPermissionAccepted() {
-        askForPermissions();
+    private void drawMarkers(Location location) {
+        googleMap.clear();
+        LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+        googleMap.addMarker(new MarkerOptions().
+            position(myLocation).
+            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
+            title(getResources().getString(R.string.pick_up_my_location)));
+        if (this.location == null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, DEFAULT_ZOOM_LEVEL));
+        }
+        this.location = location;
+
+        LatLng pointLocation = new LatLng(10, 30);
+
+        googleMap.addMarker(new MarkerOptions().
+            position(pointLocation).
+            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
+            title("Restaurant"));
     }
 }
