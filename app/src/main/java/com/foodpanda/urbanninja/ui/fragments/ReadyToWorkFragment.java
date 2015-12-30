@@ -98,6 +98,17 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
+    protected DateTime provideScheduleEndDate() {
+        if (scheduleWrapper.getTimeWindow() != null) {
+
+            return scheduleWrapper.getTimeWindow().getEndTime();
+        } else {
+
+            return null;
+        }
+    }
+
+    @Override
     protected String provideLeftString() {
         return getResources().getString(R.string.ready_to_work_time_left);
     }

@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.interfaces;
 
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -13,5 +14,5 @@ public interface MainActivityCallback {
 
     void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
 
-    void openPickUp();
+    void openPickUp(RouteWrapper routeWrapper);
 }

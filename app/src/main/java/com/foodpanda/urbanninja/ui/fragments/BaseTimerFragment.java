@@ -61,35 +61,46 @@ public abstract class BaseTimerFragment extends BaseFragment {
 
     private void enableActionButton() {
         DateTime now = new DateTime();
-
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
-
         mainActivityCallback.enableActionButton(now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT);
     }
 
     private String setTimerValue() {
-        String result;
         DateTime now = new DateTime();
-
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
+        DateTime endDate = provideScheduleEndDate() == null ? new DateTime() : provideScheduleEndDate();
+        TextView textViewDescription = provideTimerDescriptionTextView();
 
         long date = Math.abs(startDate.getMillis() - now.getMillis());
-        result = DateUtil.timeFormat(date);
+
         if (now.getMillis() < startDate.getMillis()) {
-            if (date > DateUtil.ONE_DAY) {
-                provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_no_shift));
-            } else {
-                provideTimerDescriptionTextView().setText(provideLeftString());
-            }
+            textViewDescription.setText(timeLeft(date));
         } else {
-            if (date > DateUtil.ONE_DAY) {
-                provideTimerDescriptionTextView().setText(getResources().getString(R.string.action_ready_shift_expired));
-            } else {
-                provideTimerDescriptionTextView().setText(providePassedString());
-            }
+            long dateExpired = now.getMillis() - endDate.getMillis();
+            textViewDescription.setText(timePassed(date, dateExpired));
         }
 
-        return result;
+        return DateUtil.timeFormat(date);
+    }
+
+    private String timeLeft(long date) {
+        if (date > DateUtil.ONE_DAY) {
+
+            return getResources().getString(R.string.action_ready_no_shift);
+        } else {
+
+            return provideLeftString();
+        }
+    }
+
+    private String timePassed(long date, long dateExpired) {
+        if (date > dateExpired) {
+
+            return getResources().getString(R.string.action_ready_shift_expired);
+        } else {
+
+            return providePassedString();
+        }
     }
 
     /**
@@ -116,6 +127,13 @@ public abstract class BaseTimerFragment extends BaseFragment {
      * @return DateTime from the server side
      */
     protected abstract DateTime provideScheduleDate();
+
+    /**
+     * provide end time for any action with timer
+     *
+     * @return DateTime from the server side
+     */
+    protected abstract DateTime provideScheduleEndDate();
 
     /**
      * provide description of the left time value for the TextView
