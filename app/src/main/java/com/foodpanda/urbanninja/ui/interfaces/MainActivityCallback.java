@@ -15,4 +15,6 @@ public interface MainActivityCallback {
     void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
 
     void openPickUp(RouteWrapper routeWrapper);
+
+    void openTaskList();
 }

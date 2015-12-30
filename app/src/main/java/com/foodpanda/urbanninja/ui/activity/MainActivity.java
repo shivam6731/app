@@ -27,6 +27,7 @@ import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.fragments.TaskListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
@@ -100,8 +101,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         switch (userStatus) {
             case CLOCK_IN:
                 apiExecutor.clockIn();
+                break;
             case EMPTY_LIST:
             case ARRIVING:
+                openTaskList();
+                break;
             case PICK_UP:
         }
     }
@@ -239,6 +243,18 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             commit();
 
         updateActionButton(true, true, R.string.action_at_pick_up);
+    }
+
+    @Override
+    public void openTaskList() {
+        userStatus = UserStatus.STOP_LIST;
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                TaskListFragment.newInstance()).
+            commit();
+
+        updateActionButton(true, true, R.string.action_at_picked_up);
     }
 
     private void updateActionButton(

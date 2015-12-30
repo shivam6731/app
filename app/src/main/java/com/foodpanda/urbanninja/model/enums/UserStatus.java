@@ -4,6 +4,7 @@ public enum  UserStatus {
     CLOCK_IN,
     EMPTY_LIST,
     ARRIVING,
-    PICK_UP
+    PICK_UP,
+    STOP_LIST
 
 }
