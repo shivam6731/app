@@ -27,7 +27,7 @@ import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
-import com.foodpanda.urbanninja.ui.fragments.TaskListFragment;
+import com.foodpanda.urbanninja.ui.fragments.StopsListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
@@ -251,7 +251,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
-                TaskListFragment.newInstance()).
+                StopsListFragment.newInstance()).
             commit();
 
         updateActionButton(true, true, R.string.action_at_picked_up);

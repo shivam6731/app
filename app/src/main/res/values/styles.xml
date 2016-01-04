@@ -29,6 +29,14 @@
         <item name="android:layout_margin">@dimen/margin_default</item>
     </style>
 
+    <style name="TextView.Dark">
+        <item name="android:textColor">@color/stop_text_color</item>
+    </style>
+
+    <style name="TextView.Dark.Multiline">
+        <item name="android:singleLine">false</item>
+    </style>
+
     <style name="TextView.Title">
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/default_title_size</item>

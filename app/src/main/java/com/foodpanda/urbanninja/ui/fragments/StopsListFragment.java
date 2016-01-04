@@ -6,15 +6,17 @@ import android.view.View;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.adapter.StopAdapter;
+import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TaskListFragment extends BaseListFragment<StopAdapter> {
+public class StopsListFragment extends BaseListFragment<StopAdapter> {
     private List<Stop> list = new LinkedList<>();
 
-    public static TaskListFragment newInstance() {
-        TaskListFragment fragment = new TaskListFragment();
+
+    public static StopsListFragment newInstance() {
+        StopsListFragment fragment = new StopsListFragment();
         return fragment;
     }
 

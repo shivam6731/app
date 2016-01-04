@@ -8,5 +8,6 @@
     <color name="main_button_enable">#43d490</color>
     <color name="main_button_enable_selected">#0cc76f</color>
     <color name="default_selected">#40D3D3D3</color>
-
+    <color name="stop_background">#f5f7f9</color>
+    <color name="stop_text_color">#32383e</color>
 </resources>

@@ -60,4 +60,7 @@
 
     <!-- Ready to work -->
     <string name="pick_up_my_location">My Location</string>
+
+    <!-- Ready to work -->
+    <string name="stop_list_done">Done</string>
 </resources>
