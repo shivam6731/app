@@ -53,8 +53,10 @@ public abstract class BaseTimerFragment extends BaseFragment {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                provideTimerTextView().setText(setTimerValue());
-                enableActionButton();
+                if (BaseTimerFragment.this.isAdded()) {
+                    provideTimerTextView().setText(setTimerValue());
+                    enableActionButton();
+                }
             }
         });
     }
@@ -64,11 +66,14 @@ public abstract class BaseTimerFragment extends BaseFragment {
 
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
 
-        mainActivityCallback.enableActionButton(now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT);
+        mainActivityCallback.enableActionButton(
+            now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT,
+            provideActionButtonString());
     }
 
     private String setTimerValue() {
         String result;
+
         DateTime now = new DateTime();
 
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
@@ -132,5 +137,12 @@ public abstract class BaseTimerFragment extends BaseFragment {
      * @see #provideTimerDescriptionTextView()
      */
     protected abstract String providePassedString();
+
+    /**
+     * provide label for the bottom button
+     *
+     * @return link to the string resources
+     */
+    protected abstract int provideActionButtonString();
 }
 

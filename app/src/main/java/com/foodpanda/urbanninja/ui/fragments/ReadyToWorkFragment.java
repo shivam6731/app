@@ -106,4 +106,9 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     protected String providePassedString() {
         return getResources().getString(R.string.ready_to_work_time_passed);
     }
+
+    @Override
+    protected int provideActionButtonString() {
+        return R.string.action_ready_to_work;
+    }
 }

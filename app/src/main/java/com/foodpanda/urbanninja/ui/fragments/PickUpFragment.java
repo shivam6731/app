@@ -141,6 +141,11 @@ public class PickUpFragment extends BaseTimerFragment implements
     }
 
     @Override
+    protected int provideActionButtonString() {
+        return R.string.action_at_pick_up;
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
     }

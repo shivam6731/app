@@ -76,11 +76,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         apiExecutor = null;
     }
 
-    private void enableButton(final boolean b) {
+    private void enableButton(final boolean b, final int text) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateActionButton(true, b, R.string.action_ready_to_work);
+                updateActionButton(true, b, text);
             }
         });
     }
@@ -205,8 +205,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void enableActionButton(boolean b) {
-        enableButton(b);
+    public void enableActionButton(boolean b, int text) {
+        enableButton(b, text);
     }
 
     @Override
@@ -242,7 +242,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 fragment).
             commit();
 
-        updateActionButton(true, true, R.string.action_at_pick_up);
+        updateActionButton(true, true, R.string.action_at_pick_up, R.drawable.arrow_swipe);
     }
 
     @Override
@@ -254,13 +254,21 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 StopsListFragment.newInstance()).
             commit();
 
-        updateActionButton(true, true, R.string.action_at_picked_up);
+        updateActionButton(true, false, R.string.action_at_picked_up, R.drawable.arrow_swipe);
     }
 
     private void updateActionButton(
         boolean isVisible,
         boolean isEnable,
         int textRes) {
+        updateActionButton(isVisible, isEnable, textRes, 0);
+    }
+
+    private void updateActionButton(
+        boolean isVisible,
+        boolean isEnable,
+        int textRes,
+        int drawableLeft) {
         if (isVisible) {
             btnAction.setVisibility(View.VISIBLE);
         } else {
@@ -269,6 +277,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
         btnAction.setEnabled(isEnable);
         btnAction.setText(textRes);
+        if (drawableLeft != 0) {
+            btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
+        }
     }
 
 }
