@@ -38,6 +38,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private DrawerLayout drawerLayout;
     private Button btnAction;
+    private View layoutAction;
 
     private StorageManager storageManager;
     private ApiExecutor apiExecutor;
@@ -86,9 +87,10 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private void setActionButton() {
+        layoutAction = findViewById(R.id.layout_action);
         btnAction = (Button) findViewById(R.id.btn_action);
-        btnAction.setEnabled(false);
-        btnAction.setOnClickListener(new View.OnClickListener() {
+        layoutAction.setEnabled(false);
+        layoutAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeStatus();
@@ -241,7 +243,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 fragment).
             commit();
-
         updateActionButton(true, true, R.string.action_at_pick_up, R.drawable.arrow_swipe);
     }
 
@@ -253,14 +254,14 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 StopsListFragment.newInstance()).
             commit();
-
         updateActionButton(true, false, R.string.action_at_picked_up, R.drawable.arrow_swipe);
     }
 
     private void updateActionButton(
         boolean isVisible,
         boolean isEnable,
-        int textRes) {
+        int textRes
+    ) {
         updateActionButton(isVisible, isEnable, textRes, 0);
     }
 
@@ -268,18 +269,20 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         boolean isVisible,
         boolean isEnable,
         int textRes,
-        int drawableLeft) {
+        int drawableLeft
+    ) {
         if (isVisible) {
-            btnAction.setVisibility(View.VISIBLE);
+            layoutAction.setVisibility(View.VISIBLE);
         } else {
-            btnAction.setVisibility(View.GONE);
+            layoutAction.setVisibility(View.GONE);
             return;
         }
-        btnAction.setEnabled(isEnable);
-        btnAction.setText(textRes);
+        layoutAction.setEnabled(isEnable);
         if (drawableLeft != 0) {
             btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
         }
+        btnAction.setText(textRes);
+
     }
 
 }
