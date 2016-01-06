@@ -27,9 +27,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.joda.time.DateTime;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class PickUpFragment extends BaseTimerFragment implements
     OnMapReadyCallback,
@@ -167,6 +172,7 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     public void onLocationChanged(Location location) {
+        location.getAccuracy();
         drawMarkers(location);
     }
 
@@ -192,20 +198,34 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     private void drawMarkers(Location location) {
         googleMap.clear();
+        List<Marker> markers = new LinkedList<>();
         LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-        googleMap.addMarker(new MarkerOptions().
+        Marker marker = googleMap.addMarker(new MarkerOptions().
             position(myLocation).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
             title(getResources().getString(R.string.pick_up_my_location)));
+        markers.add(marker);
+        markers.add(drawPointMarker());
+
         if (this.location == null) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, DEFAULT_ZOOM_LEVEL));
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker m : markers) {
+                builder.include(m.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            int padding = (int) (getResources().getDrawable(R.drawable.pin_rider).getIntrinsicHeight() * 1.5);
+
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
         }
         this.location = location;
 
-        LatLng pointLocation = new LatLng(10, 30);
+    }
 
-        googleMap.addMarker(new MarkerOptions().
+    private Marker drawPointMarker() {
+        LatLng pointLocation = new LatLng(52.5373777, 13.4071534);
+
+        return googleMap.addMarker(new MarkerOptions().
             position(pointLocation).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
             title("Restaurant"));
