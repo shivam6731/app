@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.manager;
 
+import android.widget.Toast;
+
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
@@ -49,7 +51,6 @@ public class ApiExecutor {
             new BaseApiCallback<List<ScheduleWrapper>>() {
                 @Override
                 public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
-
                     // Here we get all future and current working schedule
                     // However we need only first one as current
                     if (scheduleWrappers.size() > 0) {
@@ -79,7 +80,7 @@ public class ApiExecutor {
                 if (routeWrapper.getStops().size() == 0) {
                     mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
                 } else {
-                    mainActivityCallback.openPickUp();
+                    mainActivityCallback.openPickUp(routeWrapper);
                 }
             }
 
@@ -88,5 +89,22 @@ public class ApiExecutor {
                 activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
             }
         });
+    }
+
+    public void clockIn() {
+        if (scheduleWrapper != null)
+            apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
+                @Override
+                public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                    Toast.makeText(activity, "Clock in", Toast.LENGTH_SHORT).show();
+                    getRoute();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    getRoute();
+                }
+            });
     }
 }

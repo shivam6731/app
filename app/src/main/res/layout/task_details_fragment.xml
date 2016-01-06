@@ -7,7 +7,7 @@
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_details"
-        style="@style/TextView.Description"
+        style="@style/TextView.Title.Multiline.NotBold"
         android:layout_centerHorizontal="true"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
@@ -23,20 +23,22 @@
         android:layout_centerHorizontal="true"
         android:text="@string/task_details_time_left"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_end_point"
-        style="@style/TextView"
-        android:layout_below="@+id/txt_minutes_left"
+        style="@style/TextView.Title.Multiline.NotBold"
+        android:layout_above="@+id/map"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@android:drawable/ic_lock_lock"
+        android:layout_marginBottom="@dimen/margin_large_button"
+        android:drawableLeft="@drawable/ico_street"
         android:text="@string/task_details_time_left"/>
 
-    <fragment android:id="@+id/map"
-              android:layout_below="@+id/txt_end_point"
-              android:name="com.google.android.gms.maps.SupportMapFragment"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:context=".MapsActivity"/>
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentBottom="true"
+        tools:context=".MapsActivity"/>
 </RelativeLayout>

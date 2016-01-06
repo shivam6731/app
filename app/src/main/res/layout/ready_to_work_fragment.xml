@@ -19,9 +19,8 @@
 
     <com.foodpanda.urbanninja.ui.widget.MontserratButton
         android:id="@+id/btn_see_map"
-        style="@style/Button.NotBold"
+        style="@style/Button.NotBold.TransparentBackground"
         android:layout_below="@+id/txt_start_point"
-        android:background="@drawable/see_map_btn_background"
         android:text="@string/ready_to_work_see_map"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView

@@ -12,7 +12,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class ReadyToWorkFragment extends BaseTimerFragment {
     private TextView txtStartPoint;
@@ -87,10 +87,21 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
-    protected Date provideScheduleDate() {
+    protected DateTime provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
             return scheduleWrapper.getTimeWindow().getStartTime();
+        } else {
+
+            return null;
+        }
+    }
+
+    @Override
+    protected DateTime provideScheduleEndDate() {
+        if (scheduleWrapper.getTimeWindow() != null) {
+
+            return scheduleWrapper.getTimeWindow().getEndTime();
         } else {
 
             return null;

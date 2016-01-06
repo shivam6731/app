@@ -46,6 +46,7 @@
     <style name="TextView.Title.Multiline">
         <item name="android:singleLine">false</item>
     </style>
+
     <style name="TextView.Title.Multiline.NotBold">
         <item name="android:textStyle">normal</item>
     </style>
@@ -68,6 +69,13 @@
 
     <style name="Button.NotBold">
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Button.NotBold.TransparentBackground">
+        <item name="android:layout_margin">@null</item>
+        <item name="android:layout_marginLeft">@dimen/margin_button_side</item>
+        <item name="android:layout_marginRight">@dimen/margin_button_side</item>
+        <item name="android:background">@drawable/see_map_btn_background</item>
     </style>
 
     <style name="ButtonMainAction" parent="AppTheme">

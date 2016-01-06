@@ -1,16 +1,29 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.utils.DateUtil;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class BaseTimerFragment extends BaseFragment {
+    protected MainActivityCallback mainActivityCallback;
+
     private static final int UPDATE_INTERVAL = 1000;
+    private static final int ENABLE_TIME_OUT = 30 * 60 * 1000;
     private Timer timer;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
+    }
 
     @Override
     public void onStart() {
@@ -41,22 +54,53 @@ public abstract class BaseTimerFragment extends BaseFragment {
             @Override
             public void run() {
                 provideTimerTextView().setText(setTimerValue());
+                enableActionButton();
             }
         });
     }
 
+    private void enableActionButton() {
+        DateTime now = new DateTime();
+        DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
+        mainActivityCallback.enableActionButton(now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT);
+    }
+
     private String setTimerValue() {
-        String result;
-        Date now = new Date();
-        Date to = provideScheduleDate() == null ? new Date() : provideScheduleDate();
-        if (now.getTime() < to.getTime()) {
-            result = DateUtil.timerFormat(to.getTime() - now.getTime());
-            provideTimerDescriptionTextView().setText(provideLeftString());
+        DateTime now = new DateTime();
+        DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
+        DateTime endDate = provideScheduleEndDate() == null ? new DateTime() : provideScheduleEndDate();
+        TextView textViewDescription = provideTimerDescriptionTextView();
+
+        long date = Math.abs(startDate.getMillis() - now.getMillis());
+
+        if (now.getMillis() < startDate.getMillis()) {
+            textViewDescription.setText(timeLeft(date));
         } else {
-            result = DateUtil.timerFormat(now.getTime() - to.getTime());
-            provideTimerDescriptionTextView().setText(providePassedString());
+            long dateExpired = now.getMillis() - endDate.getMillis();
+            textViewDescription.setText(timePassed(date, dateExpired));
         }
-        return result;
+
+        return DateUtil.timeFormat(date);
+    }
+
+    private String timeLeft(long date) {
+        if (date > DateUtil.ONE_DAY) {
+
+            return getResources().getString(R.string.action_ready_no_shift);
+        } else {
+
+            return provideLeftString();
+        }
+    }
+
+    private String timePassed(long date, long dateExpired) {
+        if (date > dateExpired) {
+
+            return getResources().getString(R.string.action_ready_shift_expired);
+        } else {
+
+            return providePassedString();
+        }
     }
 
     /**
@@ -64,6 +108,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
      *
      * @return TextView with big text size (according to our design)
      */
+
     protected abstract TextView provideTimerTextView();
 
     /**
@@ -79,9 +124,16 @@ public abstract class BaseTimerFragment extends BaseFragment {
     /**
      * provide start time for any action with timer
      *
-     * @return Date from the server side
+     * @return DateTime from the server side
      */
-    protected abstract Date provideScheduleDate();
+    protected abstract DateTime provideScheduleDate();
+
+    /**
+     * provide end time for any action with timer
+     *
+     * @return DateTime from the server side
+     */
+    protected abstract DateTime provideScheduleEndDate();
 
     /**
      * provide description of the left time value for the TextView
