@@ -77,11 +77,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         apiExecutor = null;
     }
 
-    private void enableButton(final boolean b, final int text) {
+    private void enableButton(final boolean isEnabled, final int text) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateActionButton(true, b, text);
+                updateActionButton(true, isEnabled, text);
             }
         });
     }
@@ -207,8 +207,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void enableActionButton(boolean b, int text) {
-        enableButton(b, text);
+    public void enableActionButton(boolean isEnabled, int text) {
+        enableButton(isEnabled, text);
     }
 
     @Override
@@ -222,7 +222,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle
+                                          vehicleDeliveryAreaRiderBundle) {
         userStatus = UserStatus.EMPTY_LIST;
         fragmentManager.
             beginTransaction().

@@ -136,6 +136,11 @@ public class PickUpFragment extends BaseTimerFragment implements
     }
 
     @Override
+    protected DateTime provideScheduleEndDate() {
+        return new DateTime();
+    }
+
+    @Override
     protected String provideLeftString() {
         return getResources().getString(R.string.task_details_time_left);
     }
@@ -172,7 +177,6 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     public void onLocationChanged(Location location) {
-        location.getAccuracy();
         drawMarkers(location);
     }
 
@@ -230,4 +234,5 @@ public class PickUpFragment extends BaseTimerFragment implements
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
             title("Restaurant"));
     }
+
 }
