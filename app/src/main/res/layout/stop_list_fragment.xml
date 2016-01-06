@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/main_background_color"
+              android:orientation="vertical">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_order_name"
+        style="@style/TextView.Multiline"
+        android:layout_gravity="center"
+        android:text="@string/stop_list_description"/>
+
+    <com.foodpanda.urbanninja.ui.widget.MontserratTextView
+        style="@style/TextView.Multiline"
+        android:layout_gravity="center"
+        android:textAllCaps="true"
+        android:text="Easy Peasy "/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        style="@style/TextView.Multiline"
+        android:layout_gravity="center"
+        android:text="@string/stop_list_description"
+        android:textStyle="italic"/>
+
+    <include
+        layout="@layout/base_list_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_select"/>
+
+</LinearLayout>

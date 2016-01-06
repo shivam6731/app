@@ -43,7 +43,7 @@ public class StopsListFragment extends BaseListFragment<StopAdapter> {
 
     @Override
     protected int provideListLayout() {
-        return R.layout.base_list_fragment;
+        return R.layout.stop_list_fragment;
     }
 
     @Override

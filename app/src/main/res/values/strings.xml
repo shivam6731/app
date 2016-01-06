@@ -61,6 +61,7 @@
     <!-- Ready to work -->
     <string name="pick_up_my_location">My Location</string>
 
-    <!-- Ready to work -->
+    <!-- Stop list -->
     <string name="stop_list_done">Done</string>
+    <string name="stop_list_description">Tap on the actions to mark them\nas completed </string>
 </resources>

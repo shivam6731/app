@@ -21,7 +21,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/ico_pay"/>
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
             android:id="@+id/txt_stop_name"
             style="@style/TextView.Dark"
             android:layout_centerVertical="true"

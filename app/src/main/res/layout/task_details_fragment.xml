@@ -14,13 +14,15 @@
         android:id="@+id/txt_timer"
         style="@style/TextView.Title.Timer"
         android:layout_below="@+id/txt_details"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_tiny_tiny"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_minutes_left"
         style="@style/TextView.Title.Multiline"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_tiny_tiny"
         android:text="@string/task_details_time_left"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
@@ -38,7 +40,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="@dimen/map_height"
         android:layout_alignParentBottom="true"
         tools:context=".MapsActivity"/>
 </RelativeLayout>
