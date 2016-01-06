@@ -16,7 +16,6 @@
     </style>
 
     <style name="TextView" parent="AppTheme">
-        <!--<item name="android:fontFamily">sans-serif-medium</item>-->
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:layout_height">wrap_content</item>
