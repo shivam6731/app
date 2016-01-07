@@ -25,6 +25,7 @@ public class StopsListFragment extends BaseListFragment<StopAdapter> {
 
     public static StopsListFragment newInstance() {
         StopsListFragment fragment = new StopsListFragment();
+
         return fragment;
     }
 

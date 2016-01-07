@@ -14,14 +14,12 @@
     <com.foodpanda.urbanninja.ui.widget.MontserratTextView
         style="@style/TextView.Multiline"
         android:layout_gravity="center"
-        android:textAllCaps="true"
-        android:text="Easy Peasy "/>
+        android:textAllCaps="true"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         style="@style/TextView.Multiline"
         android:layout_gravity="center"
-        android:text="@string/stop_list_description"
-        android:textStyle="italic"/>
+        android:text="@string/stop_list_description"/>
 
     <include
         layout="@layout/base_list_fragment"

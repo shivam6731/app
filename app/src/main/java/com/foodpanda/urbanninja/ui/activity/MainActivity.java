@@ -77,11 +77,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         apiExecutor = null;
     }
 
-    private void enableButton(final boolean isEnabled, final int text) {
+    private void enableButton(final boolean isEnabled, final int textResourceLink) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateActionButton(true, isEnabled, text);
+                updateActionButton(true, isEnabled, textResourceLink);
             }
         });
     }
@@ -207,8 +207,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void enableActionButton(boolean isEnabled, int text) {
-        enableButton(isEnabled, text);
+    public void enableActionButton(final boolean isEnabled, final int textResLink) {
+        enableButton(isEnabled, textResLink);
     }
 
     @Override
@@ -222,8 +222,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle
-                                          vehicleDeliveryAreaRiderBundle) {
+    public void openEmptyListFragment(
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         userStatus = UserStatus.EMPTY_LIST;
         fragmentManager.
             beginTransaction().
@@ -261,16 +261,16 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void updateActionButton(
         boolean isVisible,
         boolean isEnable,
-        int textRes
+        int textResLink
     ) {
-        updateActionButton(isVisible, isEnable, textRes, 0);
+        updateActionButton(isVisible, isEnable, textResLink, 0);
     }
 
     private void updateActionButton(
-        boolean isVisible,
-        boolean isEnable,
-        int textRes,
-        int drawableLeft
+        final boolean isVisible,
+        final boolean isEnable,
+        final int textResLink,
+        final int drawableLeft
     ) {
         if (isVisible) {
             layoutAction.setVisibility(View.VISIBLE);
@@ -282,7 +282,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         if (drawableLeft != 0) {
             btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
         }
-        btnAction.setText(textRes);
+        btnAction.setText(textResLink);
 
     }
 

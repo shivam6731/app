@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -207,8 +208,21 @@ public class PickUpFragment extends BaseTimerFragment implements
 
         Marker marker = googleMap.addMarker(new MarkerOptions().
             position(myLocation).
+            anchor(0.5f, 0.5f).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
             title(getResources().getString(R.string.pick_up_my_location)));
+
+        if (location.hasAccuracy()) {
+            CircleOptions circleOptions = new CircleOptions();
+            circleOptions.
+                center(myLocation).
+                radius(location.getAccuracy()).
+                fillColor(getResources().getColor(R.color.location_radius_color)).
+                strokeColor(getResources().getColor(R.color.location_radius_border_color)).
+                strokeWidth(getResources().getDimension(R.dimen.margin_tiny_tiny));
+            googleMap.addCircle(circleOptions);
+        }
+
         markers.add(marker);
         markers.add(drawPointMarker());
 
@@ -218,7 +232,7 @@ public class PickUpFragment extends BaseTimerFragment implements
                 builder.include(m.getPosition());
             }
             LatLngBounds bounds = builder.build();
-            int padding = (int) (getResources().getDrawable(R.drawable.pin_rider).getIntrinsicHeight() * 1.5);
+            int padding = getResources().getDrawable(R.drawable.pin).getIntrinsicHeight();
 
             googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
         }
@@ -231,6 +245,7 @@ public class PickUpFragment extends BaseTimerFragment implements
 
         return googleMap.addMarker(new MarkerOptions().
             position(pointLocation).
+            anchor(1.0f, 0.5f).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
             title("Restaurant"));
     }

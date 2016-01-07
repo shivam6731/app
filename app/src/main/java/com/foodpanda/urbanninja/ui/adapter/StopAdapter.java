@@ -32,6 +32,7 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, StopAdapter.ViewHolder>
     @Override
     public StopAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_stop, parent, false);
+
         return new ViewHolder(v);
     }
 
@@ -81,9 +82,11 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, StopAdapter.ViewHolder>
     private boolean isAllChecked() {
         for (Stop stop : objects) {
             if (!linkedHashMap.get(stop)) {
+
                 return false;
             }
         }
+
         return true;
     }
 

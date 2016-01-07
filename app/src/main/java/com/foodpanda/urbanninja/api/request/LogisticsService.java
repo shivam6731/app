@@ -7,6 +7,8 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import retrofit.Call;
@@ -28,7 +30,11 @@ public interface LogisticsService {
     Call<RouteWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
-    Call<List<ScheduleWrapper>> getRiderSchedule(@Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId);
+    Call<List<ScheduleWrapper>> getRiderSchedule(
+        @Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId,
+        @Query(ApiTag.SCHEDULE_START_TIME_TAG) DateTime startTime,
+        @Query(ApiTag.SCHEDULE_END_TIME_TAG) DateTime endTime,
+        @Query(ApiTag.SORT) String sort);
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
     Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);

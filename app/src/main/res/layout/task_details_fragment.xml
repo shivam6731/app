@@ -19,7 +19,7 @@
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_minutes_left"
-        style="@style/TextView.Title.Multiline"
+        style="@style/TextView.Title.Multiline.NotBold"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/margin_tiny_tiny"

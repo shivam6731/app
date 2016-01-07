@@ -18,12 +18,6 @@ public abstract class BaseFragment extends Fragment {
         activity = (BaseActivity) context;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
-        super.onSaveInstanceState(outState);
-    }
-
     protected void showProgressDialog() {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         progressDialogFragment = new ProgressDialogFragment();

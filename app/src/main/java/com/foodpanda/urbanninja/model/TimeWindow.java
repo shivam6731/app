@@ -44,7 +44,6 @@ public class TimeWindow implements Parcelable {
     }
 
     public DateTime getEndTime() {
-        return startTime;
+        return endTime;
     }
-
 }
