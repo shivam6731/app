@@ -32,7 +32,7 @@ public class StopsListFragment extends BaseListFragment<StopAdapter> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             list.add(new Stop());
         }
     }
@@ -44,7 +44,7 @@ public class StopsListFragment extends BaseListFragment<StopAdapter> {
 
     @Override
     protected int provideListLayout() {
-        return R.layout.stop_list_fragment;
+        return R.layout.base_list_fragment;
     }
 
     @Override

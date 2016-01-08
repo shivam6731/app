@@ -104,7 +104,7 @@ public class PickUpFragment extends BaseTimerFragment implements
         Bundle savedInstanceState
     ) {
 
-        return inflater.inflate(R.layout.task_details_fragment, container, false);
+        return inflater.inflate(R.layout.pick_up_fragment, container, false);
     }
 
     @Override

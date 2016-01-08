@@ -58,6 +58,11 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextView.Title.Multiline.NotBold.Address">
+        <item name="android:textSize">@dimen/address_description_size</item>
+        <item name="android:maxLines">@integer/max_lines_number_address</item>
+    </style>
+
     <style name="TextView.Description">
         <item name="android:gravity">center</item>
         <item name="android:singleLine">false</item>

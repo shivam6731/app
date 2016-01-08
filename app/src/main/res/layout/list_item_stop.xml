@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:canExpand="true">
+        >
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_stop_description"
@@ -52,7 +52,6 @@
             android:id="@+id/layout_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:background="@color/default_selected">
 
             <CheckBox

@@ -6,9 +6,9 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
 public interface MainActivityCallback {
-    void onSeeMapClicked(GeoCoordinate geoCoordinate);
+    void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel);
 
-    void enableActionButton(boolean b,int text);
+    void enableActionButton(boolean b, int text);
 
     void openReadyToWork(ScheduleWrapper scheduleWrapper);
 

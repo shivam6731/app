@@ -115,7 +115,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private Toolbar initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         return toolbar;
     }
 
@@ -191,11 +193,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void onSeeMapClicked(GeoCoordinate geoCoordinate) {
+    public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
         if (geoCoordinate != null) {
             String uri = String.format(
                 Locale.ENGLISH,
-                "geo:%f,%f",
+                "geo:0,0?q=%f,%f(" + pinLabel + ")",
                 geoCoordinate.getLat(),
                 geoCoordinate.getLon()
             );

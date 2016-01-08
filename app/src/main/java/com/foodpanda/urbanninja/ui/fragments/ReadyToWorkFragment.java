@@ -65,7 +65,10 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
         view.findViewById(R.id.btn_see_map).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate());
+                if (scheduleWrapper.getStartingPoint() != null && scheduleWrapper.getStartingPoint().getGeoCoordinate() != null) {
+                    String pinLabel = scheduleWrapper.getStartingPoint().getName();
+                    mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate(), pinLabel);
+                }
             }
         });
         if (scheduleWrapper.getStartingPoint() == null) {
