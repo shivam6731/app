@@ -27,7 +27,19 @@ public class OpenSansTextView extends TextView {
     }
 
     private void applyCustomFont(Context context) {
-        Typeface customFont = FontCacheUtil.getTypeface("OpenSans-Regular.ttf", context);
-        setTypeface(customFont);
+        Typeface currentTypeFace = getTypeface();
+        Typeface customFont;
+        if (currentTypeFace != null) {
+            switch (currentTypeFace.getStyle()) {
+                case Typeface.BOLD:
+                    customFont = FontCacheUtil.getTypeface("OpenSans-Semibold.ttf", context);
+                    setTypeface(customFont, Typeface.BOLD);
+                    break;
+                default:
+                    customFont = FontCacheUtil.getTypeface("OpenSans-Light.ttf", context);
+                    setTypeface(customFont);
+                    break;
+            }
+        }
     }
 }

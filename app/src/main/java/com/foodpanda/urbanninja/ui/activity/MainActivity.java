@@ -27,6 +27,7 @@ import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.fragments.StopsListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private DrawerLayout drawerLayout;
     private Button btnAction;
+    private View layoutAction;
 
     private StorageManager storageManager;
     private ApiExecutor apiExecutor;
@@ -75,19 +77,20 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         apiExecutor = null;
     }
 
-    private void enableButton(final boolean isEnabled) {
+    private void enableButton(final boolean isEnabled, final int textResourceLink) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateActionButton(true, isEnabled, R.string.action_ready_to_work);
+                updateActionButton(true, isEnabled, textResourceLink);
             }
         });
     }
 
     private void setActionButton() {
+        layoutAction = findViewById(R.id.layout_action);
         btnAction = (Button) findViewById(R.id.btn_action);
-        btnAction.setEnabled(false);
-        btnAction.setOnClickListener(new View.OnClickListener() {
+        layoutAction.setEnabled(false);
+        layoutAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeStatus();
@@ -100,8 +103,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         switch (userStatus) {
             case CLOCK_IN:
                 apiExecutor.clockIn();
+                break;
             case EMPTY_LIST:
             case ARRIVING:
+                openTaskList();
+                break;
             case PICK_UP:
         }
     }
@@ -201,8 +207,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void enableActionButton(boolean isEnabled) {
-        enableButton(isEnabled);
+    public void enableActionButton(final boolean isEnabled, final int textResLink) {
+        enableButton(isEnabled, textResLink);
     }
 
     @Override
@@ -216,7 +222,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+    public void openEmptyListFragment(
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         userStatus = UserStatus.EMPTY_LIST;
         fragmentManager.
             beginTransaction().
@@ -237,22 +244,46 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container,
                 fragment).
             commit();
+        updateActionButton(true, true, R.string.action_at_pick_up, R.drawable.arrow_swipe);
+    }
 
-        updateActionButton(true, true, R.string.action_at_pick_up);
+    @Override
+    public void openTaskList() {
+        userStatus = UserStatus.STOP_LIST;
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container,
+                StopsListFragment.newInstance()).
+            commit();
+        updateActionButton(true, false, R.string.action_at_picked_up, R.drawable.arrow_swipe);
     }
 
     private void updateActionButton(
         boolean isVisible,
         boolean isEnable,
-        int textRes) {
+        int textResLink
+    ) {
+        updateActionButton(isVisible, isEnable, textResLink, 0);
+    }
+
+    private void updateActionButton(
+        final boolean isVisible,
+        final boolean isEnable,
+        final int textResLink,
+        final int drawableLeft
+    ) {
         if (isVisible) {
-            btnAction.setVisibility(View.VISIBLE);
+            layoutAction.setVisibility(View.VISIBLE);
         } else {
-            btnAction.setVisibility(View.GONE);
+            layoutAction.setVisibility(View.GONE);
             return;
         }
-        btnAction.setEnabled(isEnable);
-        btnAction.setText(textRes);
+        layoutAction.setEnabled(isEnable);
+        if (drawableLeft != 0) {
+            btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
+        }
+        btnAction.setText(textResLink);
+
     }
 
 }

@@ -16,14 +16,14 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/ninja"/>
 
-        <TextView
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/empty_list_text"
             style="@style/TextView.Description"
             android:layout_below="@+id/image_top_logo"
             android:layout_centerHorizontal="true"
             android:text="@string/empty_list_header"/>
 
-        <TextView
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             style="@style/TextView.Title.Multiline"
             android:layout_below="@+id/empty_list_text"
             android:layout_centerHorizontal="true"

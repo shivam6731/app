@@ -27,7 +27,14 @@ public class OpenSansEditText extends EditText {
     }
 
     private void applyCustomFont(Context context) {
-        Typeface customFont = FontCacheUtil.getTypeface("OpenSans-Regular.ttf", context);
-        setTypeface(customFont);
+        Typeface currentTypeFace = getTypeface();
+        Typeface customFont;
+        if (currentTypeFace != null && currentTypeFace.getStyle() == Typeface.BOLD) {
+            customFont = FontCacheUtil.getTypeface("OpenSans-Semibold.ttf", context);
+            setTypeface(customFont, Typeface.BOLD);
+        } else {
+            customFont = FontCacheUtil.getTypeface("OpenSans-Regular.ttf", context);
+            setTypeface(customFont);
+        }
     }
 }

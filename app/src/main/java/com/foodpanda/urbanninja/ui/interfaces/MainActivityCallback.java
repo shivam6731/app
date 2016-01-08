@@ -8,11 +8,13 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 public interface MainActivityCallback {
     void onSeeMapClicked(GeoCoordinate geoCoordinate);
 
-    void enableActionButton(boolean b);
+    void enableActionButton(boolean b,int text);
 
     void openReadyToWork(ScheduleWrapper scheduleWrapper);
 
     void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
 
     void openPickUp(RouteWrapper routeWrapper);
+
+    void openTaskList();
 }

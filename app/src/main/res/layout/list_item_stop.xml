@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.foodpanda.urbanninja.ui.widget.ExpandableLayout
+    android:id="@+id/expand_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/image_stop_icon"
+    android:background="@color/stop_background">
+
+    <RelativeLayout
+        android:id="@+id/layout_main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding_default"
+        android:paddingRight="@dimen/padding_default">
+
+        <ImageView
+            android:id="@+id/image_stop_icon"
+            style="@style/ImageView"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ico_pay"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            android:id="@+id/txt_stop_name"
+            style="@style/TextView.Dark"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/image_stop_icon"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_stop_price"
+            style="@style/TextView.Dark"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/txt_stop_name"
+            android:gravity="right"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:canExpand="true">
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_stop_description"
+            style="@style/TextView.Dark.Multiline"/>
+
+        <RelativeLayout
+            android:id="@+id/layout_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/default_selected">
+
+            <CheckBox
+                android:id="@+id/checkbox_done"
+                style="@style/TextView.Dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/stop_list_done"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</com.foodpanda.urbanninja.ui.widget.ExpandableLayout>
+

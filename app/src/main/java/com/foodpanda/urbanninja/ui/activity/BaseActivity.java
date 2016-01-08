@@ -22,7 +22,6 @@ public abstract class BaseActivity extends AppCompatActivity  {
         }
     }
 
-
     public void onError(int status, String message) {
         switch (status) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:

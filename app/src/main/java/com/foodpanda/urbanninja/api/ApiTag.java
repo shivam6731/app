@@ -11,6 +11,10 @@ public class ApiTag {
     public static final String USER_TAG = "rider_id";
     public static final String VEHICLE_TAG = "vehicle_id";
     public static final String SCHEDULE_RIDER_TAG = "rider";
+    public static final String SCHEDULE_START_TIME_TAG = "startTime";
+    public static final String SCHEDULE_END_TIME_TAG = "endTime";
+    public static final String SORT = "sort";
+    public static final String SORT_VALUE = "+startTime";
     public static final String SCHEDULE_ID_TAG = "schedule_id";
 
 }

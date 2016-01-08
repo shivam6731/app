@@ -68,12 +68,20 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
                 mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate());
             }
         });
+        if (scheduleWrapper.getStartingPoint() == null) {
+            view.findViewById(R.id.btn_see_map).setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        txtStartPoint.setText(scheduleWrapper.getStartingPoint().getDescription());
+        if (scheduleWrapper.getStartingPoint() != null) {
+            txtStartPoint.setText(scheduleWrapper.getStartingPoint().getDescription());
+        } else {
+            txtStartPoint.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
@@ -93,7 +101,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
             return scheduleWrapper.getTimeWindow().getStartTime();
         } else {
 
-            return null;
+            return new DateTime().plusDays(2);
         }
     }
 
@@ -104,7 +112,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
             return scheduleWrapper.getTimeWindow().getEndTime();
         } else {
 
-            return null;
+            return new DateTime().plusDays(2);
         }
     }
 
@@ -116,5 +124,10 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     @Override
     protected String providePassedString() {
         return getResources().getString(R.string.ready_to_work_time_passed);
+    }
+
+    @Override
+    protected int provideActionButtonString() {
+        return R.string.action_ready_to_work;
     }
 }

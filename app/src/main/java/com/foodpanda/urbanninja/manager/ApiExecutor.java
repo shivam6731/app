@@ -63,6 +63,8 @@ public class ApiExecutor {
                         } else {
                             mainActivityCallback.openReadyToWork(scheduleWrapper);
                         }
+                    } else {
+                        mainActivityCallback.openReadyToWork(new ScheduleWrapper());
                     }
                 }
 

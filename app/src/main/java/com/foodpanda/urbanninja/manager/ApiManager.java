@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.ApiUrbanNinjaUrl;
 import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
@@ -147,15 +148,22 @@ public class ApiManager implements Managable {
         int riderId,
         @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
     ) {
-        service.getRiderSchedule(riderId).enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
-            @Override
-            public void onResponse(Response<List<ScheduleWrapper>> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
+        DateTime dateTimeNow = DateTime.now();
+        DateTime datePlusOneDay = DateTime.now().plusDays(1);
+
+        service.getRiderSchedule(riderId,
+            dateTimeNow,
+            datePlusOneDay,
+            ApiTag.SORT_VALUE)
+            .enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
+                @Override
+                public void onResponse(Response<List<ScheduleWrapper>> response, Retrofit retrofit) {
+                    super.onResponse(response, retrofit);
+                    if (response.isSuccess()) {
+                        baseApiCallback.onSuccess(response.body());
+                    }
                 }
-            }
-        });
+            });
     }
 
     public void scheduleClockIn(
