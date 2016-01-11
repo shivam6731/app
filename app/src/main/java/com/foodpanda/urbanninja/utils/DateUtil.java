@@ -14,30 +14,30 @@ public class DateUtil {
     private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM");
     private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm");
 
-    private static String timerFormatMinute(long date) {
+    private static String formatTimeMinute(long date) {
         return timerFormat.format(date);
     }
 
-    private static String timerFormatWithHour(long date) {
+    private static String formatTimeWithHour(long date) {
         return timerFormatWithHour.format(date);
     }
 
-    public static String timeFormatMinutesHour(long date) {
+    public static String formatTimeMinutesHour(long date) {
         if (date > ONE_DAY) {
             return "";
         }
         if (date > ONE_HOUR) {
-            return timerFormatWithHour(date);
+            return formatTimeWithHour(date);
         } else {
-            return timerFormatMinute(date);
+            return formatTimeMinute(date);
         }
     }
 
-    public static String timeFormatMinutesHour(DateTime dateTime) {
-        return timerFormat.format(dateTime.toDate());
+    public static String formatTimeMinutesHour(DateTime dateTime) {
+        return timerFormatMinutesHour.format(dateTime.toDate());
     }
 
-    public static String timerFormatWeekDayDateMonth(DateTime dateTime) {
-        return timerFormatMinutesHour.format(dateTime.toDate());
+    public static String formatTimeWeekDayDateMonth(DateTime dateTime) {
+        return timerFormatWeekDayDateMonth.format(dateTime.toDate());
     }
 }

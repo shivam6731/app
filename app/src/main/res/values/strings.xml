@@ -64,4 +64,6 @@
     <!-- Stop list -->
     <string name="stop_list_done">Done</string>
     <string name="stop_list_description">Tap on the actions to mark them\nas completed </string>
+    <!-- Schedule list-->
+    <string name="schedule_list_title">Next Shifts</string>
 </resources>

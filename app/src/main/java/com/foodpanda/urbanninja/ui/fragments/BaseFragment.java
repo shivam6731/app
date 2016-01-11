@@ -17,7 +17,6 @@ public abstract class BaseFragment extends Fragment {
         activity = (BaseActivity) context;
     }
 
-
     protected void showProgressDialog() {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         progressDialogFragment = new ProgressDialogFragment();

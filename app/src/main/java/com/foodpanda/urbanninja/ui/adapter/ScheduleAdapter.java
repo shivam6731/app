@@ -31,12 +31,11 @@ public class ScheduleAdapter extends SimpleBaseAdapter<ScheduleWrapper, Schedule
         if (scheduleWrapper.getStartingPoint() != null) {
             holder.txtScheduleStartName.setText(scheduleWrapper.getStartingPoint().getName());
             holder.txtScheduleStartAddress.setText(scheduleWrapper.getStartingPoint().getDescription());
-            holder.txtScheduleStartAddress.setText(scheduleWrapper.getStartingPoint().getDescription());
         }
         if (scheduleWrapper.getTimeWindow() != null) {
-            holder.txtScheduleStartTime.setText(DateUtil.timeFormatMinutesHour(scheduleWrapper.getTimeWindow().getStartTime()));
-            holder.txtScheduleEndTime.setText(DateUtil.timeFormatMinutesHour(scheduleWrapper.getTimeWindow().getEndTime()));
-            holder.txtScheduleStartDate.setText(DateUtil.timerFormatWeekDayDateMonth(scheduleWrapper.getTimeWindow().getEndTime()));
+            holder.txtScheduleStartTime.setText(DateUtil.formatTimeMinutesHour(scheduleWrapper.getTimeWindow().getStartTime()));
+            holder.txtScheduleEndTime.setText(DateUtil.formatTimeMinutesHour(scheduleWrapper.getTimeWindow().getEndTime()));
+            holder.txtScheduleStartDate.setText(DateUtil.formatTimeWeekDayDateMonth(scheduleWrapper.getTimeWindow().getStartTime()));
         }
     }
 

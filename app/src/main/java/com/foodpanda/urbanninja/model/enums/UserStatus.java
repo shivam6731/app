@@ -1,6 +1,6 @@
 package com.foodpanda.urbanninja.model.enums;
 
-public enum  UserStatus {
+public enum UserStatus {
     CLOCK_IN,
     EMPTY_LIST,
     ARRIVING,

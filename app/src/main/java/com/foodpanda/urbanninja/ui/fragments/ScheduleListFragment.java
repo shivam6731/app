@@ -12,11 +12,10 @@ import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<List<ScheduleWrapper>> {
-    private List<ScheduleWrapper> list = new LinkedList<>();
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ApiManager apiManager;
 
@@ -25,6 +24,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
         Bundle bundle = new Bundle();
         bundle.putParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName(), vehicleDeliveryAreaRiderBundle);
         fragment.setArguments(bundle);
+
         return fragment;
     }
 
@@ -41,18 +41,16 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
         if (vehicleDeliveryAreaRiderBundle != null && vehicleDeliveryAreaRiderBundle.getRider() != null) {
             apiManager.getScheduleList(vehicleDeliveryAreaRiderBundle.getRider().getId(), this);
         }
-
-
     }
 
     @Override
     protected ScheduleAdapter provideListAdapter() {
-        return new ScheduleAdapter(list, activity);
+        return new ScheduleAdapter(new ArrayList<ScheduleWrapper>(), activity);
     }
 
     @Override
     protected int provideListLayout() {
-        return R.layout.base_list_fragment;
+        return R.layout.schedule_list_fragment;
     }
 
     @Override

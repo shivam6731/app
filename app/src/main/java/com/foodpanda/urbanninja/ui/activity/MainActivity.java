@@ -195,12 +195,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
-        userStatus = UserStatus.CLOCK_IN;
+        ScheduleListFragment fragment = ScheduleListFragment.newInstance(apiExecutor.getVehicleDeliveryAreaRiderBundle());
         fragmentManager.
             beginTransaction().
-            replace(R.id.container,
-                ScheduleListFragment.newInstance(apiExecutor.getVehicleDeliveryAreaRiderBundle())).
+            replace(R.id.container, fragment).
+            addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
+
+        updateActionButton(false, false, 0);
+        drawerLayout.closeDrawers();
     }
 
     @Override
