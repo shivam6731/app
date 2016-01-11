@@ -25,7 +25,7 @@
         <item name="android:text">1234</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawablePadding">@dimen/padding_default</item>
-        <item name="android:layout_margin">@dimen/margin_default</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
     </style>
 
     <style name="TextView.Dark">

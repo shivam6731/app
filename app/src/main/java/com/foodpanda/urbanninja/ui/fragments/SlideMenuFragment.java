@@ -59,6 +59,13 @@ public class SlideMenuFragment extends BaseFragment {
                 Toast.makeText(activity, "Settings Clicked", Toast.LENGTH_SHORT).show();
             }
         });
+        view.findViewById(R.id.btn_schedule).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(activity, "Scheudle Clicked", Toast.LENGTH_SHORT).show();
+                mainActivityCallback.onScheduleClicked();
+            }
+        });
     }
 
 }

@@ -13,7 +13,10 @@
         android:id="@+id/btn_settings"
         style="@style/Button"
         android:text="@string/side_menu_settings" />
-
+    <Button
+        android:id="@+id/btn_schedule"
+        style="@style/Button"
+        android:text="@string/side_menu_schedule" />
     <Button
         android:id="@+id/btn_logout"
         style="@style/Button"

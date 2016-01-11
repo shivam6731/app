@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_schedule_start_date"
+            style="@style/TextView.Title"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_schedule_start_name"
+            style="@style/TextView"
+            android:textColor="@color/colorAccent"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_schedule_start_address"
+            style="@style/TextView"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2">
+
+        <com.foodpanda.urbanninja.ui.widget.MontserratTextView
+            android:id="@+id/txt_schedule_start_time"
+            style="@style/TextView.Title"
+            android:layout_alignParentRight="true"/>
+
+        <com.foodpanda.urbanninja.ui.widget.MontserratTextView
+            android:id="@+id/txt_schedule_end_time"
+            style="@style/TextView.Title"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/txt_schedule_start_time"/>
+    </RelativeLayout>
+</LinearLayout>
