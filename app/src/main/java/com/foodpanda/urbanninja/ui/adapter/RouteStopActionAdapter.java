@@ -10,25 +10,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.RouteStopAction;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseViewHolder> {
+public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
     private MainActivityCallback mainActivityCallback;
-    private LinkedHashMap<Stop, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
+    private LinkedHashMap<RouteStopAction, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
 
-    public StopAdapter(List<Stop> objects, Context context, MainActivityCallback mainActivityCallback) {
+    public RouteStopActionAdapter(List<RouteStopAction> objects, Context context, MainActivityCallback mainActivityCallback) {
         super(objects, context);
         this.mainActivityCallback = mainActivityCallback;
-        for (Stop stop : objects) {
-            checkedActionsHashMap.put(stop, false);
+        for (RouteStopAction routeStopAction : objects) {
+            checkedActionsHashMap.put(routeStopAction, false);
         }
     }
 
@@ -50,7 +50,7 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseV
 
     /**
      * This method would recognize is this header or regular item
-     * and set action or header value to the ViewHolder 
+     * and set action or header value to the ViewHolder
      * @param holder SimpleBaseAdapter.BaseViewHolder holder instance
      * @param position in a list on content
      */
@@ -58,13 +58,14 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseV
     public void onBindViewHolder(SimpleBaseAdapter.BaseViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
-            final Stop stop = getItem(position);
+            final RouteStopAction routeStopAction = getItem(position);
             viewHolder.expandableLayout.setTag(holder);
             viewHolder.checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     //Check if all task are done and if it's true enable bottom main action button
-                    checkedActionsHashMap.put(stop, isChecked);
+                    checkedActionsHashMap.put(routeStopAction, isChecked);
+                    //TODO replace title depends on type of route pickUp or delivery
                     mainActivityCallback.enableActionButton(isAllChecked(), R.string.action_at_picked_up);
                 }
             });
@@ -86,7 +87,6 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseV
     private class ViewHolderHeader extends SimpleBaseAdapter.BaseViewHolder {
         public TextView txtName;
         public TextView txtDescription;
-
 
         public ViewHolderHeader(View view) {
             super(view);
@@ -126,8 +126,8 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseV
     }
 
     private boolean isAllChecked() {
-        for (Stop stop : objects) {
-            if (!checkedActionsHashMap.get(stop)) {
+        for (RouteStopAction routeStopAction : objects) {
+            if (!checkedActionsHashMap.get(routeStopAction)) {
                 return false;
             }
         }
@@ -135,4 +135,13 @@ public class StopAdapter extends SimpleBaseAdapter<Stop, SimpleBaseAdapter.BaseV
         return true;
     }
 
+    @Override
+    public int getItemCount() {
+        return objects.size() + 1;
+    }
+
+    @Override
+    public RouteStopAction getItem(int position) {
+        return objects.get(position - 1);
+    }
 }

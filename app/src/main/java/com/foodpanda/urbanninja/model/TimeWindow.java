@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 
-public class TimeWindow implements Parcelable {
-    private DateTime startTime;
-    private DateTime endTime;
+public class TimeWindow implements ParcelableModel {
+    private DateTime startAt;
+    private DateTime endAt;
 
     public TimeWindow() {
     }
@@ -19,13 +19,13 @@ public class TimeWindow implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeSerializable(this.startTime);
-        dest.writeSerializable(this.endTime);
+        dest.writeSerializable(this.startAt);
+        dest.writeSerializable(this.endAt);
     }
 
     protected TimeWindow(Parcel in) {
-        this.startTime = (DateTime) in.readSerializable();
-        this.endTime = (DateTime) in.readSerializable();
+        this.startAt = (DateTime) in.readSerializable();
+        this.endAt = (DateTime) in.readSerializable();
     }
 
 
@@ -39,11 +39,11 @@ public class TimeWindow implements Parcelable {
         }
     };
 
-    public DateTime getStartTime() {
-        return startTime;
+    public DateTime getStartAt() {
+        return startAt;
     }
 
-    public DateTime getEndTime() {
-        return endTime;
+    public DateTime getEndAt() {
+        return endAt;
     }
 }

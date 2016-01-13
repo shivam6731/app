@@ -6,5 +6,4 @@ public interface BaseApiCallback<T> {
     void onSuccess(T t);
 
     void onError(ErrorMessage errorMessage);
-
 }

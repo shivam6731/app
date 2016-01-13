@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Country implements Parcelable {
+public class Country implements ParcelableModel {
     @SerializedName("code")
     private String code;
 

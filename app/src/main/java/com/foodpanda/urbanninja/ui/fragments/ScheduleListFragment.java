@@ -7,15 +7,15 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<List<ScheduleWrapper>> {
+public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<ScheduleCollectionWrapper> {
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ApiManager apiManager;
 
@@ -39,7 +39,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (vehicleDeliveryAreaRiderBundle != null && vehicleDeliveryAreaRiderBundle.getRider() != null) {
-            apiManager.getScheduleList(vehicleDeliveryAreaRiderBundle.getRider().getId(), this);
+            apiManager.getScheduleList(this);
         }
     }
 
@@ -59,7 +59,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     }
 
     @Override
-    public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
+    public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
         adapter.addAll(scheduleWrappers);
         adapter.notifyDataSetChanged();
     }

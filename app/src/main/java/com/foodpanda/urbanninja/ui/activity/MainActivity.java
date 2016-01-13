@@ -15,20 +15,21 @@ import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
-import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
+import com.foodpanda.urbanninja.ui.fragments.RouteStopActionListFragment;
+import com.foodpanda.urbanninja.ui.fragments.RouteStopDetailsFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
-import com.foodpanda.urbanninja.ui.fragments.StopsListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
@@ -106,11 +107,27 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 apiExecutor.clockIn();
                 break;
             case EMPTY_LIST:
-            case ARRIVING:
-                openTaskList();
                 break;
-            case PICK_UP:
+            case VIEWING:
+                apiExecutor.performAction(Action.ON_THE_WAY);
+                setTaskTitle();
+                break;
+            case ARRIVING:
+                openRouteStopActionList();
+                apiExecutor.performAction(Action.ARRIVED);
+                break;
+            case ACTION_LIST:
+                apiExecutor.performAction(Action.COMPLETED);
+                openRouteStopDetails();
+                break;
         }
+    }
+
+    private void setTaskTitle() {
+        userStatus = UserStatus.ARRIVING;
+        int title = storageManager.getStopList().get(0).getTask() == RouteStopTaskStatus.DELIVER ?
+            R.string.action_at_delivery : R.string.action_at_pick_up;
+        updateActionButton(true, true, title, R.drawable.arrow_swipe);
     }
 
     private Toolbar initToolbar() {
@@ -158,7 +175,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case PickUpFragment.MY_PERMISSIONS_REQUEST_LOCATION: {
+            case RouteStopDetailsFragment.MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length == 2 && permissionAccepted != null) {
                     permissionAccepted.onPermissionAccepted();
                 } else {
@@ -251,27 +268,34 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openPickUp(RouteWrapper routeWrapper) {
-        userStatus = UserStatus.ARRIVING;
-        PickUpFragment fragment = PickUpFragment.newInstance(routeWrapper);
+    public void openRouteStopDetails() {
+        userStatus = UserStatus.VIEWING;
+        apiExecutor.performAction(Action.VIEWED);
+
+        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance();
         permissionAccepted = fragment;
         fragmentManager.
             beginTransaction().
-            replace(R.id.container,
-                fragment).
+            replace(R.id.container, fragment).
             commit();
-        updateActionButton(true, true, R.string.action_at_pick_up, R.drawable.arrow_swipe);
+
+        if (storageManager.getStopList() != null && storageManager.getStopList().size() > 0) {
+            updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
+        }
     }
 
     @Override
-    public void openTaskList() {
-        userStatus = UserStatus.STOP_LIST;
+    public void openRouteStopActionList() {
+        userStatus = UserStatus.ACTION_LIST;
         fragmentManager.
             beginTransaction().
-            replace(R.id.container,
-                StopsListFragment.newInstance()).
+            add(R.id.container,
+                RouteStopActionListFragment.newInstance()).
             commit();
-        updateActionButton(true, false, R.string.action_at_picked_up, R.drawable.arrow_swipe);
+
+        int title = storageManager.getStopList().get(0).getTask() == RouteStopTaskStatus.DELIVER ?
+            R.string.action_at_delivered : R.string.action_at_picked_up;
+        updateActionButton(true, false, title, R.drawable.arrow_swipe);
     }
 
     private void updateActionButton(

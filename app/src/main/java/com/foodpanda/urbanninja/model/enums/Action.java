@@ -1,7 +1,8 @@
 package com.foodpanda.urbanninja.model.enums;
 
 public enum Action {
-    GOING,
+    VIEWED,
+    ON_THE_WAY,
     ARRIVED,
     BROKE,
     LATE,
