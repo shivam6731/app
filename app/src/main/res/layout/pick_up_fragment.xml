@@ -8,31 +8,30 @@
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_details"
         style="@style/TextView.Title.Multiline.NotBold"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_timer"
         style="@style/TextView.Title.Timer"
         android:layout_below="@+id/txt_details"
         android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/margin_tiny_tiny"/>
+        android:layout_margin="0dp"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_minutes_left"
         style="@style/TextView.Title.Multiline.NotBold"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/margin_tiny_tiny"
+        android:layout_margin="0dp"
         android:text="@string/task_details_time_left"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_end_point"
-        style="@style/TextView.Title.Multiline.NotBold"
+        style="@style/TextView.Title.Multiline.NotBold.Address"
         android:layout_above="@+id/map"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_large_button"
-        android:drawableLeft="@drawable/ico_street"
-        android:text="@string/task_details_time_left"/>
+        android:drawableLeft="@drawable/ico_street"/>
 
     <fragment
         android:id="@+id/map"

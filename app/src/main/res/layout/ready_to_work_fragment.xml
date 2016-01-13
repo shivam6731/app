@@ -8,7 +8,9 @@
     <ImageView
         android:id="@+id/image_top_logo"
         style="@style/ImageView"
+        android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"
         android:src="@drawable/logo"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
@@ -27,13 +29,15 @@
         android:id="@+id/txt_timer"
         style="@style/TextView.Title.Timer"
         android:layout_below="@+id/btn_see_map"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_timer_description"
         style="@style/TextView.Title.Multiline.NotBold"
         android:layout_below="@+id/txt_timer"
         android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"
         android:text="@string/ready_to_work_time_left"/>
 
 </RelativeLayout>
