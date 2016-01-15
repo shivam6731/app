@@ -35,6 +35,10 @@ public class OpenSansTextView extends TextView {
                     customFont = FontCacheUtil.getTypeface("OpenSans-Semibold.ttf", context);
                     setTypeface(customFont, Typeface.BOLD);
                     break;
+                case Typeface.ITALIC:
+                    customFont = FontCacheUtil.getTypeface("OpenSans-LightItalic.ttf", context);
+                    setTypeface(customFont, Typeface.ITALIC);
+                    break;
                 default:
                     customFont = FontCacheUtil.getTypeface("OpenSans-Light.ttf", context);
                     setTypeface(customFont);

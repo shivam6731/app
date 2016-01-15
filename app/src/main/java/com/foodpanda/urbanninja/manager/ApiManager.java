@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.ApiUrbanNinjaUrl;
 import com.foodpanda.urbanninja.api.ApiUrl;
@@ -144,16 +145,33 @@ public class ApiManager implements Managable {
 
     }
 
-    public void getSchedule(
+    public void getCurrentSchedule(
         int riderId,
-        @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
+        BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
     ) {
         DateTime dateTimeNow = DateTime.now();
         DateTime datePlusOneDay = DateTime.now().plusDays(1);
 
+        getScheduleList(riderId, dateTimeNow, datePlusOneDay, baseApiCallback);
+    }
+
+    public void getScheduleList(int riderId,
+                                BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
+    ) {
+        DateTime dateTimeNow = DateTime.now();
+        DateTime dateTimeEnd = DateTime.now().plusDays(Constants.SCHEDULE_LIST_RANGE);
+
+        getScheduleList(riderId, dateTimeNow, dateTimeEnd, baseApiCallback);
+    }
+
+    private void getScheduleList(int riderId,
+                                 DateTime dateTimeStart,
+                                 DateTime dateTimeEnd,
+                                 @NonNull final BaseApiCallback<List<ScheduleWrapper>> baseApiCallback
+    ) {
         service.getRiderSchedule(riderId,
-            dateTimeNow,
-            datePlusOneDay,
+            dateTimeStart,
+            dateTimeEnd,
             ApiTag.SORT_VALUE)
             .enqueue(new BaseCallback<List<ScheduleWrapper>>(baseApiCallback) {
                 @Override

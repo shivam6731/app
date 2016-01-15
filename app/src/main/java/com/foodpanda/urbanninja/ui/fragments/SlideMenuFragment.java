@@ -43,7 +43,6 @@ public class SlideMenuFragment extends BaseFragment {
         view.findViewById(R.id.btn_logout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "Logout Clicked", Toast.LENGTH_SHORT).show();
                 mainActivityCallback.onLogoutClicked();
             }
         });
@@ -57,6 +56,12 @@ public class SlideMenuFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(activity, "Settings Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        view.findViewById(R.id.btn_schedule).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivityCallback.onScheduleClicked();
             }
         });
     }

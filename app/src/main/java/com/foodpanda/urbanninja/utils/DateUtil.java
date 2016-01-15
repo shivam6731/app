@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.utils;
 
+import org.joda.time.DateTime;
+
 import java.text.SimpleDateFormat;
 
 public class DateUtil {
@@ -7,24 +9,35 @@ public class DateUtil {
     public static final int ONE_DAY = 24 * ONE_HOUR;
 
     private static SimpleDateFormat timerFormat = new SimpleDateFormat("mm:ss");
-    private static SimpleDateFormat timerFormatWithHours = new SimpleDateFormat("HH:mm:ss");
+    private static SimpleDateFormat timerFormatWithHour = new SimpleDateFormat("HH:mm:ss");
 
-    private static String timerFormatMinutes(long date) {
+    private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM");
+    private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm");
+
+    private static String formatTimeMinute(long date) {
         return timerFormat.format(date);
     }
 
-    private static String timerFormatWithHours(long date) {
-        return timerFormatWithHours.format(date);
+    private static String formatTimeWithHour(long date) {
+        return timerFormatWithHour.format(date);
     }
 
-    public static String timeFormat(long date) {
+    public static String formatTimeMinutesHour(long date) {
         if (date > ONE_DAY) {
             return "";
         }
         if (date > ONE_HOUR) {
-            return timerFormatWithHours(date);
+            return formatTimeWithHour(date);
         } else {
-            return timerFormatMinutes(date);
+            return formatTimeMinute(date);
         }
+    }
+
+    public static String formatTimeMinutesHour(DateTime dateTime) {
+        return timerFormatMinutesHour.format(dateTime.toDate());
+    }
+
+    public static String formatTimeWeekDayDateMonth(DateTime dateTime) {
+        return timerFormatWeekDayDateMonth.format(dateTime.toDate());
     }
 }

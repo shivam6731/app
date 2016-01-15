@@ -46,7 +46,7 @@ public class ApiExecutor {
     }
 
     private void getRidersSchedule() {
-        apiManager.getSchedule(
+        apiManager.getCurrentSchedule(
             vehicleDeliveryAreaRiderBundle.getRider().getId(),
             new BaseApiCallback<List<ScheduleWrapper>>() {
                 @Override
@@ -108,5 +108,9 @@ public class ApiExecutor {
                     getRoute();
                 }
             });
+    }
+
+    public VehicleDeliveryAreaRiderBundle getVehicleDeliveryAreaRiderBundle() {
+        return vehicleDeliveryAreaRiderBundle;
     }
 }

@@ -6,6 +6,7 @@
     <dimen name="default_text_size">16sp</dimen>
     <dimen name="default_description_size">20sp</dimen>
     <dimen name="address_description_size">18sp</dimen>
+    <dimen name="schedule_date_text_size">16sp</dimen>
     <dimen name="default_title_size">22sp</dimen>
     <dimen name="default_timer_size">60sp</dimen>
 

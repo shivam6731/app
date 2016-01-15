@@ -26,6 +26,7 @@ import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
 import com.foodpanda.urbanninja.ui.fragments.PickUpFragment;
 import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
+import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.fragments.StopsListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -190,6 +191,19 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onScheduleClicked() {
+        ScheduleListFragment fragment = ScheduleListFragment.newInstance(apiExecutor.getVehicleDeliveryAreaRiderBundle());
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container, fragment).
+            addToBackStack(ScheduleListFragment.class.getSimpleName()).
+            commit();
+
+        updateActionButton(false, false, 0);
+        drawerLayout.closeDrawers();
     }
 
     @Override

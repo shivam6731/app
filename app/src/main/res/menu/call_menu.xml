@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_call"
         android:orderInCategory="100"
-        android:icon="@android:drawable/ic_menu_call"
+        android:icon="@drawable/ico_phone"
         app:showAsAction="always"
         android:title="@string/app_name"/>
 </menu>

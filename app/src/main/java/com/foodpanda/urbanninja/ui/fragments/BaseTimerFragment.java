@@ -85,7 +85,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
             textViewDescription.setText(timePassed(date, dateExpired));
         }
 
-        return DateUtil.timeFormat(date);
+        return DateUtil.formatTimeMinutesHour(date);
     }
 
     private String timeLeft(long date) {
