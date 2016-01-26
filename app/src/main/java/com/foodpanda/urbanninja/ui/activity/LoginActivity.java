@@ -22,7 +22,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity_container);
         storageManager = App.STORAGE_MANAGER;
-        if (checkIsLogged()) {
+        if (isLogged()) {
             openMainActivity();
 
             return;
@@ -65,7 +65,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         }
     }
 
-    private boolean checkIsLogged() {
+    private boolean isLogged() {
 
         return storageManager.getToken() != null;
     }

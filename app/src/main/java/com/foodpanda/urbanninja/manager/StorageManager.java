@@ -146,6 +146,5 @@ public class StorageManager implements Managable {
         }.getType());
 
         return calls != null ? calls : requestsQueue;
-
     }
 }

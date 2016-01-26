@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
@@ -33,10 +35,14 @@ import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.Locale;
 
 public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG = "MainActivity";
 
     private DrawerLayout drawerLayout;
     private Button btnAction;
@@ -71,6 +77,34 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 commit();
         }
         apiExecutor = new ApiExecutor(this);
+        if (isPlayServicesAvailable()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean isPlayServicesAvailable() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                    .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+
+            return false;
+        }
+        
+        return true;
     }
 
     @Override

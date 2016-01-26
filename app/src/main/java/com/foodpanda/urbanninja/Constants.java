@@ -11,6 +11,5 @@ public class Constants {
         public static final String REQUEST_LIST = "RequestList";
 
         public static final String CACHED_REQUESTS_PREFERENCES_NAME = "CachedRequestListPreferenceName";
-        public static final String CACHED_REQUESTS_LIST = "CachedRequestList";
     }
 }
