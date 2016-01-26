@@ -42,6 +42,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scheduleWrapper = getArguments().getParcelable(ScheduleWrapper.class.getSimpleName());
+        needToModifyActionButton = true;
     }
 
     @Nullable
@@ -101,7 +102,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     protected DateTime provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
-            return scheduleWrapper.getTimeWindow().getStartTime();
+            return scheduleWrapper.getTimeWindow().getStartAt();
         } else {
 
             return new DateTime().plusDays(2);
@@ -112,7 +113,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     protected DateTime provideScheduleEndDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
-            return scheduleWrapper.getTimeWindow().getEndTime();
+            return scheduleWrapper.getTimeWindow().getEndAt();
         } else {
 
             return new DateTime().plusDays(2);

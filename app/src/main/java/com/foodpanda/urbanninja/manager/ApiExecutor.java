@@ -1,22 +1,21 @@
 package com.foodpanda.urbanninja.manager;
 
-import android.widget.Toast;
-
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
-import java.util.List;
-
 public class ApiExecutor {
     private final BaseActivity activity;
     private final ApiManager apiManager;
+    private final StorageManager storageManager;
     private final MainActivityCallback mainActivityCallback;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
@@ -26,6 +25,7 @@ public class ApiExecutor {
         this.activity = mainActivity;
         this.mainActivityCallback = mainActivity;
         this.apiManager = App.API_MANAGER;
+        this.storageManager = App.STORAGE_MANAGER;
         getCurrentRider();
     }
 
@@ -47,18 +47,18 @@ public class ApiExecutor {
 
     private void getRidersSchedule() {
         apiManager.getCurrentSchedule(
-            vehicleDeliveryAreaRiderBundle.getRider().getId(),
-            new BaseApiCallback<List<ScheduleWrapper>>() {
+            new BaseApiCallback<ScheduleCollectionWrapper>() {
+
                 @Override
-                public void onSuccess(List<ScheduleWrapper> scheduleWrappers) {
+                public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
                     // Here we get all future and current working schedule
                     // However we need only first one as current
                     if (scheduleWrappers.size() > 0) {
                         ApiExecutor.this.scheduleWrapper = scheduleWrappers.get(0);
 
-                        // In the future we would have isClockIn flag and depend on this value we
+                        // If isClockIn flag is false we
                         // Would open clock in screen or route related screens
-                        if (scheduleWrapper.getId() == 0) {
+                        if (scheduleWrapper.isclockedIn()) {
                             getRoute();
                         } else {
                             mainActivityCallback.openReadyToWork(scheduleWrapper);
@@ -79,10 +79,11 @@ public class ApiExecutor {
         apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
             @Override
             public void onSuccess(RouteWrapper routeWrapper) {
-                if (routeWrapper.getStops().size() == 0) {
+                storageManager.storeStopList(routeWrapper.getStops());
+                if (storageManager.getStopList().size() == 0) {
                     mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
                 } else {
-                    mainActivityCallback.openPickUp(routeWrapper);
+                    mainActivityCallback.openRouteStopDetails();
                 }
             }
 
@@ -98,16 +99,20 @@ public class ApiExecutor {
             apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
                 @Override
                 public void onSuccess(ScheduleWrapper scheduleWrapper) {
-                    Toast.makeText(activity, "Clock in", Toast.LENGTH_SHORT).show();
+                    ApiExecutor.this.scheduleWrapper = scheduleWrapper;
                     getRoute();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    getRoute();
                 }
             });
+    }
+
+    public void performAction(Action action) {
+        int routeId = storageManager.getStopList().get(0).getId();
+        apiManager.notifyActionPerformed(routeId, action);
     }
 
     public VehicleDeliveryAreaRiderBundle getVehicleDeliveryAreaRiderBundle() {

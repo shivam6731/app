@@ -1,19 +1,23 @@
 package com.foodpanda.urbanninja.api.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.foodpanda.urbanninja.model.DeliveryArea;
+import com.foodpanda.urbanninja.model.ParcelableModel;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.StartPoint;
 import com.foodpanda.urbanninja.model.TimeWindow;
 
-public class ScheduleWrapper implements Parcelable {
+import org.joda.time.DateTime;
+
+public class ScheduleWrapper implements ParcelableModel {
     private int id;
     private StartPoint startingPoint;
     private Rider rider;
     private DeliveryArea deliveryArea;
     private TimeWindow timeWindow;
+    private DateTime clockedInAt;
+    private boolean clockedIn;
 
     public ScheduleWrapper() {
     }
@@ -30,6 +34,8 @@ public class ScheduleWrapper implements Parcelable {
         dest.writeParcelable(this.rider, 0);
         dest.writeParcelable(this.deliveryArea, 0);
         dest.writeParcelable(this.timeWindow, 0);
+        dest.writeSerializable(this.clockedInAt);
+        dest.writeByte(clockedIn ? (byte) 1 : (byte) 0);
     }
 
     protected ScheduleWrapper(Parcel in) {
@@ -38,9 +44,11 @@ public class ScheduleWrapper implements Parcelable {
         this.rider = in.readParcelable(Rider.class.getClassLoader());
         this.deliveryArea = in.readParcelable(DeliveryArea.class.getClassLoader());
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
+        this.clockedInAt = (DateTime) in.readSerializable();
+        this.clockedIn = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<ScheduleWrapper> CREATOR = new Parcelable.Creator<ScheduleWrapper>() {
+    public static final Creator<ScheduleWrapper> CREATOR = new Creator<ScheduleWrapper>() {
         public ScheduleWrapper createFromParcel(Parcel source) {
             return new ScheduleWrapper(source);
         }
@@ -68,5 +76,13 @@ public class ScheduleWrapper implements Parcelable {
 
     public TimeWindow getTimeWindow() {
         return timeWindow;
+    }
+
+    public DateTime getclockedInAt() {
+        return clockedInAt;
+    }
+
+    public boolean isclockedIn() {
+        return clockedIn;
     }
 }

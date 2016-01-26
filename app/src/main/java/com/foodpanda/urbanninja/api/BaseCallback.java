@@ -1,21 +1,27 @@
 package com.foodpanda.urbanninja.api;
 
-import android.util.Log;
-
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.model.Model;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public abstract class BaseCallback<T> implements Callback<T> {
-    private BaseApiCallback<T> baseApiCallback;
+public abstract class BaseCallback<T extends Model> implements Callback<T> {
+    private static final int TOTAL_RETRIES = 3;
+    private int retryCount = 0;
 
-    public BaseCallback(BaseApiCallback<T> errorCallback) {
-        this.baseApiCallback = errorCallback;
+    private BaseApiCallback baseApiCallback;
+
+    private Call<T> call;
+
+    public BaseCallback(BaseApiCallback callback, Call<T> call) {
+        this.baseApiCallback = callback;
+        this.call = call;
     }
 
     @Override
@@ -27,14 +33,30 @@ public abstract class BaseCallback<T> implements Callback<T> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            baseApiCallback.onError(errorMessage);
+            if (baseApiCallback != null) {
+                baseApiCallback.onError(errorMessage);
+            }
+
+            sendRetry();
         }
 
     }
 
     @Override
     public void onFailure(Throwable t) {
-        Log.e("onFailure", t.getMessage());
-        baseApiCallback.onError(new ErrorMessage(500, t.getMessage()));
+        sendRetry();
+        if (baseApiCallback != null) {
+            baseApiCallback.onError(new ErrorMessage(500, t.getMessage()));
+        }
+    }
+
+    protected boolean sendRetry() {
+        if (retryCount++ < TOTAL_RETRIES) {
+            call.clone().enqueue(this);
+
+            return true;
+        }
+
+        return false;
     }
 }

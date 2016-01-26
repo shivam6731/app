@@ -12,7 +12,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        API_MANAGER.init(getApplicationContext());
         STORAGE_MANAGER.init(getApplicationContext());
+        API_MANAGER.init(getApplicationContext());
     }
 }

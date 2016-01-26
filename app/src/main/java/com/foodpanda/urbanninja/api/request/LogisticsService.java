@@ -2,19 +2,21 @@ package com.foodpanda.urbanninja.api.request;
 
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -30,13 +32,18 @@ public interface LogisticsService {
     Call<RouteWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
-    Call<List<ScheduleWrapper>> getRiderSchedule(
+    Call<ScheduleCollectionWrapper> getRiderSchedule(
         @Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId,
-        @Query(ApiTag.SCHEDULE_START_TIME_TAG) DateTime startTime,
-        @Query(ApiTag.SCHEDULE_END_TIME_TAG) DateTime endTime,
+        @Query(ApiTag.SCHEDULE_START_TIME_TAG) DateTime startAt,
+        @Query(ApiTag.SCHEDULE_END_TIME_TAG) DateTime endAt,
         @Query(ApiTag.SORT) String sort);
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
     Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
+
+    @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
+    Call<Stop> performedActionNotify(
+        @Path(ApiTag.ROUTE_STOP_ID_TAG) int routeId,
+        @Body PerformActionWrapper performActionWrapper);
 
 }

@@ -14,6 +14,7 @@ import java.util.TimerTask;
 
 public abstract class BaseTimerFragment extends BaseFragment {
     protected MainActivityCallback mainActivityCallback;
+    protected boolean needToModifyActionButton;
 
     private static final int UPDATE_INTERVAL = 1000;
     private static final int ENABLE_TIME_OUT = 30 * 60 * 1000;
@@ -55,18 +56,26 @@ public abstract class BaseTimerFragment extends BaseFragment {
             public void run() {
                 if (BaseTimerFragment.this.isAdded()) {
                     provideTimerTextView().setText(setTimerValue());
-                    enableActionButton();
+                    if (needToModifyActionButton) {
+                        enableActionButton();
+                    }
                 }
             }
         });
     }
 
     private void enableActionButton() {
+        mainActivityCallback.enableActionButton(
+            isChangeAllowed(),
+            provideActionButtonString());
+    }
+
+    private boolean isChangeAllowed() {
         DateTime now = new DateTime();
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
-        mainActivityCallback.enableActionButton(
-            now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT,
-            provideActionButtonString());
+        DateTime endDate = provideScheduleEndDate() == null ? new DateTime() : provideScheduleEndDate();
+
+        return now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT && endDate.getMillis() > now.getMillis();
     }
 
 
@@ -80,12 +89,18 @@ public abstract class BaseTimerFragment extends BaseFragment {
 
         if (now.getMillis() < startDate.getMillis()) {
             textViewDescription.setText(timeLeft(date));
-        } else {
-            long dateExpired = now.getMillis() - endDate.getMillis();
-            textViewDescription.setText(timePassed(date, dateExpired));
-        }
 
-        return DateUtil.formatTimeMinutesHour(date);
+            return DateUtil.formatTimeMinutes(date);
+        } else {
+            textViewDescription.setText(timePassed(endDate.getMillis(), now.getMillis()));
+            if (endDate.getMillis() > now.getMillis()) {
+
+                return DateUtil.formatTimeMinutes(date);
+            } else {
+
+                return "";
+            }
+        }
     }
 
     private String timeLeft(long date) {
@@ -98,13 +113,13 @@ public abstract class BaseTimerFragment extends BaseFragment {
         }
     }
 
-    private String timePassed(long date, long dateExpired) {
-        if (date > dateExpired) {
-
-            return getResources().getString(R.string.action_ready_shift_expired);
-        } else {
+    private String timePassed(long endDate, long nowDate) {
+        if (endDate > nowDate) {
 
             return providePassedString();
+        } else {
+
+            return getResources().getString(R.string.action_ready_shift_expired);
         }
     }
 

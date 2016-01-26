@@ -3,7 +3,7 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class DeliveryArea implements Parcelable {
+public class DeliveryArea implements ParcelableModel {
     private int id;
     private String name;
 

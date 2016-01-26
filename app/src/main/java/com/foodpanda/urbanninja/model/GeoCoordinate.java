@@ -3,7 +3,7 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GeoCoordinate implements Parcelable {
+public class GeoCoordinate implements ParcelableModel {
     private Double lat;
 
     private Double lon;

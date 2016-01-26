@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Token implements Parcelable {
+public class Token implements ParcelableModel {
     @SerializedName("access_token")
     private String accessToken;
 

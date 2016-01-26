@@ -3,8 +3,7 @@ package com.foodpanda.urbanninja.model.enums;
 public enum UserStatus {
     CLOCK_IN,
     EMPTY_LIST,
+    VIEWING,
     ARRIVING,
-    PICK_UP,
-    STOP_LIST
-
+    ACTION_LIST
 }

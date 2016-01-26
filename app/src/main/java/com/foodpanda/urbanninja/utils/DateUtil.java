@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.utils;
 import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 public class DateUtil {
     public static final int ONE_HOUR = 1000 * 60 * 60;
@@ -14,6 +15,13 @@ public class DateUtil {
     private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM");
     private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm");
 
+    static {
+        timerFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        timerFormatWithHour.setTimeZone(TimeZone.getTimeZone("GMT"));
+        timerFormatWeekDayDateMonth.setTimeZone(TimeZone.getTimeZone("GMT"));
+        timerFormatMinutesHour.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     private static String formatTimeMinute(long date) {
         return timerFormat.format(date);
     }
@@ -22,7 +30,7 @@ public class DateUtil {
         return timerFormatWithHour.format(date);
     }
 
-    public static String formatTimeMinutesHour(long date) {
+    public static String formatTimeMinutes(long date) {
         if (date > ONE_DAY) {
             return "";
         }
@@ -33,7 +41,7 @@ public class DateUtil {
         }
     }
 
-    public static String formatTimeMinutesHour(DateTime dateTime) {
+    public static String formatTimeMinutes(DateTime dateTime) {
         return timerFormatMinutesHour.format(dateTime.toDate());
     }
 

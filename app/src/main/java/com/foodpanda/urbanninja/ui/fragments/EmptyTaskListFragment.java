@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,10 +14,15 @@ import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
 public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallback<RouteWrapper> {
+    private MainActivityCallback mainActivityCallback;
+
     private ApiManager apiManager;
+    private StorageManager storageManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
@@ -31,9 +37,17 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = App.API_MANAGER;
+        storageManager = App.STORAGE_MANAGER;
+
         vehicleDeliveryAreaRiderBundle = getArguments().getParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName());
     }
 
@@ -65,7 +79,11 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
 
     @Override
     public void onSuccess(RouteWrapper routeWrapper) {
+        storageManager.storeStopList(routeWrapper.getStops());
         swipeRefreshLayout.setRefreshing(false);
+        if (storageManager.getStopList().size() > 0) {
+            mainActivityCallback.openRouteStopDetails();
+        }
     }
 
     @Override

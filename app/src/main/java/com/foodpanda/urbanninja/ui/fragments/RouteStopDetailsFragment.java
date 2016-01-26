@@ -7,14 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.api.model.RouteWrapper;
+import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,8 +27,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -37,7 +41,7 @@ import org.joda.time.DateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PickUpFragment extends BaseTimerFragment implements
+public class RouteStopDetailsFragment extends BaseTimerFragment implements
     OnMapReadyCallback,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
@@ -45,7 +49,6 @@ public class PickUpFragment extends BaseTimerFragment implements
     LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
-    private static final int DEFAULT_ZOOM_LEVEL = 15;
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -53,24 +56,26 @@ public class PickUpFragment extends BaseTimerFragment implements
     private TextView txtTimerDescription;
 
     private GoogleMap googleMap;
+    private MapView mapView;
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
+    private StorageManager storageManager;
 
-    private RouteWrapper routeWrapper;
+    private Stop stop;
     private Location location;
 
-    public static PickUpFragment newInstance(RouteWrapper routeWrapper) {
-        PickUpFragment pickUpFragment = new PickUpFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(RouteWrapper.class.getSimpleName(), routeWrapper);
-        pickUpFragment.setArguments(bundle);
-        return pickUpFragment;
+    public static RouteStopDetailsFragment newInstance() {
+        return new RouteStopDetailsFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        routeWrapper = getArguments().getParcelable(RouteWrapper.class.getSimpleName());
+        storageManager = App.STORAGE_MANAGER;
+
+        if (storageManager.getStopList().size() > 0) {
+            stop = storageManager.getStopList().get(0);
+        }
 
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(activity)
@@ -96,6 +101,24 @@ public class PickUpFragment extends BaseTimerFragment implements
         super.onStop();
     }
 
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
     @Nullable
     @Override
     public View onCreateView(
@@ -104,7 +127,7 @@ public class PickUpFragment extends BaseTimerFragment implements
         Bundle savedInstanceState
     ) {
 
-        return inflater.inflate(R.layout.pick_up_fragment, container, false);
+        return inflater.inflate(R.layout.route_stop_details_fragment, container, false);
     }
 
     @Override
@@ -114,11 +137,43 @@ public class PickUpFragment extends BaseTimerFragment implements
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
         txtEndPoint = (TextView) view.findViewById(R.id.txt_end_point);
         txtTimerDescription = (TextView) view.findViewById(R.id.txt_minutes_left);
-        SupportMapFragment mapFragment =
-            (SupportMapFragment) getChildFragmentManager().
-                findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(this);
+        mapView = (MapView) view.findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        googleMap = mapView.getMap();
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        googleMap.setMyLocationEnabled(false);
+
+        setData();
+    }
+
+    private void setData() {
+        txtEndPoint.setText(stop.getAddress());
+        txtDetails.setText(detailsText());
+    }
+
+    private Spanned detailsText() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getResources().getString(R.string.task_details_go_to));
+        stringBuilder.append(" <b>");
+        stringBuilder.append(stop.getName());
+        stringBuilder.append("</b> ");
+        stringBuilder.append(getResources().getString(R.string.task_details_to));
+        stringBuilder.append(" <b>");
+        stringBuilder.append(getStatusString());
+        stringBuilder.append("</b>");
+        return Html.fromHtml(stringBuilder.toString());
+    }
+
+    private String getStatusString() {
+        switch (stop.getTask()) {
+            case DELIVER:
+                return getResources().getString(R.string.task_details_delivery);
+            case PICKUP:
+                return getResources().getString(R.string.task_details_pick_up);
+            default:
+                return getResources().getString(R.string.task_details_pick_up);
+        }
     }
 
     @Override
@@ -133,12 +188,12 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     protected DateTime provideScheduleDate() {
-        return new DateTime();
+        return stop.getArrivalTime();
     }
 
     @Override
     protected DateTime provideScheduleEndDate() {
-        return new DateTime();
+        return stop.getArrivalTime().plusDays(1);
     }
 
     @Override
@@ -153,7 +208,7 @@ public class PickUpFragment extends BaseTimerFragment implements
 
     @Override
     protected int provideActionButtonString() {
-        return R.string.action_at_pick_up;
+        return 0;
     }
 
     @Override
@@ -210,7 +265,7 @@ public class PickUpFragment extends BaseTimerFragment implements
             position(myLocation).
             anchor(0.5f, 0.5f).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
-            title(getResources().getString(R.string.pick_up_my_location)));
+            title(getResources().getString(R.string.route_stop_details_my_location)));
 
         if (location.hasAccuracy()) {
             CircleOptions circleOptions = new CircleOptions();
@@ -224,7 +279,9 @@ public class PickUpFragment extends BaseTimerFragment implements
         }
 
         markers.add(marker);
-        markers.add(drawPointMarker());
+        if (stop.getGps() != null) {
+            markers.add(drawPointMarker());
+        }
 
         if (this.location == null) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -241,13 +298,14 @@ public class PickUpFragment extends BaseTimerFragment implements
     }
 
     private Marker drawPointMarker() {
-        LatLng pointLocation = new LatLng(52.5373777, 13.4071534);
+
+        LatLng pointLocation = new LatLng(stop.getGps().getLat(), stop.getGps().getLon());
 
         return googleMap.addMarker(new MarkerOptions().
             position(pointLocation).
             anchor(1.0f, 0.5f).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
-            title("Restaurant"));
+            title(stop.getName()));
     }
 
 }

@@ -7,32 +7,48 @@ import android.util.Base64;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.api.model.StorableAction;
+import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Country;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 
 public class StorageManager implements Managable {
     private SharedPreferences sharedPreferences;
+    private SharedPreferences cachedRequestPreferences;
     private Gson gson;
 
     private Token token;
+    private List<Stop> stopList = new ArrayList<>();
 
     @Override
     public void init(Context context) {
         sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+        cachedRequestPreferences = context.getSharedPreferences(Constants.Preferences.CACHED_REQUESTS_PREFERENCES_NAME, Context.MODE_PRIVATE);
         gson = new GsonBuilder().
+            registerTypeAdapter(DateTime.class, new DateTimeDeserializer()).
             create();
     }
 
-    public void storeToken(Token token) {
+    public boolean storeToken(Token token) {
         this.token = token;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String json = gson.toJson(token);
         editor.putString(Constants.Preferences.TOKEN, json);
-        editor.commit();
+
+        return editor.commit();
     }
 
     public Token getToken() {
@@ -56,31 +72,34 @@ public class StorageManager implements Managable {
         }
     }
 
-    public void storeUserName(String username) {
+    public boolean storeUserName(String username) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.Preferences.USERNAME, username);
-        editor.commit();
+
+        return editor.commit();
     }
 
     public String getUsername() {
         return sharedPreferences.getString(Constants.Preferences.USERNAME, "");
     }
 
-    public void storePassword(String password) {
+    public boolean storePassword(String password) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.Preferences.PASSWORD, password);
-        editor.commit();
+
+        return editor.commit();
     }
 
     public String getPassword() {
         return sharedPreferences.getString(Constants.Preferences.PASSWORD, "");
     }
 
-    public void storeCountry(Country country) {
+    public boolean storeCountry(Country country) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String json = gson.toJson(country);
         editor.putString(Constants.Preferences.COUNTRY, json);
-        editor.commit();
+
+        return editor.commit();
     }
 
     public void cleanToken() {
@@ -91,5 +110,42 @@ public class StorageManager implements Managable {
         String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
 
         return gson.fromJson(json, Country.class);
+    }
+
+    public boolean storeStopList(List<Stop> stopList) {
+        this.stopList = stopList;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = gson.toJson(stopList);
+        editor.putString(Constants.Preferences.STOP_LIST, json);
+
+        return editor.commit();
+    }
+
+    public List<Stop> getStopList() {
+        if (stopList == null) {
+            String json = sharedPreferences.getString(Constants.Preferences.STOP_LIST, "");
+            stopList = gson.fromJson(json, new TypeToken<List<Stop>>() {
+            }.getType());
+        }
+
+        return stopList;
+    }
+
+    public boolean storeApiRequests(Queue<StorableAction> requestsQueue) {
+        SharedPreferences.Editor editor = cachedRequestPreferences.edit();
+        String json = gson.toJson(requestsQueue);
+        editor.putString(Constants.Preferences.REQUEST_LIST, json);
+
+        return editor.commit();
+    }
+
+    public Queue<StorableAction> getApiRequestList() {
+        Queue<StorableAction> requestsQueue = new LinkedList<>();
+        String json = cachedRequestPreferences.getString(Constants.Preferences.REQUEST_LIST, "");
+        Queue<StorableAction> calls = gson.fromJson(json, new TypeToken<Queue<StorableAction>>() {
+        }.getType());
+
+        return calls != null ? calls : requestsQueue;
+
     }
 }

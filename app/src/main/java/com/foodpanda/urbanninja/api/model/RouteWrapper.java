@@ -3,11 +3,12 @@ package com.foodpanda.urbanninja.api.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.foodpanda.urbanninja.model.ParcelableModel;
 import com.foodpanda.urbanninja.model.Stop;
 
 import java.util.List;
 
-public class RouteWrapper implements Parcelable {
+public class RouteWrapper implements ParcelableModel {
     private int id;
     private List<Stop> stops;
 

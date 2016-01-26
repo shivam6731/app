@@ -42,6 +42,10 @@
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
     <string name="task_details_time_passed">MINUTES PASSED</string>
+    <string name="task_details_go_to">Go to</string>
+    <string name="task_details_to">to</string>
+    <string name="task_details_pick_up"><b>pickup</b></string>
+    <string name="task_details_delivery"><b>delivery</b></string>
 
     <!-- Errors -->
     <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
@@ -54,12 +58,14 @@
 
     <!-- Ready to work -->
     <string name="action_ready_to_work">I am ready to work</string>
+    <string name="action_driving">I am driving there</string>
     <string name="action_at_pick_up">I am at pickup</string>
+    <string name="action_at_delivery">I am at delivery</string>
     <string name="action_at_picked_up">I picked up</string>
+    <string name="action_at_delivered">I delivered</string>
     <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
-    <string name="action_ready_shift_expired">Your shift started more\n then 24 hours ago</string>
-    <!-- Ready to work -->
-    <string name="pick_up_my_location">My Location</string>
+    <string name="action_ready_shift_expired">Your current shift has already finished</string>
+    <string name="route_stop_details_my_location">My Location</string>
 
     <!-- Stop list -->
     <string name="stop_list_done">Done</string>
