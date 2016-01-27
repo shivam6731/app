@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
@@ -34,7 +35,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     public static CountryListFragment newInstance(Country country) {
         CountryListFragment fragment = new CountryListFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Country.class.getSimpleName(), country);
+        bundle.putParcelable(Constants.BundleKeys.COUNTRY, country);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -43,7 +44,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = App.API_MANAGER;
-        selectedCountry = getArguments().getParcelable(Country.class.getSimpleName());
+        selectedCountry = getArguments().getParcelable(Constants.BundleKeys.COUNTRY);
     }
 
     @Override

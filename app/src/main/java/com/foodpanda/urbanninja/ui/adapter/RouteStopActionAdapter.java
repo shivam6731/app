@@ -51,7 +51,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, S
     /**
      * This method would recognize is this header or regular item
      * and set action or header value to the ViewHolder
-     * @param holder SimpleBaseAdapter.BaseViewHolder holder instance
+     *
+     * @param holder   SimpleBaseAdapter.BaseViewHolder holder instance
      * @param position in a list on content
      */
     @Override

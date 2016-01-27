@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -26,7 +27,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
         ReadyToWorkFragment readyToWorkFragment = new ReadyToWorkFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ScheduleWrapper.class.getSimpleName(), scheduleWrapper);
+        bundle.putParcelable(Constants.BundleKeys.SCHEDULE_WRAPPER, scheduleWrapper);
         readyToWorkFragment.setArguments(bundle);
 
         return readyToWorkFragment;
@@ -41,7 +42,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        scheduleWrapper = getArguments().getParcelable(ScheduleWrapper.class.getSimpleName());
+        scheduleWrapper = getArguments().getParcelable(Constants.BundleKeys.SCHEDULE_WRAPPER);
         needToModifyActionButton = true;
     }
 

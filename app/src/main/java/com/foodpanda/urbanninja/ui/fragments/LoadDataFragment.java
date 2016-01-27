@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.foodpanda.urbanninja.R;
 
 public class LoadDataFragment extends BaseFragment {
-    public static LoadDataFragment newIntance() {
+    public static LoadDataFragment newInstance() {
         LoadDataFragment loadDataFragment = new LoadDataFragment();
 
         return loadDataFragment;

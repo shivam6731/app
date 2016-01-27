@@ -6,11 +6,17 @@ import com.foodpanda.urbanninja.model.Stop;
 
 import retrofit.Call;
 
-public class RetryCallback<T extends Stop> extends BaseCallback<T> {
+/**
+ * Child of {@see BaseCallback} to allows to store rider actions to the {@link ApiQueue}
+ * and after reSend this data to the server side as soon as internet would work
+ *
+ * @param <T> extends list of {@link Stop}
+ */
+public class RetryActionCallback<T extends Stop> extends BaseCallback<T> {
     private int routeId;
     private PerformActionWrapper performActionWrapper;
 
-    public RetryCallback(Call<T> call, int routeId, PerformActionWrapper performActionWrapper) {
+    public RetryActionCallback(Call<T> call, int routeId, PerformActionWrapper performActionWrapper) {
         super(null, call);
         this.routeId = routeId;
         this.performActionWrapper = performActionWrapper;
@@ -20,7 +26,7 @@ public class RetryCallback<T extends Stop> extends BaseCallback<T> {
     protected boolean sendRetry() {
         boolean isSent = super.sendRetry();
         if (!isSent) {
-            ApiQueue.getInstance().enqueue(performActionWrapper, routeId);
+            ApiQueue.getInstance().enqueueAction(performActionWrapper, routeId);
         }
 
         return isSent;

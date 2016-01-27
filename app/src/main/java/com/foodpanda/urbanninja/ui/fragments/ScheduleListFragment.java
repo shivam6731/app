@@ -10,21 +10,15 @@ import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
-import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
 
 import java.util.ArrayList;
 
 public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<ScheduleCollectionWrapper> {
-    private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ApiManager apiManager;
 
-    public static ScheduleListFragment newInstance(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+    public static ScheduleListFragment newInstance() {
         ScheduleListFragment fragment = new ScheduleListFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName(), vehicleDeliveryAreaRiderBundle);
-        fragment.setArguments(bundle);
-
         return fragment;
     }
 
@@ -32,15 +26,12 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiManager = App.API_MANAGER;
-        vehicleDeliveryAreaRiderBundle = getArguments().getParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName());
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (vehicleDeliveryAreaRiderBundle != null && vehicleDeliveryAreaRiderBundle.getRider() != null) {
-            apiManager.getScheduleList(this);
-        }
+        apiManager.getScheduleList(this);
     }
 
     @Override

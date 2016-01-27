@@ -81,6 +81,9 @@
             android:name=".api.service.RegistrationIntentService"
             android:exported="false">
         </service>
+        <service android:name=".api.service.LocationService"/>
+
+        <receiver android:name=".api.receiver.ScheduleFinishedReceiver"/>
     </application>
 
 </manifest>

@@ -1,6 +1,10 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +19,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
@@ -32,8 +37,8 @@ import com.foodpanda.urbanninja.ui.fragments.RouteStopActionListFragment;
 import com.foodpanda.urbanninja.ui.fragments.RouteStopDetailsFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
+import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
-import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -42,7 +47,9 @@ import java.util.Locale;
 
 public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "MainActivity";
+    public static final int PERMISSIONS_REQUEST_LOCATION = 100;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawerLayout;
     private Button btnAction;
@@ -52,7 +59,17 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private ApiExecutor apiExecutor;
 
     private UserStatus userStatus;
-    private PermissionAccepted permissionAccepted;
+
+    private LocationChangedCallback locationChangedCallback;
+    private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (locationChangedCallback != null) {
+                Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
+                locationChangedCallback.onLocationChanged(location);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +85,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         if (savedInstanceState == null) {
             fragmentManager.
                 beginTransaction().
-                add(R.id.container, LoadDataFragment.newIntance()).
+                add(R.id.container, LoadDataFragment.newInstance()).
                 commit();
 
             fragmentManager.
@@ -76,7 +93,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 add(R.id.left_drawer, SlideMenuFragment.newInstance()).
                 commit();
         }
+
         apiExecutor = new ApiExecutor(this);
+
         if (isPlayServicesAvailable()) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
@@ -103,7 +122,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
             return false;
         }
-        
+
         return true;
     }
 
@@ -120,6 +139,18 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 updateActionButton(true, isEnabled, textResourceLink);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(locationChangeReceiver);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(locationChangeReceiver, new IntentFilter(Constants.LOCATION_UPDATED));
     }
 
     private void setActionButton() {
@@ -209,9 +240,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case RouteStopDetailsFragment.MY_PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length == 2 && permissionAccepted != null) {
-                    permissionAccepted.onPermissionAccepted();
+            case PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length) {
+                    apiExecutor.startLocationService();
                 } else {
                     Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -246,7 +277,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
-        ScheduleListFragment fragment = ScheduleListFragment.newInstance(apiExecutor.getVehicleDeliveryAreaRiderBundle());
+        ScheduleListFragment fragment = ScheduleListFragment.newInstance();
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
@@ -307,7 +338,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         apiExecutor.performAction(Action.VIEWED);
 
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance();
-        permissionAccepted = fragment;
+        locationChangedCallback = fragment;
+
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
@@ -359,5 +391,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         btnAction.setText(textResLink);
 
     }
+
 
 }

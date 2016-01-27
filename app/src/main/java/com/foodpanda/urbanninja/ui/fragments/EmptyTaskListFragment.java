@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
@@ -30,7 +31,7 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     public static EmptyTaskListFragment newInstance(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         EmptyTaskListFragment emptyTaskListFragment = new EmptyTaskListFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName(), vehicleDeliveryAreaRiderBundle);
+        bundle.putParcelable(Constants.BundleKeys.VEHICLE_DELIVERY_AREA_RIDER_BUNDLE, vehicleDeliveryAreaRiderBundle);
         emptyTaskListFragment.setArguments(bundle);
 
         return emptyTaskListFragment;
@@ -48,7 +49,7 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
         apiManager = App.API_MANAGER;
         storageManager = App.STORAGE_MANAGER;
 
-        vehicleDeliveryAreaRiderBundle = getArguments().getParcelable(VehicleDeliveryAreaRiderBundle.class.getSimpleName());
+        vehicleDeliveryAreaRiderBundle = getArguments().getParcelable(Constants.BundleKeys.VEHICLE_DELIVERY_AREA_RIDER_BUNDLE);
     }
 
     @Nullable

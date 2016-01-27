@@ -1,7 +1,6 @@
 package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 
