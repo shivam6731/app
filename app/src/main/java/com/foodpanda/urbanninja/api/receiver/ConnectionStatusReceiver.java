@@ -19,12 +19,12 @@ public class ConnectionStatusReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (checkConnectivity(context)) {
+        if (isInternetConnectionAvailable(context)) {
             apiManager.sendAllFailedRequests();
         }
     }
 
-    boolean checkConnectivity(Context context) {
+    boolean isInternetConnectionAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
 

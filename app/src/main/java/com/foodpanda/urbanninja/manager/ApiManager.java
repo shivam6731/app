@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
@@ -14,12 +15,14 @@ import com.foodpanda.urbanninja.api.RetryCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
+import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
@@ -220,6 +223,23 @@ public class ApiManager implements Managable {
 
     public void sendAllFailedRequests() {
         ApiQueue.getInstance().recall(service);
+    }
+
+    public void registerDeviceId(String token) {
+        if (!TextUtils.isEmpty(token)) {
+            TokenData tokenData = storageManager.getTokenData();
+
+            Call<Rider> call = service.registerDeviceId(
+                tokenData.getUserId(),
+                new PushNotificationRegistrationWrapper(token));
+
+            call.enqueue(new BaseCallback<Rider>(null, call) {
+                @Override
+                public void onResponse(Response<Rider> response, Retrofit retrofit) {
+                    super.onResponse(response, retrofit);
+                }
+            });
+        }
     }
 
     //Internal foodpanda API

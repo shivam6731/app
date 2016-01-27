@@ -3,9 +3,11 @@ package com.foodpanda.urbanninja.api.request;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
+import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -46,4 +48,8 @@ public interface LogisticsService {
         @Path(ApiTag.ROUTE_STOP_ID_TAG) int routeId,
         @Body PerformActionWrapper performActionWrapper);
 
+    @PUT(ApiTag.REGISTRY_PUSH_NOTIFICATION)
+    Call<Rider> registerDeviceId(
+        @Path(ApiTag.USER_TAG) int riderId,
+        @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper);
 }

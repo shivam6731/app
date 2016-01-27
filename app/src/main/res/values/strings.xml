@@ -72,4 +72,7 @@
     <string name="stop_list_description">Tap on the actions to mark them\nas completed </string>
     <!-- Schedule list-->
     <string name="schedule_list_title">Next Shifts</string>
+
+    <!-- GCM -->
+    <string name="gcm_defaultSenderId">975393205483</string>
 </resources>

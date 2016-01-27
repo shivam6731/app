@@ -122,7 +122,7 @@ public class ExpandableLayout extends LinearLayout {
         return null;
     }
 
-    boolean checkExpandableView(View expandableView) {
+    boolean isExpandableView(View expandableView) {
         LayoutParams p = (LayoutParams) expandableView.getLayoutParams();
 
         return p.canExpand;
@@ -160,7 +160,7 @@ public class ExpandableLayout extends LinearLayout {
     private boolean expand(View child, boolean shouldAnimate) {
         boolean result = false;
 
-        if (!checkExpandableView(child)) {
+        if (!isExpandableView(child)) {
             throw new IllegalArgumentException("expand(), View is not expandableView");
         }
 
@@ -234,7 +234,7 @@ public class ExpandableLayout extends LinearLayout {
     private boolean collapse(View child, boolean shouldAnimation) {
         boolean result = false;
 
-        if (!checkExpandableView(child)) {
+        if (!isExpandableView(child)) {
             throw new IllegalArgumentException("collapse(), View is not expandableView");
         }
 
