@@ -5,10 +5,14 @@ import android.os.Parcelable;
 
 public class GeoCoordinate implements ParcelableModel {
     private Double lat;
-
     private Double lon;
 
     public GeoCoordinate() {
+    }
+
+    public GeoCoordinate(Double lat, Double lon) {
+        this.lat = lat;
+        this.lon = lon;
     }
 
     @Override

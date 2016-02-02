@@ -3,12 +3,11 @@ package com.foodpanda.urbanninja.api.model;
 import android.os.Parcel;
 
 import com.foodpanda.urbanninja.model.Country;
-import com.foodpanda.urbanninja.model.Model;
 import com.foodpanda.urbanninja.model.ParcelableModel;
 
 import java.util.List;
 
-public class CountryListWrapper implements ParcelableModel{
+public class CountryListWrapper implements ParcelableModel {
     private List<Country> data;
 
     public List<Country> getData() {

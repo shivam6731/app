@@ -11,11 +11,15 @@ import com.foodpanda.urbanninja.api.ApiUrbanNinjaUrl;
 import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
-import com.foodpanda.urbanninja.api.RetryCallback;
+import com.foodpanda.urbanninja.api.RetryActionCallback;
+import com.foodpanda.urbanninja.api.RetryLocationCallback;
+import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
+import com.foodpanda.urbanninja.api.model.RiderLocation;
+import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
@@ -38,6 +42,7 @@ import com.squareup.okhttp.Request;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -218,11 +223,35 @@ public class ApiManager implements Managable {
     ) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(action, new DateTime());
         Call<Stop> call = service.performedActionNotify(routeId, performActionWrapper);
-        call.enqueue(new RetryCallback<>(call, routeId, performActionWrapper));
+        call.enqueue(new RetryActionCallback<>(call, routeId, performActionWrapper));
+    }
+
+    public void sendLocation(
+        int vehicleId,
+        List<RiderLocation> riderLocation,
+        @NonNull final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
+
+        RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
+        riderLocationCollectionWrapper.addAll(riderLocation);
+
+        Call<RiderLocationCollectionWrapper> call = service.sendLocation(vehicleId, riderLocationCollectionWrapper);
+        call.enqueue(new RetryLocationCallback<RiderLocationCollectionWrapper>(
+            baseApiCallback,
+            call,
+            vehicleId,
+            riderLocationCollectionWrapper) {
+            @Override
+            public void onResponse(Response<RiderLocationCollectionWrapper> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
+            }
+        });
     }
 
     public void sendAllFailedRequests() {
-        ApiQueue.getInstance().recall(service);
+        ApiQueue.getInstance().resendRequests(service);
     }
 
     public void registerDeviceId(String token) {

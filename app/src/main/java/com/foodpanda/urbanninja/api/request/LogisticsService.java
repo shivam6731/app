@@ -4,6 +4,7 @@ import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
+import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
@@ -52,4 +53,9 @@ public interface LogisticsService {
     Call<Rider> registerDeviceId(
         @Path(ApiTag.USER_TAG) int riderId,
         @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper);
+
+    @POST(ApiTag.POST_LOCATION)
+    Call<RiderLocationCollectionWrapper> sendLocation(
+        @Path(ApiTag.VEHICLE_TAG) int vehicleId,
+        @Body RiderLocationCollectionWrapper riderLocation);
 }

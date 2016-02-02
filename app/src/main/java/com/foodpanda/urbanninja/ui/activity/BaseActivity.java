@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import java.net.HttpURLConnection;
 
-public abstract class BaseActivity extends AppCompatActivity  {
+public abstract class BaseActivity extends AppCompatActivity {
     protected FragmentManager fragmentManager;
 
     @Override

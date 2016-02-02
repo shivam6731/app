@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.utils.FontCacheUtil;
 
-public class OpenSansRegularTextView extends TextView{
+public class OpenSansRegularTextView extends TextView {
     public OpenSansRegularTextView(Context context) {
         super(context);
 

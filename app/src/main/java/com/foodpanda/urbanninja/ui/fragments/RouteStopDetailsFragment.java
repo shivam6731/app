@@ -1,30 +1,20 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.ui.interfaces.PermissionAccepted;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -43,12 +33,7 @@ import java.util.List;
 
 public class RouteStopDetailsFragment extends BaseTimerFragment implements
     OnMapReadyCallback,
-    GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener,
-    PermissionAccepted,
-    LocationListener {
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    LocationChangedCallback {
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -57,8 +42,7 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
 
     private GoogleMap googleMap;
     private MapView mapView;
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
+
     private StorageManager storageManager;
 
     private Stop stop;
@@ -76,47 +60,6 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
         if (storageManager.getStopList().size() > 0) {
             stop = storageManager.getStopList().get(0);
         }
-
-        if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(activity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-            locationRequest = new LocationRequest();
-            locationRequest.setInterval(10000);
-            locationRequest.setFastestInterval(5000);
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        }
-    }
-
-    public void onStart() {
-        googleApiClient.connect();
-        super.onStart();
-    }
-
-    public void onStop() {
-        googleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    public void onResume() {
-        mapView.onResume();
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
     }
 
     @Nullable
@@ -140,11 +83,34 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
-        googleMap = mapView.getMap();
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        googleMap.setMyLocationEnabled(false);
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                RouteStopDetailsFragment.this.googleMap = googleMap;
+                RouteStopDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                RouteStopDetailsFragment.this.googleMap.setMyLocationEnabled(false);
+            }
+        });
 
         setData();
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     private void setData() {
@@ -217,46 +183,15 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        askForPermissions();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(getContext(), connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void onLocationChanged(Location location) {
         drawMarkers(location);
     }
 
-    @Override
-    public void onPermissionAccepted() {
-        askForPermissions();
-    }
-
-    private void askForPermissions() {
-        if (ContextCompat.checkSelfPermission(activity,
-            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                MY_PERMISSIONS_REQUEST_LOCATION);
-        } else {
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, locationRequest, this);
-        }
-    }
-
     private void drawMarkers(Location location) {
+        if (googleMap == null) {
+            return;
+        }
+
         googleMap.clear();
         List<Marker> markers = new LinkedList<>();
         LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -294,7 +229,6 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
             googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
         }
         this.location = location;
-
     }
 
     private Marker drawPointMarker() {

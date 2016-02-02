@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.StorableAction;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Country;
@@ -131,20 +132,48 @@ public class StorageManager implements Managable {
         return stopList;
     }
 
-    public boolean storeApiRequests(Queue<StorableAction> requestsQueue) {
+    public boolean storeActionApiRequests(Queue<StorableAction> requestsQueue) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         String json = gson.toJson(requestsQueue);
-        editor.putString(Constants.Preferences.REQUEST_LIST, json);
+        editor.putString(Constants.Preferences.ACTION_REQUEST_LIST, json);
 
         return editor.commit();
     }
 
-    public Queue<StorableAction> getApiRequestList() {
+    public Queue<StorableAction> getActionApiRequestList() {
         Queue<StorableAction> requestsQueue = new LinkedList<>();
-        String json = cachedRequestPreferences.getString(Constants.Preferences.REQUEST_LIST, "");
+        String json = cachedRequestPreferences.getString(Constants.Preferences.ACTION_REQUEST_LIST, "");
         Queue<StorableAction> calls = gson.fromJson(json, new TypeToken<Queue<StorableAction>>() {
         }.getType());
 
         return calls != null ? calls : requestsQueue;
+    }
+
+    public boolean storeLocationApiRequests(Queue<RiderLocation> requestsQueue) {
+        SharedPreferences.Editor editor = cachedRequestPreferences.edit();
+        String json = gson.toJson(requestsQueue);
+        editor.putString(Constants.Preferences.LOCATION_REQUEST_LIST, json);
+
+        return editor.commit();
+    }
+
+    public Queue<RiderLocation> getLocationApiRequestList() {
+        Queue<RiderLocation> requestsQueue = new LinkedList<>();
+        String json = cachedRequestPreferences.getString(Constants.Preferences.LOCATION_REQUEST_LIST, "");
+        Queue<RiderLocation> calls = gson.fromJson(json, new TypeToken<Queue<RiderLocation>>() {
+        }.getType());
+
+        return calls != null ? calls : requestsQueue;
+    }
+
+    public boolean storeVehicleId(int vehicleId) {
+        SharedPreferences.Editor editor = cachedRequestPreferences.edit();
+        editor.putInt(Constants.Preferences.VEHICLE_ID, vehicleId);
+
+        return editor.commit();
+    }
+
+    public int getVehicleId() {
+        return cachedRequestPreferences.getInt(Constants.Preferences.VEHICLE_ID, 0);
     }
 }
