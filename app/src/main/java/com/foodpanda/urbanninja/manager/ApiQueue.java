@@ -71,7 +71,7 @@ public class ApiQueue {
     private void resendAction(LogisticsService service) {
         if (!requestsQueue.isEmpty()) {
             StorableAction storableAction = requestsQueue.remove();
-            Call<Stop> call = service.performedActionNotify(storableAction.getRouteId(), storableAction.getPerformActionWrapper());
+            Call<Stop> call = service.notifyActionPerformed(storableAction.getRouteId(), storableAction.getPerformActionWrapper());
             call.enqueue(new RetryActionCallback<>(call, storableAction.getRouteId(), storableAction.getPerformActionWrapper()));
             resendAction(service);
         }

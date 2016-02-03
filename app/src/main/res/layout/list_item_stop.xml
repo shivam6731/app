@@ -58,11 +58,10 @@
                 android:id="@+id/checkbox_done"
                 style="@style/TextView.Dark"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/check_box_done_height"
                 android:layout_centerHorizontal="true"
                 android:text="@string/stop_list_done"/>
         </RelativeLayout>
-
 
     </LinearLayout>
 

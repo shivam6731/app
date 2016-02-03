@@ -26,6 +26,7 @@ import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
@@ -83,11 +84,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         setActionBarDrawerToggle(initToolbar());
 
         if (savedInstanceState == null) {
-            fragmentManager.
-                beginTransaction().
-                add(R.id.container, LoadDataFragment.newInstance()).
-                commit();
-
+            openLoadFragment();
             fragmentManager.
                 beginTransaction().
                 add(R.id.left_drawer, SlideMenuFragment.newInstance()).
@@ -174,23 +171,22 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             case EMPTY_LIST:
                 break;
             case VIEWING:
-                apiExecutor.performAction(Action.ON_THE_WAY);
+                apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
                 setTaskTitle();
                 break;
             case ARRIVING:
-                openRouteStopActionList();
-                apiExecutor.performAction(Action.ARRIVED);
+                openRouteStopActionList(storageManager.getCurrentStop());
+                apiExecutor.notifyActionPerformed(Action.ARRIVED);
                 break;
             case ACTION_LIST:
-                apiExecutor.performAction(Action.COMPLETED);
-                openRouteStopDetails();
+                apiExecutor.notifyActionPerformed(Action.COMPLETED);
                 break;
         }
     }
 
     private void setTaskTitle() {
         userStatus = UserStatus.ARRIVING;
-        int title = storageManager.getStopList().get(0).getTask() == RouteStopTaskStatus.DELIVER ?
+        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
         updateActionButton(true, true, title, R.drawable.arrow_swipe);
     }
@@ -277,10 +273,10 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
-        ScheduleListFragment fragment = ScheduleListFragment.newInstance();
+        ScheduleListFragment fragment = ScheduleListFragment.newInstance(isActionButtonVisible());
         fragmentManager.
             beginTransaction().
-            replace(R.id.container, fragment).
+            add(R.id.container, fragment).
             addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
 
@@ -310,6 +306,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
+    public void changeActionButtonVisibility(boolean b) {
+        setActionButtonVisibility(b);
+    }
+
+    @Override
     public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         userStatus = UserStatus.CLOCK_IN;
         fragmentManager.
@@ -333,11 +334,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openRouteStopDetails() {
+    public void openRouteStopDetails(Stop stop) {
         userStatus = UserStatus.VIEWING;
-        apiExecutor.performAction(Action.VIEWED);
+        apiExecutor.notifyActionPerformed(Action.VIEWED);
 
-        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance();
+        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
         locationChangedCallback = fragment;
 
         fragmentManager.
@@ -345,23 +346,31 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container, fragment).
             commit();
 
-        if (storageManager.getStopList() != null && storageManager.getStopList().size() > 0) {
+        if (storageManager.getCurrentStop() != null) {
             updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
         }
     }
 
     @Override
-    public void openRouteStopActionList() {
+    public void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
         fragmentManager.
             beginTransaction().
-            add(R.id.container,
-                RouteStopActionListFragment.newInstance()).
+            replace(R.id.container,
+                RouteStopActionListFragment.newInstance(stop)).
             commit();
 
-        int title = storageManager.getStopList().get(0).getTask() == RouteStopTaskStatus.DELIVER ?
+        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
         updateActionButton(true, false, title, R.drawable.arrow_swipe);
+    }
+
+    @Override
+    public void openLoadFragment() {
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container, LoadDataFragment.newInstance()).
+            commit();
     }
 
     private void updateActionButton(
@@ -389,7 +398,14 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
         }
         btnAction.setText(textResLink);
+    }
 
+    private boolean isActionButtonVisible() {
+        return layoutAction.getVisibility() == View.VISIBLE;
+    }
+
+    private void setActionButtonVisibility(boolean isVisible) {
+        layoutAction.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
 

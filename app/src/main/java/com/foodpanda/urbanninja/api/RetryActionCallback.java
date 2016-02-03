@@ -16,7 +16,9 @@ public class RetryActionCallback<T extends Stop> extends BaseCallback<T> {
     private int routeId;
     private PerformActionWrapper performActionWrapper;
 
-    public RetryActionCallback(Call<T> call, int routeId, PerformActionWrapper performActionWrapper) {
+    public RetryActionCallback(Call<T> call,
+                               int routeId,
+                               PerformActionWrapper performActionWrapper) {
         super(null, call);
         this.routeId = routeId;
         this.performActionWrapper = performActionWrapper;

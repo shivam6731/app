@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.RouteStopAction;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter> {
     private MainActivityCallback mainActivityCallback;
+    private Stop currentStop;
 
     private List<RouteStopAction> list = new LinkedList<>();
 
@@ -23,8 +26,11 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
         mainActivityCallback = (MainActivityCallback) context;
     }
 
-    public static RouteStopActionListFragment newInstance() {
+    public static RouteStopActionListFragment newInstance(Stop stop) {
         RouteStopActionListFragment fragment = new RouteStopActionListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.BundleKeys.STOP, stop);
+        fragment.setArguments(bundle);
 
         return fragment;
     }
@@ -32,7 +38,10 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (int i = 0; i < 5; i++) {
+        currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+        //TODO this is mock data and it would be replaced with real data in the next PR
+        //related to the route actions  
+        for (int i = 0; i < 2; i++) {
             list.add(new RouteStopAction());
         }
     }

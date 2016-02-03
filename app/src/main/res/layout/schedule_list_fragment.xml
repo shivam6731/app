@@ -8,7 +8,7 @@
     <ImageView
         style="@style/ImageView"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ico_country_big"/>
+        android:src="@drawable/ico_schedule"/>
 
     <com.foodpanda.urbanninja.ui.widget.MontserratTextView
         style="@style/TextView.Title"

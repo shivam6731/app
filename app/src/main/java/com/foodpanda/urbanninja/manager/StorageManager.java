@@ -132,6 +132,24 @@ public class StorageManager implements Managable {
         return stopList;
     }
 
+    public Stop getCurrentStop() {
+        if (getStopList() == null || getStopList().isEmpty()) {
+            return null;
+        } else {
+            return getStopList().get(0);
+        }
+    }
+
+    public Stop removeCurrentStop() {
+        if (getStopList() == null || getStopList().isEmpty()) {
+            return null;
+        }
+        Stop stop = getStopList().remove(0);
+        storeStopList(getStopList());
+
+        return stop;
+    }
+
     public boolean storeActionApiRequests(Queue<StorableAction> requestsQueue) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         String json = gson.toJson(requestsQueue);
