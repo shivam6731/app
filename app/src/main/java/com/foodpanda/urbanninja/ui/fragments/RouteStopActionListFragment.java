@@ -18,7 +18,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     private MainActivityCallback mainActivityCallback;
     private Stop currentStop;
 
-    private List<RouteStopAction> list = new LinkedList<>();
+    private List<RouteStopActivity> list = new LinkedList<>();
 
     @Override
     public void onAttach(Context context) {
