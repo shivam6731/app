@@ -23,6 +23,8 @@ public class Constants {
         public static final String VEHICLE_DELIVERY_AREA_RIDER_BUNDLE = "VehicleDeliveryAreaRiderBundle";
         public static final String SCHEDULE_WRAPPER = "ScheduleWrapper";
         public static final String LOCATION = "Location";
+        public static final String STOP = "Stop";
+        public static final String VISIBILITY = "Visibility";
 
     }
 }

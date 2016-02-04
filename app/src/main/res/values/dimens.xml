@@ -32,4 +32,7 @@
 
     <!--Map -->
     <dimen name="map_height">180dp</dimen>
+
+    <!--CheckBox -->
+    <dimen name="check_box_done_height">48dp</dimen>
 </resources>

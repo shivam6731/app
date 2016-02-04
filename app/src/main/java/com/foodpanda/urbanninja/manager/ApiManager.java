@@ -217,12 +217,9 @@ public class ApiManager implements Managable {
         });
     }
 
-    public void notifyActionPerformed(
-        int routeId,
-        Action action
-    ) {
+    public void notifyActionPerformed(int routeId, Action action) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(action, new DateTime());
-        Call<Stop> call = service.performedActionNotify(routeId, performActionWrapper);
+        Call<Stop> call = service.notifyActionPerformed(routeId, performActionWrapper);
         call.enqueue(new RetryActionCallback<>(call, routeId, performActionWrapper));
     }
 

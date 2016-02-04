@@ -115,9 +115,11 @@ public class LocationService extends Service implements
         disconnect();
         super.onDestroy();
     }
+
     /**
      * After calling {@link #requestLocationUpdates()} will be triggered
      * any time when rider location would be changed
+     *
      * @param location new rider location from googleApi
      */
     @Override
@@ -234,7 +236,7 @@ public class LocationService extends Service implements
     }
 
     private void sendRiderLocation() {
-        if (vehicleId == 0 && locationList.isEmpty()) {
+        if (vehicleId == 0 || locationList.isEmpty()) {
             return;
         }
         apiManager.sendLocation(

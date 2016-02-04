@@ -45,7 +45,7 @@ public interface LogisticsService {
     Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
 
     @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
-    Call<Stop> performedActionNotify(
+    Call<Stop> notifyActionPerformed(
         @Path(ApiTag.ROUTE_STOP_ID_TAG) int routeId,
         @Body PerformActionWrapper performActionWrapper);
 

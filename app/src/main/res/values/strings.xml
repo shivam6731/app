@@ -41,7 +41,7 @@
 
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
-    <string name="task_details_time_passed">MINUTES PASSED</string>
+    <string name="task_details_time_passed">MINUTES AGO</string>
     <string name="task_details_go_to">Go to</string>
     <string name="task_details_to">to</string>
     <string name="task_details_pick_up"><b>pickup</b></string>

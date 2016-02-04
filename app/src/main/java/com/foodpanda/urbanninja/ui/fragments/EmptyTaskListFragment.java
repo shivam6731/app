@@ -67,6 +67,16 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+                apiManager.getRoute(
+                    vehicleDeliveryAreaRiderBundle.getRider().getId(),
+                    EmptyTaskListFragment.this
+                );
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -82,8 +92,8 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     public void onSuccess(RouteWrapper routeWrapper) {
         storageManager.storeStopList(routeWrapper.getStops());
         swipeRefreshLayout.setRefreshing(false);
-        if (storageManager.getStopList().size() > 0) {
-            mainActivityCallback.openRouteStopDetails();
+        if (!storageManager.getStopList().isEmpty()) {
+            mainActivityCallback.openRouteStopDetails(storageManager.getCurrentStop());
         }
     }
 

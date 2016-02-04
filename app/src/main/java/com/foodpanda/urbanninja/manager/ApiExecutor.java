@@ -46,6 +46,58 @@ public class ApiExecutor {
         getCurrentRider();
     }
 
+    public void getRoute() {
+        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
+            @Override
+            public void onSuccess(RouteWrapper routeWrapper) {
+                storageManager.storeStopList(routeWrapper.getStops());
+                openCurrentRouteFragment();
+            }
+
+            @Override
+            public void onError(ErrorMessage errorMessage) {
+                activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+            }
+        });
+    }
+
+    public void clockIn() {
+        if (scheduleWrapper != null)
+            apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
+                @Override
+                public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                    ApiExecutor.this.scheduleWrapper = scheduleWrapper;
+                    getRoute();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                }
+            });
+    }
+
+    public void notifyActionPerformed(final Action action) {
+        int routeId = storageManager.getCurrentStop().getId();
+        apiManager.notifyActionPerformed(routeId, action);
+
+        if (action == Action.COMPLETED) {
+            finishWithCurrentRoute();
+        }
+    }
+
+    public void startLocationService() {
+        if (vehicleDeliveryAreaRiderBundle != null &&
+            vehicleDeliveryAreaRiderBundle.getRider() != null) {
+            Intent intent = new Intent(activity, LocationService.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constants.BundleKeys.VEHICLE_ID, vehicleDeliveryAreaRiderBundle.getVehicle().getId());
+            intent.putExtras(bundle);
+
+            activity.startService(intent);
+        }
+    }
+
     private void getCurrentRider() {
         apiManager.getCurrentRider(
             new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
@@ -94,58 +146,6 @@ public class ApiExecutor {
             });
     }
 
-    private void getRoute() {
-        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
-            @Override
-            public void onSuccess(RouteWrapper routeWrapper) {
-                storageManager.storeStopList(routeWrapper.getStops());
-                if (storageManager.getStopList().size() == 0) {
-                    mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
-                } else {
-                    mainActivityCallback.openRouteStopDetails();
-                }
-            }
-
-            @Override
-            public void onError(ErrorMessage errorMessage) {
-                activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-            }
-        });
-    }
-
-    public void clockIn() {
-        if (scheduleWrapper != null)
-            apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
-                @Override
-                public void onSuccess(ScheduleWrapper scheduleWrapper) {
-                    ApiExecutor.this.scheduleWrapper = scheduleWrapper;
-                    getRoute();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                }
-            });
-    }
-
-    public void performAction(Action action) {
-        int routeId = storageManager.getStopList().get(0).getId();
-        apiManager.notifyActionPerformed(routeId, action);
-    }
-
-    public void startLocationService() {
-        if (vehicleDeliveryAreaRiderBundle != null &&
-            vehicleDeliveryAreaRiderBundle.getRider() != null) {
-            Intent intent = new Intent(activity, LocationService.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt(Constants.BundleKeys.VEHICLE_ID, vehicleDeliveryAreaRiderBundle.getVehicle().getId());
-            intent.putExtras(bundle);
-
-            activity.startService(intent);
-        }
-    }
-
     private void launchServiceOrAskForPermissions() {
         if (ContextCompat.checkSelfPermission(activity,
             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -171,6 +171,19 @@ public class ApiExecutor {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, scheduleWrapper.getTimeWindow().getEndAt().getMillis(), pendingIntent);
+    }
+
+    private void openCurrentRouteFragment() {
+        if (storageManager.getStopList().isEmpty()) {
+            mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
+        } else {
+            mainActivityCallback.openRouteStopDetails(storageManager.getCurrentStop());
+        }
+    }
+
+    private void finishWithCurrentRoute() {
+        storageManager.removeCurrentStop();
+        openCurrentRouteFragment();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -10,9 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,23 +44,22 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     private GoogleMap googleMap;
     private MapView mapView;
 
-    private StorageManager storageManager;
-
     private Stop stop;
     private Location location;
 
-    public static RouteStopDetailsFragment newInstance() {
-        return new RouteStopDetailsFragment();
+    public static RouteStopDetailsFragment newInstance(Stop stop) {
+        RouteStopDetailsFragment routeStopDetailsFragment = new RouteStopDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.BundleKeys.STOP, stop);
+        routeStopDetailsFragment.setArguments(bundle);
+
+        return routeStopDetailsFragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storageManager = App.STORAGE_MANAGER;
-
-        if (storageManager.getStopList().size() > 0) {
-            stop = storageManager.getStopList().get(0);
-        }
+        stop = getArguments().getParcelable(Constants.BundleKeys.STOP);
     }
 
     @Nullable
@@ -89,6 +89,8 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
                 RouteStopDetailsFragment.this.googleMap = googleMap;
                 RouteStopDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 RouteStopDetailsFragment.this.googleMap.setMyLocationEnabled(false);
+                RouteStopDetailsFragment.this.location = null;
+                getLastKnownLocation();
             }
         });
 
@@ -116,6 +118,16 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     private void setData() {
         txtEndPoint.setText(stop.getAddress());
         txtDetails.setText(detailsText());
+    }
+
+    private void getLastKnownLocation() {
+        LocationManager locationManager = (LocationManager) activity.getSystemService
+            (Context.LOCATION_SERVICE);
+        Location lastLocation = locationManager.getLastKnownLocation
+            (LocationManager.PASSIVE_PROVIDER);
+        if (lastLocation != null) {
+            drawMarkers(lastLocation);
+        }
     }
 
     private Spanned detailsText() {
@@ -188,7 +200,7 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     private void drawMarkers(Location location) {
-        if (googleMap == null) {
+        if (googleMap == null || !isAdded()) {
             return;
         }
 
