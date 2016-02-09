@@ -12,7 +12,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 
 public class SlideMenuFragment extends BaseFragment {
-    private SlideMenuCallback mainActivityCallback;
+    private SlideMenuCallback slideMenuCallback;
 
     public static SlideMenuFragment newInstance() {
         SlideMenuFragment loginFragment = new SlideMenuFragment();
@@ -23,7 +23,7 @@ public class SlideMenuFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (SlideMenuCallback) context;
+        slideMenuCallback = (SlideMenuCallback) context;
     }
 
     @Nullable
@@ -43,7 +43,7 @@ public class SlideMenuFragment extends BaseFragment {
         view.findViewById(R.id.btn_logout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivityCallback.onLogoutClicked();
+                slideMenuCallback.onLogoutClicked();
             }
         });
         view.findViewById(R.id.btn_profile).setOnClickListener(new View.OnClickListener() {
@@ -61,7 +61,7 @@ public class SlideMenuFragment extends BaseFragment {
         view.findViewById(R.id.btn_schedule).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivityCallback.onScheduleClicked();
+                slideMenuCallback.onScheduleClicked();
             }
         });
     }

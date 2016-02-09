@@ -8,7 +8,6 @@
     <ImageView
         android:id="@+id/image_top_logo"
         style="@style/ImageView"
-        android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_margin="0dp"
         android:src="@drawable/logo"/>

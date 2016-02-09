@@ -11,11 +11,12 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
+import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -23,11 +24,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
     private MainActivityCallback mainActivityCallback;
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
+    private Stop stop;
 
-    public RouteStopActionAdapter(List<RouteStopActivity> objects, Context context, MainActivityCallback mainActivityCallback) {
-        super(objects, context);
+    public RouteStopActionAdapter(Stop stop, Context context, MainActivityCallback mainActivityCallback) {
+        super(stop.getActivities(), context);
         this.mainActivityCallback = mainActivityCallback;
-        for (RouteStopActivity routeStopActivity : objects) {
+        this.stop = stop;
+        for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
         }
     }
@@ -66,23 +69,38 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     //Check if all task are done and if it's true enable bottom main action button
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
-                    //TODO replace title depends on type of route pickUp or delivery
-                    mainActivityCallback.enableActionButton(isAllChecked(), R.string.action_at_picked_up);
+                    if (stop != null) {
+                        mainActivityCallback.enableActionButton(isAllChecked(),
+                            stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
+                    }
                 }
             });
+
             switch (routeStopActivity.getType()) {
                 case PICKUP:
-                case DELIVER:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up));
                     viewHolder.imageSelected.setImageResource(R.drawable.ico_collect);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect));
-                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_items, routeStopActivity.getValue()));
+                    break;
+                case DELIVER:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver));
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_collect);
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_items, routeStopActivity.getValue()));
                     break;
                 case PAY_RESTAURANT:
-                case PREPARE_CHANGE:
-                case COLLECT:
                     viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay));
-                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_items, routeStopActivity.getValue()));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    break;
+                case PREPARE_CHANGE:
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    break;
+                case COLLECT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
                     break;
 
             }
@@ -90,7 +108,10 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
         } else if (holder instanceof ViewHolderHeader) {
             ViewHolderHeader viewHolder = (ViewHolderHeader) holder;
-            viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_header, "dasdasd", "asdasdas"));
+            viewHolder.txtName.setText(
+                context.getResources().getString(R.string.route_action_header,
+                    String.valueOf(stop.getId()),
+                    stop.getName()));
             viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_easy_peasy));
         }
 
