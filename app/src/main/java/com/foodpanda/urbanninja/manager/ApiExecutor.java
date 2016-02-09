@@ -145,7 +145,7 @@ public class ApiExecutor {
     }
 
     private void launchServiceOrAskForPermissions() {
-        if (activity.isPermissionGranted()) {
+        if (!activity.isPermissionGranted()) {
 
             ActivityCompat.requestPermissions(activity,
                 PERMISSIONS_ARRAY,
