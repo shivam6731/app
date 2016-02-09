@@ -38,6 +38,7 @@
 
     <style name="TextView.Dark.Multiline">
         <item name="android:singleLine">false</item>
+        <item name="android:layout_margin">@null</item>
     </style>
 
     <style name="TextView.Title">

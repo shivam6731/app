@@ -18,6 +18,7 @@
     <dimen name="margin_large">15dp</dimen>
     <dimen name="margin_large_button">25dp</dimen>
     <dimen name="margin_button_side">40dp</dimen>
+    <dimen name="margin_left_description">80dp</dimen>
 
     <!--Padding -->
     <dimen name="padding_tiny_tiny">1dp</dimen>

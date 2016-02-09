@@ -46,7 +46,10 @@
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_stop_description"
-            style="@style/TextView.Dark.Multiline"/>
+            style="@style/TextView.Dark.Multiline"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_left_description"
+            android:layout_marginTop="@dimen/margin_small"/>
 
         <RelativeLayout
             android:id="@+id/layout_details"
