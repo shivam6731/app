@@ -1,7 +1,10 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -35,5 +38,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             default:
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean isPermissionGranted() {
+        return ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }

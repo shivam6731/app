@@ -121,12 +121,14 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     private void getLastKnownLocation() {
-        LocationManager locationManager = (LocationManager) activity.getSystemService
-            (Context.LOCATION_SERVICE);
-        Location lastLocation = locationManager.getLastKnownLocation
-            (LocationManager.PASSIVE_PROVIDER);
-        if (lastLocation != null) {
-            drawMarkers(lastLocation);
+        if (activity.isPermissionGranted()) {
+            LocationManager locationManager = (LocationManager) activity.getSystemService
+                (Context.LOCATION_SERVICE);
+            Location lastLocation = locationManager.getLastKnownLocation
+                (LocationManager.PASSIVE_PROVIDER);
+            if (lastLocation != null) {
+                drawMarkers(lastLocation);
+            }
         }
     }
 

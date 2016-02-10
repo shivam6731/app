@@ -75,4 +75,15 @@
 
     <!-- GCM -->
     <string name="gcm_defaultSenderId">975393205483</string>
+
+    <!-- Route Actions  -->
+    <string name="route_action_items">%1$s Items</string>
+    <string name="route_action_currency">%1$s $</string>
+    <string name="route_action_pay">Pay</string>
+    <string name="route_action_pick_up">Pick up</string>
+    <string name="route_action_change">Prepare Change</string>
+    <string name="route_action_deliver">Deliver</string>
+    <string name="route_action_collect">Collect</string>
+    <string name="route_action_header">Order %1$s \nfor %2$s</string>
+    <string name="route_action_easy_peasy">Easy Peasyt</string>
 </resources>

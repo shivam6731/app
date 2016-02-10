@@ -1,12 +1,13 @@
 package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 public class Stop implements ParcelableModel {
     private int id;
@@ -23,10 +24,7 @@ public class Stop implements ParcelableModel {
     private String comment;
     private String address;
     private RouteStopTaskStatus task;
-
-    public Stop() {
-    }
-
+    private List<RouteStopActivity> activities;
 
     @Override
     public int describeContents() {
@@ -49,6 +47,10 @@ public class Stop implements ParcelableModel {
         dest.writeString(this.comment);
         dest.writeString(this.address);
         dest.writeInt(this.task == null ? -1 : this.task.ordinal());
+        dest.writeTypedList(activities);
+    }
+
+    public Stop() {
     }
 
     protected Stop(Parcel in) {
@@ -68,9 +70,10 @@ public class Stop implements ParcelableModel {
         this.address = in.readString();
         int tmpTask = in.readInt();
         this.task = tmpTask == -1 ? null : RouteStopTaskStatus.values()[tmpTask];
+        this.activities = in.createTypedArrayList(RouteStopActivity.CREATOR);
     }
 
-    public static final Parcelable.Creator<Stop> CREATOR = new Parcelable.Creator<Stop>() {
+    public static final Creator<Stop> CREATOR = new Creator<Stop>() {
         public Stop createFromParcel(Parcel source) {
             return new Stop(source);
         }
@@ -134,5 +137,9 @@ public class Stop implements ParcelableModel {
 
     public RouteStopTaskStatus getTask() {
         return task;
+    }
+
+    public List<RouteStopActivity> getActivities() {
+        return activities;
     }
 }

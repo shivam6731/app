@@ -10,25 +10,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.model.RouteStopAction;
+import com.foodpanda.urbanninja.model.RouteStopActivity;
+import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 
-public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, SimpleBaseAdapter.BaseViewHolder> {
+public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
     private MainActivityCallback mainActivityCallback;
-    private LinkedHashMap<RouteStopAction, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
+    private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
+    private Stop stop;
 
-    public RouteStopActionAdapter(List<RouteStopAction> objects, Context context, MainActivityCallback mainActivityCallback) {
-        super(objects, context);
+    public RouteStopActionAdapter(Stop stop, Context context, MainActivityCallback mainActivityCallback) {
+        super(stop.getActivities(), context);
         this.mainActivityCallback = mainActivityCallback;
-        for (RouteStopAction routeStopAction : objects) {
-            checkedActionsHashMap.put(routeStopAction, false);
+        this.stop = stop;
+        for (RouteStopActivity routeStopActivity : stop.getActivities()) {
+            checkedActionsHashMap.put(routeStopActivity, false);
         }
     }
 
@@ -59,19 +62,57 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, S
     public void onBindViewHolder(SimpleBaseAdapter.BaseViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
-            final RouteStopAction routeStopAction = getItem(position);
+            final RouteStopActivity routeStopActivity = getItem(position);
             viewHolder.expandableLayout.setTag(holder);
             viewHolder.checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     //Check if all task are done and if it's true enable bottom main action button
-                    checkedActionsHashMap.put(routeStopAction, isChecked);
-                    //TODO replace title depends on type of route pickUp or delivery
-                    mainActivityCallback.enableActionButton(isAllChecked(), R.string.action_at_picked_up);
+                    checkedActionsHashMap.put(routeStopActivity, isChecked);
+                    if (stop != null) {
+                        mainActivityCallback.enableActionButton(isAllChecked(),
+                            stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
+                    }
                 }
             });
+
+            switch (routeStopActivity.getType()) {
+                case PICKUP:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up));
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_collect);
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_items, routeStopActivity.getValue()));
+                    break;
+                case DELIVER:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver));
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_collect);
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_items, routeStopActivity.getValue()));
+                    break;
+                case PAY_RESTAURANT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    break;
+                case PREPARE_CHANGE:
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    break;
+                case COLLECT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect));
+                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    break;
+
+            }
+            viewHolder.txtDescription.setText(routeStopActivity.getDescription());
+
         } else if (holder instanceof ViewHolderHeader) {
             ViewHolderHeader viewHolder = (ViewHolderHeader) holder;
+            viewHolder.txtName.setText(
+                context.getResources().getString(R.string.route_action_header,
+                    String.valueOf(stop.getId()),
+                    stop.getName()));
+            viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_easy_peasy));
         }
 
     }
@@ -127,8 +168,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, S
     }
 
     private boolean isAllChecked() {
-        for (RouteStopAction routeStopAction : objects) {
-            if (!checkedActionsHashMap.get(routeStopAction)) {
+        for (RouteStopActivity routeStopActivity : objects) {
+            if (!checkedActionsHashMap.get(routeStopActivity)) {
                 return false;
             }
         }
@@ -142,7 +183,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopAction, S
     }
 
     @Override
-    public RouteStopAction getItem(int position) {
+    public RouteStopActivity getItem(int position) {
         return objects.get(position - 1);
     }
 }
