@@ -4,18 +4,41 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.enums.PushNotificationType;
+import com.foodpanda.urbanninja.ui.activity.LoginActivity;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 
 public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
+    //Set interval update for LED light when notification received
+    //See documentation link
+    //http://developer.android.com/intl/ru/reference/android/app/Notification.Builder.html#setLights(int, int, int)
+    private static final int LED_UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+    //Set the vibration pattern to use. See vibrate(long[], int) for a discussion of the pattern parameter.
+    //See documentation link
+    //http://developer.android.com/reference/android/app/Notification.Builder.html#setVibrate(long[])
+    private static final long[] VIBRATION_PATTERN = {1000, 200, 800, 200, 600, 200, 400, 200, 200, 1000, 100, 200, 50, 200, 50, 200, 50,
+        200, 500, 1000, 200, 800, 200, 600, 200, 400, 200, 200, 1000};
+    private StorageManager storageManager;
 
     private static final String TAG = GcmListenerService.class.getSimpleName();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        storageManager = App.STORAGE_MANAGER;
+    }
 
     /**
      * Called when message is received.
@@ -26,9 +49,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
         Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
 
         /**
          * Production applications would usually process the message here.
@@ -41,28 +62,45 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(message);
+        showNotification(PushNotificationType.valueOf(data.getString("type")));
     }
 
     /**
      * Create and show a simple notification containing the received GCM message.
      *
-     * @param message GCM message received.
+     * @param pushNotificationType type of notification .
      */
-    private void sendNotification(String message) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+    private void showNotification(@NonNull PushNotificationType pushNotificationType) {
+        Intent intent;
+        if (storageManager.getToken() != null) {
+            intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE, pushNotificationType);
+        } else {
+            intent = new Intent(this, LoginActivity.class);
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
             PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+            //TODO replace with notification icon
             .setSmallIcon(R.drawable.ico_collect)
-            .setContentTitle("GCM Message")
-            .setContentText(message)
+            .setContentTitle(pushNotificationType.toString())
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent);
+
+        // Vibration
+        notificationBuilder.setVibrate(VIBRATION_PATTERN);
+
+        // LED
+        notificationBuilder.setLights(Color.RED, LED_UPDATE_INTERVAL_IN_MILLISECONDS, LED_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sound
+        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sonidolargo);
+        notificationBuilder.setSound(sound);
 
         NotificationManager notificationManager =
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

@@ -75,6 +75,9 @@
 
     <!-- GCM -->
     <string name="gcm_defaultSenderId">975393205483</string>
+    <string name="push_notification_schedule">Schedule Updated</string>
+    <string name="push_notification_route">Route Updated</string>
+    <string name="push_notification_default">Message</string>
 
     <!-- Route Actions  -->
     <string name="route_action_items">%1$s Items</string>

@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
@@ -29,6 +30,7 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private DrawerLayout drawerLayout;
     private Button btnAction;
     private View layoutAction;
+    private ProgressBar progressBar;
 
     private StorageManager storageManager;
     private ApiExecutor apiExecutor;
@@ -150,6 +153,23 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         registerReceiver(locationChangeReceiver, new IntentFilter(Constants.LOCATION_UPDATED));
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        PushNotificationType pushNotificationType = (PushNotificationType)
+            intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE);
+        showProgress();
+
+        switch (pushNotificationType) {
+            case SCHEDULE_UPDATED:
+                apiExecutor.getRidersSchedule();
+                break;
+            case ROUTE_UPDATED:
+                apiExecutor.getRoute();
+                break;
+        }
+    }
+
     private void setActionButton() {
         layoutAction = findViewById(R.id.layout_action);
         btnAction = (Button) findViewById(R.id.btn_action);
@@ -161,6 +181,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             }
         });
         updateActionButton(false, false, 0);
+        progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
+    }
+
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
     }
 
     private void changeStatus() {
