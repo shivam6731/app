@@ -28,7 +28,7 @@ public class ApiExecutor {
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION};
 
-    private final BaseActivity activity;
+    private final MainActivity activity;
     private final ApiManager apiManager;
     private final StorageManager storageManager;
     private final MainActivityCallback mainActivityCallback;
@@ -50,11 +50,13 @@ public class ApiExecutor {
             public void onSuccess(RouteWrapper routeWrapper) {
                 storageManager.storeStopList(routeWrapper.getStops());
                 openCurrentRouteFragment();
+                activity.hideProgress();
             }
 
             @Override
             public void onError(ErrorMessage errorMessage) {
                 activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                activity.hideProgress();
             }
         });
     }
@@ -66,11 +68,13 @@ public class ApiExecutor {
                 public void onSuccess(ScheduleWrapper scheduleWrapper) {
                     ApiExecutor.this.scheduleWrapper = scheduleWrapper;
                     getRoute();
+                    activity.hideProgress();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    activity.hideProgress();
                 }
             });
     }
@@ -96,23 +100,7 @@ public class ApiExecutor {
         }
     }
 
-    private void getCurrentRider() {
-        apiManager.getCurrentRider(
-            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
-                @Override
-                public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                    ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
-                    getRidersSchedule();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                }
-            });
-    }
-
-    private void getRidersSchedule() {
+    public void getRidersSchedule() {
         apiManager.getCurrentSchedule(
             new BaseApiCallback<ScheduleCollectionWrapper>() {
 
@@ -135,11 +123,31 @@ public class ApiExecutor {
                         mainActivityCallback.openReadyToWork(new ScheduleWrapper());
                     }
                     launchServiceOrAskForPermissions();
+                    activity.hideProgress();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    activity.hideProgress();
+                }
+            });
+    }
+
+    private void getCurrentRider() {
+        apiManager.getCurrentRider(
+            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
+                @Override
+                public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                    ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
+                    getRidersSchedule();
+                    activity.hideProgress();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    activity.hideProgress();
                 }
             });
     }
