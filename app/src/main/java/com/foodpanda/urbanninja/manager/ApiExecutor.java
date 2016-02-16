@@ -19,7 +19,6 @@ import com.foodpanda.urbanninja.api.receiver.ScheduleFinishedReceiver;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 
@@ -48,7 +47,6 @@ public class ApiExecutor {
         apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
             @Override
             public void onSuccess(RouteWrapper routeWrapper) {
-                storageManager.storeStopList(routeWrapper.getStops());
                 openCurrentRouteFragment();
                 activity.hideProgress();
             }
@@ -79,12 +77,26 @@ public class ApiExecutor {
             });
     }
 
+    /**
+     * Notify server if any kind of action with route was happened
+     * and store this action to the map to save up to date status for each route
+     * <p/>
+     * Moreover this method should work offline and in this case
+     * rider will be redirected to the next route or empty route list fragment
+     * as soon as we finish with one particular route.
+     *
+     * @param action that should be sent to the server side
+     */
     public void notifyActionPerformed(final Action action) {
-        int routeId = storageManager.getCurrentStop().getId();
-        apiManager.notifyActionPerformed(routeId, action);
+        if (storageManager.getCurrentStop() != null) {
+            long routeId = storageManager.getCurrentStop().getId();
+            storageManager.storeAction(routeId, action);
 
-        if (action == Action.COMPLETED) {
-            finishWithCurrentRoute();
+            apiManager.notifyActionPerformed(routeId, action);
+
+            if (action == Action.COMPLETED) {
+                finishWithCurrentRoute();
+            }
         }
     }
 
@@ -180,7 +192,7 @@ public class ApiExecutor {
         if (storageManager.getStopList().isEmpty()) {
             mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
         } else {
-            mainActivityCallback.openRouteStopDetails(storageManager.getCurrentStop());
+            mainActivityCallback.openRoute(storageManager.getCurrentStop());
         }
     }
 

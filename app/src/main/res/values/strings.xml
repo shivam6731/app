@@ -66,6 +66,7 @@
     <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
     <string name="action_ready_shift_expired">Your current shift has already finished</string>
     <string name="route_stop_details_my_location">My Location</string>
+    <string name="route_error">This route status is not supported</string>
 
     <!-- Stop list -->
     <string name="stop_list_done">Done</string>

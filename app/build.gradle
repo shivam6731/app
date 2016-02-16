@@ -23,6 +23,10 @@ android {
     }
 }
 
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -36,4 +40,10 @@ dependencies {
     compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile 'joda-time:joda-time:2.3'
     compile 'com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.2.0'
+
+    // Test
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    // We're using the SNAPSHOT since 3.0 does not support Android SDK v23 yet, switch to stable when 3.1 released
+    testCompile "org.robolectric:robolectric:3.1-SNAPSHOT"
 }

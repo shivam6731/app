@@ -13,12 +13,14 @@ import retrofit.Call;
  * @param <T> extends list of {@link Stop}
  */
 public class RetryActionCallback<T extends Stop> extends BaseCallback<T> {
-    private int routeId;
+    private long routeId;
     private PerformActionWrapper performActionWrapper;
 
-    public RetryActionCallback(Call<T> call,
-                               int routeId,
-                               PerformActionWrapper performActionWrapper) {
+    public RetryActionCallback(
+        Call<T> call,
+        long routeId,
+        PerformActionWrapper performActionWrapper
+    ) {
         super(null, call);
         this.routeId = routeId;
         this.performActionWrapper = performActionWrapper;

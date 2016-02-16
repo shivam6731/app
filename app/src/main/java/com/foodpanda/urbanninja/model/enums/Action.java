@@ -6,6 +6,8 @@ public enum Action {
     ARRIVED,
     BROKE,
     LATE,
-    COMPLETED
-
+    COMPLETED,
+    CANCELED,
+    UNASSIGNED,
+    ASSIGNED
 }

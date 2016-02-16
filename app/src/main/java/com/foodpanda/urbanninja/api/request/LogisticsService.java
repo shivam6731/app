@@ -46,7 +46,7 @@ public interface LogisticsService {
 
     @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
     Call<Stop> notifyActionPerformed(
-        @Path(ApiTag.ROUTE_STOP_ID_TAG) int routeId,
+        @Path(ApiTag.ROUTE_STOP_ID_TAG) long routeId,
         @Body PerformActionWrapper performActionWrapper);
 
     @PUT(ApiTag.REGISTRY_PUSH_NOTIFICATION)

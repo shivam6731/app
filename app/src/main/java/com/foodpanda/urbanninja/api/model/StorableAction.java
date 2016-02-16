@@ -4,9 +4,9 @@ import com.foodpanda.urbanninja.model.Model;
 
 public class StorableAction implements Model {
     private PerformActionWrapper performActionWrapper;
-    private int routeId;
+    private long routeId;
 
-    public StorableAction(PerformActionWrapper performActionWrapper, int routeId) {
+    public StorableAction(PerformActionWrapper performActionWrapper, long routeId) {
         this.performActionWrapper = performActionWrapper;
         this.routeId = routeId;
     }
@@ -15,7 +15,7 @@ public class StorableAction implements Model {
         return performActionWrapper;
     }
 
-    public int getRouteId() {
+    public long getRouteId() {
         return routeId;
     }
 }

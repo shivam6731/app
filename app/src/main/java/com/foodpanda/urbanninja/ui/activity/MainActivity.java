@@ -363,9 +363,30 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void openRouteStopDetails(Stop stop) {
-        userStatus = UserStatus.VIEWING;
-        apiExecutor.notifyActionPerformed(Action.VIEWED);
+    public void openRoute(Stop stop) {
+        switch (stop.getStatus()) {
+            case UNASSIGNED:
+            case ASSIGNED:
+            case VIEWED:
+                userStatus = UserStatus.VIEWING;
+                apiExecutor.notifyActionPerformed(Action.VIEWED);
+                updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
+                openRouteStopDetails(stop);
+                break;
+            case ON_THE_WAY:
+                setTaskTitle();
+                openRouteStopDetails(stop);
+                break;
+            case ARRIVED:
+                openRouteStopActionList(stop);
+                break;
+            default:
+                Toast.makeText(this, R.string.route_error, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private void openRouteStopDetails(Stop stop) {
 
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
         locationChangedCallback = fragment;
@@ -375,12 +396,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             replace(R.id.container, fragment).
             commit();
 
-        if (storageManager.getCurrentStop() != null) {
-            updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
-        }
     }
 
-    @Override
     public void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
         fragmentManager.

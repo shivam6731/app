@@ -14,15 +14,18 @@ import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
+import com.foodpanda.urbanninja.model.enums.Action;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 
@@ -32,7 +35,8 @@ public class StorageManager implements Managable {
     private Gson gson;
 
     private Token token;
-    private List<Stop> stopList = new ArrayList<>();
+    private List<Stop> stopList = new LinkedList<>();
+    private Map<Long, Action> stopActionMap = new LinkedHashMap<>();
 
     @Override
     public void init(Context context) {
@@ -41,6 +45,7 @@ public class StorageManager implements Managable {
         gson = new GsonBuilder().
             registerTypeAdapter(DateTime.class, new DateTimeDeserializer()).
             create();
+        setActionMap();
     }
 
     public boolean storeToken(Token token) {
@@ -113,39 +118,38 @@ public class StorageManager implements Managable {
         return gson.fromJson(json, Country.class);
     }
 
-    public boolean storeStopList(List<Stop> stopList) {
-        this.stopList = stopList;
+    public void storeStopList(List<Stop> stopList) {
+        this.stopList = getUpToDateList(stopList);
+        cleanActionMap();
+    }
+
+    public List<Stop> getStopList() {
+        return stopList == null ? new LinkedList<Stop>() : stopList;
+    }
+
+    public boolean storeAction(long routeId, Action action) {
+        stopActionMap.put(routeId, action);
+        String json = gson.toJson(stopActionMap);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = gson.toJson(stopList);
-        editor.putString(Constants.Preferences.STOP_LIST, json);
+        editor.putString(Constants.Preferences.ACTION_LIST, json);
 
         return editor.commit();
     }
 
-    public List<Stop> getStopList() {
-        if (stopList == null) {
-            String json = sharedPreferences.getString(Constants.Preferences.STOP_LIST, "");
-            stopList = gson.fromJson(json, new TypeToken<List<Stop>>() {
-            }.getType());
-        }
-
-        return stopList;
-    }
-
     public Stop getCurrentStop() {
-        if (getStopList() == null || getStopList().isEmpty()) {
+        if (stopList.isEmpty()) {
             return null;
         } else {
-            return getStopList().get(0);
+            return stopList.get(0);
         }
     }
 
     public Stop removeCurrentStop() {
-        if (getStopList() == null || getStopList().isEmpty()) {
+        if (stopList.isEmpty()) {
             return null;
         }
-        Stop stop = getStopList().remove(0);
-        storeStopList(getStopList());
+        Stop stop = stopList.remove(0);
+        getUpToDateList(stopList);
 
         return stop;
     }
@@ -193,5 +197,43 @@ public class StorageManager implements Managable {
 
     public int getVehicleId() {
         return cachedRequestPreferences.getInt(Constants.Preferences.VEHICLE_ID, 0);
+    }
+
+    private List<Stop> getUpToDateList(List<Stop> stopList) {
+        for (Stop stop : stopList) {
+            if (stopActionMap.get(stop.getId()) != null) {
+                stop.setStatus(stopActionMap.get(stop.getId()));
+            }
+        }
+
+        return removeCompletedStops(stopList);
+    }
+
+    private boolean cleanActionMap() {
+        stopActionMap.clear();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constants.Preferences.ACTION_LIST, "");
+
+        return editor.commit();
+    }
+
+    private void setActionMap() {
+        String json = sharedPreferences.getString(Constants.Preferences.ACTION_LIST, "");
+        if (!TextUtils.isEmpty(json)) {
+            stopActionMap = gson.fromJson(json, new TypeToken<LinkedHashMap<Long, Action>>() {
+            }.getType());
+        }
+    }
+
+    private List<Stop> removeCompletedStops(List<Stop> stopList) {
+        for (Iterator<Stop> iterator = stopList.iterator(); iterator.hasNext(); ) {
+            Stop stop = iterator.next();
+            if (stop.getStatus() == Action.CANCELED ||
+                stop.getStatus() == Action.COMPLETED) {
+                iterator.remove();
+            }
+        }
+
+        return stopList;
     }
 }

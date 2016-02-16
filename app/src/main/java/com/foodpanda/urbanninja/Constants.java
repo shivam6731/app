@@ -9,7 +9,7 @@ public class Constants {
         public static final String USERNAME = "Username";
         public static final String PASSWORD = "Password";
         public static final String COUNTRY = "Country";
-        public static final String STOP_LIST = "StopList";
+        public static final String ACTION_LIST = "ActionList";
         public static final String ACTION_REQUEST_LIST = "ActionRequestList";
         public static final String LOCATION_REQUEST_LIST = "LocationRequestList";
         public static final String VEHICLE_ID = "VEHICLE_ID";

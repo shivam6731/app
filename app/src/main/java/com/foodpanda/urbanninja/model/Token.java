@@ -21,6 +21,13 @@ public class Token implements ParcelableModel {
     public Token() {
     }
 
+    public Token(String accessToken, String tokenType, int expiresIn, String refreshToken) {
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
+        this.refreshToken = refreshToken;
+    }
+
     @Override
     public int describeContents() {
         return 0;
