@@ -16,9 +16,7 @@ public interface MainActivityCallback {
 
     void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
 
-    void openRouteStopDetails(Stop stop);
-
-    void openRouteStopActionList(Stop stop);
+    void openRoute(Stop stop);
 
     void openLoadFragment();
 }

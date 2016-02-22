@@ -47,7 +47,7 @@ public class ApiQueue {
      *                             and executed time
      * @param routeId              route id is required param from the API request
      */
-    public void enqueueAction(PerformActionWrapper performActionWrapper, int routeId) {
+    public void enqueueAction(PerformActionWrapper performActionWrapper, long routeId) {
 
         requestsQueue.add(new StorableAction(performActionWrapper, routeId));
         storageManager.storeActionApiRequests(requestsQueue);

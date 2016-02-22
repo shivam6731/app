@@ -2,7 +2,7 @@ package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
 
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 
 import org.joda.time.DateTime;
@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 public class Stop implements ParcelableModel {
-    private int id;
+    private long id;
     private int locationId;
     private int sequence;
     private int processingTimeSeconds;
@@ -18,7 +18,7 @@ public class Stop implements ParcelableModel {
     private int loadUponArrival;
     private TimeWindow timeWindow;
     private DateTime arrivalTime;
-    private RouteStopStatus status;
+    private Action status;
     private GeoCoordinate gps;
     private String name;
     private String comment;
@@ -33,7 +33,7 @@ public class Stop implements ParcelableModel {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeLong(this.id);
         dest.writeInt(this.locationId);
         dest.writeInt(this.sequence);
         dest.writeInt(this.processingTimeSeconds);
@@ -54,7 +54,7 @@ public class Stop implements ParcelableModel {
     }
 
     protected Stop(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.locationId = in.readInt();
         this.sequence = in.readInt();
         this.processingTimeSeconds = in.readInt();
@@ -63,7 +63,7 @@ public class Stop implements ParcelableModel {
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
         this.arrivalTime = (DateTime) in.readSerializable();
         int tmpStatus = in.readInt();
-        this.status = tmpStatus == -1 ? null : RouteStopStatus.values()[tmpStatus];
+        this.status = tmpStatus == -1 ? null : Action.values()[tmpStatus];
         this.gps = in.readParcelable(GeoCoordinate.class.getClassLoader());
         this.name = in.readString();
         this.comment = in.readString();
@@ -83,7 +83,7 @@ public class Stop implements ParcelableModel {
         }
     };
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -115,7 +115,7 @@ public class Stop implements ParcelableModel {
         return arrivalTime;
     }
 
-    public RouteStopStatus getStatus() {
+    public Action getStatus() {
         return status;
     }
 
@@ -141,5 +141,9 @@ public class Stop implements ParcelableModel {
 
     public List<RouteStopActivity> getActivities() {
         return activities;
+    }
+
+    public void setStatus(Action status) {
+        this.status = status;
     }
 }
