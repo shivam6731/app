@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 commit();
         }
 
-        apiExecutor = new ApiExecutor(this);
+        apiExecutor = new ApiExecutor(this, App.API_MANAGER, App.STORAGE_MANAGER);
 
         if (isPlayServicesAvailable()) {
             // Start IntentService to register this application with GCM.
@@ -173,7 +173,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void setActionButton() {
         layoutAction = findViewById(R.id.layout_action);
         btnAction = (Button) findViewById(R.id.btn_action);
-        layoutAction.setEnabled(false);
         layoutAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -408,7 +407,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
         int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, false, title, R.drawable.arrow_swipe);
+        updateActionButton(true, stop.getActivities().isEmpty(), title, R.drawable.arrow_swipe);
     }
 
     @Override
@@ -417,6 +416,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             beginTransaction().
             replace(R.id.container, LoadDataFragment.newInstance()).
             commit();
+    }
+
+    @Override
+    public void openNextScheduleIfCurrentIsFinished() {
+        apiExecutor.openNextScheduleIfCurrentIsFinished();
     }
 
     private void updateActionButton(

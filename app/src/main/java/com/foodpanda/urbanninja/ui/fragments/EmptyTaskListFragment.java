@@ -94,6 +94,8 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
         swipeRefreshLayout.setRefreshing(false);
         if (!storageManager.getStopList().isEmpty()) {
             mainActivityCallback.openRoute(storageManager.getCurrentStop());
+        } else {
+            mainActivityCallback.openNextScheduleIfCurrentIsFinished();
         }
     }
 

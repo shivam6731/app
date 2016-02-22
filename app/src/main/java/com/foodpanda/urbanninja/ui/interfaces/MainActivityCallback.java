@@ -19,4 +19,6 @@ public interface MainActivityCallback {
     void openRoute(Stop stop);
 
     void openLoadFragment();
+
+    void openNextScheduleIfCurrentIsFinished();
 }

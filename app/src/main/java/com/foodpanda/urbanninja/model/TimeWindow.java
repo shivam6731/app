@@ -11,6 +11,11 @@ public class TimeWindow implements ParcelableModel {
     public TimeWindow() {
     }
 
+    public TimeWindow(DateTime startAt, DateTime endAt) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
+
     @Override
     public int describeContents() {
         return 0;
