@@ -35,7 +35,7 @@
     <string name="ready_to_work_time_passed">MINUTES PASSED\n since shift started</string>
 
     <!-- Empty list -->
-    <string name="empty_list_header">Check your foodbox,wear\nyour helmet, take a deep\breath…</string>
+    <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
     <string name="empty_list_text">New orders\nare coming soon</string>
     <string name="empty_list_recycle">No data to show</string>
 
@@ -64,7 +64,9 @@
     <string name="action_at_picked_up">I picked up</string>
     <string name="action_at_delivered">I delivered</string>
     <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
+    <string name="action_order_in_future">in more than 24 hours</string>
     <string name="action_ready_shift_expired">Your current shift has already finished</string>
+    <string name="action_order_expired">more than 24 hours ago</string>
     <string name="route_stop_details_my_location">My Location</string>
     <string name="route_error">This route status is not supported</string>
 

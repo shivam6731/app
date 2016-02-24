@@ -135,4 +135,14 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     protected int provideActionButtonString() {
         return R.string.action_ready_to_work;
     }
+
+    @Override
+    protected int provideExpireString() {
+        return R.string.action_ready_shift_expired;
+    }
+
+    @Override
+    protected int provideFutureString() {
+        return R.string.action_ready_no_shift;
+    }
 }

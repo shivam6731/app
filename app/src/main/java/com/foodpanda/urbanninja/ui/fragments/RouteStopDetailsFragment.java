@@ -192,6 +192,16 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     @Override
+    protected int provideExpireString() {
+        return R.string.action_order_expired;
+    }
+
+    @Override
+    protected int provideFutureString() {
+        return R.string.action_order_in_future;
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
     }
