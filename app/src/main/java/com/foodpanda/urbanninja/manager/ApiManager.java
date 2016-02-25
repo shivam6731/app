@@ -131,16 +131,19 @@ public class ApiManager implements Managable {
 
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
-        Call<VehicleDeliveryAreaRiderBundle> call = service.getRider(tokenData.getUserId());
-        call.enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback, call) {
-            @Override
-            public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    riderBundleBaseApiCallback.onSuccess(response.body());
+        if (tokenData != null) {
+            Call<VehicleDeliveryAreaRiderBundle> call = service.getRider(tokenData.getUserId());
+            call.enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback, call) {
+                @Override
+                public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
+                    super.onResponse(response, retrofit);
+                    if (response.isSuccess()) {
+                        riderBundleBaseApiCallback.onSuccess(response.body());
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     public void getRoute(

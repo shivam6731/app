@@ -146,4 +146,8 @@ public class Stop implements ParcelableModel {
     public void setStatus(Action status) {
         this.status = status;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

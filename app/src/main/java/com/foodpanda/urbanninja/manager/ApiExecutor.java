@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
@@ -34,12 +33,13 @@ public class ApiExecutor {
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
+    private ScheduleCollectionWrapper scheduleWrappers;
 
-    public ApiExecutor(MainActivity mainActivity) {
+    public ApiExecutor(MainActivity mainActivity, ApiManager apiManager, StorageManager storageManager) {
         this.activity = mainActivity;
         this.mainActivityCallback = mainActivity;
-        this.apiManager = App.API_MANAGER;
-        this.storageManager = App.STORAGE_MANAGER;
+        this.apiManager = apiManager;
+        this.storageManager = storageManager;
         getCurrentRider();
     }
 
@@ -90,8 +90,8 @@ public class ApiExecutor {
     public void notifyActionPerformed(final Action action) {
         if (storageManager.getCurrentStop() != null) {
             long routeId = storageManager.getCurrentStop().getId();
-            storageManager.storeAction(routeId, action);
 
+            storageManager.storeAction(routeId, action);
             apiManager.notifyActionPerformed(routeId, action);
 
             if (action == Action.COMPLETED) {
@@ -118,6 +118,7 @@ public class ApiExecutor {
 
                 @Override
                 public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
+                    ApiExecutor.this.setScheduleWrappers(scheduleWrappers);
                     // Here we get all future and current working schedule
                     // However we need only first one as current
                     if (scheduleWrappers.size() > 0) {
@@ -125,7 +126,7 @@ public class ApiExecutor {
 
                         // If isClockIn flag is false we
                         // Would open clock in screen or route related screens
-                        if (scheduleWrapper.isclockedIn()) {
+                        if (scheduleWrapper.isClockedIn()) {
                             getRoute();
                         } else {
                             mainActivityCallback.openReadyToWork(scheduleWrapper);
@@ -144,6 +145,21 @@ public class ApiExecutor {
                     activity.hideProgress();
                 }
             });
+    }
+
+    /**
+     * Open clock-in screen if current schedule is over
+     *
+     * @return true is rider's schedule is over
+     */
+    public boolean openNextScheduleIfCurrentIsFinished() {
+        if (scheduleWrapper.isScheduleFinished()) {
+            mainActivityCallback.openReadyToWork(switchSchedule());
+
+            return true;
+        }
+
+        return false;
     }
 
     private void getCurrentRider() {
@@ -190,10 +206,31 @@ public class ApiExecutor {
 
     private void openCurrentRouteFragment() {
         if (storageManager.getStopList().isEmpty()) {
-            mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
+            // will be called only of rider doesn't have any route to do
+            if (!openNextScheduleIfCurrentIsFinished()) {
+                mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
+            }
         } else {
             mainActivityCallback.openRoute(storageManager.getCurrentStop());
         }
+    }
+
+    /**
+     * finish with current schedule and get next from the list
+     * if list is empty create new object to show no data information
+     * in a fragment
+     *
+     * @return next schedule object from the API request
+     */
+    private ScheduleWrapper switchSchedule() {
+        scheduleWrappers.remove(0);
+        if (scheduleWrappers.isEmpty()) {
+            scheduleWrapper = new ScheduleWrapper();
+        } else {
+            scheduleWrapper = scheduleWrappers.get(0);
+        }
+
+        return scheduleWrapper;
     }
 
     private void finishWithCurrentRoute() {
@@ -201,4 +238,33 @@ public class ApiExecutor {
         openCurrentRouteFragment();
     }
 
+    /**
+     * This method is used only for tests
+     * here we emulate a list of users schedules for the next week
+     *
+     * @param scheduleWrappers list of schedules
+     */
+    void setScheduleWrappers(ScheduleCollectionWrapper scheduleWrappers) {
+        this.scheduleWrappers = scheduleWrappers;
+    }
+
+    /**
+     * This method is used only for tests
+     * here we emulate a current schedule as part of schedule list
+     * {@link #setScheduleWrappers(ScheduleCollectionWrapper)}
+     *
+     * @param scheduleWrapper emulated schedule item
+     */
+    void setScheduleWrapper(ScheduleWrapper scheduleWrapper) {
+        this.scheduleWrapper = scheduleWrapper;
+    }
+
+    /**
+     * This method is used only for tests
+     * here we get current emulated schedule as part of schedule list
+     * {@link #setScheduleWrappers(ScheduleCollectionWrapper)}
+     */
+    public ScheduleWrapper getScheduleWrapper() {
+        return scheduleWrapper;
+    }
 }
