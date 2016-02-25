@@ -13,5 +13,5 @@
     <color name="location_radius_color">#40ffa500</color>
     <color name="location_radius_border_color">#ffa500</color>
     <color name="notification_bg_color">#303F9F</color>
-
+    <color name="snackbar_background">#ff1919</color>
 </resources>
