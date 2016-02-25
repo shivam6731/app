@@ -3,7 +3,6 @@ package com.foodpanda.urbanninja.ui.fragments;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.utils.DateUtil;
 
@@ -88,11 +87,11 @@ public abstract class BaseTimerFragment extends BaseFragment {
         long date = Math.abs(startDate.getMillis() - now.getMillis());
 
         if (now.getMillis() < startDate.getMillis()) {
-            textViewDescription.setText(timeLeft(date));
+            textViewDescription.setText(getTimeLeft(date));
 
             return DateUtil.formatTimeMinutes(date);
         } else {
-            textViewDescription.setText(timePassed(endDate.getMillis(), now.getMillis()));
+            textViewDescription.setText(getTimePassed(endDate.getMillis(), now.getMillis()));
             if (endDate.getMillis() > now.getMillis()) {
 
                 return DateUtil.formatTimeMinutes(date);
@@ -103,23 +102,23 @@ public abstract class BaseTimerFragment extends BaseFragment {
         }
     }
 
-    private String timeLeft(long date) {
+    private String getTimeLeft(long date) {
         if (date > DateUtil.ONE_DAY) {
 
-            return getResources().getString(R.string.action_ready_no_shift);
+            return getResources().getString(provideFutureString());
         } else {
 
             return provideLeftString();
         }
     }
 
-    private String timePassed(long endDate, long nowDate) {
+    private String getTimePassed(long endDate, long nowDate) {
         if (endDate > nowDate) {
 
             return providePassedString();
         } else {
 
-            return getResources().getString(R.string.action_ready_shift_expired);
+            return getResources().getString(provideExpireString());
         }
     }
 
@@ -177,5 +176,19 @@ public abstract class BaseTimerFragment extends BaseFragment {
      * @return link to the string resources
      */
     protected abstract int provideActionButtonString();
+
+    /**
+     * provide label for the action that is expired
+     *
+     * @return link to the string resources
+     */
+    protected abstract int provideExpireString();
+
+    /**
+     * provide label for the action in the future
+     *
+     * @return link to the string resources
+     */
+    protected abstract int provideFutureString();
 }
 
