@@ -15,8 +15,8 @@ public abstract class BaseTimerFragment extends BaseFragment {
     protected MainActivityCallback mainActivityCallback;
     protected boolean needToModifyActionButton;
 
-    private static final int UPDATE_INTERVAL = 1000;
-    private static final int ENABLE_TIME_OUT = 30 * 60 * 1000;
+    private static final int UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    private static final int ENABLE_TIME_OUT_IN_MILLISECONDS = 30 * 60 * 1000;
     private Timer timer;
 
     @Override
@@ -46,7 +46,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
             public void run() {
                 drawTime();
             }
-        }, 0, UPDATE_INTERVAL);
+        }, 0, UPDATE_INTERVAL_IN_MILLISECONDS);
     }
 
     private void drawTime() {
@@ -74,7 +74,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
         DateTime startDate = provideScheduleDate() == null ? new DateTime() : provideScheduleDate();
         DateTime endDate = provideScheduleEndDate() == null ? new DateTime() : provideScheduleEndDate();
 
-        return now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT && endDate.getMillis() > now.getMillis();
+        return now.getMillis() > startDate.getMillis() - ENABLE_TIME_OUT_IN_MILLISECONDS && endDate.getMillis() > now.getMillis();
     }
 
 

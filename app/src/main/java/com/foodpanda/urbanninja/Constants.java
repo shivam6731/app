@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja;
 public class Constants {
     public static final int SCHEDULE_LIST_RANGE = 15;
     public static final String LOCATION_UPDATED = "RiderLocationUpdated";
+    public static final int SNACKBAR_DURATION_IN_MILLISECONDS = 1000 * 60;
 
     public static class Preferences {
         public static final String TOKEN = "Token";

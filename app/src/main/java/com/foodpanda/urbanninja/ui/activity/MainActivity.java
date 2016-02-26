@@ -43,6 +43,7 @@ import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
+import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private Button btnAction;
     private View layoutAction;
     private ProgressBar progressBar;
+    private Toolbar toolbar;
 
     private StorageManager storageManager;
     private ApiExecutor apiExecutor;
@@ -164,10 +166,16 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             case SCHEDULE_UPDATED:
                 apiExecutor.getRidersSchedule();
                 break;
+            case ROUTE_CANCELED:
+                showSnackbar();
             case ROUTE_UPDATED:
                 apiExecutor.getRoute();
                 break;
         }
+    }
+
+    private void showSnackbar() {
+        new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
     }
 
     private void setActionButton() {
@@ -220,7 +228,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     private Toolbar initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
