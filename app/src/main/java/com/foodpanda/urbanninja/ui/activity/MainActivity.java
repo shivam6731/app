@@ -4,13 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
@@ -48,6 +43,7 @@ import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
+import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -171,29 +167,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 apiExecutor.getRidersSchedule();
                 break;
             case ROUTE_CANCELED:
-                showSnackbar("sample ");
+                showSnackbar();
             case ROUTE_UPDATED:
                 apiExecutor.getRoute();
                 break;
         }
     }
 
-    private void showSnackbar(String orderCode) {
-        CharSequence text = getResources().getString(R.string.task_details_canceled, orderCode);
-        Snackbar snackbar = Snackbar
-            .make(toolbar, text, Snackbar.LENGTH_LONG);
-
-        View snackbarView = snackbar.getView();
-
-        // Changing  background color
-        snackbarView.setBackgroundColor(ContextCompat.getColor(this, R.color.snackbar_background));
-
-        // Changing action button text color and style
-        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setTextColor(Color.WHITE);
-        textView.setTypeface(null, Typeface.BOLD);
-
-        snackbar.show();
+    private void showSnackbar() {
+        new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
     }
 
     private void setActionButton() {

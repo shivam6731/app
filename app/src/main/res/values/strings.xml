@@ -46,7 +46,8 @@
     <string name="task_details_to">to</string>
     <string name="task_details_pick_up"><b>pickup</b></string>
     <string name="task_details_delivery"><b>delivery</b></string>
-    <string name="task_details_canceled">NOTE: you don\'t need to deliver \norder %1$s anymore</string>
+    <string name="task_details_canceled">One of the orders assigned to you just got canceled</string>
+    <string name="task_details_canceled_dismiss">I GOT IT</string>
 
     <!-- Errors -->
     <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
