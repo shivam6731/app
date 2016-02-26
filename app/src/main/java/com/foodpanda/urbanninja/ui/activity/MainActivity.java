@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -39,7 +40,6 @@ import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
 import com.foodpanda.urbanninja.ui.fragments.RouteStopActionListFragment;
 import com.foodpanda.urbanninja.ui.fragments.RouteStopDetailsFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
-import com.foodpanda.urbanninja.ui.fragments.SlideMenuFragment;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
@@ -76,6 +76,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             }
         }
     };
+    private int selectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,13 +88,10 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         setActionButton();
         setActionBarDrawerToggle(initToolbar());
+        setNavigationDrawer();
 
         if (savedInstanceState == null) {
             openLoadFragment();
-            fragmentManager.
-                beginTransaction().
-                add(R.id.left_drawer, SlideMenuFragment.newInstance()).
-                commit();
         }
 
         apiExecutor = new ApiExecutor(this, App.API_MANAGER, App.STORAGE_MANAGER);
@@ -103,6 +101,38 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+    }
+
+    private void setNavigationDrawer() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.animate();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                drawerLayout.closeDrawers();
+                if (selectedItem == item.getItemId()) {
+                    return false;
+                }
+                item.setChecked(true);
+                selectedItem = item.getItemId();
+
+                switch (item.getItemId()) {
+                    case R.id.orders:
+                        fragmentManager.popBackStack();
+                        break;
+                    case R.id.shift:
+                        onScheduleClicked();
+                        break;
+                    case R.id.order_history:
+                        onScheduleClicked();
+                        break;
+                    case R.id.logout:
+                        onLogoutClicked();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     /**

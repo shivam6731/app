@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/orders"
+            android:title="@string/side_menu_orders"/>
+
+        <item
+            android:id="@+id/shift"
+            android:title="@string/side_menu_schedule"/>
+
+        <item
+            android:id="@+id/order_history"
+            android:title="@string/side_menu_order_history"/>
+
+        <item
+            android:id="@+id/logout"
+            android:title="@string/side_menu_logout"/>
+
+    </group>
+</menu>
