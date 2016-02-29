@@ -31,6 +31,12 @@ import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
+/**
+ * To encapsulate all logic according to current rider's orders in one separate navigation menu item
+ * this order wrapper fragment was created.
+ * It would be recreated any time when 'orders' menu item was selected in navigation menu except only
+ * if this item is current one
+ */
 public class OrdersNestedFragment extends BaseFragment implements NestedFragmentCallback {
     private MainActivityCallback mainActivityCallback;
     private FragmentManager fragmentManager;

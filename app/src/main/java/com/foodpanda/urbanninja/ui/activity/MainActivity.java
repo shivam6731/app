@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             public boolean onNavigationItemSelected(MenuItem item) {
                 drawerLayout.closeDrawers();
                 if (selectedItem == item.getItemId()) {
-                    return false;
+                    return true;
                 }
                 item.setChecked(true);
                 selectedItem = item.getItemId();
