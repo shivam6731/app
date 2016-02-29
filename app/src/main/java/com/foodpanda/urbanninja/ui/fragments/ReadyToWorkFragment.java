@@ -36,7 +36,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) context;
+        mainActivityCallback = (MainActivityCallback) getParentFragment();
     }
 
     @Override

@@ -25,7 +25,6 @@ public class Constants {
         public static final String SCHEDULE_WRAPPER = "ScheduleWrapper";
         public static final String LOCATION = "Location";
         public static final String STOP = "Stop";
-        public static final String VISIBILITY = "Visibility";
         public static final String PUSH_NOTIFICATION_TYPE = "PushNotificationType";
     }
 }

@@ -9,6 +9,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
 import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
+import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -49,7 +50,8 @@ public class ApiExecutorTest {
         app.onCreate();
 
         MainActivity activity = mock(MainActivity.class);
-        apiExecutor = new ApiExecutor(activity, apiManager, storageManager);
+        OrdersNestedFragment ordersNestedFragment = mock(OrdersNestedFragment.class);
+        apiExecutor = new ApiExecutor(activity, ordersNestedFragment, apiManager, storageManager);
     }
 
     @Test

@@ -40,7 +40,7 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) context;
+        mainActivityCallback = (MainActivityCallback) getParentFragment();
     }
 
     @Override

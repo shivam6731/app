@@ -35,9 +35,12 @@ public class ApiExecutor {
     private ScheduleWrapper scheduleWrapper;
     private ScheduleCollectionWrapper scheduleWrappers;
 
-    public ApiExecutor(MainActivity mainActivity, ApiManager apiManager, StorageManager storageManager) {
+    public ApiExecutor(MainActivity mainActivity,
+                       MainActivityCallback mainActivityCallback,
+                       ApiManager apiManager,
+                       StorageManager storageManager) {
         this.activity = mainActivity;
-        this.mainActivityCallback = mainActivity;
+        this.mainActivityCallback = mainActivityCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
         getCurrentRider();

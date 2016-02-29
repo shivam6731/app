@@ -4,4 +4,6 @@ public interface SlideMenuCallback {
     void onLogoutClicked();
 
     void onScheduleClicked();
+
+    void onOrderClicked();
 }

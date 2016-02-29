@@ -10,8 +10,6 @@ public interface MainActivityCallback {
 
     void enableActionButton(boolean b, int text);
 
-    void changeActionButtonVisibility(boolean b);
-
     void openReadyToWork(ScheduleWrapper scheduleWrapper);
 
     void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);

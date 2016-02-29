@@ -17,7 +17,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) context;
+        mainActivityCallback = (MainActivityCallback) getParentFragment();
     }
 
     public static RouteStopActionListFragment newInstance(Stop stop) {

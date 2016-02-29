@@ -1,11 +1,6 @@
 package com.foodpanda.urbanninja.ui.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,66 +11,35 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
-import com.foodpanda.urbanninja.model.GeoCoordinate;
-import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
-import com.foodpanda.urbanninja.model.enums.UserStatus;
-import com.foodpanda.urbanninja.ui.fragments.EmptyTaskListFragment;
-import com.foodpanda.urbanninja.ui.fragments.LoadDataFragment;
-import com.foodpanda.urbanninja.ui.fragments.ReadyToWorkFragment;
-import com.foodpanda.urbanninja.ui.fragments.RouteStopActionListFragment;
-import com.foodpanda.urbanninja.ui.fragments.RouteStopDetailsFragment;
+import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
-import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.util.Locale;
-
-public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
+public class MainActivity extends BaseActivity implements SlideMenuCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PERMISSIONS_REQUEST_LOCATION = 100;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawerLayout;
-    private Button btnAction;
-    private View layoutAction;
     private ProgressBar progressBar;
     private Toolbar toolbar;
 
     private StorageManager storageManager;
-    private ApiExecutor apiExecutor;
 
-    private UserStatus userStatus;
-
-    private LocationChangedCallback locationChangedCallback;
-    private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (locationChangedCallback != null) {
-                Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
-                locationChangedCallback.onLocationChanged(location);
-            }
-        }
-    };
     private int selectedItem;
 
     @Override
@@ -86,15 +50,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         storageManager = App.STORAGE_MANAGER;
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        setActionButton();
+        progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
+
         setActionBarDrawerToggle(initToolbar());
         setNavigationDrawer();
 
         if (savedInstanceState == null) {
-            openLoadFragment();
+            onOrderClicked();
         }
 
-        apiExecutor = new ApiExecutor(this, App.API_MANAGER, App.STORAGE_MANAGER);
 
         if (isPlayServicesAvailable()) {
             // Start IntentService to register this application with GCM.
@@ -117,7 +81,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
                 switch (item.getItemId()) {
                     case R.id.orders:
-                        fragmentManager.popBackStack();
+                        onOrderClicked();
                         break;
                     case R.id.shift:
                         onScheduleClicked();
@@ -159,33 +123,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        apiExecutor = null;
-    }
-
-    private void enableButton(final boolean isEnabled, final int textResourceLink) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateActionButton(true, isEnabled, textResourceLink);
-            }
-        });
-    }
-
-    @Override
-    protected void onStop() {
-        unregisterReceiver(locationChangeReceiver);
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        registerReceiver(locationChangeReceiver, new IntentFilter(Constants.LOCATION_UPDATED));
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         PushNotificationType pushNotificationType = (PushNotificationType)
@@ -194,12 +131,14 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
         switch (pushNotificationType) {
             case SCHEDULE_UPDATED:
-                apiExecutor.getRidersSchedule();
+                //TODO add api executor
+//                apiExecutor.getRidersSchedule();
                 break;
             case ROUTE_CANCELED:
                 showSnackbar();
             case ROUTE_UPDATED:
-                apiExecutor.getRoute();
+                //TODO add api executor
+//                apiExecutor.getRoute();
                 break;
         }
     }
@@ -208,18 +147,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
     }
 
-    private void setActionButton() {
-        layoutAction = findViewById(R.id.layout_action);
-        btnAction = (Button) findViewById(R.id.btn_action);
-        layoutAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeStatus();
-            }
-        });
-        updateActionButton(false, false, 0);
-        progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
-    }
 
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
@@ -229,33 +156,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         progressBar.setVisibility(View.GONE);
     }
 
-    private void changeStatus() {
-        switch (userStatus) {
-            case CLOCK_IN:
-                apiExecutor.clockIn();
-                break;
-            case EMPTY_LIST:
-                break;
-            case VIEWING:
-                apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
-                setTaskTitle();
-                break;
-            case ARRIVING:
-                openRouteStopActionList(storageManager.getCurrentStop());
-                apiExecutor.notifyActionPerformed(Action.ARRIVED);
-                break;
-            case ACTION_LIST:
-                apiExecutor.notifyActionPerformed(Action.COMPLETED);
-                break;
-        }
-    }
-
-    private void setTaskTitle() {
-        userStatus = UserStatus.ARRIVING;
-        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
-            R.string.action_at_delivery : R.string.action_at_pick_up;
-        updateActionButton(true, true, title, R.drawable.arrow_swipe);
-    }
 
     private Toolbar initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -304,7 +204,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length) {
-                    apiExecutor.startLocationService();
+                    //TODO add api executor
+//                    apiExecutor.startLocationService();
                 } else {
                     Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -339,161 +240,24 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
-        ScheduleListFragment fragment = ScheduleListFragment.newInstance(isActionButtonVisible());
+        ScheduleListFragment fragment = ScheduleListFragment.newInstance();
         fragmentManager.
             beginTransaction().
-            add(R.id.container, fragment).
+            replace(R.id.container, fragment).
             addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
-
-        updateActionButton(false, false, 0);
         drawerLayout.closeDrawers();
     }
 
     @Override
-    public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
-        if (geoCoordinate != null) {
-            String uri = String.format(
-                Locale.ENGLISH,
-                "geo:0,0?q=%f,%f(" + pinLabel + ")",
-                geoCoordinate.getLat(),
-                geoCoordinate.getLon()
-            );
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void enableActionButton(final boolean isEnabled, final int textResLink) {
-        enableButton(isEnabled, textResLink);
-    }
-
-    @Override
-    public void changeActionButtonVisibility(boolean b) {
-        setActionButtonVisibility(b);
-    }
-
-    @Override
-    public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
-        userStatus = UserStatus.CLOCK_IN;
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                ReadyToWorkFragment.newInstance(scheduleWrapper)).
-            commit();
-    }
-
-    @Override
-    public void openEmptyListFragment(
-        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-        userStatus = UserStatus.EMPTY_LIST;
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
-            commit();
-
-        updateActionButton(false, false, 0);
-    }
-
-    @Override
-    public void openRoute(Stop stop) {
-        switch (stop.getStatus()) {
-            case UNASSIGNED:
-            case ASSIGNED:
-            case VIEWED:
-                userStatus = UserStatus.VIEWING;
-                apiExecutor.notifyActionPerformed(Action.VIEWED);
-                updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
-                openRouteStopDetails(stop);
-                break;
-            case ON_THE_WAY:
-                setTaskTitle();
-                openRouteStopDetails(stop);
-                break;
-            case ARRIVED:
-                openRouteStopActionList(stop);
-                break;
-            default:
-                Toast.makeText(this, R.string.route_error, Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
-    private void openRouteStopDetails(Stop stop) {
-
-        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
-        locationChangedCallback = fragment;
-
+    public void onOrderClicked() {
+        OrdersNestedFragment fragment = OrdersNestedFragment.newInstance();
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
+            addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
-
-    }
-
-    public void openRouteStopActionList(Stop stop) {
-        userStatus = UserStatus.ACTION_LIST;
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                RouteStopActionListFragment.newInstance(stop)).
-            commit();
-
-        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
-            R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, stop.getActivities().isEmpty(), title, R.drawable.arrow_swipe);
-    }
-
-    @Override
-    public void openLoadFragment() {
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container, LoadDataFragment.newInstance()).
-            commit();
-    }
-
-    @Override
-    public void openNextScheduleIfCurrentIsFinished() {
-        apiExecutor.openNextScheduleIfCurrentIsFinished();
-    }
-
-    private void updateActionButton(
-        boolean isVisible,
-        boolean isEnable,
-        int textResLink
-    ) {
-        updateActionButton(isVisible, isEnable, textResLink, 0);
-    }
-
-    private void updateActionButton(
-        final boolean isVisible,
-        final boolean isEnable,
-        final int textResLink,
-        final int drawableLeft
-    ) {
-        if (isVisible) {
-            layoutAction.setVisibility(View.VISIBLE);
-        } else {
-            layoutAction.setVisibility(View.GONE);
-            return;
-        }
-        layoutAction.setEnabled(isEnable);
-        if (drawableLeft != 0) {
-            btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
-        }
-        btnAction.setText(textResLink);
-    }
-
-    private boolean isActionButtonVisible() {
-        return layoutAction.getVisibility() == View.VISIBLE;
-    }
-
-    private void setActionButtonVisibility(boolean isVisible) {
-        layoutAction.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        drawerLayout.closeDrawers();
     }
 
 
