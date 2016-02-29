@@ -1,4 +1,7 @@
 package com.foodpanda.urbanninja.ui.interfaces;
 
-public class MainActivityCallback {
+import com.foodpanda.urbanninja.model.GeoCoordinate;
+
+public interface MainActivityCallback {
+    void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel);
 }
