@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private void setNavigationDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        navigationView.animate();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -124,6 +123,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                         onScheduleClicked();
                         break;
                     case R.id.order_history:
+                        //TODO should be replaced to order history
                         onScheduleClicked();
                         break;
                     case R.id.logout:
