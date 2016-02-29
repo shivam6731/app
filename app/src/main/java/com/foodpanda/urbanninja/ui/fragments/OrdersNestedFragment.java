@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -30,10 +29,10 @@ import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
-import java.util.Locale;
-
-public class OrdersNestedFragment extends BaseFragment implements MainActivityCallback {
+public class OrdersNestedFragment extends BaseFragment implements NestedFragmentCallback {
+    private MainActivityCallback mainActivityCallback;
     private FragmentManager fragmentManager;
     private Button btnAction;
     private View layoutAction;
@@ -59,6 +58,12 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
             }
         }
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +110,7 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         setActionButton(view);
     }
 
-    public void setActionButton(View view) {
+    private void setActionButton(View view) {
         layoutAction = view.findViewById(R.id.layout_action);
         btnAction = (Button) view.findViewById(R.id.btn_action);
         layoutAction.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +122,7 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         updateActionButton(false, false, 0);
     }
 
-    public void changeStatus() {
+    private void changeStatus() {
         switch (userStatus) {
             case CLOCK_IN:
                 apiExecutor.clockIn();
@@ -138,7 +143,7 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         }
     }
 
-    public void openRouteStopActionList(Stop stop) {
+    private void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
         fragmentManager.
             beginTransaction().
@@ -151,8 +156,16 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         updateActionButton(true, stop.getActivities().isEmpty(), title, R.drawable.arrow_swipe);
     }
 
+    private void openRouteStopDetails(Stop stop) {
+        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
+        locationChangedCallback = fragment;
+        fragmentManager.
+            beginTransaction().
+            replace(R.id.container, fragment).
+            commit();
+    }
 
-    public void updateActionButton(
+    private void updateActionButton(
         boolean isVisible,
         boolean isEnable,
         int textResLink
@@ -160,7 +173,7 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         updateActionButton(isVisible, isEnable, textResLink, 0);
     }
 
-    public void updateActionButton(
+    private void updateActionButton(
         final boolean isVisible,
         final boolean isEnable,
         final int textResLink,
@@ -179,14 +192,14 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
         btnAction.setText(textResLink);
     }
 
-    public void setTaskTitle() {
+    private void setTaskTitle() {
         userStatus = UserStatus.ARRIVING;
         int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
         updateActionButton(true, true, title, R.drawable.arrow_swipe);
     }
 
-    public void enableButton(final boolean isEnabled, final int textResourceLink) {
+    private void enableButton(final boolean isEnabled, final int textResourceLink) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -197,19 +210,7 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
 
     @Override
     public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
-        if (geoCoordinate != null) {
-            String uri = String.format(
-                Locale.ENGLISH,
-                "geo:0,0?q=%f,%f(" + pinLabel + ")",
-                geoCoordinate.getLat(),
-                geoCoordinate.getLon()
-            );
-            //TODO move open activity to callback
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            startActivity(intent);
-        } else {
-            Toast.makeText(activity, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
-        }
+        mainActivityCallback.onSeeMapClicked(geoCoordinate, pinLabel);
     }
 
     @Override
@@ -261,15 +262,6 @@ public class OrdersNestedFragment extends BaseFragment implements MainActivityCa
                 Toast.makeText(activity, R.string.route_error, Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-
-    private void openRouteStopDetails(Stop stop) {
-        RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
-        locationChangedCallback = fragment;
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container, fragment).
-            commit();
     }
 
     @Override

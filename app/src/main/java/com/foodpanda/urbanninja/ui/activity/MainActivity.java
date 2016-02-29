@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,15 +21,19 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-public class MainActivity extends BaseActivity implements SlideMenuCallback {
+import java.util.Locale;
+
+public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PERMISSIONS_REQUEST_LOCATION = 100;
 
@@ -58,7 +63,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         if (savedInstanceState == null) {
             onOrderClicked();
         }
-
 
         if (isPlayServicesAvailable()) {
             // Start IntentService to register this application with GCM.
@@ -143,11 +147,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         }
     }
 
-    private void showSnackbar() {
-        new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
-    }
-
-
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
     }
@@ -156,6 +155,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         progressBar.setVisibility(View.GONE);
     }
 
+    private void showSnackbar() {
+        new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
+    }
 
     private Toolbar initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -244,7 +246,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
-            addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
         drawerLayout.closeDrawers();
     }
@@ -255,10 +256,23 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback {
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
-            addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
         drawerLayout.closeDrawers();
     }
 
-
+    @Override
+    public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
+        if (geoCoordinate != null) {
+            String uri = String.format(
+                Locale.ENGLISH,
+                "geo:0,0?q=%f,%f(" + pinLabel + ")",
+                geoCoordinate.getLat(),
+                geoCoordinate.getLon()
+            );
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
+        }
+    }
 }

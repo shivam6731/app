@@ -17,10 +17,10 @@ import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
 public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallback<RouteWrapper> {
-    private MainActivityCallback mainActivityCallback;
+    private NestedFragmentCallback nestedFragmentCallback;
 
     private ApiManager apiManager;
     private StorageManager storageManager;
@@ -40,7 +40,7 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) getParentFragment();
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
     }
 
     @Override
@@ -93,9 +93,9 @@ public class EmptyTaskListFragment extends BaseFragment implements BaseApiCallba
         storageManager.storeStopList(routeWrapper.getStops());
         swipeRefreshLayout.setRefreshing(false);
         if (!storageManager.getStopList().isEmpty()) {
-            mainActivityCallback.openRoute(storageManager.getCurrentStop());
+            nestedFragmentCallback.openRoute(storageManager.getCurrentStop());
         } else {
-            mainActivityCallback.openNextScheduleIfCurrentIsFinished();
+            nestedFragmentCallback.openNextScheduleIfCurrentIsFinished();
         }
     }
 

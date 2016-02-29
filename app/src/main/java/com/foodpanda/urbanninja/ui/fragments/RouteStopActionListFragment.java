@@ -8,16 +8,16 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
 public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter> {
-    private MainActivityCallback mainActivityCallback;
+    private NestedFragmentCallback nestedFragmentCallback;
     private Stop currentStop;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) getParentFragment();
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
     }
 
     public static RouteStopActionListFragment newInstance(Stop stop) {
@@ -37,7 +37,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
     @Override
     protected RouteStopActionAdapter provideListAdapter() {
-        return new RouteStopActionAdapter(currentStop, activity, mainActivityCallback);
+        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback);
     }
 
     @Override

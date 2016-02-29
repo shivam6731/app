@@ -19,7 +19,7 @@ import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
 public class ApiExecutor {
     public static final String[] PERMISSIONS_ARRAY = new String[]{
@@ -29,18 +29,18 @@ public class ApiExecutor {
     private final MainActivity activity;
     private final ApiManager apiManager;
     private final StorageManager storageManager;
-    private final MainActivityCallback mainActivityCallback;
+    private final NestedFragmentCallback nestedFragmentCallback;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
     private ScheduleCollectionWrapper scheduleWrappers;
 
     public ApiExecutor(MainActivity mainActivity,
-                       MainActivityCallback mainActivityCallback,
+                       NestedFragmentCallback nestedFragmentCallback,
                        ApiManager apiManager,
                        StorageManager storageManager) {
         this.activity = mainActivity;
-        this.mainActivityCallback = mainActivityCallback;
+        this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
         getCurrentRider();
@@ -132,11 +132,11 @@ public class ApiExecutor {
                         if (scheduleWrapper.isClockedIn()) {
                             getRoute();
                         } else {
-                            mainActivityCallback.openReadyToWork(scheduleWrapper);
+                            nestedFragmentCallback.openReadyToWork(scheduleWrapper);
                         }
                         setScheduleFinishedAlarm();
                     } else {
-                        mainActivityCallback.openReadyToWork(new ScheduleWrapper());
+                        nestedFragmentCallback.openReadyToWork(new ScheduleWrapper());
                     }
                     launchServiceOrAskForPermissions();
                     activity.hideProgress();
@@ -157,7 +157,7 @@ public class ApiExecutor {
      */
     public boolean openNextScheduleIfCurrentIsFinished() {
         if (scheduleWrapper.isScheduleFinished()) {
-            mainActivityCallback.openReadyToWork(switchSchedule());
+            nestedFragmentCallback.openReadyToWork(switchSchedule());
 
             return true;
         }
@@ -211,10 +211,10 @@ public class ApiExecutor {
         if (storageManager.getStopList().isEmpty()) {
             // will be called only of rider doesn't have any route to do
             if (!openNextScheduleIfCurrentIsFinished()) {
-                mainActivityCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
+                nestedFragmentCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
             }
         } else {
-            mainActivityCallback.openRoute(storageManager.getCurrentStop());
+            nestedFragmentCallback.openRoute(storageManager.getCurrentStop());
         }
     }
 
