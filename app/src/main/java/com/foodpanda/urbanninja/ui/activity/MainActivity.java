@@ -47,6 +47,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private int selectedItem;
 
+    private OrdersNestedFragment ordersNestedFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +94,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                         onScheduleClicked();
                         break;
                     case R.id.order_history:
-                        //TODO should be replaced to order history
-                        onScheduleClicked();
+                        onOrdersClicked();
                         break;
                     case R.id.logout:
                         onLogoutClicked();
@@ -135,15 +137,29 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
         switch (pushNotificationType) {
             case SCHEDULE_UPDATED:
-                //TODO add api executor
-//                apiExecutor.getRidersSchedule();
+                updateRiderSchedule();
                 break;
             case ROUTE_CANCELED:
                 showSnackbar();
             case ROUTE_UPDATED:
-                //TODO add api executor
-//                apiExecutor.getRoute();
+                updateRiderRoutes();
                 break;
+        }
+    }
+
+    private void updateRiderSchedule() {
+        if (ordersNestedFragment != null) {
+            ordersNestedFragment.getRidersSchedule();
+        } else {
+            onOrderClicked();
+        }
+    }
+
+    private void updateRiderRoutes() {
+        if (ordersNestedFragment != null) {
+            ordersNestedFragment.getRoute();
+        } else {
+            onOrderClicked();
         }
     }
 
@@ -205,9 +221,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length) {
-                    //TODO add api executor
-//                    apiExecutor.startLocationService();
+                if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length && ordersNestedFragment != null) {
+                    ordersNestedFragment.startLocationSerivce();
                 } else {
                     Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -242,6 +257,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
+        ordersNestedFragment = null;
         ScheduleListFragment fragment = ScheduleListFragment.newInstance();
         fragmentManager.
             beginTransaction().
@@ -251,11 +267,18 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
+    public void onOrdersClicked() {
+        ordersNestedFragment = null;
+        //TODO should be replaced to order history
+        onScheduleClicked();
+    }
+
+    @Override
     public void onOrderClicked() {
-        OrdersNestedFragment fragment = OrdersNestedFragment.newInstance();
+        ordersNestedFragment = OrdersNestedFragment.newInstance();
         fragmentManager.
             beginTransaction().
-            replace(R.id.container, fragment).
+            replace(R.id.container, ordersNestedFragment).
             commit();
         drawerLayout.closeDrawers();
     }

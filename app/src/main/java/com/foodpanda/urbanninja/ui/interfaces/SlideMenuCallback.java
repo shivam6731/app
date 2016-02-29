@@ -1,9 +1,11 @@
 package com.foodpanda.urbanninja.ui.interfaces;
 
 public interface SlideMenuCallback {
-    void onLogoutClicked();
+    void onOrderClicked();
 
     void onScheduleClicked();
 
-    void onOrderClicked();
+    void onOrdersClicked();
+
+    void onLogoutClicked();
 }

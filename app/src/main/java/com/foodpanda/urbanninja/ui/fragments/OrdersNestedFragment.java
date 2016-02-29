@@ -110,6 +110,18 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         setActionButton(view);
     }
 
+    public void getRidersSchedule() {
+        apiExecutor.getRidersSchedule();
+    }
+
+    public void getRoute() {
+        apiExecutor.getRoute();
+    }
+
+    public void startLocationSerivce() {
+        apiExecutor.startLocationService();
+    }
+
     private void setActionButton(View view) {
         layoutAction = view.findViewById(R.id.layout_action);
         btnAction = (Button) view.findViewById(R.id.btn_action);
