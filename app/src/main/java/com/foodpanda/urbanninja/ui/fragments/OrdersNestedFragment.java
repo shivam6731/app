@@ -177,9 +177,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 RouteStopActionListFragment.newInstance(stop)).
             commit();
 
-        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
+        int titleResourcesLink = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, stop.getActivities().isEmpty(), title, R.drawable.arrow_swipe);
+        updateActionButton(true, stop.getActivities().isEmpty(), titleResourcesLink, R.drawable.arrow_swipe);
     }
 
     private void openRouteStopDetails(Stop stop) {

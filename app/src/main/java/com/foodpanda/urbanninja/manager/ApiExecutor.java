@@ -35,10 +35,12 @@ public class ApiExecutor {
     private ScheduleWrapper scheduleWrapper;
     private ScheduleCollectionWrapper scheduleWrappers;
 
-    public ApiExecutor(MainActivity mainActivity,
-                       NestedFragmentCallback nestedFragmentCallback,
-                       ApiManager apiManager,
-                       StorageManager storageManager) {
+    public ApiExecutor(
+        MainActivity mainActivity,
+        NestedFragmentCallback nestedFragmentCallback,
+        ApiManager apiManager,
+        StorageManager storageManager
+    ) {
         this.activity = mainActivity;
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
@@ -83,7 +85,7 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of action with route was happened
      * and store this action to the map to save up to date status for each route
-     * <p/>
+     * <p>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.

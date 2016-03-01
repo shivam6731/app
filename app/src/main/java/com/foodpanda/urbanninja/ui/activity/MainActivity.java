@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private StorageManager storageManager;
 
-    private int selectedItem;
+    private int currentItemId;
 
     private OrdersNestedFragment ordersNestedFragment;
 
@@ -109,10 +109,10 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 drawerLayout.closeDrawers();
-                if (selectedItem == item.getItemId()) {
+                if (currentItemId == item.getItemId()) {
                     return true;
                 }
-                selectedItem = item.getItemId();
+                currentItemId = item.getItemId();
 
                 switch (item.getItemId()) {
                     case R.id.orders:
@@ -128,6 +128,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                         onLogoutClicked();
                         break;
                 }
+
                 return true;
             }
         });
@@ -178,7 +179,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     private void setSelectedNavigationItem() {
         navigationView.getMenu().getItem(0).setChecked(true);
-        selectedItem = navigationView.getMenu().getItem(0).getItemId();
+        currentItemId = navigationView.getMenu().getItem(0).getItemId();
     }
 
     private Toolbar initToolbar() {
