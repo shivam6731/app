@@ -207,15 +207,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     ) {
         if (isVisible) {
             layoutAction.setVisibility(View.VISIBLE);
+            layoutAction.setEnabled(isEnable);
+            if (drawableLeft != 0) {
+                btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
+            }
+            btnAction.setText(textResLink);
         } else {
             layoutAction.setVisibility(View.GONE);
-            return;
         }
-        layoutAction.setEnabled(isEnable);
-        if (drawableLeft != 0) {
-            btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
-        }
-        btnAction.setText(textResLink);
     }
 
     private void setTaskTitle() {
