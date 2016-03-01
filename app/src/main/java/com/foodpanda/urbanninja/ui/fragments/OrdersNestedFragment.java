@@ -48,6 +48,8 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private StorageManager storageManager;
 
+    private int isActionButtonView;
+
     public static OrdersNestedFragment newInstance() {
         OrdersNestedFragment fragment = new OrdersNestedFragment();
 
@@ -137,7 +139,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 changeStatus();
             }
         });
-        updateActionButton(false, false, 0);
+        layoutAction.setVisibility(isActionButtonView);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        isActionButtonView = layoutAction.getVisibility();
     }
 
     private void changeStatus() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,13 +43,13 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private DrawerLayout drawerLayout;
     private ProgressBar progressBar;
     private Toolbar toolbar;
+    private NavigationView navigationView;
 
     private StorageManager storageManager;
 
     private int selectedItem;
 
     private OrdersNestedFragment ordersNestedFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         setNavigationDrawer();
 
         if (savedInstanceState == null) {
-            onOrderClicked();
+            startOrderFragment();
         }
 
         if (isPlayServicesAvailable()) {
@@ -74,8 +75,36 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
     }
 
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        PushNotificationType pushNotificationType = (PushNotificationType)
+            intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE);
+        showProgress();
+
+        switch (pushNotificationType) {
+            case SCHEDULE_UPDATED:
+                updateRiderSchedule();
+                break;
+            case ROUTE_CANCELED:
+                showSnackbar();
+            case ROUTE_UPDATED:
+                updateRiderRoutes();
+                break;
+        }
+    }
+
     private void setNavigationDrawer() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        setSelectedNavigationItem();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -83,7 +112,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 if (selectedItem == item.getItemId()) {
                     return true;
                 }
-                item.setChecked(true);
                 selectedItem = item.getItemId();
 
                 switch (item.getItemId()) {
@@ -100,7 +128,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                         onLogoutClicked();
                         break;
                 }
-                return false;
+                return true;
             }
         });
     }
@@ -128,25 +156,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         return true;
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        PushNotificationType pushNotificationType = (PushNotificationType)
-            intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE);
-        showProgress();
-
-        switch (pushNotificationType) {
-            case SCHEDULE_UPDATED:
-                updateRiderSchedule();
-                break;
-            case ROUTE_CANCELED:
-                showSnackbar();
-            case ROUTE_UPDATED:
-                updateRiderRoutes();
-                break;
-        }
-    }
-
     private void updateRiderSchedule() {
         if (ordersNestedFragment != null) {
             ordersNestedFragment.getRidersSchedule();
@@ -163,16 +172,13 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
     }
 
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
-    }
-
     private void showSnackbar() {
         new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
+    }
+
+    private void setSelectedNavigationItem() {
+        navigationView.getMenu().getItem(0).setChecked(true);
+        selectedItem = navigationView.getMenu().getItem(0).getItemId();
     }
 
     private Toolbar initToolbar() {
@@ -257,28 +263,40 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onScheduleClicked() {
-        ordersNestedFragment = null;
-        ScheduleListFragment fragment = ScheduleListFragment.newInstance();
+        ScheduleListFragment scheduleListFragment = ScheduleListFragment.newInstance();
+
         fragmentManager.
             beginTransaction().
-            replace(R.id.container, fragment).
+            add(R.id.container, scheduleListFragment).
+            addToBackStack(ScheduleListFragment.class.getSimpleName()).
             commit();
         drawerLayout.closeDrawers();
     }
 
     @Override
     public void onOrdersClicked() {
-        ordersNestedFragment = null;
         //TODO should be replaced to order history
+        Toast.makeText(this, "Order History ", Toast.LENGTH_SHORT).show();
         onScheduleClicked();
     }
 
-    @Override
-    public void onOrderClicked() {
+    private void startOrderFragment() {
         ordersNestedFragment = OrdersNestedFragment.newInstance();
         fragmentManager.
             beginTransaction().
             replace(R.id.container, ordersNestedFragment).
+            commit();
+    }
+
+    @Override
+    public void onOrderClicked() {
+        if (ordersNestedFragment == null) {
+            ordersNestedFragment = OrdersNestedFragment.newInstance();
+        }
+        fragmentManager.
+            beginTransaction().
+            detach(ordersNestedFragment).
+            attach(ordersNestedFragment).
             commit();
         drawerLayout.closeDrawers();
     }
@@ -296,6 +314,21 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             startActivity(intent);
         } else {
             Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = fragmentManager.getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            for (Fragment fragment : fragmentManager.getFragments()) {
+                if (!(fragment instanceof OrdersNestedFragment)) {
+                    fragmentManager.popBackStack();
+                }
+            }
+            setSelectedNavigationItem();
         }
     }
 }
