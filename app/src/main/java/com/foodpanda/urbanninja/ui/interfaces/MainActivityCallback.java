@@ -1,24 +1,16 @@
 package com.foodpanda.urbanninja.ui.interfaces;
 
-import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
-import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
+/**
+ * Interface to communicate with  activities and fragment from
+ * MainActivity's children
+ */
 public interface MainActivityCallback {
+    /**
+     * Open third par maps app with intent
+     * @param geoCoordinate coordinates to the point
+     * @param pinLabel label that should be shown with point
+     */
     void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel);
-
-    void enableActionButton(boolean b, int text);
-
-    void changeActionButtonVisibility(boolean b);
-
-    void openReadyToWork(ScheduleWrapper scheduleWrapper);
-
-    void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
-
-    void openRoute(Stop stop);
-
-    void openLoadFragment();
-
-    void openNextScheduleIfCurrentIsFinished();
 }

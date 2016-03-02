@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
 import org.joda.time.DateTime;
 
@@ -22,7 +22,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
 
     private ScheduleWrapper scheduleWrapper;
 
-    private MainActivityCallback mainActivityCallback;
+    private NestedFragmentCallback nestedFragmentCallback;
 
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
         ReadyToWorkFragment readyToWorkFragment = new ReadyToWorkFragment();
@@ -36,7 +36,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) context;
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
             public void onClick(View v) {
                 if (scheduleWrapper.getStartingPoint() != null && scheduleWrapper.getStartingPoint().getGeoCoordinate() != null) {
                     String pinLabel = scheduleWrapper.getStartingPoint().getName();
-                    mainActivityCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate(), pinLabel);
+                    nestedFragmentCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate(), pinLabel);
                 }
             }
         });

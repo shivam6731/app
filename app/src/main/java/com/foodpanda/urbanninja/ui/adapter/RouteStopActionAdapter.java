@@ -13,7 +13,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
 import java.util.LinkedHashMap;
@@ -22,13 +22,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private MainActivityCallback mainActivityCallback;
+    private NestedFragmentCallback nestedFragmentCallback;
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
     private Stop stop;
 
-    public RouteStopActionAdapter(Stop stop, Context context, MainActivityCallback mainActivityCallback) {
+    public RouteStopActionAdapter(Stop stop, Context context, NestedFragmentCallback nestedFragmentCallback) {
         super(stop.getActivities(), context);
-        this.mainActivityCallback = mainActivityCallback;
+        this.nestedFragmentCallback = nestedFragmentCallback;
         this.stop = stop;
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
@@ -70,7 +70,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     //Check if all task are done and if it's true enable bottom main action button
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
                     if (stop != null) {
-                        mainActivityCallback.enableActionButton(isAllChecked(),
+                        nestedFragmentCallback.enableActionButton(isAllChecked(),
                             stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                     }
                 }

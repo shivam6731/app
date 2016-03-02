@@ -3,7 +3,7 @@ package com.foodpanda.urbanninja.ui.fragments;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.utils.DateUtil;
 
 import org.joda.time.DateTime;
@@ -12,7 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class BaseTimerFragment extends BaseFragment {
-    protected MainActivityCallback mainActivityCallback;
+    protected NestedFragmentCallback nestedFragmentCallback;
     protected boolean needToModifyActionButton;
 
     private static final int UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
@@ -22,7 +22,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mainActivityCallback = (MainActivityCallback) context;
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
     }
 
     @Override
@@ -64,7 +64,7 @@ public abstract class BaseTimerFragment extends BaseFragment {
     }
 
     private void enableActionButton() {
-        mainActivityCallback.enableActionButton(
+        nestedFragmentCallback.enableActionButton(
             isChangeAllowed(),
             provideActionButtonString());
     }
