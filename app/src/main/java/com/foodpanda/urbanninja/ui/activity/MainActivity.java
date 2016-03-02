@@ -116,13 +116,13 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
                 switch (item.getItemId()) {
                     case R.id.orders:
-                        onOrderClicked();
+                        onOrdersClicked();
                         break;
                     case R.id.shift:
                         onScheduleClicked();
                         break;
                     case R.id.order_history:
-                        onOrdersClicked();
+                        onOrderHistoryClicked();
                         break;
                     case R.id.logout:
                         onLogoutClicked();
@@ -161,7 +161,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         if (ordersNestedFragment != null) {
             ordersNestedFragment.getRidersSchedule();
         } else {
-            onOrderClicked();
+            onOrdersClicked();
         }
     }
 
@@ -169,7 +169,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         if (ordersNestedFragment != null) {
             ordersNestedFragment.getRoute();
         } else {
-            onOrderClicked();
+            onOrdersClicked();
         }
     }
 
@@ -276,6 +276,19 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onOrdersClicked() {
+        if (ordersNestedFragment == null) {
+            ordersNestedFragment = OrdersNestedFragment.newInstance();
+        }
+        fragmentManager.
+            beginTransaction().
+            detach(ordersNestedFragment).
+            attach(ordersNestedFragment).
+            commit();
+        drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onOrderHistoryClicked() {
         //TODO should be replaced to order history
         Toast.makeText(this, "Order History ", Toast.LENGTH_SHORT).show();
         onScheduleClicked();
@@ -287,19 +300,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             beginTransaction().
             replace(R.id.container, ordersNestedFragment).
             commit();
-    }
-
-    @Override
-    public void onOrderClicked() {
-        if (ordersNestedFragment == null) {
-            ordersNestedFragment = OrdersNestedFragment.newInstance();
-        }
-        fragmentManager.
-            beginTransaction().
-            detach(ordersNestedFragment).
-            attach(ordersNestedFragment).
-            commit();
-        drawerLayout.closeDrawers();
     }
 
     @Override
