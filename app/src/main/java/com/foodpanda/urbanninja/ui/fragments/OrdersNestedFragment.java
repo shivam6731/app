@@ -57,6 +57,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     private LocationChangedCallback locationChangedCallback;
+
     private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -9,7 +9,6 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
  * Interface describe all possible state for rider working work flow
  * from clock-in to clock-out
  */
-
 public interface NestedFragmentCallback {
     /**
      * Calls the activity callback to open the external map app
