@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.ApiUrbanNinjaUrl;
-import com.foodpanda.urbanninja.api.ApiUrl;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.RetryActionCallback;
@@ -80,7 +80,7 @@ public class ApiManager implements Managable {
             }
         );
         Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(ApiUrl.BASE_URL)
+            .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
             .build();

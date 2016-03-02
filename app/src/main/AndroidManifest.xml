@@ -35,8 +35,8 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
-            android:launchMode="singleTop"
-            android:label="@string/title_activity_main"/>
+            android:label="@string/title_activity_main"
+            android:launchMode="singleTop"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -45,6 +45,10 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+
+        <meta-data
+            android:name="net.hockeyapp.android.appIdentifier"
+            android:value="@string/hockey_app_key"/>
 
         <receiver android:name=".api.receiver.ConnectionStatusReceiver">
             <intent-filter>

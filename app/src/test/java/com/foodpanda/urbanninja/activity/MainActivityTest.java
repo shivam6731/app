@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Robolectric.buildActivity;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+@Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class MainActivityTest {
 
     @Test
