@@ -1,6 +1,8 @@
 package com.foodpanda.urbanninja.ui.adapter;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,12 +108,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             }
             viewHolder.txtDescription.setText(routeStopActivity.getDescription());
 
-        } else if (holder instanceof ViewHolderHeader) {
+        } else if (holder instanceof ViewHolderHeader && !TextUtils.isEmpty(stop.getOrderCode())) {
             ViewHolderHeader viewHolder = (ViewHolderHeader) holder;
             viewHolder.txtName.setText(
-                context.getResources().getString(R.string.route_action_header,
-                    String.valueOf(stop.getId()),
-                    stop.getName()));
+                Html.fromHtml(
+                    context.getResources().getString(R.string.route_action_header,
+                        "<b>" + stop.getOrderCode() + "</b> <br>",
+                        stop.getName())));
             viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_easy_peasy));
         }
 

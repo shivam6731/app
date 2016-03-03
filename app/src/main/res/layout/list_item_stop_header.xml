@@ -15,10 +15,12 @@
         android:id="@+id/txt_order_description"
         style="@style/TextView.Multiline"
         android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_default"
         android:textAllCaps="true"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         style="@style/TextView.Multiline"
         android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_default"
         android:text="@string/stop_list_description"/>
 </LinearLayout>

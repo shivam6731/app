@@ -54,6 +54,14 @@
     <string name="dialog_please_wait">Please wait…</string>
     <string name="error_start_point_not_found">Start Point not found</string>
 
+    <!-- Dialog -->
+    <string name="dialog_phone_title">Select Phone Number</string>
+    <string name="dialog_phone_customer">Customer Phone</string>
+    <string name="dialog_phone_restaurant">Restaurant Phone</string>
+    <string name="dialog_phone_manager">Manager Phone</string>
+    <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assi</string>
+    <string name="dialog_phone_not_numbers">This order doesn\'t contain any number</string>
+
     <!-- Country -->
     <string name="country_select_title">Select Country</string>
     <string name="country_select">Select</string>
@@ -92,6 +100,6 @@
     <string name="route_action_change">Prepare Change</string>
     <string name="route_action_deliver">Deliver</string>
     <string name="route_action_collect">Collect</string>
-    <string name="route_action_header">Order %1$s \nfor %2$s</string>
-    <string name="route_action_easy_peasy">Easy Peasyt</string>
+    <string name="route_action_header">Order %1$s for %2$s</string>
+    <string name="route_action_easy_peasy">Easy Peasy</string>
 </resources>

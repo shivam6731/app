@@ -25,6 +25,10 @@ public class Stop implements ParcelableModel {
     private String address;
     private RouteStopTaskStatus task;
     private List<RouteStopActivity> activities;
+    private String pickupPhone;
+    private String deliveryPhone;
+    private long orderId;
+    private String orderCode;
 
     @Override
     public int describeContents() {
@@ -48,6 +52,10 @@ public class Stop implements ParcelableModel {
         dest.writeString(this.address);
         dest.writeInt(this.task == null ? -1 : this.task.ordinal());
         dest.writeTypedList(activities);
+        dest.writeString(pickupPhone);
+        dest.writeString(deliveryPhone);
+        dest.writeLong(orderId);
+        dest.writeString(orderCode);
     }
 
     public Stop() {
@@ -71,6 +79,10 @@ public class Stop implements ParcelableModel {
         int tmpTask = in.readInt();
         this.task = tmpTask == -1 ? null : RouteStopTaskStatus.values()[tmpTask];
         this.activities = in.createTypedArrayList(RouteStopActivity.CREATOR);
+        this.pickupPhone = in.readString();
+        this.deliveryPhone = in.readString();
+        this.orderId = in.readLong();
+        this.orderCode = in.readString();
     }
 
     public static final Creator<Stop> CREATOR = new Creator<Stop>() {
@@ -149,5 +161,21 @@ public class Stop implements ParcelableModel {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getPickupPhone() {
+        return pickupPhone;
+    }
+
+    public String getDeliveryPhone() {
+        return deliveryPhone;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
     }
 }

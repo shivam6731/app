@@ -24,6 +24,8 @@ import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
+import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
+import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -217,13 +219,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.call_menu, menu);
-
-        return true;
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
@@ -239,10 +234,17 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.call_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_call:
-
+                showPhoneDialog();
                 return true;
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
@@ -319,6 +321,13 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
+    public void onPhoneSelected(String phoneNumber) {
+        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+        callIntent.setData(Uri.parse("tel:" + phoneNumber));
+        startActivity(callIntent);
+    }
+
+    @Override
     public void onBackPressed() {
         int count = fragmentManager.getBackStackEntryCount();
         if (count == 0) {
@@ -330,6 +339,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 }
             }
             setSelectedNavigationItem();
+        }
+    }
+
+    protected void showPhoneDialog() {
+        if (storageManager.getCurrentStop() != null) {
+            PhoneNumberSingleChoiceDialog phoneNumberSingleChoiceDialog = PhoneNumberSingleChoiceDialog.newInstance(storageManager.getCurrentStop());
+            phoneNumberSingleChoiceDialog.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
         }
     }
 }
