@@ -105,8 +105,8 @@ public class LoginFragment extends BaseFragment implements
             }
         });
 
-        Button mEmailSignInButton = (Button) view.findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
+        Button emailSignInButton = (Button) view.findViewById(R.id.email_sign_in_button);
+        emailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -130,11 +130,14 @@ public class LoginFragment extends BaseFragment implements
 
     @Override
     public void onValidationSucceeded() {
-        showProgressDialog();
-        username = editEmail.getText().toString();
-        password = editPassword.getText().toString();
-
-        apiManager.login(username, password, this);
+        if (storageManager.getCountry() == null) {
+            Toast.makeText(activity, getResources().getString(R.string.login_country_error), Toast.LENGTH_SHORT).show();
+        } else {
+            showProgressDialog();
+            username = editEmail.getText().toString();
+            password = editPassword.getText().toString();
+            apiManager.login(username, password, this);
+        }
     }
 
     @Override

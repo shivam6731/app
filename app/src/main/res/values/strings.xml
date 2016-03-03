@@ -16,6 +16,7 @@
     <string name="login_username_hint">Username</string>
     <string name="login_country_hint">Country</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="login_country_error">You have to select a country</string>
     <!-- Side Menu -->
     <string name="side_menu_orders">Orders</string>
     <string name="side_menu_schedule">Schedule</string>
