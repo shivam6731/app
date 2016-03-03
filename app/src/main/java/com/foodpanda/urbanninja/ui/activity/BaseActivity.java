@@ -8,6 +8,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.Tracking;
+import net.hockeyapp.android.UpdateManager;
+
 import java.net.HttpURLConnection;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -17,7 +21,28 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = getSupportFragmentManager();
+        checkForCrashes();
+        checkForUpdates();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterManagers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Tracking.startUsage(this);
+    }
+
+    @Override
+    protected void onPause() {
+        Tracking.stopUsage(this);
+        super.onPause();
+    }
+
 
     protected void hideActionBar() {
         if (getActionBar() != null) {
@@ -45,5 +70,17 @@ public abstract class BaseActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this);
+    }
+
+    private void checkForUpdates() {
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
     }
 }
