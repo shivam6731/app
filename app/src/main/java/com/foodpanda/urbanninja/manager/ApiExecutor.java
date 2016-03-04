@@ -53,13 +53,13 @@ public class ApiExecutor {
             @Override
             public void onSuccess(RouteWrapper routeWrapper) {
                 openCurrentRouteFragment();
-                activity.hideProgress();
+                hideProgressIndicators();
             }
 
             @Override
             public void onError(ErrorMessage errorMessage) {
                 activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                activity.hideProgress();
+                hideProgressIndicators();
             }
         });
     }
@@ -71,13 +71,13 @@ public class ApiExecutor {
                 public void onSuccess(ScheduleWrapper scheduleWrapper) {
                     ApiExecutor.this.scheduleWrapper = scheduleWrapper;
                     getRoute();
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
             });
     }
@@ -85,7 +85,7 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of action with route was happened
      * and store this action to the map to save up to date status for each route
-     * <p>
+     * <p/>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
@@ -141,13 +141,13 @@ public class ApiExecutor {
                         nestedFragmentCallback.openReadyToWork(new ScheduleWrapper());
                     }
                     launchServiceOrAskForPermissions();
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
             });
     }
@@ -174,13 +174,13 @@ public class ApiExecutor {
                 public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
                     ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
                     getRidersSchedule();
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
 
                 @Override
                 public void onError(ErrorMessage errorMessage) {
                     activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    activity.hideProgress();
+                    hideProgressIndicators();
                 }
             });
     }
@@ -241,6 +241,11 @@ public class ApiExecutor {
     private void finishWithCurrentRoute() {
         storageManager.removeCurrentStop();
         openCurrentRouteFragment();
+    }
+
+    private void hideProgressIndicators() {
+        activity.hideProgress();
+        nestedFragmentCallback.hideProgressIndicator();
     }
 
     /**

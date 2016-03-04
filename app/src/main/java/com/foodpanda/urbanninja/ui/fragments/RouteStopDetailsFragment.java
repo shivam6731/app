@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -40,6 +41,8 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     private TextView txtEndPoint;
     private TextView txtTimer;
     private TextView txtTimerDescription;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private GoogleMap googleMap;
     private MapView mapView;
@@ -91,6 +94,13 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
                 RouteStopDetailsFragment.this.googleMap.setMyLocationEnabled(false);
                 RouteStopDetailsFragment.this.location = null;
                 getLastKnownLocation();
+            }
+        });
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                nestedFragmentCallback.onRefresh();
             }
         });
 
@@ -209,6 +219,12 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     @Override
     public void onLocationChanged(Location location) {
         drawMarkers(location);
+    }
+
+    public void refreshComplete() {
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private void drawMarkers(Location location) {

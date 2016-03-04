@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,6 @@ import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
-import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
@@ -42,6 +42,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private FragmentManager fragmentManager;
     private Button btnAction;
     private View layoutAction;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private UserStatus userStatus;
     private ApiExecutor apiExecutor;
@@ -56,14 +57,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         return fragment;
     }
 
-    private LocationChangedCallback locationChangedCallback;
+    private RouteStopDetailsFragment routeStopDetailsFragment;
 
     private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (locationChangedCallback != null) {
+            if (routeStopDetailsFragment != null) {
                 Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
-                locationChangedCallback.onLocationChanged(location);
+                routeStopDetailsFragment.onLocationChanged(location);
             }
         }
     };
@@ -80,7 +81,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         fragmentManager = getChildFragmentManager();
         storageManager = App.STORAGE_MANAGER;
         apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
-        openLoadFragment();
     }
 
     @Override
@@ -116,7 +116,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setSwipeRefreshLayout(view);
         setActionButton(view);
+        openLoadFragment();
     }
 
     public void getRidersSchedule() {
@@ -141,6 +143,34 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             }
         });
         layoutAction.setVisibility(isActionButtonView);
+    }
+
+    private void setSwipeRefreshLayout(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateApiRequest();
+            }
+        });
+    }
+
+    private void updateApiRequest() {
+        switch (userStatus) {
+            //In all cases according to the order logic
+            //break section is missed, because we need the same API request for all
+            //this screens just update route list and show current state of the first route
+            case ACTION_LIST:
+            case VIEWING:
+            case EMPTY_LIST:
+            case ARRIVING:
+                apiExecutor.getRoute();
+                break;
+            case CLOCK_IN:
+                apiExecutor.getRidersSchedule();
+                break;
+        }
     }
 
     @Override
@@ -172,6 +202,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
+        swipeRefreshLayout.setEnabled(true);
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
@@ -184,8 +215,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     private void openRouteStopDetails(Stop stop) {
+        swipeRefreshLayout.setEnabled(false);
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
-        locationChangedCallback = fragment;
+        routeStopDetailsFragment = fragment;
         fragmentManager.
             beginTransaction().
             replace(R.id.container, fragment).
@@ -247,6 +279,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         userStatus = UserStatus.CLOCK_IN;
+        swipeRefreshLayout.setEnabled(true);
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
@@ -257,10 +290,22 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         userStatus = UserStatus.EMPTY_LIST;
+        swipeRefreshLayout.setEnabled(true);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                //Do not allow retrieve the data if empty list is already launched
+                if (!(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
+                    swipeRefreshLayout.setRefreshing(true);
+                    apiExecutor.getRoute();
+                }
+            }
+        });
+
         fragmentManager.
             beginTransaction().
             replace(R.id.container,
-                EmptyTaskListFragment.newInstance(vehicleDeliveryAreaRiderBundle)).
+                EmptyTaskListFragment.newInstance()).
             commit();
 
         updateActionButton(false, false, 0);
@@ -292,6 +337,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     @Override
     public void openLoadFragment() {
+        swipeRefreshLayout.setEnabled(false);
         fragmentManager.
             beginTransaction().
             replace(R.id.container, LoadDataFragment.newInstance()).
@@ -299,7 +345,15 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void openNextScheduleIfCurrentIsFinished() {
-        apiExecutor.openNextScheduleIfCurrentIsFinished();
+    public void hideProgressIndicator() {
+        swipeRefreshLayout.setRefreshing(false);
+        if (routeStopDetailsFragment != null) {
+            routeStopDetailsFragment.refreshComplete();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        updateApiRequest();
     }
 }

@@ -56,9 +56,14 @@ public interface NestedFragmentCallback {
     void openLoadFragment();
 
     /**
-     * Check after finishing last order is rider schedule is over
-     * and if it's true open {@link #openReadyToWork(ScheduleWrapper)} ()}
-     * otherwise open empty list {@link #openEmptyListFragment(VehicleDeliveryAreaRiderBundle)} ()}
+     * Notify fragment that some api request is finished and we have to hide progress bar
+     * or other indicator
      */
-    void openNextScheduleIfCurrentIsFinished();
+    void hideProgressIndicator();
+
+    /**
+     * Notify order fragment that api request is called from details fragment where swipe area
+     * is not included map view
+     */
+    void onRefresh();
 }
