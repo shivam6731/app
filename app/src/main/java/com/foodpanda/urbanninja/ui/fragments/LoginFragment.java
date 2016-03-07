@@ -27,6 +27,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 
 import java.util.List;
+import java.util.Locale;
 
 public class LoginFragment extends BaseFragment implements
     Validator.ValidationListener,
@@ -120,7 +121,8 @@ public class LoginFragment extends BaseFragment implements
         editEmail.setText(storageManager.getUsername());
         editPassword.setText(storageManager.getPassword());
         if (storageManager.getCountry() != null) {
-            txtCountry.setText(storageManager.getCountry().getTitle());
+            String title = new Locale("", storageManager.getCountry().getCode()).getDisplayCountry();
+            txtCountry.setText(title);
         }
     }
 
@@ -175,6 +177,7 @@ public class LoginFragment extends BaseFragment implements
 
     @Override
     public void onCountrySelected(Country country) {
-        txtCountry.setText(country.getTitle());
+        String title = new Locale("", country.getCode()).getDisplayCountry();
+        txtCountry.setText(title);
     }
 }

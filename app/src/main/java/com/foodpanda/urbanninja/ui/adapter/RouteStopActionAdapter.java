@@ -11,19 +11,24 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
+    private final StorageManager storageManager;
     private NestedFragmentCallback nestedFragmentCallback;
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
     private Stop stop;
@@ -35,6 +40,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
         }
+        storageManager = App.STORAGE_MANAGER;
     }
 
     @Override
@@ -77,7 +83,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     }
                 }
             });
-
+            String currencySymbol = getValueWithCurrencySymbol(routeStopActivity.getValue());
             switch (routeStopActivity.getType()) {
                 case PICKUP:
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up));
@@ -92,17 +98,17 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 case PAY_RESTAURANT:
                     viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay));
-                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    viewHolder.txtPrice.setText(currencySymbol);
                     break;
                 case PREPARE_CHANGE:
                     viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change));
-                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    viewHolder.txtPrice.setText(currencySymbol);
                     break;
                 case COLLECT:
                     viewHolder.imageSelected.setImageResource(R.drawable.ico_pay);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect));
-                    viewHolder.txtPrice.setText(context.getResources().getString(R.string.route_action_currency, routeStopActivity.getValue()));
+                    viewHolder.txtPrice.setText(currencySymbol);
                     break;
 
             }
@@ -118,6 +124,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_easy_peasy));
         }
 
+    }
+
+    private String getValueWithCurrencySymbol(String value) {
+        Locale locale = new Locale("en", storageManager.getCountry().getCode());
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+
+        return numberFormat.format(value);
     }
 
     @Override

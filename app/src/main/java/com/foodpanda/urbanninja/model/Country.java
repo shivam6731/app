@@ -1,31 +1,16 @@
 package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.gson.annotations.SerializedName;
 
 public class Country implements ParcelableModel {
-    @SerializedName("code")
     private String code;
-
-    @SerializedName("currency_code")
-    private String currencyCode;
-
-    @SerializedName("brand")
-    private String brand;
-
-    @SerializedName("title")
-    private String title;
-
-    @SerializedName("image")
-    private String image;
-
-    @SerializedName("url")
+    private long id;
+    private String environment;
     private String url;
+    private String platform;
+    private String version;
+    private String component;
 
-    public Country() {
-    }
 
     @Override
     public int describeContents() {
@@ -35,23 +20,28 @@ public class Country implements ParcelableModel {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.code);
-        dest.writeString(this.currencyCode);
-        dest.writeString(this.brand);
-        dest.writeString(this.title);
-        dest.writeString(this.image);
+        dest.writeLong(this.id);
+        dest.writeString(this.environment);
         dest.writeString(this.url);
+        dest.writeString(this.platform);
+        dest.writeString(this.version);
+        dest.writeString(this.component);
+    }
+
+    public Country() {
     }
 
     protected Country(Parcel in) {
         this.code = in.readString();
-        this.currencyCode = in.readString();
-        this.brand = in.readString();
-        this.title = in.readString();
-        this.image = in.readString();
+        this.id = in.readLong();
+        this.environment = in.readString();
         this.url = in.readString();
+        this.platform = in.readString();
+        this.version = in.readString();
+        this.component = in.readString();
     }
 
-    public static final Parcelable.Creator<Country> CREATOR = new Parcelable.Creator<Country>() {
+    public static final Creator<Country> CREATOR = new Creator<Country>() {
         public Country createFromParcel(Parcel source) {
             return new Country(source);
         }
@@ -65,23 +55,27 @@ public class Country implements ParcelableModel {
         return code;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
+    public long getId() {
+        return id;
     }
 
-    public String getBrand() {
-        return brand;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getImage() {
-        return image;
+    public String getEnvironment() {
+        return environment;
     }
 
     public String getUrl() {
         return url;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getComponent() {
+        return component;
     }
 }

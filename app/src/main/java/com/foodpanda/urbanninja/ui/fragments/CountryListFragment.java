@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryListWrapper> {
     private ApiManager apiManager;
@@ -103,7 +104,10 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
         Collections.sort(list, new Comparator<Country>() {
             @Override
             public int compare(Country lhs, Country rhs) {
-                return lhs.getTitle().compareTo(rhs.getTitle());
+                String titleFirst = new Locale("", lhs.getCode()).getDisplayCountry();
+                String titleSecond = new Locale("", rhs.getCode()).getDisplayCountry();
+
+                return titleFirst.compareTo(titleSecond);
             }
         });
         return list;
