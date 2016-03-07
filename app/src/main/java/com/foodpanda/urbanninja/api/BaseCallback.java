@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.api;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.model.Model;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ public abstract class BaseCallback<T extends Model> implements Callback<T> {
             ErrorMessage errorMessage = new ErrorMessage();
             try {
                 errorMessage = new GsonBuilder().create().fromJson(response.errorBody().string(), ErrorMessage.class);
-            } catch (IOException e) {
+            } catch (IOException | JsonSyntaxException e) {
                 e.printStackTrace();
             }
             if (baseApiCallback != null) {
