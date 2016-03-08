@@ -2,41 +2,57 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/main_background_color"
-                android:orientation="vertical">
+                android:background="@color/main_background_color">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-        android:id="@+id/txt_details"
-        style="@style/TextView.Title.Multiline.NotBold"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="0dp"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/map">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-        android:id="@+id/txt_timer"
-        style="@style/TextView.Title.Timer"
-        android:layout_below="@+id/txt_details"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="0dp"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-        android:id="@+id/txt_minutes_left"
-        style="@style/TextView.Title.Multiline.NotBold"
-        android:layout_below="@+id/txt_timer"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="0dp"
-        android:text="@string/task_details_time_left"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-        android:id="@+id/txt_end_point"
-        style="@style/TextView.Title.Multiline.NotBold.Address"
-        android:layout_above="@+id/map"
-        android:layout_centerHorizontal="true"
-        android:drawableLeft="@drawable/ico_street"/>
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                    android:id="@+id/txt_details"
+                    style="@style/TextView.Title.Multiline.NotBold"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="0dp"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                    android:id="@+id/txt_timer"
+                    style="@style/TextView.Title.Timer"
+                    android:layout_below="@+id/txt_details"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="0dp"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                    android:id="@+id/txt_minutes_left"
+                    style="@style/TextView.Title.Multiline.NotBold"
+                    android:layout_below="@+id/txt_timer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="0dp"
+                    android:text="@string/task_details_time_left"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                    android:id="@+id/txt_end_point"
+                    style="@style/TextView.Title.Multiline.NotBold.Address"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/ico_street"/>
+            </RelativeLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="@dimen/map_height"
         android:layout_alignParentBottom="true"/>
-
 </RelativeLayout>

@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background_color">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_to_refresh"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/main_background_color">
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/main_background_color">
+        <ImageView
+            android:id="@+id/image_top_logo"
+            style="@style/ImageView"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ninja"/>
 
-            <ImageView
-                android:id="@+id/image_top_logo"
-                style="@style/ImageView"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ninja"/>
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/empty_list_text"
+            style="@style/TextView.Description"
+            android:layout_below="@+id/image_top_logo"
+            android:layout_centerHorizontal="true"
+            android:text="@string/empty_list_header"/>
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                android:id="@+id/empty_list_text"
-                style="@style/TextView.Description"
-                android:layout_below="@+id/image_top_logo"
-                android:layout_centerHorizontal="true"
-                android:text="@string/empty_list_header"/>
-
-            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                style="@style/TextView.Title.Multiline"
-                android:layout_below="@+id/empty_list_text"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="@dimen/padding_empty_description"
-                android:text="@string/empty_list_text"/>
-        </RelativeLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
-</FrameLayout>
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            style="@style/TextView.Title.Multiline"
+            android:layout_below="@+id/empty_list_text"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="@dimen/padding_empty_description"
+            android:text="@string/empty_list_text"/>
+    </RelativeLayout>
+</ScrollView>
