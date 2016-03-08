@@ -30,6 +30,9 @@
 
     <!--Menu -->
     <dimen name="menu_width">240dp</dimen>
+    <dimen name="menu_navigation_thickness">1dp</dimen>
+    <dimen name="menu_navigation_gap_between_bars">8dp</dimen>
+    <dimen name="menu_navigation_bar_length">24dp</dimen>
 
     <!--Map -->
     <dimen name="map_height">180dp</dimen>

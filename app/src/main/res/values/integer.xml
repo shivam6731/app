@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="max_lines_number_address">2</integer>
+    <integer name="max_lines_number_address">30</integer>
 </resources>

@@ -52,6 +52,7 @@ public class ApiExecutor {
         apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
             @Override
             public void onSuccess(RouteWrapper routeWrapper) {
+                activity.writeCodeAsTitle(storageManager.getCurrentStop());
                 openCurrentRouteFragment();
                 hideProgressIndicators();
             }
@@ -240,6 +241,7 @@ public class ApiExecutor {
 
     private void finishWithCurrentRoute() {
         storageManager.removeCurrentStop();
+        activity.writeCodeAsTitle(storageManager.getCurrentStop());
         openCurrentRouteFragment();
     }
 

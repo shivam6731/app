@@ -40,13 +40,21 @@
                     android:layout_margin="0dp"
                     android:text="@string/task_details_time_left"/>
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                    android:id="@+id/txt_end_point"
-                    style="@style/TextView.Title.Multiline.NotBold.Address"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:drawableLeft="@drawable/ico_street"/>
+                    android:layout_below="@+id/txt_minutes_left">
+
+                    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                        android:id="@+id/txt_end_point"
+                        style="@style/TextView.Title.Multiline.NotBold.Address"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:drawableLeft="@drawable/ico_street"/>
+                </RelativeLayout>
             </RelativeLayout>
+
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -55,4 +63,5 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/map_height"
         android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>

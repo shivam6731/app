@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,12 +17,15 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
 import com.foodpanda.urbanninja.utils.FormatUtil;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -34,6 +38,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
     public RouteStopActionAdapter(Stop stop, Context context, NestedFragmentCallback nestedFragmentCallback) {
         super(stop.getActivities(), context);
+        //TODO should be removed
+        //blocked by https://foodpanda.atlassian.net/browse/LOGI-324
+        objects = removePayActivity(stop.getActivities());
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.stop = stop;
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
@@ -115,12 +122,24 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
         } else if (holder instanceof ViewHolderHeader && !TextUtils.isEmpty(stop.getOrderCode())) {
             ViewHolderHeader viewHolder = (ViewHolderHeader) holder;
+            int textResourceLink = 0;
+            int imageResourceLink = 0;
+            switch (stop.getTask()) {
+                case PICKUP:
+                    textResourceLink = R.string.route_action_header_pick_up;
+                    imageResourceLink = R.drawable.ico_restaurant;
+                    break;
+                case DELIVER:
+                    textResourceLink = R.string.route_action_header_deliver;
+                    imageResourceLink = R.drawable.ico_user;
+                    break;
+            }
+
             viewHolder.txtName.setText(
                 Html.fromHtml(
-                    context.getResources().getString(R.string.route_action_header,
-                        "<b>" + stop.getOrderCode() + "</b> <br>",
-                        stop.getName())));
-            viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_easy_peasy));
+                    context.getResources().getString(textResourceLink,
+                        "<br> <b>" + stop.getName() + "</b>")));
+            viewHolder.imageOrderType.setImageDrawable(ContextCompat.getDrawable(context, imageResourceLink));
         }
 
     }
@@ -140,15 +159,14 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
     private class ViewHolderHeader extends SimpleBaseAdapter.BaseViewHolder {
         public TextView txtName;
-        public TextView txtDescription;
+        public ImageView imageOrderType;
 
         public ViewHolderHeader(View view) {
             super(view);
             txtName = (TextView) view.findViewById(R.id.txt_order_name);
-            txtDescription = (TextView) view.findViewById(R.id.txt_order_description);
+            imageOrderType = (ImageView) view.findViewById(R.id.image_order_type);
         }
     }
-
 
     private class ViewHolder extends SimpleBaseAdapter.BaseViewHolder {
         public TextView txtName;
@@ -182,11 +200,25 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     private boolean isAllChecked() {
         for (RouteStopActivity routeStopActivity : objects) {
             if (!checkedActionsHashMap.get(routeStopActivity)) {
+
                 return false;
             }
         }
 
         return true;
+    }
+
+    //TODO should be removed after testing in a Honk-Kong
+    // blocked by https://foodpanda.atlassian.net/browse/LOGI-324
+    private List<RouteStopActivity> removePayActivity(List<RouteStopActivity> list) {
+        for (Iterator<RouteStopActivity> iterator = list.iterator(); iterator.hasNext(); ) {
+            RouteStopActivity routeStopActivity = iterator.next();
+            if (routeStopActivity.getType() == RouteStopActivityType.PAY_RESTAURANT) {
+                iterator.remove();
+            }
+        }
+
+        return list;
     }
 
     @Override
