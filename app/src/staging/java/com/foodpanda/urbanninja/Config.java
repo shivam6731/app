@@ -7,13 +7,11 @@ import com.foodpanda.urbanninja.model.Country;
 
 public class Config {
     public static class ApiBaseUrl {
-        private static final String URL_SCHEME_TO_REPLACE_OLD = "urbanninja";
-        private static final String URL_SCHEME_TO_REPLACE_NEW = "urbanninja2";
 
         public static String getBaseUrl(Country country) {
             if (country != null && !TextUtils.isEmpty(country.getUrl())) {
-                //TODO fix country end point and replace url with normal one
-                return country.getUrl().replace(URL_SCHEME_TO_REPLACE_OLD, URL_SCHEME_TO_REPLACE_NEW);
+
+                return country.getUrl();
             } else {
 
                 return ApiUrl.BASE_URL;
@@ -22,14 +20,12 @@ public class Config {
     }
 
     public class ApiUrbanNinjaTag {
-        //TODO replace params with UN2 one when https://foodpanda.atlassian.net/browse/LOGI-303 will be done
-        public static final String PARAMS = "getmobilecountries?environment=staging&version=1.0&component=urbanninja";
+        public static final String PARAMS = "endpoints?environment=staging&component=fleet&version=1&platform=foodpanda";
     }
 
     public class ApiUrbanNinjaUrl {
-        //TODO replace link with UN2 link when https://foodpanda.atlassian.net/browse/LOGI-303 will be done
-        private static final String URL = "https://api-st.foodpanda.com/";
-        private static final String CONFIG = "configuration/";
+        private static final String URL = "http://api.foodpanda.com/";
+        private static final String CONFIG = "configuration/urban-ninja-v2/";
         public static final String BASE_URL = URL + CONFIG;
     }
 }

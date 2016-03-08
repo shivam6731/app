@@ -93,7 +93,6 @@
 
     <!-- Route Actions  -->
     <string name="route_action_items">%1$s Items</string>
-    <string name="route_action_currency">%1$s $</string>
     <string name="route_action_pay">Pay</string>
     <string name="route_action_pick_up">Pick up</string>
     <string name="route_action_change">Prepare Change</string>

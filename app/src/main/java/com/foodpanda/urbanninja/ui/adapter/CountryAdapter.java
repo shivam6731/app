@@ -12,6 +12,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Country;
 
 import java.util.List;
+import java.util.Locale;
 
 public class CountryAdapter extends SimpleBaseAdapter<Country, CountryAdapter.ViewHolder> {
     private Country selectedCountry;
@@ -30,8 +31,9 @@ public class CountryAdapter extends SimpleBaseAdapter<Country, CountryAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Country country = getItem(position);
-        if (!TextUtils.isEmpty(country.getTitle())) {
-            holder.txtName.setText(country.getTitle());
+        if (!TextUtils.isEmpty(country.getCode())) {
+            String title = new Locale("", country.getCode()).getDisplayCountry();
+            holder.txtName.setText(title);
         }
         if (selectedCountry != null &&
             selectedCountry.getCode().equalsIgnoreCase(getItem(position).getCode())) {
