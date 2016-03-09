@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.utils;
 
+import android.text.TextUtils;
+
 import com.foodpanda.urbanninja.model.Country;
 
 import java.text.NumberFormat;
@@ -28,7 +30,7 @@ public class FormatUtil {
      * Format number as currency of passed country
      */
     public static String getValueWithCurrencySymbol(Country country, Number numericValue) {
-        if (StringUtil.isEmpty(country.getCode())) {
+        if (TextUtils.isEmpty(country.getCode())) {
             return "";
         }
 
