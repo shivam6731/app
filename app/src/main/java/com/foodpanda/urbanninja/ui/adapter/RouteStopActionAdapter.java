@@ -78,7 +78,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
                     if (stop != null) {
                         nestedFragmentCallback.enableActionButton(isAllChecked(),
-                                stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
+                            stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                     }
                 }
             });

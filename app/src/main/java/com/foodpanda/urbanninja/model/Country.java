@@ -58,6 +58,7 @@ public class Country implements ParcelableModel {
     public void setCode(String code) {
         this.code = code;
     }
+
     public long getId() {
         return id;
     }
