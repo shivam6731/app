@@ -30,8 +30,7 @@
                 <com.foodpanda.urbanninja.ui.widget.MontserratButton
                     android:id="@+id/btn_action"
                     style="@style/ButtonMainAction.Main"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/action_ready_to_work"/>
+                    android:layout_centerHorizontal="true"/>
             </RelativeLayout>
         </RelativeLayout>
 

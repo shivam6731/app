@@ -155,14 +155,6 @@ public class Stop implements ParcelableModel {
         return activities;
     }
 
-    public void setStatus(Action status) {
-        this.status = status;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getPickupPhone() {
         return pickupPhone;
     }
@@ -177,5 +169,21 @@ public class Stop implements ParcelableModel {
 
     public String getOrderCode() {
         return orderCode;
+    }
+
+    public void setStatus(Action status) {
+        this.status = status;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTask(RouteStopTaskStatus task) {
+        this.task = task;
+    }
+
+    public void setActivities(List<RouteStopActivity> activities) {
+        this.activities = activities;
     }
 }

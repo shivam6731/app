@@ -25,11 +25,11 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
 /**
  * To encapsulate all logic according to current rider's orders in one separate navigation menu item
@@ -40,16 +40,14 @@ import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 public class OrdersNestedFragment extends BaseFragment implements NestedFragmentCallback {
     private MainActivityCallback mainActivityCallback;
     private FragmentManager fragmentManager;
-    private Button btnAction;
-    private View layoutAction;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private UserStatus userStatus = UserStatus.LOADING;
     private ApiExecutor apiExecutor;
 
-    private StorageManager storageManager;
+    private ActionLayoutHelper actionLayoutHelper;
 
-    private int isActionButtonView = View.GONE;
+    private StorageManager storageManager;
 
     public static OrdersNestedFragment newInstance() {
         OrdersNestedFragment fragment = new OrdersNestedFragment();
@@ -81,6 +79,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         fragmentManager = getChildFragmentManager();
         storageManager = App.STORAGE_MANAGER;
         apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
+        actionLayoutHelper = new ActionLayoutHelper(activity);
         openLoadFragment();
     }
 
@@ -134,15 +133,19 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     private void setActionButton(View view) {
-        layoutAction = view.findViewById(R.id.layout_action);
-        btnAction = (Button) view.findViewById(R.id.btn_action);
+        View layoutAction = view.findViewById(R.id.layout_action);
+        Button btnAction = (Button) view.findViewById(R.id.btn_action);
+
+        actionLayoutHelper.setLayoutAction(layoutAction);
+        actionLayoutHelper.setBtnAction(btnAction);
+
         layoutAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeStatus();
             }
         });
-        layoutAction.setVisibility(isActionButtonView);
+        actionLayoutHelper.setActionButtonState();
     }
 
     private void setSwipeRefreshLayout(View view) {
@@ -175,8 +178,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        isActionButtonView = layoutAction.getVisibility();
+        actionLayoutHelper.saveActionButtonState();
     }
+
 
     private void changeStatus() {
         switch (userStatus) {
@@ -187,7 +191,8 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 break;
             case VIEWING:
                 apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
-                setTaskTitle();
+                userStatus = UserStatus.ARRIVING;
+                actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVING:
                 openRouteStopActionList(storageManager.getCurrentStop());
@@ -208,9 +213,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 RouteStopActionListFragment.newInstance(stop)).
             commit();
 
-        int titleResourcesLink = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
-            R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, stop.getActivities().isEmpty(), titleResourcesLink, R.drawable.arrow_swipe);
+        actionLayoutHelper.setRouteStopActionListButton(storageManager.getCurrentStop());
     }
 
     private void openRouteStopDetails(Stop stop) {
@@ -223,44 +226,11 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             commit();
     }
 
-    private void updateActionButton(
-        boolean isVisible,
-        boolean isEnable,
-        int textResLink
-    ) {
-        updateActionButton(isVisible, isEnable, textResLink, 0);
-    }
-
-    private void updateActionButton(
-        final boolean isVisible,
-        final boolean isEnable,
-        final int textResLink,
-        final int drawableLeft
-    ) {
-        if (isVisible) {
-            layoutAction.setVisibility(View.VISIBLE);
-            layoutAction.setEnabled(isEnable);
-            if (drawableLeft != 0) {
-                btnAction.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_swipe, 0, 0, 0);
-            }
-            btnAction.setText(textResLink);
-        } else {
-            layoutAction.setVisibility(View.GONE);
-        }
-    }
-
-    private void setTaskTitle() {
-        userStatus = UserStatus.ARRIVING;
-        int title = storageManager.getCurrentStop().getTask() == RouteStopTaskStatus.DELIVER ?
-            R.string.action_at_delivery : R.string.action_at_pick_up;
-        updateActionButton(true, true, title, R.drawable.arrow_swipe);
-    }
-
     private void enableButton(final boolean isEnabled, final int textResourceLink) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateActionButton(true, isEnabled, textResourceLink);
+                actionLayoutHelper.updateActionButton(isEnabled, textResourceLink);
             }
         });
     }
@@ -276,6 +246,11 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
+    public void disableActionButton() {
+        actionLayoutHelper.disableActionButton();
+    }
+
+    @Override
     public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         userStatus = UserStatus.CLOCK_IN;
         swipeRefreshLayout.setEnabled(true);
@@ -284,6 +259,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             replace(R.id.container,
                 ReadyToWorkFragment.newInstance(scheduleWrapper)).
             commit();
+        actionLayoutHelper.setReadyToWorkActionButton();
     }
 
     @Override
@@ -307,7 +283,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 EmptyTaskListFragment.newInstance()).
             commit();
 
-        updateActionButton(false, false, 0);
+        actionLayoutHelper.hideActionButton();
     }
 
     @Override
@@ -318,12 +294,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case VIEWED:
                 userStatus = UserStatus.VIEWING;
                 apiExecutor.notifyActionPerformed(Action.VIEWED);
-                updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
                 openRouteStopDetails(stop);
+                actionLayoutHelper.setDrivingHereStatusActionButton();
                 break;
             case ON_THE_WAY:
-                setTaskTitle();
+                userStatus = UserStatus.ARRIVING;
                 openRouteStopDetails(stop);
+                actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVED:
                 openRouteStopActionList(stop);
