@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
@@ -325,6 +327,11 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         Intent callIntent = new Intent(Intent.ACTION_DIAL);
         callIntent.setData(Uri.parse("tel:" + phoneNumber));
         startActivity(callIntent);
+    }
+
+    @Override
+    public void writeCodeAsTitle(Stop stop) {
+        toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
     }
 
     @Override

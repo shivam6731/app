@@ -6,10 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/ToolbarColoredBackArrow</item>
     </style>
 
-    <style name="ToolbarColoredBackArrow" parent="AppTheme">
+    <style name="ToolbarColoredBackArrow" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="thickness">@dimen/menu_navigation_thickness</item>
+        <item name="gapBetweenBars">@dimen/menu_navigation_gap_between_bars</item>
+        <item name="barLength">@dimen/menu_navigation_bar_length</item>
     </style>
 
     <style name="ImageView" parent="AppTheme">

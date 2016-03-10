@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,8 +126,22 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
         mapView.onLowMemory();
     }
 
+    /**
+     * Here we set all information about the current route stop for the text field
+     * we have the same text view for the address and comment so we need to check if this data
+     * present before set it
+     */
     private void setData() {
-        txtEndPoint.setText(stop.getAddress());
+        String text = "";
+
+        if (!TextUtils.isEmpty(stop.getAddress())) {
+            text += stop.getAddress();
+        }
+        if (!TextUtils.isEmpty(stop.getComment())) {
+            text += getResources().getString(R.string.task_details_comment, stop.getComment());
+        }
+
+        txtEndPoint.setText(text);
         txtDetails.setText(detailsText());
     }
 
@@ -142,6 +157,13 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
         }
     }
 
+    /**
+     * Set info about about destination point
+     * to the Spanned and depends on what type of task it is
+     * the description would be "delivery" or "pickup"
+     *
+     * @return text for the TextView
+     */
     private Spanned detailsText() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getResources().getString(R.string.task_details_go_to));

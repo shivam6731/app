@@ -44,12 +44,12 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private View layoutAction;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private UserStatus userStatus;
+    private UserStatus userStatus = UserStatus.LOADING;
     private ApiExecutor apiExecutor;
 
     private StorageManager storageManager;
 
-    private int isActionButtonView;
+    private int isActionButtonView = View.GONE;
 
     public static OrdersNestedFragment newInstance() {
         OrdersNestedFragment fragment = new OrdersNestedFragment();
@@ -81,6 +81,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         fragmentManager = getChildFragmentManager();
         storageManager = App.STORAGE_MANAGER;
         apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
+        openLoadFragment();
     }
 
     @Override
@@ -118,7 +119,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         super.onViewCreated(view, savedInstanceState);
         setSwipeRefreshLayout(view);
         setActionButton(view);
-        openLoadFragment();
     }
 
     public void getRidersSchedule() {
@@ -147,7 +147,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private void setSwipeRefreshLayout(View view) {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
-        swipeRefreshLayout.setEnabled(false);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -337,7 +336,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     @Override
     public void openLoadFragment() {
-        swipeRefreshLayout.setEnabled(false);
         fragmentManager.
             beginTransaction().
             replace(R.id.container, LoadDataFragment.newInstance()).

@@ -11,12 +11,11 @@
         android:layout_gravity="center"
         android:text="@string/stop_list_description"/>
 
-    <com.foodpanda.urbanninja.ui.widget.MontserratTextView
-        android:id="@+id/txt_order_description"
-        style="@style/TextView.Multiline"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/margin_default"
-        android:textAllCaps="true"/>
+    <ImageView
+        android:id="@+id/image_order_type"
+        style="@style/ImageView"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ico_restaurant"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         style="@style/TextView.Multiline"
