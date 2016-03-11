@@ -139,6 +139,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             }
         });
 
+        showAppVersion();
+    }
+
+    /**
+     * in the bottom of sliding menu we would have a label with
+     * current version of the app taken from {@link BuildConfig} file
+     * base on version in the gradle build file
+     */
+    private void showAppVersion() {
         TextView textView = (TextView) findViewById(R.id.txt_app_version);
         textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
     }
