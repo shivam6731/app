@@ -15,9 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
@@ -136,6 +138,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 return true;
             }
         });
+
+        TextView textView = (TextView) findViewById(R.id.txt_app_version);
+        textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
     }
 
     /**
