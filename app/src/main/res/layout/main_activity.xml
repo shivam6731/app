@@ -45,7 +45,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:menu="@menu/drawer">
 
-        <TextView
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_app_version"
             style="@style/TextView.Dark"
             android:layout_gravity="bottom"/>
