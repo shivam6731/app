@@ -28,6 +28,15 @@ public interface NestedFragmentCallback {
     void enableActionButton(boolean isEnable, int textResLink);
 
     /**
+     * Disable the main action button
+     * We need this logic for case when items were selected and it means that
+     * button is enable to finish an order
+     * however when this screen would be re-created all items would be not selected
+     * and the button should be disabled
+     */
+    void disableActionButton();
+
+    /**
      * Open clock-in fragment if rider as a schedule and doesn't clock-in jet
      *
      * @param scheduleWrapper current rider schedule where he has to clock-in

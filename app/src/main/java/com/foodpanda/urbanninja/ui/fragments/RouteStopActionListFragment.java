@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.foodpanda.urbanninja.Constants;
@@ -14,12 +15,6 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     private NestedFragmentCallback nestedFragmentCallback;
     private Stop currentStop;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
-    }
-
     public static RouteStopActionListFragment newInstance(Stop stop) {
         RouteStopActionListFragment fragment = new RouteStopActionListFragment();
         Bundle bundle = new Bundle();
@@ -30,9 +25,21 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        nestedFragmentCallback.disableActionButton();
     }
 
     @Override

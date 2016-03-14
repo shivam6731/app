@@ -77,7 +77,9 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
         view.findViewById(R.id.btn_select).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginActivityCallback.onCountrySelected(selectedCountry);
+                if (selectedCountry != null) {
+                    loginActivityCallback.onCountrySelected(selectedCountry);
+                }
             }
         });
     }
