@@ -31,6 +31,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
+import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -132,8 +133,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                     case R.id.shift:
                         onScheduleClicked();
                         break;
-                    case R.id.order_history:
-                        onOrderHistoryClicked();
+                    case R.id.cash_report:
+                        onCashReportClicked();
                         break;
                     case R.id.logout:
                         onLogoutClicked();
@@ -323,10 +324,15 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     @Override
-    public void onOrderHistoryClicked() {
-        //TODO should be replaced to order history
-        Toast.makeText(this, "Order History ", Toast.LENGTH_SHORT).show();
-        onScheduleClicked();
+    public void onCashReportClicked() {
+        CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
+
+        fragmentManager.
+            beginTransaction().
+            add(R.id.container, cashReportListFragment).
+            addToBackStack(CashReportListFragment.class.getSimpleName()).
+            commit();
+        drawerLayout.closeDrawers();
     }
 
     private void startOrderFragment() {

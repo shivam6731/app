@@ -14,8 +14,8 @@
             android:title="@string/side_menu_schedule"/>
 
         <item
-            android:id="@+id/order_history"
-            android:title="@string/side_menu_order_history"/>
+            android:id="@+id/cash_report"
+            android:title="@string/side_menu_cash_report"/>
 
     </group>
     <group

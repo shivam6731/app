@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_small"
+                android:orientation="horizontal">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_cash_report_code"
+        style="@style/TextView.Italic"
+        android:layout_alignParentLeft="true"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_cash_report_name"
+        style="@style/TextView"
+        android:layout_toLeftOf="@+id/txt_cash_report_value"
+        android:layout_toRightOf="@+id/txt_cash_report_code"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_cash_report_value"
+        style="@style/TextView"
+        android:layout_alignParentRight="true"/>
+
+    <View
+        android:id="@+id/divider_cash_report"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/main_button_disable"/>
+</RelativeLayout>

@@ -18,10 +18,8 @@
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_name"
-            style="@style/TextView"
-            android:layout_margin="@dimen/margin_tiny_tiny"
-            android:textColor="@color/colorAccent"
-            android:textStyle="italic"/>
+            style="@style/TextView.Italic"
+            android:textColor="@color/colorAccent"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_address"

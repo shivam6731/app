@@ -13,6 +13,7 @@ public class DateUtil {
     private static SimpleDateFormat timerFormatWithHour = new SimpleDateFormat("HH:mm:ss");
 
     private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM");
+    private static SimpleDateFormat timerFormatWeekDayDateMonthYear = new SimpleDateFormat("EEEE - dd/MM/yyyy");
     private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm");
 
     static {
@@ -20,6 +21,7 @@ public class DateUtil {
         timerFormatWithHour.setTimeZone(TimeZone.getTimeZone("GMT"));
         timerFormatWeekDayDateMonth.setTimeZone(TimeZone.getTimeZone("GMT"));
         timerFormatMinutesHour.setTimeZone(TimeZone.getTimeZone("GMT"));
+        timerFormatWeekDayDateMonthYear.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     private static String formatTimeMinute(long date) {
@@ -48,4 +50,9 @@ public class DateUtil {
     public static String formatTimeWeekDayDateMonth(DateTime dateTime) {
         return timerFormatWeekDayDateMonth.format(dateTime.toDate());
     }
+
+    public static String formatTimeWeekDayDateMonthYear(DateTime dateTime) {
+        return timerFormatWeekDayDateMonthYear.format(dateTime.toDate());
+    }
+
 }

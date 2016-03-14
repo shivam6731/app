@@ -20,7 +20,7 @@
     <!-- Side Menu -->
     <string name="side_menu_orders">Orders</string>
     <string name="side_menu_schedule">Schedule</string>
-    <string name="side_menu_order_history">Order History</string>
+    <string name="side_menu_cash_report">Order History</string>
     <string name="side_menu_logout">Logout</string>
     <string name="side_menu_open">Open</string>
     <string name="side_menu_close">Close</string>
@@ -102,4 +102,9 @@
     <string name="route_action_collect">Collect</string>
     <string name="route_action_header_deliver">Deliver to %1$s</string>
     <string name="route_action_header_pick_up">Pickup from %1$s</string>
+
+    <!-- Cash Report-->
+    <string name="cash_report_total">Total: %1$s</string>
+    <string name="cash_report_total_label">Total:</string>
+    <string name="cash_report_cancelled">Cancelled</string>
 </resources>
