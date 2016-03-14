@@ -24,6 +24,7 @@
     <string name="side_menu_logout">Logout</string>
     <string name="side_menu_open">Open</string>
     <string name="side_menu_close">Close</string>
+    <string name="side_menu_version">App version: %1$s</string>
 
     <!-- Menu -->
     <string name="menu_call">Call</string>
