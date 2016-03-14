@@ -49,20 +49,25 @@ public class ApiExecutor {
     }
 
     public void getRoute() {
-        apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
-            @Override
-            public void onSuccess(RouteWrapper routeWrapper) {
-                activity.writeCodeAsTitle(storageManager.getCurrentStop());
-                openCurrentRouteFragment();
-                hideProgressIndicators();
-            }
+        if (vehicleDeliveryAreaRiderBundle == null ||
+            vehicleDeliveryAreaRiderBundle.getVehicle() == null) {
+            getRoute();
+        } else {
+            apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
+                @Override
+                public void onSuccess(RouteWrapper routeWrapper) {
+                    activity.writeCodeAsTitle(storageManager.getCurrentStop());
+                    openCurrentRouteFragment();
+                    hideProgressIndicators();
+                }
 
-            @Override
-            public void onError(ErrorMessage errorMessage) {
-                activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                hideProgressIndicators();
-            }
-        });
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    hideProgressIndicators();
+                }
+            });
+        }
     }
 
     public void clockIn() {
@@ -108,7 +113,7 @@ public class ApiExecutor {
 
     public void startLocationService() {
         if (vehicleDeliveryAreaRiderBundle != null &&
-            vehicleDeliveryAreaRiderBundle.getRider() != null) {
+            vehicleDeliveryAreaRiderBundle.getVehicle() != null) {
             Intent intent = new Intent(activity, LocationService.class);
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.BundleKeys.VEHICLE_ID, vehicleDeliveryAreaRiderBundle.getVehicle().getId());
