@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.Spanned;
@@ -269,8 +270,8 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
             circleOptions.
                 center(myLocation).
                 radius(location.getAccuracy()).
-                fillColor(getResources().getColor(R.color.location_radius_color)).
-                strokeColor(getResources().getColor(R.color.location_radius_border_color)).
+                fillColor(ContextCompat.getColor(activity, R.color.location_radius_color)).
+                strokeColor(ContextCompat.getColor(activity, R.color.location_radius_border_color)).
                 strokeWidth(getResources().getDimension(R.dimen.margin_tiny_tiny));
             googleMap.addCircle(circleOptions);
         }
@@ -286,9 +287,14 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
                 builder.include(m.getPosition());
             }
             LatLngBounds bounds = builder.build();
-            int padding = getResources().getDrawable(R.drawable.pin).getIntrinsicHeight();
+            int padding = ContextCompat.getDrawable(activity, R.drawable.pin).getIntrinsicHeight();
 
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngBounds(
+                    bounds,
+                    this.getResources().getDisplayMetrics().widthPixels,
+                    this.getResources().getDimensionPixelOffset(R.dimen.map_height),
+                    padding));
         }
         this.location = location;
     }

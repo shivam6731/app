@@ -351,7 +351,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     @Override
     public void onBackPressed() {
         int count = fragmentManager.getBackStackEntryCount();
-        if (count == 0) {
+        if (count <= 0) {
             super.onBackPressed();
         } else {
             for (Fragment fragment : fragmentManager.getFragments()) {

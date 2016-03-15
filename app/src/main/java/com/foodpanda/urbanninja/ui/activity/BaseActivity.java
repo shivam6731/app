@@ -25,6 +25,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         checkForUpdates();
     }
 
+    //http://stackoverflow.com/a/10261438/831625
+    //With this code I try to get rid of crash with call
+    //methods when app is not in a foreground
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
