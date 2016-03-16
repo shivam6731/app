@@ -16,12 +16,13 @@ public class FormatUtil {
     /**
      * Convert string to number and format as currency of passed country
      *
-     * Returns empty string if cannot convert string to number
+     * @return empty string if cannot convert string to number
+     * otherwise it would be value with currency symbol
      */
     public static String getValueWithCurrencySymbol(Country country, String value) {
         try {
-            return getValueWithCurrencySymbol(country, Double.parseDouble(value));
-        } catch (NumberFormatException e) {
+            return getValueWithCurrencySymbolFromNumber(country, Double.parseDouble(value));
+        } catch (NumberFormatException | NullPointerException e) {
             return "";
         }
     }
@@ -29,7 +30,7 @@ public class FormatUtil {
     /**
      * Format number as currency of passed country
      */
-    public static String getValueWithCurrencySymbol(Country country, Number numericValue) {
+    public static String getValueWithCurrencySymbolFromNumber(Country country, Number numericValue) {
         if (TextUtils.isEmpty(country.getCode())) {
             return "";
         }

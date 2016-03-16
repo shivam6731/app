@@ -84,12 +84,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        apiExecutor = null;
-    }
-
-    @Override
     public void onStop() {
         activity.unregisterReceiver(locationChangeReceiver);
         super.onStop();
@@ -100,7 +94,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         super.onStart();
         activity.registerReceiver(locationChangeReceiver, new IntentFilter(Constants.LOCATION_UPDATED));
     }
-
 
     @Nullable
     @Override
@@ -207,11 +200,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
         swipeRefreshLayout.setEnabled(true);
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                RouteStopActionListFragment.newInstance(stop)).
-            commit();
+        replaceFragment(RouteStopActionListFragment.newInstance(stop));
 
         actionLayoutHelper.setRouteStopActionListButton(storageManager.getCurrentStop());
     }
@@ -220,10 +209,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         swipeRefreshLayout.setEnabled(false);
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
         routeStopDetailsFragment = fragment;
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container, fragment).
-            commit();
+        replaceFragment(fragment);
     }
 
     private void enableButton(final boolean isEnabled, final int textResourceLink) {
@@ -254,11 +240,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         userStatus = UserStatus.CLOCK_IN;
         swipeRefreshLayout.setEnabled(true);
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                ReadyToWorkFragment.newInstance(scheduleWrapper)).
-            commit();
+        replaceFragment(ReadyToWorkFragment.newInstance(scheduleWrapper));
         actionLayoutHelper.setReadyToWorkActionButton();
     }
 
@@ -276,14 +258,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 }
             }
         });
-
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container,
-                EmptyTaskListFragment.newInstance()).
-            commit();
+        replaceFragment(EmptyTaskListFragment.newInstance());
 
         actionLayoutHelper.hideActionButton();
+    }
+
+    @Override
+    public void openLoadFragment() {
+        replaceFragment(LoadDataFragment.newInstance());
     }
 
     @Override
@@ -312,18 +294,20 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void openLoadFragment() {
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.container, LoadDataFragment.newInstance()).
-            commit();
-    }
-
-    @Override
     public void hideProgressIndicator() {
         swipeRefreshLayout.setRefreshing(false);
         if (routeStopDetailsFragment != null) {
             routeStopDetailsFragment.refreshComplete();
+        }
+    }
+
+    private void replaceFragment(BaseFragment baseFragment) {
+        if (getActivity() != null && !getActivity().isFinishing() && isAdded()) {
+            fragmentManager.
+                beginTransaction().
+                replace(R.id.container,
+                    baseFragment).
+                commitAllowingStateLoss();
         }
     }
 

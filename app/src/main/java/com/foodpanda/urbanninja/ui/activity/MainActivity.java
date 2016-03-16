@@ -92,19 +92,23 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent == null) {
+            return;
+        }
         PushNotificationType pushNotificationType = (PushNotificationType)
             intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE);
         showProgress();
-
-        switch (pushNotificationType) {
-            case SCHEDULE_UPDATED:
-                updateRiderSchedule();
-                break;
-            case ROUTE_CANCELED:
-                showSnackbar();
-            case ROUTE_UPDATED:
-                updateRiderRoutes();
-                break;
+        if (pushNotificationType != null) {
+            switch (pushNotificationType) {
+                case SCHEDULE_UPDATED:
+                    updateRiderSchedule();
+                    break;
+                case ROUTE_CANCELED:
+                    showSnackbar();
+                case ROUTE_UPDATED:
+                    updateRiderRoutes();
+                    break;
+            }
         }
     }
 

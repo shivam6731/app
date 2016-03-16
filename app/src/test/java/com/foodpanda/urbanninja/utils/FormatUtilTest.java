@@ -26,15 +26,20 @@ public class FormatUtilTest {
         assertEquals("", FormatUtil.getValueWithCurrencySymbol(getCountryForCode("hk"), "foobar"));
     }
 
+    @Test
+    public void testGetValueWithCurrencySymbolFromNullString() throws Exception {
+        assertEquals("", FormatUtil.getValueWithCurrencySymbol(getCountryForCode("hk"), null));
+    }
+
 
     @Test
     public void testGetValueWithCurrencySymbolWithNumeric() throws Exception {
-        assertEquals("HKD2.00", FormatUtil.getValueWithCurrencySymbol(getCountryForCode("hk"), 2.0d));
+        assertEquals("HKD2.00", FormatUtil.getValueWithCurrencySymbolFromNumber(getCountryForCode("hk"), 2.0d));
     }
 
     @Test
     public void testGetValueWithCurrencySymbolWithUnknownCountry() throws Exception {
-        assertEquals("", FormatUtil.getValueWithCurrencySymbol(new Country(), 2.0d));
+        assertEquals("", FormatUtil.getValueWithCurrencySymbolFromNumber(new Country(), 2.0));
     }
 
     private Country getCountryForCode(String code) {
