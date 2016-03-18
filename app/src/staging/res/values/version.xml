@@ -2,6 +2,6 @@
 <resources>
     <integer name="version">0</integer>
     <string name="environment">staging</string>
-    <string name="app_name">Logistics-app-staging</string>
+    <string name="app_name">ST-Urban Ninja 2</string>
     <string name="hockey_app_key">5a2894d5d4a04443a1e27fa16f77ab90</string>
 </resources>
