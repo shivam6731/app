@@ -4,12 +4,15 @@ package com.foodpanda.urbanninja.activity;
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -22,22 +25,27 @@ import static org.robolectric.Robolectric.buildActivity;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class MainActivityTest {
+    private MainActivity mainActivity;
+    private Application app;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        ShadowGooglePlayServicesUtil.setIsGooglePlayServicesAvailable(ConnectionResult.SUCCESS);
+
+        app = RuntimeEnvironment.application;
+        app.onCreate();
+
+        mainActivity = buildActivity(MainActivity.class).get();
+    }
 
     @Test
     public void testNotNull() {
-        MainActivity mainActivity = buildActivity(MainActivity.class).get();
         assertNotNull(mainActivity);
     }
 
     @Test
     public void testOnCreateNotNull() {
-        Application app = RuntimeEnvironment.application;
-        app.onCreate();
-
-        ShadowGooglePlayServicesUtil.setIsGooglePlayServicesAvailable(ConnectionResult.SUCCESS);
-
-        MainActivity mainActivity = Robolectric.buildActivity(MainActivity.class).get();
-
         assertNotNull(mainActivity);
         assertEquals(app, mainActivity.getApplication());
     }
