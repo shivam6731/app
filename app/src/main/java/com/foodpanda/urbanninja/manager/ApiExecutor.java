@@ -51,7 +51,7 @@ public class ApiExecutor {
     public void getRoute() {
         if (vehicleDeliveryAreaRiderBundle == null ||
             vehicleDeliveryAreaRiderBundle.getVehicle() == null) {
-            getRoute();
+            getCurrentRider();
         } else {
             apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
                 @Override
@@ -129,6 +129,8 @@ public class ApiExecutor {
 
                 @Override
                 public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
+                    // Remove action title for cased when user is not clocked-in
+                    activity.writeCodeAsTitle(null);
                     ApiExecutor.this.setScheduleWrappers(scheduleWrappers);
                     // Here we get all future and current working schedule
                     // However we need only first one as current
