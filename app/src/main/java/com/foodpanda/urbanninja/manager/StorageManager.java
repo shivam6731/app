@@ -108,8 +108,13 @@ public class StorageManager implements Managable {
         return editor.commit();
     }
 
-    public void cleanToken() {
+    /**
+     * Clean all stored data
+     */
+    public void cleanSession() {
         storeToken(null);
+        stopActionMap.clear();
+        stopList.clear();
     }
 
     public Country getCountry() {

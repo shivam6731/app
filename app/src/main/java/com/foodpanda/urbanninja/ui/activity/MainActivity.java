@@ -22,6 +22,7 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
@@ -277,11 +278,23 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onLogoutClicked() {
-        storageManager.cleanToken();
+        storageManager.cleanSession();
+        stopLocationService();
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    /**
+     * We need to stop location service when rider
+     * logout to avoid unauthorized sending location
+     * and stop tracking location for riders how not logged in anymore
+     */
+    private void stopLocationService() {
+        Intent closeServiceIntent = new Intent(this, LocationService.class);
+        stopService(closeServiceIntent);
     }
 
     @Override

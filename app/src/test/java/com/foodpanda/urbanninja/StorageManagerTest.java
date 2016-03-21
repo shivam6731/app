@@ -1,23 +1,17 @@
 package com.foodpanda.urbanninja;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.app.Application;
 
-import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.LinkedList;
@@ -25,65 +19,36 @@ import java.util.LinkedList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class StorageManagerTest {
-
-    private static final String APP_NAME = "APP_NAME";
-
-    private final Gson gson = new GsonBuilder().
-        registerTypeAdapter(DateTime.class, new DateTimeDeserializer()).
-        create();
-
-    @Mock
-    Context context;
-
-    @Mock
-    Resources resources;
-
-    @Mock
-    SharedPreferences sharedPreferences;
-
-    @Mock
-    SharedPreferences cachedRequestPreferences;
-
-    @Mock
-    SharedPreferences.Editor editor;
-
     private StorageManager storageManager;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        when(resources.getString(R.string.app_name)).thenReturn(APP_NAME);
-
-        when(context.getResources()).thenReturn(resources);
-
-        when(context.getSharedPreferences(APP_NAME, Context.MODE_PRIVATE))
-            .thenReturn(sharedPreferences);
-
-        when(context.getSharedPreferences(Constants.Preferences.CACHED_REQUESTS_PREFERENCES_NAME, Context.MODE_PRIVATE))
-            .thenReturn(cachedRequestPreferences);
-
-        when(sharedPreferences.edit()).thenReturn(editor);
+        Application app = RuntimeEnvironment.application;
+        app.onCreate();
 
         storageManager = new StorageManager();
-        storageManager.init(context);
+        storageManager.init(app);
     }
 
     @Test
     public void testStoreToken() {
-        when(editor.commit()).thenReturn(true);
-
         Token token = new Token("", "", 0, "");
         assertTrue(storageManager.storeToken(token));
+        assertEquals(storageManager.getToken(), token);
+    }
 
-        String json = gson.toJson(token);
-        verify(editor).putString(Constants.Preferences.TOKEN, json);
+    @Test
+    public void testClearToken() {
+        Token token = new Token("", "", 0, "");
+        assertTrue(storageManager.storeToken(token));
+        storageManager.cleanSession();
+        assertEquals(storageManager.getToken(), null);
+        assertTrue(storageManager.getStopList().isEmpty());
     }
 
     @Test
