@@ -55,19 +55,19 @@ public class LocationService extends Service implements
      * otherwise we set {@value #BIG_UPDATE_PERIOD}
      */
     //Big battery level in %
-    private static final int BIG_BATTERY_LEVEL = 50;
+    private static final int BIG_BATTERY_LEVEL = 75;
     //Low battery level in %
-    private static final int LOW_BATTERY_LEVEL = 30;
+    private static final int LOW_BATTERY_LEVEL = 25;
     //Minimal distance that should trigger our location service
     private static final int DISTANCE_RANGE = 0;
     //Default location update interval
     private static final int FASTEST_UPDATE_PERIOD = 5000;
     //The shortest location update interval for the full battery level
-    private static final int SMALL_UPDATE_PERIOD = 10000;
+    private static final int SMALL_UPDATE_PERIOD = 30000;
     //Middle location update interval for the not full battery level
-    private static final int MIDDLE_UPDATE_PERIOD = 30000;
+    private static final int MIDDLE_UPDATE_PERIOD = 60000;
     //The longest location update interval for the low battery level
-    private static final int BIG_UPDATE_PERIOD = 60000;
+    private static final int BIG_UPDATE_PERIOD = 90000;
     ///Interval for sending location to the server side
     private static final int SEND_DATA_INTERVAL = 10000;
 
