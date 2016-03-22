@@ -1,13 +1,8 @@
 <resources>
     <!-- Strings related to login -->
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">Country field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+
     <!-- Login -->
     <string name="logic_action">Login</string>
     <string name="login_title">Rider login</string>
@@ -26,9 +21,6 @@
     <string name="side_menu_close">Close</string>
     <string name="side_menu_version">App version: %1$s</string>
 
-    <!-- Menu -->
-    <string name="menu_call">Call</string>
-
     <!-- Ready to work -->
     <string name="ready_to_work_see_map">See map</string>
     <string name="ready_to_work_time_left">MINUTES LEFT\n until your shift starts</string>
@@ -37,7 +29,6 @@
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
     <string name="empty_list_text">New orders\nare coming soon</string>
-    <string name="empty_list_recycle">No data to show</string>
 
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
@@ -51,7 +42,6 @@
     <string name="task_details_comment">\nComment: %1$s</string>
 
     <!-- Errors -->
-    <string name="error_invalid_login">Sorry, your username and password don\'t match for the selected country</string>
     <string name="dialog_please_wait">Please wait…</string>
     <string name="error_start_point_not_found">Start Point not found</string>
 
@@ -59,7 +49,6 @@
     <string name="dialog_phone_title">Select Phone Number</string>
     <string name="dialog_phone_customer">Customer Phone</string>
     <string name="dialog_phone_restaurant">Restaurant Phone</string>
-    <string name="dialog_phone_manager">Manager Phone</string>
     <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assi</string>
     <string name="dialog_phone_not_numbers">This order doesn\'t contain any number</string>
 
@@ -89,9 +78,6 @@
 
     <!-- GCM -->
     <string name="gcm_defaultSenderId">975393205483</string>
-    <string name="push_notification_schedule">Schedule Updated</string>
-    <string name="push_notification_route">Route Updated</string>
-    <string name="push_notification_default">Message</string>
 
     <!-- Route Actions  -->
     <string name="route_action_items">%1$s Items</string>
@@ -107,4 +93,16 @@
     <string name="cash_report_total">Total: %1$s</string>
     <string name="cash_report_total_label">Total:</string>
     <string name="cash_report_cancelled">Cancelled</string>
+
+    <!-- Content Description -->
+    <string name="content_description_empty_list">Ninja logo</string>
+    <string name="content_description_list_item_country_check">Country selected check</string>
+    <string name="content_description_list_item_action_stop">Action icon</string>
+    <string name="content_description_list_item_header_action_stop">Route type icon</string>
+    <string name="content_description_login_fragment">Ninja logo</string>
+    <string name="content_description_ready_to_work_fragment">Ninja logo</string>
+    <string name="content_description_schedule_list">Schedule logo</string>
+    <string name="content_description_select_country_back">Back button</string>
+    <string name="content_description_select_country_logo">Country logo</string>
+
 </resources>

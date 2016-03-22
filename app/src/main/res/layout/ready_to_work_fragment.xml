@@ -15,6 +15,7 @@
             style="@style/ImageView"
             android:layout_centerHorizontal="true"
             android:layout_margin="0dp"
+            android:contentDescription="@string/content_description_ready_to_work_fragment"
             android:src="@drawable/logo"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView

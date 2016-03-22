@@ -17,6 +17,7 @@
         <ImageView
             android:id="@+id/image_stop_icon"
             style="@style/ImageView"
+            android:contentDescription="@string/content_description_list_item_action_stop"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ico_pay"/>

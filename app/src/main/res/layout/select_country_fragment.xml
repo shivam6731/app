@@ -12,13 +12,15 @@
         <ImageView
             android:id="@+id/image_back"
             style="@style/ImageView"
-            android:padding="@dimen/padding_default"
             android:layout_margin="0dp"
+            android:contentDescription="@string/content_description_select_country_back"
+            android:padding="@dimen/padding_default"
             android:src="@drawable/arrow_back"/>
 
         <ImageView
             style="@style/ImageView"
             android:layout_centerHorizontal="true"
+            android:contentDescription="@string/content_description_select_country_logo"
             android:src="@drawable/ico_country_big"/>
     </RelativeLayout>
 
@@ -35,8 +37,8 @@
         <com.foodpanda.urbanninja.ui.widget.MontserratButton
             android:id="@+id/btn_select"
             style="@style/ButtonMainAction"
-            android:text="@string/country_select"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            android:text="@string/country_select"/>
 
         <include
             layout="@layout/base_list_fragment"

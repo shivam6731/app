@@ -3,18 +3,19 @@ package com.foodpanda.urbanninja.utils;
 import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtil {
     public static final int ONE_HOUR = 1000 * 60 * 60;
     public static final int ONE_DAY = 24 * ONE_HOUR;
 
-    private static SimpleDateFormat timerFormat = new SimpleDateFormat("mm:ss");
-    private static SimpleDateFormat timerFormatWithHour = new SimpleDateFormat("HH:mm:ss");
+    private static SimpleDateFormat timerFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+    private static SimpleDateFormat timerFormatWithHour = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
-    private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM");
-    private static SimpleDateFormat timerFormatWeekDayDateMonthYear = new SimpleDateFormat("EEEE - dd/MM/yyyy");
-    private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm");
+    private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM", Locale.getDefault());
+    private static SimpleDateFormat timerFormatWeekDayDateMonthYear = new SimpleDateFormat("EEEE - dd/MM/yyyy", Locale.getDefault());
+    private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     static {
         timerFormat.setTimeZone(TimeZone.getTimeZone("GMT"));

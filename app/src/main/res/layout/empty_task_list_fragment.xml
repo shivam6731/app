@@ -6,15 +6,15 @@
     android:background="@color/main_background_color">
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/main_background_color">
 
         <ImageView
             android:id="@+id/image_top_logo"
             style="@style/ImageView"
             android:layout_centerHorizontal="true"
+            android:contentDescription="@string/content_description_empty_list"
             android:src="@drawable/ninja"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView

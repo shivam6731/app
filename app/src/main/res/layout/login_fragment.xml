@@ -5,14 +5,11 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_above="@+id/email_sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/email_sign_in_button"
         android:background="@color/main_background_color"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
         android:padding="@dimen/activity_vertical_margin"
         tools:context=".ui.activity.LoginActivity">
 
@@ -20,16 +17,17 @@
             android:id="@+id/image_header"
             style="@style/ImageView"
             android:layout_centerHorizontal="true"
+            android:contentDescription="@string/content_description_login_fragment"
             android:src="@drawable/ninja"/>
 
         <com.foodpanda.urbanninja.ui.widget.MontserratTextView
             android:id="@+id/txt_title"
             style="@style/TextView.Title"
-            android:textAllCaps="true"
             android:layout_below="@+id/image_header"
             android:layout_centerHorizontal="true"
             android:paddingTop="@dimen/padding_large"
-            android:text="@string/login_title"/>
+            android:text="@string/login_title"
+            android:textAllCaps="true"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansEditText
             android:id="@+id/edit_username"
