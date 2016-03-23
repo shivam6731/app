@@ -4,15 +4,23 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
+import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
-public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter> {
+import org.joda.time.DateTime;
+
+public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter>
+    implements TimerDataProvider {
     private NestedFragmentCallback nestedFragmentCallback;
+    private TimerHelper timerHelper;
+
     private Stop currentStop;
 
     public static RouteStopActionListFragment newInstance(Stop stop) {
@@ -34,6 +42,19 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+        timerHelper = new TimerHelper(activity, this, this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        timerHelper.setTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        timerHelper.stopTimer();
     }
 
     @Override
@@ -55,5 +76,50 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public void onItemClick(View view, int position) {
 
+    }
+
+    @Override
+    public TextView provideTimerTextView() {
+        return adapter.getTxtTimer();
+    }
+
+    @Override
+    public TextView provideTimerDescriptionTextView() {
+        return adapter.getTxtMinutesLeft();
+    }
+
+    @Override
+    public DateTime provideScheduleDate() {
+        return currentStop.getArrivalTime();
+    }
+
+    @Override
+    public DateTime provideScheduleEndDate() {
+        return currentStop.getArrivalTime().plusDays(1);
+    }
+
+    @Override
+    public String provideLeftString() {
+        return getResources().getString(R.string.task_details_time_left);
+    }
+
+    @Override
+    public String providePassedString() {
+        return getResources().getString(R.string.task_details_time_passed);
+    }
+
+    @Override
+    public int provideActionButtonString() {
+        return 0;
+    }
+
+    @Override
+    public String provideExpireString() {
+        return getResources().getString(R.string.action_order_expired);
+    }
+
+    @Override
+    public String provideFutureString() {
+        return getResources().getString(R.string.action_order_in_future);
     }
 }

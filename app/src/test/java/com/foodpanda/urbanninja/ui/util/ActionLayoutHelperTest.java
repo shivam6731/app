@@ -1,4 +1,4 @@
-package com.foodpanda.urbanninja.ui.utils;
+package com.foodpanda.urbanninja.ui.util;
 
 import android.app.Application;
 import android.view.View;
@@ -9,7 +9,6 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
-import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
 import org.junit.Before;
 import org.junit.Test;
