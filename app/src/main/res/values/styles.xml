@@ -24,7 +24,7 @@
     </style>
 
     <style name="TextView" parent="AppTheme">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/primary_text_color</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -48,6 +48,12 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/default_title_size</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextView.Title.CashReport">
+        <item name="android:textSize">@dimen/default_title_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">left</item>
     </style>
 
     <style name="TextView.Title.NotBold">
@@ -75,6 +81,10 @@
         <item name="android:textSize">@dimen/schedule_date_text_size</item>
     </style>
 
+    <style name="TextView.Title.Green">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
     <style name="TextView.Description">
         <item name="android:gravity">center</item>
         <item name="android:singleLine">false</item>
@@ -85,6 +95,10 @@
     <style name="TextView.Multiline">
         <item name="android:singleLine">false</item>
         <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.Italic">
+        <item name="android:textStyle">italic</item>
     </style>
 
     <style name="Button" parent="AppTheme">

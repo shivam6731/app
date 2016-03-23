@@ -19,7 +19,7 @@ public interface SlideMenuCallback {
      * Rider working report section with all worked days
      * and total revenue for each day
      */
-    void onOrderHistoryClicked();
+    void onCashReportClicked();
 
     /**
      * Logout feature
