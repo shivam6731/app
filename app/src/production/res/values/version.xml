@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="version">0</integer>
-    <string name="environment">production</string>
     <string name="app_name">Urban Ninja 2</string>
     <string name="hockey_app_key">3e7f60a4e69c4a16b6c595de8c6d1421</string>
 </resources>

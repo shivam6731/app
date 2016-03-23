@@ -19,7 +19,8 @@ public class ConnectionStatusReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (isInternetConnectionAvailable(context)) {
+        if (ConnectivityManager.CONNECTIVITY_ACTION.equalsIgnoreCase(intent.getAction()) &&
+            isInternetConnectionAvailable(context)) {
             apiManager.sendAllFailedRequests();
         }
     }

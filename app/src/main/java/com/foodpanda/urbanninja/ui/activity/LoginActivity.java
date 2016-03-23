@@ -1,7 +1,9 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
@@ -52,7 +54,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
             add(R.id.container, CountryListFragment.newInstance(country)).
             addToBackStack(CountryListFragment.class.getSimpleName()).
             commit();
-
+        hideKeyboard();
     }
 
     @Override
@@ -67,7 +69,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     private boolean isLogged() {
-
         return storageManager.getToken() != null;
     }
 
@@ -76,6 +77,14 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    private void hideKeyboard() {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            getCurrentFocus().clearFocus();
+        }
     }
 }
 

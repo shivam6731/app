@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.foodpanda.urbanninja.App;
@@ -86,7 +87,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
             .setSmallIcon(R.mipmap.ic_notification)
-            .setColor(R.color.notification_bg_color)
+            .setColor(ContextCompat.getColor(this, R.color.notification_bg_color))
             .setContentTitle(pushNotificationType.toString())
             .setAutoCancel(true)
             .setSound(defaultSoundUri)

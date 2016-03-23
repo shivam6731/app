@@ -16,5 +16,6 @@
         style="@style/ImageView"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:contentDescription="@string/content_description_list_item_country_check"
         android:src="@drawable/check_country"/>
 </RelativeLayout>

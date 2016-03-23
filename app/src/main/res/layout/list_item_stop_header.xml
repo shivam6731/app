@@ -15,6 +15,7 @@
         android:id="@+id/image_order_type"
         style="@style/ImageView"
         android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/content_description_list_item_header_action_stop"
         android:src="@drawable/ico_restaurant"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView

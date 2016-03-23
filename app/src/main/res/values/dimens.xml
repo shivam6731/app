@@ -1,6 +1,5 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="default_text_size">16sp</dimen>
@@ -12,24 +11,19 @@
 
     <!--Margin -->
     <dimen name="margin_tiny_tiny">1dp</dimen>
-    <dimen name="margin_tiny">3dp</dimen>
     <dimen name="margin_small">5dp</dimen>
     <dimen name="margin_default">10dp</dimen>
     <dimen name="margin_large">15dp</dimen>
-    <dimen name="margin_large_button">25dp</dimen>
     <dimen name="margin_button_side">40dp</dimen>
     <dimen name="margin_left_description">80dp</dimen>
 
     <!--Padding -->
-    <dimen name="padding_tiny_tiny">1dp</dimen>
-    <dimen name="padding_tiny">3dp</dimen>
     <dimen name="padding_small">5dp</dimen>
     <dimen name="padding_default">10dp</dimen>
     <dimen name="padding_large">15dp</dimen>
     <dimen name="padding_empty_description">60dp</dimen>
 
     <!--Menu -->
-    <dimen name="menu_width">240dp</dimen>
     <dimen name="menu_navigation_thickness">1dp</dimen>
     <dimen name="menu_navigation_gap_between_bars">8dp</dimen>
     <dimen name="menu_navigation_bar_length">24dp</dimen>

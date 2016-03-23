@@ -49,6 +49,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         storageManager = App.STORAGE_MANAGER;
     }
 
+    //All both of this ViewHolders extend BaseView Holder
+    //So this call is save
+    @SuppressWarnings("unchecked")
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
