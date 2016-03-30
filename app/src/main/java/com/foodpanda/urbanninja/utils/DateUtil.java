@@ -10,19 +10,24 @@ public class DateUtil {
     public static final int ONE_HOUR = 1000 * 60 * 60;
     public static final int ONE_DAY = 24 * ONE_HOUR;
 
+    //Timer formatter
     private static SimpleDateFormat timerFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private static SimpleDateFormat timerFormatWithHour = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
+    //Date formatter
     private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM", Locale.getDefault());
     private static SimpleDateFormat timerFormatWeekDayDateMonthYear = new SimpleDateFormat("EEEE - dd/MM/yyyy", Locale.getDefault());
-    private static SimpleDateFormat timerFormatMinutesHour = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+    //Hour formatter for start and end of schedule 
+    private static SimpleDateFormat timerFormatHoursMinutes = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+    /**
+     * We need to set UTC time zone only for cases when we have to show only
+     * difference between two long values with ignoring time zone, such as timer
+     */
     static {
-        timerFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        timerFormatWithHour.setTimeZone(TimeZone.getTimeZone("GMT"));
-        timerFormatWeekDayDateMonth.setTimeZone(TimeZone.getTimeZone("GMT"));
-        timerFormatMinutesHour.setTimeZone(TimeZone.getTimeZone("GMT"));
-        timerFormatWeekDayDateMonthYear.setTimeZone(TimeZone.getTimeZone("GMT"));
+        timerFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        timerFormatWithHour.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private static String formatTimeMinute(long date) {
@@ -33,7 +38,7 @@ public class DateUtil {
         return timerFormatWithHour.format(date);
     }
 
-    public static String formatTimeMinutes(long date) {
+    public static String formatTimeHoursMinutesSeconds(long date) {
         if (date > ONE_DAY) {
             return "";
         }
@@ -44,8 +49,8 @@ public class DateUtil {
         }
     }
 
-    public static String formatTimeMinutes(DateTime dateTime) {
-        return timerFormatMinutesHour.format(dateTime.toDate());
+    public static String formatTimeHoursMinutes(DateTime dateTime) {
+        return timerFormatHoursMinutes.format(dateTime.toDate());
     }
 
     public static String formatTimeWeekDayDateMonth(DateTime dateTime) {

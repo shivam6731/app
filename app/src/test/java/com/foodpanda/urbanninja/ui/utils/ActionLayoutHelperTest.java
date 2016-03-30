@@ -37,7 +37,6 @@ public class ActionLayoutHelperTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         Application app = RuntimeEnvironment.application;
         app.onCreate();
 

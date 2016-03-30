@@ -89,12 +89,12 @@ public abstract class BaseTimerFragment extends BaseFragment {
         if (now.getMillis() < startDate.getMillis()) {
             textViewDescription.setText(getTimeLeft(date));
 
-            return DateUtil.formatTimeMinutes(date);
+            return DateUtil.formatTimeHoursMinutesSeconds(date);
         } else {
             textViewDescription.setText(getTimePassed(endDate.getMillis(), now.getMillis()));
             if (endDate.getMillis() > now.getMillis()) {
 
-                return DateUtil.formatTimeMinutes(date);
+                return DateUtil.formatTimeHoursMinutesSeconds(date);
             } else {
 
                 return "";
