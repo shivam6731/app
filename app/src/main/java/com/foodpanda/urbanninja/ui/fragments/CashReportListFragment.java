@@ -34,6 +34,11 @@ public class CashReportListFragment extends BaseListFragment<CashReportAdapter> 
     }
 
     @Override
+    protected String provideEmptyListDescription() {
+        return getResources().getString(R.string.empty_list_cash_report);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         recyclerView.removeItemDecoration(dividerItemDecoration);

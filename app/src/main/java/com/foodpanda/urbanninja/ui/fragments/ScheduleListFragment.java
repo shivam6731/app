@@ -33,6 +33,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         apiManager.getScheduleList(this);
+        activity.showProgress();
     }
 
     @Override
@@ -46,6 +47,11 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     }
 
     @Override
+    protected String provideEmptyListDescription() {
+        return getResources().getString(R.string.empty_list_schedule);
+    }
+
+    @Override
     public void onItemClick(View view, int position) {
 
     }
@@ -54,6 +60,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
         adapter.addAll(scheduleWrappers);
         adapter.notifyDataSetChanged();
+        activity.hideProgress();
     }
 
     @Override

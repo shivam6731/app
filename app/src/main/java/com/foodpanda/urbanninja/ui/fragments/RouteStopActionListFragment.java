@@ -74,6 +74,11 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     }
 
     @Override
+    protected String provideEmptyListDescription() {
+        return "";
+    }
+
+    @Override
     public void onItemClick(View view, int position) {
 
     }

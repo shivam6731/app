@@ -1,7 +1,4 @@
-package com.foodpanda.urbanninja.app;
-
-import com.foodpanda.urbanninja.App;
-import com.foodpanda.urbanninja.BuildConfig;
+package com.foodpanda.urbanninja;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

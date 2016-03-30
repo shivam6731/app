@@ -30,7 +30,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
             return;
         }
         this.country = storageManager.getCountry();
-        hideActionBar();
         if (savedInstanceState == null) {
             fragmentManager.
                 beginTransaction().

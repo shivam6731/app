@@ -1,17 +1,14 @@
-package com.foodpanda.urbanninja.activity;
+package com.foodpanda.urbanninja.ui.activity;
 
 
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
-import com.foodpanda.urbanninja.manager.StorageManager;
-import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;

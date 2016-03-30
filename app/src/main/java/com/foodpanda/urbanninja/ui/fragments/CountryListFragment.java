@@ -27,6 +27,8 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     private Country selectedCountry;
     private LoginActivityCallback loginActivityCallback;
 
+    private View progressBar;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -59,6 +61,11 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     }
 
     @Override
+    protected String provideEmptyListDescription() {
+        return getResources().getString(R.string.empty_list_country);
+    }
+
+    @Override
     public void onItemClick(View view, int position) {
         selectedCountry = adapter.getItem(position);
         adapter.setSelectedCountry(adapter.getItem(position));
@@ -82,6 +89,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
                 }
             }
         });
+        progressBar = view.findViewById(R.id.progress_spinner);
     }
 
     @Override
@@ -89,17 +97,20 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
         super.onActivityCreated(savedInstanceState);
         apiManager.getCountries(this);
         adapter.setSelectedCountry(selectedCountry);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onSuccess(CountryListWrapper countryListWrapper) {
         adapter.addAll(sortCountries(countryListWrapper.getData()));
         adapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void onError(ErrorMessage errorMessage) {
         activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+        progressBar.setVisibility(View.GONE);
     }
 
     private List<Country> sortCountries(List<Country> list) {

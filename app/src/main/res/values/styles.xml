@@ -24,7 +24,7 @@
         <item name="android:contentDescription">@null</item>
     </style>
 
-    <style name="TextView" parent="AppTheme">
+    <style name="TextView">
         <item name="android:textColor">@color/primary_text_color</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:layout_height">wrap_content</item>
