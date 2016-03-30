@@ -36,6 +36,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
     private Stop stop;
 
+    private TextView txtTimer;
+    private TextView txtMinutesLeft;
+
     public RouteStopActionAdapter(Stop stop, Context context, NestedFragmentCallback nestedFragmentCallback) {
         super(stop.getActivities(), context);
         //TODO should be removed
@@ -168,6 +171,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             super(view);
             txtName = (TextView) view.findViewById(R.id.txt_order_name);
             imageOrderType = (ImageView) view.findViewById(R.id.image_order_type);
+
+            RouteStopActionAdapter.this.txtMinutesLeft = (TextView) view.findViewById(R.id.txt_minutes_left);
+            RouteStopActionAdapter.this.txtTimer = (TextView) view.findViewById(R.id.txt_timer);
         }
     }
 
@@ -232,5 +238,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     @Override
     public RouteStopActivity getItem(int position) {
         return objects.get(position - 1);
+    }
+
+    public TextView getTxtMinutesLeft() {
+        return txtMinutesLeft;
+    }
+
+    public TextView getTxtTimer() {
+        return txtTimer;
     }
 }

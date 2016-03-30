@@ -12,10 +12,12 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
+import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
 
-public class ReadyToWorkFragment extends BaseTimerFragment {
+public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvider {
     private TextView txtStartPoint;
     private TextView txtTimer;
     private TextView txtTimerDescription;
@@ -23,6 +25,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     private ScheduleWrapper scheduleWrapper;
 
     private NestedFragmentCallback nestedFragmentCallback;
+    private TimerHelper timerHelper;
 
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
         ReadyToWorkFragment readyToWorkFragment = new ReadyToWorkFragment();
@@ -43,7 +46,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scheduleWrapper = getArguments().getParcelable(Constants.BundleKeys.SCHEDULE_WRAPPER);
-        needToModifyActionButton = true;
+        timerHelper = new TimerHelper(activity, this, this, nestedFragmentCallback);
     }
 
     @Nullable
@@ -79,6 +82,18 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        timerHelper.setTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        timerHelper.stopTimer();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (scheduleWrapper.getStartingPoint() != null) {
@@ -90,17 +105,17 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
-    protected TextView provideTimerTextView() {
+    public TextView provideTimerTextView() {
         return txtTimer;
     }
 
     @Override
-    protected TextView provideTimerDescriptionTextView() {
+    public TextView provideTimerDescriptionTextView() {
         return txtTimerDescription;
     }
 
     @Override
-    protected DateTime provideScheduleDate() {
+    public DateTime provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
             return scheduleWrapper.getTimeWindow().getStartAt();
@@ -111,7 +126,7 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
-    protected DateTime provideScheduleEndDate() {
+    public DateTime provideScheduleEndDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
             return scheduleWrapper.getTimeWindow().getEndAt();
@@ -122,27 +137,27 @@ public class ReadyToWorkFragment extends BaseTimerFragment {
     }
 
     @Override
-    protected String provideLeftString() {
+    public String provideLeftString() {
         return getResources().getString(R.string.ready_to_work_time_left);
     }
 
     @Override
-    protected String providePassedString() {
+    public String providePassedString() {
         return getResources().getString(R.string.ready_to_work_time_passed);
     }
 
     @Override
-    protected int provideActionButtonString() {
+    public int provideActionButtonString() {
         return R.string.action_ready_to_work;
     }
 
     @Override
-    protected int provideExpireString() {
-        return R.string.action_ready_shift_expired;
+    public String provideExpireString() {
+        return getResources().getString(R.string.action_ready_shift_expired);
     }
 
     @Override
-    protected int provideFutureString() {
-        return R.string.action_ready_no_shift;
+    public String provideFutureString() {
+        return getResources().getString(R.string.action_ready_no_shift);
     }
 }

@@ -71,7 +71,7 @@ public class CashReportAdapter extends SimpleBaseAdapter<CashReport, SimpleBaseA
 
     /**
      * Set type of view that should be shown
-     * for the last item it would be @see #FOOTER_VIEW_TYPE
+     * for the last item it would be {@value #FOOTER_VIEW_TYPE}
      * for all others it would be default value
      *
      * @param position position of view in the list

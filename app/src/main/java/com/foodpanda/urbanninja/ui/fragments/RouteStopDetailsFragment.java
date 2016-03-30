@@ -19,6 +19,9 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
+import com.foodpanda.urbanninja.ui.util.TimerHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,9 +38,13 @@ import org.joda.time.DateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RouteStopDetailsFragment extends BaseTimerFragment implements
+public class RouteStopDetailsFragment extends BaseFragment implements
     OnMapReadyCallback,
-    LocationChangedCallback {
+    LocationChangedCallback,
+    TimerDataProvider {
+
+    private NestedFragmentCallback nestedFragmentCallback;
+    private TimerHelper timerHelper;
 
     private TextView txtDetails;
     private TextView txtEndPoint;
@@ -62,9 +69,16 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        nestedFragmentCallback = (NestedFragmentCallback) getParentFragment();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         stop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+        timerHelper = new TimerHelper(activity, this, this);
     }
 
     @Nullable
@@ -107,6 +121,18 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
         });
 
         setData();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        timerHelper.setTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        timerHelper.stopTimer();
     }
 
     @Override
@@ -190,48 +216,48 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     @Override
-    protected TextView provideTimerTextView() {
+    public TextView provideTimerTextView() {
         return txtTimer;
     }
 
     @Override
-    protected TextView provideTimerDescriptionTextView() {
+    public TextView provideTimerDescriptionTextView() {
         return txtTimerDescription;
     }
 
     @Override
-    protected DateTime provideScheduleDate() {
+    public DateTime provideScheduleDate() {
         return stop.getArrivalTime();
     }
 
     @Override
-    protected DateTime provideScheduleEndDate() {
+    public DateTime provideScheduleEndDate() {
         return stop.getArrivalTime().plusDays(1);
     }
 
     @Override
-    protected String provideLeftString() {
+    public String provideLeftString() {
         return getResources().getString(R.string.task_details_time_left);
     }
 
     @Override
-    protected String providePassedString() {
+    public String providePassedString() {
         return getResources().getString(R.string.task_details_time_passed);
     }
 
     @Override
-    protected int provideActionButtonString() {
+    public int provideActionButtonString() {
         return 0;
     }
 
     @Override
-    protected int provideExpireString() {
-        return R.string.action_order_expired;
+    public String provideExpireString() {
+        return getResources().getString(R.string.action_order_expired);
     }
 
     @Override
-    protected int provideFutureString() {
-        return R.string.action_order_in_future;
+    public String provideFutureString() {
+        return getResources().getString(R.string.action_order_in_future);
     }
 
     @Override
@@ -300,7 +326,6 @@ public class RouteStopDetailsFragment extends BaseTimerFragment implements
     }
 
     private Marker drawPointMarker() {
-
         LatLng pointLocation = new LatLng(stop.getGps().getLat(), stop.getGps().getLon());
 
         return googleMap.addMarker(new MarkerOptions().

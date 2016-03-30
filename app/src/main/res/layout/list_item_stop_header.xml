@@ -8,8 +8,7 @@
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_order_name"
         style="@style/TextView.Multiline"
-        android:layout_gravity="center"
-        android:text="@string/stop_list_description"/>
+        android:layout_gravity="center"/>
 
     <ImageView
         android:id="@+id/image_order_type"
@@ -19,8 +18,16 @@
         android:src="@drawable/ico_restaurant"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-        style="@style/TextView.Multiline"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_default"
-        android:text="@string/stop_list_description"/>
+        android:id="@+id/txt_timer"
+        style="@style/TextView.Title.Timer"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="0dp"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_minutes_left"
+        style="@style/TextView.Title.Multiline.NotBold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/padding_default"
+        android:text="@string/task_details_time_left"/>
+
 </LinearLayout>
