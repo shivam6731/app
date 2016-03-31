@@ -29,6 +29,10 @@
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
     <string name="empty_list_text">New orders\nare coming soon</string>
+    <string name="base_empty_list">No data</string>
+    <string name="empty_list_country">The country list couldn\'t be downloaded</string>
+    <string name="empty_list_schedule">You have no shift planned in the next few days</string>
+    <string name="empty_list_cash_report">No order was delivered in the past 15 days</string>
 
     <!-- Task details -->
     <string name="task_details_time_left">MINUTES LEFT</string>
@@ -72,6 +76,7 @@
 
     <!-- Stop list -->
     <string name="stop_list_done">Done</string>
+
     <!-- Schedule list-->
     <string name="schedule_list_title">Next Shifts</string>
 

@@ -62,7 +62,7 @@ public class CashReportAdapter extends SimpleBaseAdapter<CashReport, SimpleBaseA
 
     @Override
     public long getHeaderId(int position) {
-        if (position < objects.size()) {
+        if (!objects.isEmpty() && position < objects.size()) {
             return getItem(position).getDateTime().withTimeAtStartOfDay().getMillis();
         } else {
             return -1;
@@ -141,12 +141,14 @@ public class CashReportAdapter extends SimpleBaseAdapter<CashReport, SimpleBaseA
 
     /**
      * add one more item in a list for footer view
+     * if only this list is not empty
+     * otherwise empty list would be shown
      *
      * @return count of items + one more item for footer
      */
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        return super.getItemCount() == 0 ? super.getItemCount() : super.getItemCount() + 1;
     }
 
     private Spannable setBrushedTotalValue(int position) {
@@ -179,6 +181,9 @@ public class CashReportAdapter extends SimpleBaseAdapter<CashReport, SimpleBaseA
      */
     double getTotalOfTheDay(int position) {
         double total = 0;
+        if (objects.isEmpty()) {
+            return total;
+        }
         long firstTime = objects.get(position).getDateTime().withTimeAtStartOfDay().getMillis();
         for (int i = position; i > 0; i--) {
             if (firstTime == objects.get(i).getDateTime().withTimeAtStartOfDay().getMillis()) {

@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +48,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawerLayout;
-    private ProgressBar progressBar;
     private Toolbar toolbar;
     private NavigationView navigationView;
 
@@ -67,7 +65,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         storageManager = App.STORAGE_MANAGER;
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        progressBar = (ProgressBar) findViewById(R.id.progress_spinner);
 
         setActionBarDrawerToggle(initToolbar());
         setNavigationDrawer();
@@ -81,14 +78,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-    }
-
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
     }
 
     @Override

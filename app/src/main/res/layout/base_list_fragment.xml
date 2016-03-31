@@ -17,12 +17,12 @@
         android:paddingRight="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"/>
 
-    <ProgressBar
+    <TextView
         android:id="@+id/empty_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TextView.Title.Multiline"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:text="@string/base_empty_list"
         android:visibility="gone"/>
 
 </RelativeLayout>

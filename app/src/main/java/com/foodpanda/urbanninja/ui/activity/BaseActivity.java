@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
+
+import com.foodpanda.urbanninja.R;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.Tracking;
@@ -16,6 +19,7 @@ import java.net.HttpURLConnection;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected FragmentManager fragmentManager;
+    private View progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        progressBar = findViewById(R.id.progress_spinner);
+    }
+
+    public void showProgress() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void hideProgress() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -51,14 +73,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onPause();
     }
 
-
-    protected void hideActionBar() {
-        if (getActionBar() != null) {
-            getActionBar().hide();
-        }
-    }
-
     public void onError(int status, String message) {
+        hideProgress();
+
         switch (status) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
 

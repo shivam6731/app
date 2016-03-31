@@ -1,15 +1,14 @@
-package com.foodpanda.urbanninja;
+package com.foodpanda.urbanninja.manager;
 
 import android.app.Application;
 
-import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;

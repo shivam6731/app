@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.adapter.SimpleBaseAdapter;
@@ -18,7 +19,7 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
 
     protected RecyclerViewEmpty recyclerView;
     protected DividerItemDecoration dividerItemDecoration;
-    private View emptyView;
+    private TextView textViewEmpty;
 
     protected U adapter;
 
@@ -43,8 +44,9 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(provideLayoutManager());
 
-        emptyView = view.findViewById(R.id.empty_view);
-        recyclerView.setEmptyView(emptyView);
+        textViewEmpty = (TextView) view.findViewById(R.id.empty_view);
+        textViewEmpty.setText(provideEmptyListDescription());
+        recyclerView.setEmptyView(textViewEmpty);
     }
 
     @Override
@@ -58,6 +60,8 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     protected abstract U provideListAdapter();
 
     protected abstract int provideListLayout();
+
+    protected abstract String provideEmptyListDescription();
 
     protected RecyclerView.LayoutManager provideLayoutManager() {
 
