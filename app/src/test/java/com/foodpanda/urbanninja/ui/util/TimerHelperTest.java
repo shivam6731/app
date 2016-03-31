@@ -1,9 +1,12 @@
 package com.foodpanda.urbanninja.ui.util;
 
 import android.app.Application;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.BuildConfig;
+import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.fragments.BaseFragment;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
@@ -22,20 +25,21 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.robolectric.Robolectric.buildActivity;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class TimerHelperTest {
     private Application app;
 
-    private TextView textViewDescription;
+    private TextView contentTextView;
 
     private TimerHelper timerHelper;
 
     @Mock
     private BaseFragment baseFragment;
 
-    @Mock
     private MainActivity mainActivity;
 
     @Before
@@ -43,9 +47,10 @@ public class TimerHelperTest {
         MockitoAnnotations.initMocks(this);
         app = RuntimeEnvironment.application;
         app.onCreate();
+        mainActivity = buildActivity(MainActivity.class).get();
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
 
-        textViewDescription = new TextView(app);
+        contentTextView = new TextView(app);
     }
 
     @Test
@@ -84,7 +89,10 @@ public class TimerHelperTest {
             setTimerCallback(DateTime.now().plusMinutes(10), DateTime.now().minusMillis(10)));
 
         assertEquals(timerHelper.setTimerValue(), "10:00");
-        assertEquals(textViewDescription.getText(), "Left");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_in_time_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_in_time_text));
     }
 
     @Test
@@ -94,7 +102,10 @@ public class TimerHelperTest {
             setTimerCallback(DateTime.now().plusMinutes(10).plusHours(1), DateTime.now().minusMillis(10)));
 
         assertEquals(timerHelper.setTimerValue(), "01:10:00");
-        assertEquals(textViewDescription.getText(), "Left");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_in_time_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_in_time_text));
     }
 
     @Test
@@ -104,7 +115,10 @@ public class TimerHelperTest {
             setTimerCallback(DateTime.now().minusMinutes(1), DateTime.now().plusMinutes(10)));
 
         assertEquals(timerHelper.setTimerValue(), "01:00");
-        assertEquals(textViewDescription.getText(), "Passed");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
     }
 
     @Test
@@ -114,7 +128,10 @@ public class TimerHelperTest {
             setTimerCallback(DateTime.now().minusMinutes(1).minusHours(1), DateTime.now().plusMinutes(10)));
 
         assertEquals(timerHelper.setTimerValue(), "01:01:00");
-        assertEquals(textViewDescription.getText(), "Passed");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
     }
 
     @Test
@@ -124,7 +141,10 @@ public class TimerHelperTest {
             setTimerCallback(DateTime.now().minusMinutes(2), DateTime.now().minusMinutes(1)));
 
         assertEquals(timerHelper.setTimerValue(), "");
-        assertEquals(textViewDescription.getText(), "Expired");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
     }
 
     @Test
@@ -136,19 +156,17 @@ public class TimerHelperTest {
                 DateTime.now().plusDays(1).plusHours(2).plusMinutes(2)));
 
         assertEquals(timerHelper.setTimerValue(), "");
-        assertEquals(textViewDescription.getText(), "Future");
+        ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
+        int colorId = buttonColor.getColor();
+        assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_in_time_background));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_in_time_text));
     }
 
     private TimerDataProvider setTimerCallback(final DateTime start, final DateTime end) {
         return new TimerDataProvider() {
             @Override
             public TextView provideTimerTextView() {
-                return new TextView(app);
-            }
-
-            @Override
-            public TextView provideTimerDescriptionTextView() {
-                return textViewDescription;
+                return contentTextView;
             }
 
             @Override
@@ -161,15 +179,6 @@ public class TimerHelperTest {
                 return end;
             }
 
-            @Override
-            public String provideLeftString() {
-                return "Left";
-            }
-
-            @Override
-            public String providePassedString() {
-                return "Passed";
-            }
 
             @Override
             public int provideActionButtonString() {

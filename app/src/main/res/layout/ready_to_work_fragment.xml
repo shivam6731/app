@@ -42,8 +42,7 @@
             style="@style/TextView.Title.Multiline.NotBold"
             android:layout_below="@+id/txt_timer"
             android:layout_centerHorizontal="true"
-            android:layout_margin="0dp"
-            android:text="@string/ready_to_work_time_left"/>
+            android:layout_margin="0dp"/>
 
     </RelativeLayout>
 </ScrollView>

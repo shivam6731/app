@@ -33,7 +33,7 @@ public class SnackbarHelper {
                 //otherwise  call dismiss method we would not have animation
             }
         });
-        snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.location_radius_border_color));
+        snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.snack_bar_alert_text_color));
         View snackbarView = snackbar.getView();
 
         // Changing  background color

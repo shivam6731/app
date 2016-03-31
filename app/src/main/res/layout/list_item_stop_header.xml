@@ -27,7 +27,6 @@
         android:id="@+id/txt_minutes_left"
         style="@style/TextView.Title.Multiline.NotBold"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/padding_default"
-        android:text="@string/task_details_time_left"/>
+        android:layout_marginBottom="@dimen/padding_default"/>
 
 </LinearLayout>

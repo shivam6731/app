@@ -240,10 +240,6 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         return objects.get(position - 1);
     }
 
-    public TextView getTxtMinutesLeft() {
-        return txtMinutesLeft;
-    }
-
     public TextView getTxtTimer() {
         return txtTimer;
     }

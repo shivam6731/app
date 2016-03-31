@@ -28,13 +28,15 @@ public interface NestedFragmentCallback {
     void enableActionButton(boolean isEnable, int textResLink);
 
     /**
-     * Disable the main action button
+     * Set enable the main action button
      * We need this logic for case when items were selected and it means that
      * button is enable to finish an order
      * however when this screen would be re-created all items would be not selected
      * and the button should be disabled
+     *
+     * @param isEnable is actionButton enable
      */
-    void disableActionButton();
+    void setEnableActionButton(boolean isEnable);
 
     /**
      * Open clock-in fragment if rider as a schedule and doesn't clock-in jet
@@ -71,8 +73,11 @@ public interface NestedFragmentCallback {
     void hideProgressIndicator();
 
     /**
-     * Notify order fragment that api request is called from details fragment where swipe area
-     * is not included map view
+     * Enable swipe to refresh feature when we reached
+     * the top on the scroll view
+     * to prevent miss calling of update logic
+     *
+     * @param enable set enable to the swipe view
      */
-    void onRefresh();
+    void setSwipeToRefreshEnable(boolean enable);
 }

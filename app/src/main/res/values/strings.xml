@@ -12,6 +12,7 @@
     <string name="login_country_hint">Country</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="login_country_error">You have to select a country</string>
+
     <!-- Side Menu -->
     <string name="side_menu_orders">Orders</string>
     <string name="side_menu_schedule">Schedule</string>
@@ -21,10 +22,11 @@
     <string name="side_menu_close">Close</string>
     <string name="side_menu_version">App version: %1$s</string>
 
+    <!-- Main Activity -->
+    <string name="main_activity_deliver_before">Deliver before: %1$s</string>
+
     <!-- Ready to work -->
     <string name="ready_to_work_see_map">See map</string>
-    <string name="ready_to_work_time_left">MINUTES LEFT\n until your shift starts</string>
-    <string name="ready_to_work_time_passed">MINUTES PASSED\n since shift started</string>
 
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
@@ -35,15 +37,12 @@
     <string name="empty_list_cash_report">No order was delivered in the past 15 days</string>
 
     <!-- Task details -->
-    <string name="task_details_time_left">MINUTES LEFT</string>
-    <string name="task_details_time_passed">MINUTES AGO</string>
-    <string name="task_details_go_to">Go to</string>
-    <string name="task_details_to">to</string>
-    <string name="task_details_pick_up"><b>pickup</b></string>
-    <string name="task_details_delivery"><b>delivery</b></string>
     <string name="task_details_canceled">One of the orders assigned to you just got canceled</string>
     <string name="task_details_canceled_dismiss">I GOT IT</string>
-    <string name="task_details_comment">\nComment: %1$s</string>
+    <string name="task_details_address">Address:</string>
+    <string name="task_details_comment">Comment:</string>
+    <string name="task_details_go_to">Go to %1$s</string>
+    <string name="task_details_call">Call</string>
 
     <!-- Errors -->
     <string name="dialog_please_wait">Please wait…</string>
@@ -61,10 +60,10 @@
     <string name="country_select">Select</string>
 
     <!-- Ready to work -->
-    <string name="action_ready_to_work">I am ready to work</string>
-    <string name="action_driving">I am driving there</string>
-    <string name="action_at_pick_up">I am at pickup</string>
-    <string name="action_at_delivery">I am at delivery</string>
+    <string name="action_ready_to_work">I\'m ready to work</string>
+    <string name="action_driving">I\'m driving there</string>
+    <string name="action_at_pick_up">I\'m at pickup</string>
+    <string name="action_at_delivery">I\'m at delivery</string>
     <string name="action_at_picked_up">I picked up</string>
     <string name="action_at_delivered">I delivered</string>
     <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>

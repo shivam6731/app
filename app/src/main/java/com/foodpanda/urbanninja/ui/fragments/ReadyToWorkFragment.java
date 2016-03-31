@@ -20,7 +20,6 @@ import org.joda.time.DateTime;
 public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvider {
     private TextView txtStartPoint;
     private TextView txtTimer;
-    private TextView txtTimerDescription;
 
     private ScheduleWrapper scheduleWrapper;
 
@@ -65,7 +64,6 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
         super.onViewCreated(view, savedInstanceState);
         txtStartPoint = (TextView) view.findViewById(R.id.txt_start_point);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
-        txtTimerDescription = (TextView) view.findViewById(R.id.txt_timer_description);
 
         view.findViewById(R.id.btn_see_map).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,11 +110,6 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
     }
 
     @Override
-    public TextView provideTimerDescriptionTextView() {
-        return txtTimerDescription;
-    }
-
-    @Override
     public DateTime provideScheduleDate() {
         if (scheduleWrapper.getTimeWindow() != null) {
 
@@ -136,16 +129,6 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
 
             return new DateTime().plusDays(2);
         }
-    }
-
-    @Override
-    public String provideLeftString() {
-        return getResources().getString(R.string.ready_to_work_time_left);
-    }
-
-    @Override
-    public String providePassedString() {
-        return getResources().getString(R.string.ready_to_work_time_passed);
     }
 
     @Override

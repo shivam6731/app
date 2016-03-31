@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_text_color">#ffffff</color>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#43d490</color>
-    <color name="main_background_color">#314a82</color>
+    <color name="primary_text_color">#686868</color>
+    <color name="green_text_color">#20ac76</color>
+    <color name="description_text_color">#8d959c</color>
+    <color name="toolbar_color">#eb5c31</color>
+    <color name="colorPrimary">#ea5b31</color>
+    <color name="colorPrimaryDark">#CE441B</color>
+    <color name="colorAccent">#20AC76</color>
+    <color name="main_background_color">#fafafa</color>
     <color name="main_button_disable">#aaa</color>
-    <color name="main_button_enable">#43d490</color>
+    <color name="main_button_enable">#00b279</color>
     <color name="main_button_enable_selected">#0cc76f</color>
     <color name="default_selected">#40D3D3D3</color>
     <color name="stop_background">#f5f7f9</color>
     <color name="stop_text_color">#32383e</color>
-    <color name="location_radius_color">#40ffa500</color>
-    <color name="location_radius_border_color">#ffa500</color>
+    <color name="location_radius_color">#33ea5b31</color>
+    <color name="snack_bar_alert_text_color">#ffa500</color>
     <color name="notification_bg_color">#303F9F</color>
     <color name="snackbar_background">#ff1919</color>
+    <color name="timer_in_time_background">#e5f5ef</color>
+    <color name="timer_in_time_text">#009a5c</color>
+    <color name="timer_late_background">#1ad0011b</color>
+    <color name="timer_late_text">#d0021b</color>
 </resources>

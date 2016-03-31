@@ -5,19 +5,26 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.ui.interfaces.DrivingHereCallback;
 import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
@@ -41,17 +48,21 @@ import java.util.List;
 public class RouteStopDetailsFragment extends BaseFragment implements
     OnMapReadyCallback,
     LocationChangedCallback,
-    TimerDataProvider {
+    TimerDataProvider,
+    DrivingHereCallback {
 
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
 
-    private TextView txtDetails;
-    private TextView txtEndPoint;
+    private TextView txtType;
+    private TextView txtName;
+    private TextView txtAddress;
+    private TextView txtComment;
     private TextView txtTimer;
-    private TextView txtTimerDescription;
+    private CheckBox checkBoxDone;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayout layoutComment;
+    private LinearLayout layoutAddress;
 
     private GoogleMap googleMap;
     private MapView mapView;
@@ -88,17 +99,48 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         ViewGroup container,
         Bundle savedInstanceState
     ) {
-
         return inflater.inflate(R.layout.route_stop_details_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtDetails = (TextView) view.findViewById(R.id.txt_details);
+        txtName = (TextView) view.findViewById(R.id.txt_name);
+        txtType = (TextView) view.findViewById(R.id.txt_type);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
-        txtEndPoint = (TextView) view.findViewById(R.id.txt_end_point);
-        txtTimerDescription = (TextView) view.findViewById(R.id.txt_minutes_left);
+        txtComment = (TextView) view.findViewById(R.id.txt_comment);
+        txtAddress = (TextView) view.findViewById(R.id.txt_address);
+
+        layoutAddress = (LinearLayout) view.findViewById(R.id.layout_address);
+        layoutComment = (LinearLayout) view.findViewById(R.id.layout_comment);
+
+        checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
+        checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (nestedFragmentCallback != null) {
+                    nestedFragmentCallback.setEnableActionButton(isChecked);
+                }
+            }
+        });
+
+        changeActionDoneCheckboxVisibility(stop.getStatus() == Action.ON_THE_WAY);
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.floating_button_map);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (nestedFragmentCallback != null) {
+                    nestedFragmentCallback.onSeeMapClicked(stop.getGps(), stop.getName());
+                }
+            }
+        });
+        view.findViewById(R.id.txt_call).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(activity, "Open map", Toast.LENGTH_LONG).show();
+            }
+        });
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
@@ -106,17 +148,25 @@ public class RouteStopDetailsFragment extends BaseFragment implements
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 RouteStopDetailsFragment.this.googleMap = googleMap;
-                RouteStopDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                RouteStopDetailsFragment.this.googleMap.setMyLocationEnabled(false);
-                RouteStopDetailsFragment.this.location = null;
-                getLastKnownLocation();
+                RouteStopDetailsFragment.this.googleMap.getUiSettings().setScrollGesturesEnabled(false);
+                if (activity.isPermissionGranted()) {
+                    RouteStopDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    RouteStopDetailsFragment.this.googleMap.setMyLocationEnabled(false);
+                    RouteStopDetailsFragment.this.location = null;
+                    getLastKnownLocation();
+                }
             }
         });
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
-            public void onRefresh() {
-                nestedFragmentCallback.onRefresh();
+            public void onScrollChanged() {
+                // this fragment in a child view for some main container with
+                // swipe to refresh logic inside, however here we have own scroll and to get rid of scroll conflict
+                // we make main swipe view disable until we reach the top of the view here
+                if (nestedFragmentCallback != null) {
+                    nestedFragmentCallback.setSwipeToRefreshEnable(scrollView.getScrollY() == 0);
+                }
             }
         });
 
@@ -145,6 +195,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        enableSwipeToRefreshDeleteCallback();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
@@ -159,70 +215,77 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      * present before set it
      */
     private void setData() {
-        String text = "";
-
-        if (!TextUtils.isEmpty(stop.getAddress())) {
-            text += stop.getAddress();
-        }
-        if (!TextUtils.isEmpty(stop.getComment())) {
-            text += getResources().getString(R.string.task_details_comment, stop.getComment());
-        }
-
-        txtEndPoint.setText(text);
-        txtDetails.setText(detailsText());
+        txtName.setText(getResources().getString(R.string.task_details_go_to, stop.getName()));
+        setType(stop.getTask());
+        setComment(stop.getComment());
+        setAddress(stop.getAddress());
     }
 
-    private void getLastKnownLocation() {
-        if (activity.isPermissionGranted()) {
-            LocationManager locationManager = (LocationManager) activity.getSystemService
-                (Context.LOCATION_SERVICE);
-            Location lastLocation = locationManager.getLastKnownLocation
-                (LocationManager.PASSIVE_PROVIDER);
-            if (lastLocation != null) {
-                drawMarkers(lastLocation);
-            }
+    /**
+     * Put the icon and description for type textView
+     *
+     * @param task type of order
+     */
+    private void setType(RouteStopTaskStatus task) {
+        int resource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
+        txtType.setText(getResources().getText(resource));
+
+        //TODO add icon
+    }
+
+    /**
+     * Set comment data to the textView
+     * if comment is empty hide the whole layout
+     *
+     * @param comment order comment
+     */
+    private void setComment(String comment) {
+        if (TextUtils.isEmpty(comment)) {
+            layoutComment.setVisibility(View.GONE);
+        } else {
+            txtComment.setText(comment);
         }
     }
 
     /**
-     * Set info about about destination point
-     * to the Spanned and depends on what type of task it is
-     * the description would be "delivery" or "pickup"
+     * Set address data to the textView
+     * if address is empty hide the whole layout
      *
-     * @return text for the TextView
+     * @param address order address
      */
-    private Spanned detailsText() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getResources().getString(R.string.task_details_go_to));
-        stringBuilder.append(" <b>");
-        stringBuilder.append(stop.getName());
-        stringBuilder.append("</b> ");
-        stringBuilder.append(getResources().getString(R.string.task_details_to));
-        stringBuilder.append(" <b>");
-        stringBuilder.append(getStatusString());
-        stringBuilder.append("</b>");
-        return Html.fromHtml(stringBuilder.toString());
+    private void setAddress(String address) {
+        if (TextUtils.isEmpty(address)) {
+            layoutAddress.setVisibility(View.GONE);
+        } else {
+            txtAddress.setText(address);
+        }
     }
 
-    private String getStatusString() {
-        switch (stop.getTask()) {
-            case DELIVER:
-                return getResources().getString(R.string.task_details_delivery);
-            case PICKUP:
-                return getResources().getString(R.string.task_details_pick_up);
-            default:
-                return getResources().getString(R.string.task_details_pick_up);
+    private void getLastKnownLocation() {
+        LocationManager locationManager = (LocationManager) activity.getSystemService
+            (Context.LOCATION_SERVICE);
+        Location lastLocation = locationManager.getLastKnownLocation
+            (LocationManager.PASSIVE_PROVIDER);
+        if (lastLocation != null) {
+            drawMarkers(lastLocation);
+        }
+    }
+
+    /**
+     * Main main container swipe view enable and delete callback
+     * We need to delete callback because {@link ViewTreeObserver.OnScrollChangedListener}
+     * calls after {@link #onDestroy()} called and it means that we would have a wrong state for swipe view
+     */
+    private void enableSwipeToRefreshDeleteCallback() {
+        if (nestedFragmentCallback != null) {
+            nestedFragmentCallback.setSwipeToRefreshEnable(true);
+            nestedFragmentCallback = null;
         }
     }
 
     @Override
     public TextView provideTimerTextView() {
         return txtTimer;
-    }
-
-    @Override
-    public TextView provideTimerDescriptionTextView() {
-        return txtTimerDescription;
     }
 
     @Override
@@ -233,16 +296,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     @Override
     public DateTime provideScheduleEndDate() {
         return stop.getArrivalTime().plusDays(1);
-    }
-
-    @Override
-    public String provideLeftString() {
-        return getResources().getString(R.string.task_details_time_left);
-    }
-
-    @Override
-    public String providePassedString() {
-        return getResources().getString(R.string.task_details_time_passed);
     }
 
     @Override
@@ -270,12 +323,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         drawMarkers(location);
     }
 
-    public void refreshComplete() {
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
     private void drawMarkers(Location location) {
         if (googleMap == null || !isAdded()) {
             return;
@@ -288,7 +335,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         Marker marker = googleMap.addMarker(new MarkerOptions().
             position(myLocation).
             anchor(0.5f, 0.5f).
-            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_rider)).
+            icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_rider_location)).
             title(getResources().getString(R.string.route_stop_details_my_location)));
 
         if (location.hasAccuracy()) {
@@ -297,8 +344,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
                 center(myLocation).
                 radius(location.getAccuracy()).
                 fillColor(ContextCompat.getColor(activity, R.color.location_radius_color)).
-                strokeColor(ContextCompat.getColor(activity, R.color.location_radius_border_color)).
-                strokeWidth(getResources().getDimension(R.dimen.margin_tiny_tiny));
+                strokeWidth(0);
             googleMap.addCircle(circleOptions);
         }
 
@@ -313,7 +359,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
                 builder.include(m.getPosition());
             }
             LatLngBounds bounds = builder.build();
-            int padding = ContextCompat.getDrawable(activity, R.drawable.pin).getIntrinsicHeight();
+            int padding = ContextCompat.getDrawable(activity, R.drawable.icon_pickup_circle).getIntrinsicHeight();
 
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngBounds(
@@ -331,8 +377,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         return googleMap.addMarker(new MarkerOptions().
             position(pointLocation).
             anchor(1.0f, 0.5f).
-            icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)).
+            icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_pickup_circle)).
             title(stop.getName()));
     }
 
+    @Override
+    public void changeActionDoneCheckboxVisibility(boolean isVisible) {
+        checkBoxDone.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
 }

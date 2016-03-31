@@ -13,7 +13,6 @@ import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -61,9 +60,18 @@ public class ActionLayoutHelperTest {
     }
 
     @Test
+    public void testEnable() {
+        actionLayoutHelper.setEnabled(true);
+        assertTrue(layoutAction.isEnabled());
+
+        actionLayoutHelper.setEnabled(false);
+        assertFalse(layoutAction.isEnabled());
+    }
+
+    @Test
     public void testReadyToWork() {
         actionLayoutHelper.setReadyToWorkActionButton();
-        assertEquals(btnAction.getText().toString(), "I am ready to work");
+        assertEquals(btnAction.getText().toString(), "I'm ready to work");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertTrue(layoutAction.isEnabled());
         assertNull(btnAction.getCompoundDrawables()[0]);
@@ -98,7 +106,7 @@ public class ActionLayoutHelperTest {
     @Test
     public void testSetDrivingHereStatusActionButton() {
         actionLayoutHelper.setDrivingHereStatusActionButton();
-        assertEquals(btnAction.getText().toString(), "I am driving there");
+        assertEquals(btnAction.getText().toString(), "I'm driving there");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertTrue(layoutAction.isEnabled());
         assertNotNull(btnAction.getCompoundDrawables()[0]);
@@ -112,15 +120,15 @@ public class ActionLayoutHelperTest {
         stop.setTask(RouteStopTaskStatus.DELIVER);
 
         actionLayoutHelper.setViewedStatusActionButton(stop);
-        assertEquals(btnAction.getText().toString(), "I am at delivery");
+        assertEquals(btnAction.getText().toString(), "I'm at delivery");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertTrue(layoutAction.isEnabled());
+        assertFalse(layoutAction.isEnabled());
         assertNotNull(btnAction.getCompoundDrawables()[0]);
 
         stop.setTask(RouteStopTaskStatus.PICKUP);
         actionLayoutHelper.setViewedStatusActionButton(stop);
 
-        assertEquals(btnAction.getText().toString(), "I am at pickup");
+        assertEquals(btnAction.getText().toString(), "I'm at pickup");
     }
 
     @Test
@@ -133,12 +141,6 @@ public class ActionLayoutHelperTest {
         actionLayoutHelper.updateActionButton(false, 0);
         assertFalse(layoutAction.isEnabled());
         assertEquals(btnAction.getText().toString(), "");
-    }
-
-    @Test
-    public void testDisableActionButton() {
-        actionLayoutHelper.disableActionButton();
-        assertFalse(layoutAction.isEnabled());
     }
 
 }

@@ -60,7 +60,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        nestedFragmentCallback.disableActionButton();
+        nestedFragmentCallback.setEnableActionButton(false);
     }
 
     @Override
@@ -89,11 +89,6 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     }
 
     @Override
-    public TextView provideTimerDescriptionTextView() {
-        return adapter.getTxtMinutesLeft();
-    }
-
-    @Override
     public DateTime provideScheduleDate() {
         return currentStop.getArrivalTime();
     }
@@ -101,16 +96,6 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public DateTime provideScheduleEndDate() {
         return currentStop.getArrivalTime().plusDays(1);
-    }
-
-    @Override
-    public String provideLeftString() {
-        return getResources().getString(R.string.task_details_time_left);
-    }
-
-    @Override
-    public String providePassedString() {
-        return getResources().getString(R.string.task_details_time_passed);
     }
 
     @Override

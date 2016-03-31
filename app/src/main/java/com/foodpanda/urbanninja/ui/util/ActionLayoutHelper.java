@@ -21,7 +21,7 @@ public class ActionLayoutHelper {
     // is action button visible
     private boolean isActionButtonVisible = false;
     // is action button enable
-    private boolean isEnableActionButton;
+    private boolean isEnabledActionButton;
     // text of action button
     private CharSequence textActionButton;
     // icon left from the the text in the action button
@@ -33,20 +33,25 @@ public class ActionLayoutHelper {
 
     public void setActionButtonState() {
         updateActionButton(isActionButtonVisible,
-            isEnableActionButton,
+            isEnabledActionButton,
             textActionButton,
             drawableLeft);
     }
 
     public void saveActionButtonState() {
         isActionButtonVisible = layoutAction.getVisibility() == View.VISIBLE;
-        isEnableActionButton = layoutAction.isEnabled();
+        isEnabledActionButton = layoutAction.isEnabled();
         textActionButton = btnAction.getText();
         drawableLeft = btnAction.getCompoundDrawables()[0];
     }
 
     public void hideActionButton() {
         updateActionButton(false, false, 0, 0);
+    }
+
+    public void setEnabled(boolean isEnabled) {
+        isEnabledActionButton = isEnabled;
+        layoutAction.setEnabled(isEnabled);
     }
 
     public void setReadyToWorkActionButton() {
@@ -66,7 +71,7 @@ public class ActionLayoutHelper {
     public void setViewedStatusActionButton(Stop stop) {
         int title = stop.getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
-        updateActionButton(true, true, title, R.drawable.arrow_swipe);
+        updateActionButton(true, false, title, R.drawable.arrow_swipe);
     }
 
     public void updateActionButton(boolean isEnabled, int textResourceLink) {
@@ -112,8 +117,4 @@ public class ActionLayoutHelper {
         this.layoutAction = layoutAction;
     }
 
-    public void disableActionButton() {
-        isEnableActionButton = false;
-        layoutAction.setEnabled(isEnableActionButton);
-    }
 }

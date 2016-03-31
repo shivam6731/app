@@ -36,6 +36,7 @@ import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
 import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
+import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -358,6 +359,18 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     @Override
     public void writeCodeAsTitle(Stop stop) {
         toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
+        toolbar.setSubtitle(formatDeliverBefore(stop));
+    }
+
+    /**
+     * Set sub title for action bar with information about delivery time
+     *
+     * @param stop current stop that should be deliveried
+     * @return secondary title with delivery time
+     */
+    private String formatDeliverBefore(Stop stop) {
+        return stop != null ?
+            getString(R.string.main_activity_deliver_before, DateUtil.formatTimeHoursMinutes(stop.getArrivalTime())) : "";
     }
 
     @Override
@@ -375,7 +388,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         }
     }
 
-    protected void showPhoneDialog() {
+    private void showPhoneDialog() {
         if (storageManager.getCurrentStop() != null) {
             PhoneNumberSingleChoiceDialog phoneNumberSingleChoiceDialog = PhoneNumberSingleChoiceDialog.newInstance(storageManager.getCurrentStop());
             phoneNumberSingleChoiceDialog.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());

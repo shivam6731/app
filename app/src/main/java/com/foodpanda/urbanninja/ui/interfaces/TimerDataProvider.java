@@ -19,16 +19,6 @@ public interface TimerDataProvider {
     TextView provideTimerTextView();
 
     /**
-     * provide TextView the for the description values where
-     * we would see do we have some extra time or we are late
-     *
-     * @return TextView with big text size (according to our design)
-     * @see #provideLeftString()
-     * @see #providePassedString()
-     */
-    TextView provideTimerDescriptionTextView();
-
-    /**
      * provide start time for any action with timer
      *
      * @return DateTime from the server side
@@ -41,22 +31,6 @@ public interface TimerDataProvider {
      * @return DateTime from the server side
      */
     DateTime provideScheduleEndDate();
-
-    /**
-     * provide description of the left time value for the TextView
-     *
-     * @return String from resources
-     * @see #provideTimerDescriptionTextView()
-     */
-    String provideLeftString();
-
-    /**
-     * provide description of the passed time value for the TextView
-     *
-     * @return String from resources
-     * @see #provideTimerDescriptionTextView()
-     */
-    String providePassedString();
 
     /**
      * provide label for the bottom button
