@@ -136,13 +136,4 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
         return R.string.action_ready_to_work;
     }
 
-    @Override
-    public String provideExpireString() {
-        return getResources().getString(R.string.action_ready_shift_expired);
-    }
-
-    @Override
-    public String provideFutureString() {
-        return getResources().getString(R.string.action_ready_no_shift);
-    }
 }

@@ -363,7 +363,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     }
 
     /**
-     * Set sub title for action bar with information about delivery time
+     * Get sub title for action bar with information about delivery time
      *
      * @param stop current stop that should be deliveried
      * @return secondary title with delivery time

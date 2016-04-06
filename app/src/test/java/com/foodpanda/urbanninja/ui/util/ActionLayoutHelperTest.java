@@ -23,7 +23,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -74,7 +73,6 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I'm ready to work");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertTrue(layoutAction.isEnabled());
-        assertNull(btnAction.getCompoundDrawables()[0]);
     }
 
     @Test
@@ -91,7 +89,6 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I delivered");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertTrue(layoutAction.isEnabled());
-        assertNotNull(btnAction.getCompoundDrawables()[0]);
 
         stop.setTask(RouteStopTaskStatus.PICKUP);
         routeStopActivityList.add(new RouteStopActivity());
@@ -100,7 +97,6 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I picked up");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertFalse(layoutAction.isEnabled());
-        assertNotNull(btnAction.getCompoundDrawables()[0]);
     }
 
     @Test
@@ -109,7 +105,6 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I'm driving there");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertTrue(layoutAction.isEnabled());
-        assertNotNull(btnAction.getCompoundDrawables()[0]);
     }
 
     @Test
@@ -123,7 +118,6 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I'm at delivery");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertFalse(layoutAction.isEnabled());
-        assertNotNull(btnAction.getCompoundDrawables()[0]);
 
         stop.setTask(RouteStopTaskStatus.PICKUP);
         actionLayoutHelper.setViewedStatusActionButton(stop);

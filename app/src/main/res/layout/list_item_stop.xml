@@ -1,73 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.foodpanda.urbanninja.ui.widget.ExpandableLayout
-    android:id="@+id/expand_layout"
+<android.support.v7.widget.CardView
+    style="@style/CardView"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/image_stop_icon"
-    android:background="@color/stop_background">
-
-    <RelativeLayout
-        android:id="@+id/layout_main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/padding_default"
-        android:paddingRight="@dimen/padding_default">
-
-        <ImageView
-            android:id="@+id/image_stop_icon"
-            style="@style/ImageView"
-            android:contentDescription="@string/content_description_list_item_action_stop"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ico_pay"/>
-
-        <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
-            android:id="@+id/txt_stop_name"
-            style="@style/TextView.Dark"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/image_stop_icon"/>
-
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_stop_price"
-            style="@style/TextView.Dark"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/txt_stop_name"
-            android:gravity="right"
-            android:textStyle="bold"/>
-    </RelativeLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/margin_small"
+    app:cardCornerRadius="@dimen/margin_tiny_tiny"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:canExpand="true">
+        android:orientation="vertical">
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_stop_description"
-            style="@style/TextView.Dark.Multiline"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:layout_marginLeft="@dimen/margin_left_description"
-            android:layout_marginTop="@dimen/margin_small"/>
+        <LinearLayout
+            android:id="@+id/layout_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_default"
+            android:paddingRight="@dimen/padding_default">
 
-        <RelativeLayout
+            <ImageView
+                android:id="@+id/image_stop_icon"
+                style="@style/ImageView"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/content_description_list_item_action_stop"
+                android:src="@drawable/icon_pay_restaurant"/>
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                android:id="@+id/txt_stop_name"
+                style="@style/TextView.Title.WithoutPaddingMargin"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            style="@style/DividerView"/>
+
+        <LinearLayout
             android:id="@+id/layout_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/default_selected">
+            android:layout_margin="@dimen/margin_default"
+            android:clickable="false"
+            android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/checkbox_done"
-                style="@style/TextView.Dark"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/check_box_done_height"
-                android:layout_centerHorizontal="true"
-                android:text="@string/stop_list_done"/>
-        </RelativeLayout>
 
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                style="@style/TextView.CardDescription"
+                android:text="@string/route_action_details"/>
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                android:id="@+id/txt_stop_description"
+                style="@style/TextView.Dark.Multiline"/>
+
+            <View
+                style="@style/DividerView"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkbox_done"
+            style="@style/TextView.Dark.AllCaps"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/check_box_done_height"
+            android:text="@string/stop_list_done"/>
     </LinearLayout>
-
-</com.foodpanda.urbanninja.ui.widget.ExpandableLayout>
+</android.support.v7.widget.CardView>
 

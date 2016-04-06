@@ -83,10 +83,9 @@
                             android:id="@+id/txt_address"
                             style="@style/TextView.Title.Multiline.NotBold.Address"/>
 
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/margin_tiny_tiny"
-                            android:background="@color/default_selected"/>
+                            style="@style/DividerView"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -103,10 +102,10 @@
                             android:id="@+id/txt_comment"
                             style="@style/TextView.Title.Multiline.NotBold.Address"/>
 
+
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/margin_tiny_tiny"
-                            android:background="@color/default_selected"/>
+                            style="@style/DividerView"/>
+
                     </LinearLayout>
 
                     <RelativeLayout

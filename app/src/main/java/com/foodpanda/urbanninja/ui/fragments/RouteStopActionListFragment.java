@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
@@ -20,6 +21,8 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     implements TimerDataProvider {
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
+
+    private TextView txtTimer;
 
     private Stop currentStop;
 
@@ -61,16 +64,34 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         nestedFragmentCallback.setEnableActionButton(false);
+
+        txtTimer = (TextView) view.findViewById(R.id.txt_timer);
+
+        TextView txtType = (TextView) view.findViewById(R.id.txt_type);
+        setType(currentStop.getTask(), txtType);
     }
 
     @Override
     protected RouteStopActionAdapter provideListAdapter() {
-        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback);
+        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback,recyclerView);
     }
 
     @Override
     protected int provideListLayout() {
-        return R.layout.base_list_fragment;
+        return R.layout.route_stop_action_list_fragment;
+    }
+
+    /**
+     * Put the icon and description for type textView
+     *
+     * @param task type of order
+     */
+    private void setType(RouteStopTaskStatus task, TextView txtType) {
+        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
+        txtType.setText(activity.getResources().getText(textResource));
+
+        int iconResource = task == RouteStopTaskStatus.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
+        txtType.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
     }
 
     @Override
@@ -80,12 +101,11 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
     @Override
     public void onItemClick(View view, int position) {
-
     }
 
     @Override
     public TextView provideTimerTextView() {
-        return adapter.getTxtTimer();
+        return txtTimer;
     }
 
     @Override
@@ -103,13 +123,4 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
         return 0;
     }
 
-    @Override
-    public String provideExpireString() {
-        return getResources().getString(R.string.action_order_expired);
-    }
-
-    @Override
-    public String provideFutureString() {
-        return getResources().getString(R.string.action_order_in_future);
-    }
 }

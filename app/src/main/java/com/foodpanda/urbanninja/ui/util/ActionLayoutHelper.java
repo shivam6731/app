@@ -1,8 +1,6 @@
 package com.foodpanda.urbanninja.ui.util;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 
@@ -25,7 +23,6 @@ public class ActionLayoutHelper {
     // text of action button
     private CharSequence textActionButton;
     // icon left from the the text in the action button
-    private Drawable drawableLeft;
 
     public ActionLayoutHelper(Context context) {
         this.context = context;
@@ -34,19 +31,17 @@ public class ActionLayoutHelper {
     public void setActionButtonState() {
         updateActionButton(isActionButtonVisible,
             isEnabledActionButton,
-            textActionButton,
-            drawableLeft);
+            textActionButton);
     }
 
     public void saveActionButtonState() {
         isActionButtonVisible = layoutAction.getVisibility() == View.VISIBLE;
         isEnabledActionButton = layoutAction.isEnabled();
         textActionButton = btnAction.getText();
-        drawableLeft = btnAction.getCompoundDrawables()[0];
     }
 
     public void hideActionButton() {
-        updateActionButton(false, false, 0, 0);
+        updateActionButton(false, false, 0);
     }
 
     public void setEnabled(boolean isEnabled) {
@@ -55,54 +50,48 @@ public class ActionLayoutHelper {
     }
 
     public void setReadyToWorkActionButton() {
-        updateActionButton(true, true, R.string.action_ready_to_work, 0);
+        updateActionButton(true, true, R.string.action_ready_to_work);
     }
 
     public void setRouteStopActionListButton(Stop stop) {
         int titleResourcesLink = stop.getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, stop.getActivities().isEmpty(), titleResourcesLink, R.drawable.arrow_swipe);
+        updateActionButton(true, stop.getActivities().isEmpty(), titleResourcesLink);
     }
 
     public void setDrivingHereStatusActionButton() {
-        updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
+        updateActionButton(true, true, R.string.action_driving);
     }
 
     public void setViewedStatusActionButton(Stop stop) {
         int title = stop.getTask() == RouteStopTaskStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
-        updateActionButton(true, false, title, R.drawable.arrow_swipe);
+        updateActionButton(true, false, title);
     }
 
     public void updateActionButton(boolean isEnabled, int textResourceLink) {
-        updateActionButton(true, isEnabled, textResourceLink, 0);
+        updateActionButton(true, isEnabled, textResourceLink);
     }
 
     private void updateActionButton(
         final boolean isVisible,
         final boolean isEnable,
-        final int textResLink,
-        final int drawableResLinkLeft
+        final int textResLink
     ) {
         updateActionButton(
             isVisible,
             isEnable,
-            textResLink == 0 ? "" : context.getResources().getString(textResLink),
-            drawableResLinkLeft == 0 ? null : ContextCompat.getDrawable(context, drawableResLinkLeft));
+            textResLink == 0 ? "" : context.getResources().getString(textResLink));
     }
 
     private void updateActionButton(
         final boolean isVisible,
         final boolean isEnable,
-        final CharSequence text,
-        final Drawable drawableLeft
+        final CharSequence text
     ) {
         if (isVisible) {
             layoutAction.setVisibility(View.VISIBLE);
             layoutAction.setEnabled(isEnable);
-            if (drawableLeft != null) {
-                btnAction.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, null, null, null);
-            }
             btnAction.setText(text);
         } else {
             layoutAction.setVisibility(View.GONE);

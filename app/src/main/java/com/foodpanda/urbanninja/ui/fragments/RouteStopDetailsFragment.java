@@ -227,10 +227,11 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      * @param task type of order
      */
     private void setType(RouteStopTaskStatus task) {
-        int resource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
-        txtType.setText(getResources().getText(resource));
+        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
+        txtType.setText(getResources().getText(textResource));
 
-        //TODO add icon
+        int iconResource = task == RouteStopTaskStatus.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
+        txtType.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
     }
 
     /**
@@ -304,16 +305,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     }
 
     @Override
-    public String provideExpireString() {
-        return getResources().getString(R.string.action_order_expired);
-    }
-
-    @Override
-    public String provideFutureString() {
-        return getResources().getString(R.string.action_order_in_future);
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
     }
@@ -383,6 +374,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
 
     @Override
     public void changeActionDoneCheckboxVisibility(boolean isVisible) {
-        checkBoxDone.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        checkBoxDone.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
     }
 }
