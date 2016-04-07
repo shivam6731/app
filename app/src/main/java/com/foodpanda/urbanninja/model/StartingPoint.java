@@ -3,13 +3,13 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class StartPoint implements ParcelableModel {
+public class StartingPoint implements ParcelableModel {
     private int id;
     private String name;
     private String description;
     private GeoCoordinate geoCoordinate;
 
-    public StartPoint() {
+    public StartingPoint() {
     }
 
     @Override
@@ -25,20 +25,20 @@ public class StartPoint implements ParcelableModel {
         dest.writeParcelable(this.geoCoordinate, 0);
     }
 
-    protected StartPoint(Parcel in) {
+    protected StartingPoint(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();
         this.description = in.readString();
         this.geoCoordinate = in.readParcelable(GeoCoordinate.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<StartPoint> CREATOR = new Parcelable.Creator<StartPoint>() {
-        public StartPoint createFromParcel(Parcel source) {
-            return new StartPoint(source);
+    public static final Parcelable.Creator<StartingPoint> CREATOR = new Parcelable.Creator<StartingPoint>() {
+        public StartingPoint createFromParcel(Parcel source) {
+            return new StartingPoint(source);
         }
 
-        public StartPoint[] newArray(int size) {
-            return new StartPoint[size];
+        public StartingPoint[] newArray(int size) {
+            return new StartingPoint[size];
         }
     };
 

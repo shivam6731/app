@@ -28,9 +28,9 @@ public class ScheduleAdapter extends SimpleBaseAdapter<ScheduleWrapper, Schedule
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ScheduleWrapper scheduleWrapper = getItem(position);
-        if (scheduleWrapper.getStartingPoint() != null) {
-            holder.txtScheduleStartName.setText(scheduleWrapper.getStartingPoint().getName());
-            holder.txtScheduleStartAddress.setText(scheduleWrapper.getStartingPoint().getDescription());
+        if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
+            holder.txtScheduleStartName.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getName());
+            holder.txtScheduleStartAddress.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getDescription());
         }
         if (scheduleWrapper.getTimeWindow() != null) {
             holder.txtScheduleStartTime.setText(DateUtil.formatTimeHoursMinutes(scheduleWrapper.getTimeWindow().getStartAt()));

@@ -70,13 +70,15 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
         view.findViewById(R.id.btn_see_map).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (scheduleWrapper.getStartingPoint() != null && scheduleWrapper.getStartingPoint().getGeoCoordinate() != null) {
-                    String pinLabel = scheduleWrapper.getStartingPoint().getName();
-                    nestedFragmentCallback.onSeeMapClicked(scheduleWrapper.getStartingPoint().getGeoCoordinate(), pinLabel);
+                if (scheduleWrapper.getDeliveryZone() != null &&
+                    scheduleWrapper.getDeliveryZone().getStartingPoint() != null &&
+                    scheduleWrapper.getDeliveryZone().getStartingPoint().getGeoCoordinate() != null) {
+                    String pinLabel = scheduleWrapper.getDeliveryZone().getStartingPoint().getName();
+                    nestedFragmentCallback.onSeeMapClicked(scheduleWrapper.getDeliveryZone().getStartingPoint().getGeoCoordinate(), pinLabel);
                 }
             }
         });
-        if (scheduleWrapper.getStartingPoint() == null) {
+        if (scheduleWrapper.getDeliveryZone() == null && scheduleWrapper.getDeliveryZone().getStartingPoint() == null) {
             view.findViewById(R.id.btn_see_map).setVisibility(View.INVISIBLE);
         }
     }
@@ -96,8 +98,8 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (scheduleWrapper.getStartingPoint() != null) {
-            txtStartPoint.setText(scheduleWrapper.getStartingPoint().getDescription());
+        if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
+            txtStartPoint.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getDescription());
         } else {
             txtStartPoint.setVisibility(View.INVISIBLE);
         }

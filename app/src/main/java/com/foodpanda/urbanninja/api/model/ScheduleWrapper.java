@@ -2,19 +2,17 @@ package com.foodpanda.urbanninja.api.model;
 
 import android.os.Parcel;
 
-import com.foodpanda.urbanninja.model.DeliveryArea;
+import com.foodpanda.urbanninja.model.DeliveryZone;
 import com.foodpanda.urbanninja.model.ParcelableModel;
 import com.foodpanda.urbanninja.model.Rider;
-import com.foodpanda.urbanninja.model.StartPoint;
 import com.foodpanda.urbanninja.model.TimeWindow;
 
 import org.joda.time.DateTime;
 
 public class ScheduleWrapper implements ParcelableModel {
     private int id;
-    private StartPoint startingPoint;
     private Rider rider;
-    private DeliveryArea deliveryArea;
+    private DeliveryZone deliveryZone;
     private TimeWindow timeWindow;
     private DateTime clockedInAt;
     private boolean clockedIn;
@@ -30,9 +28,8 @@ public class ScheduleWrapper implements ParcelableModel {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
-        dest.writeParcelable(this.startingPoint, 0);
         dest.writeParcelable(this.rider, 0);
-        dest.writeParcelable(this.deliveryArea, 0);
+        dest.writeParcelable(this.deliveryZone, 0);
         dest.writeParcelable(this.timeWindow, 0);
         dest.writeSerializable(this.clockedInAt);
         dest.writeByte(clockedIn ? (byte) 1 : (byte) 0);
@@ -40,9 +37,8 @@ public class ScheduleWrapper implements ParcelableModel {
 
     protected ScheduleWrapper(Parcel in) {
         this.id = in.readInt();
-        this.startingPoint = in.readParcelable(StartPoint.class.getClassLoader());
         this.rider = in.readParcelable(Rider.class.getClassLoader());
-        this.deliveryArea = in.readParcelable(DeliveryArea.class.getClassLoader());
+        this.deliveryZone = in.readParcelable(DeliveryZone.class.getClassLoader());
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
         this.clockedInAt = (DateTime) in.readSerializable();
         this.clockedIn = in.readByte() != 0;
@@ -62,16 +58,12 @@ public class ScheduleWrapper implements ParcelableModel {
         return id;
     }
 
-    public StartPoint getStartingPoint() {
-        return startingPoint;
-    }
-
     public Rider getRider() {
         return rider;
     }
 
-    public DeliveryArea getDeliveryArea() {
-        return deliveryArea;
+    public DeliveryZone getDeliveryZone() {
+        return deliveryZone;
     }
 
     public TimeWindow getTimeWindow() {
