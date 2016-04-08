@@ -21,7 +21,9 @@ public class Constants {
     public static class BundleKeys {
         public static final String COUNTRY = "country";
         public static final String VEHICLE_ID = "VehicleId";
-        public static final String VEHICLE_DELIVERY_AREA_RIDER_BUNDLE = "VehicleDeliveryAreaRiderBundle";
+        public static final String MAP_ADDRESS_DETAILS = "mapAddressDetails";
+        public static final String MAP_ADDRESS_LAYOUT_SHOWN = "mapAddressLayoutShown";
+        public static final String MAP_ADDRESS_POINT_TYPE = "mapAddressPointType";
         public static final String SCHEDULE_WRAPPER = "ScheduleWrapper";
         public static final String LOCATION = "Location";
         public static final String STOP = "Stop";

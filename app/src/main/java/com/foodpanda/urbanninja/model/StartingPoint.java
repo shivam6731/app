@@ -3,7 +3,7 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class StartingPoint implements ParcelableModel {
+public class StartingPoint implements MapDetailsProvider {
     private int id;
     private String name;
     private String description;
@@ -46,15 +46,34 @@ public class StartingPoint implements ParcelableModel {
         return id;
     }
 
+    @Override
+    public GeoCoordinate getCoordinate() {
+        return geoCoordinate;
+    }
+
+    @Override
+    public String getAddress() {
+        return description;
+    }
+
+    @Override
+    public String getComment() {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    @Override
+    public String getPhoneNumber() {
+        return "";
     }
 
-    public GeoCoordinate getGeoCoordinate() {
-        return geoCoordinate;
+    @Override
+    public boolean isDoneButtonVisible() {
+        return false;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,19 +12,28 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.enums.MapPointType;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
 
-public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvider {
-    private TextView txtStartPoint;
+public class ReadyToWorkFragment extends BaseFragment implements
+    TimerDataProvider,
+    MapAddressDetailsChangeListener,
+    MapAddressDetailsCallback {
+    private TextView txtType;
     private TextView txtTimer;
+    private TextView txtEmptySchedule;
 
     private ScheduleWrapper scheduleWrapper;
 
     private NestedFragmentCallback nestedFragmentCallback;
+    private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
     private TimerHelper timerHelper;
 
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
@@ -62,23 +72,43 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        txtStartPoint = (TextView) view.findViewById(R.id.txt_start_point);
+        txtType = (TextView) view.findViewById(R.id.txt_type);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
+        txtEmptySchedule = (TextView) view.findViewById(R.id.txt_empty_schedule);
+        setData();
+    }
 
-        view.findViewById(R.id.btn_see_map).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (scheduleWrapper.getDeliveryZone() != null &&
-                    scheduleWrapper.getDeliveryZone().getStartingPoint() != null &&
-                    scheduleWrapper.getDeliveryZone().getStartingPoint().getGeoCoordinate() != null) {
-                    String pinLabel = scheduleWrapper.getDeliveryZone().getStartingPoint().getName();
-                    nestedFragmentCallback.onSeeMapClicked(scheduleWrapper.getDeliveryZone().getStartingPoint().getGeoCoordinate(), pinLabel);
-                }
-            }
-        });
-        if (scheduleWrapper.getDeliveryZone() == null && scheduleWrapper.getDeliveryZone().getStartingPoint() == null) {
-            view.findViewById(R.id.btn_see_map).setVisibility(View.INVISIBLE);
+    /**
+     * Here we set all information about the current route stop for the text field
+     * we have the same text view for the address and comment so we need to check if this data
+     * present before set it
+     */
+    private void setData() {
+        setType();
+        //Launch the map details fragment
+        if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
+            txtEmptySchedule.setVisibility(View.GONE);
+            
+            MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
+                scheduleWrapper.getDeliveryZone().getStartingPoint(), MapPointType.CLOCK_IN);
+            mapAddressDetailsChangeListener = mapAddressDetailsFragment;
+
+            fragmentManager.
+                beginTransaction().
+                replace(R.id.map_details_container,
+                    mapAddressDetailsFragment).
+                commitAllowingStateLoss();
+        } else {
+            txtEmptySchedule.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Put the icon and description for type textView
+     */
+    private void setType() {
+        txtType.setText(getResources().getText(R.string.ready_to_work_clock_in));
+        txtType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_start_green, 0, 0, 0);
     }
 
     @Override
@@ -91,17 +121,6 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
     public void onStop() {
         super.onStop();
         timerHelper.stopTimer();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
-            txtStartPoint.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getDescription());
-        } else {
-            txtStartPoint.setVisibility(View.INVISIBLE);
-        }
-
     }
 
     @Override
@@ -136,4 +155,30 @@ public class ReadyToWorkFragment extends BaseFragment implements TimerDataProvid
         return R.string.action_ready_to_work;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        if (mapAddressDetailsChangeListener != null) {
+            mapAddressDetailsChangeListener.onLocationChanged(location);
+        }
+    }
+
+    @Override
+    public void setActionDoneCheckboxVisibility(boolean isVisible) {
+        mapAddressDetailsChangeListener.setActionDoneCheckboxVisibility(false);
+    }
+
+    @Override
+    public void setActionButtonEnable(boolean isEnable) {
+        nestedFragmentCallback.setActionButtonEnable(true);
+    }
+
+    @Override
+    public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
+        nestedFragmentCallback.onSeeMapClicked(geoCoordinate, pinLabel);
+    }
+
+    @Override
+    public void onPhoneNumberClicked(String phoneNumber) {
+        nestedFragmentCallback.onPhoneNumberClicked(phoneNumber);
+    }
 }

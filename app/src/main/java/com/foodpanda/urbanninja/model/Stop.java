@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
-public class Stop implements ParcelableModel {
+public class Stop implements MapDetailsProvider {
     private long id;
     private int locationId;
     private int sequence;
@@ -29,6 +29,15 @@ public class Stop implements ParcelableModel {
     private String deliveryPhone;
     private long orderId;
     private String orderCode;
+
+    /**
+     * need this constructor only for test
+     */
+    Stop(String deliveryPhone, String pickupPhone, RouteStopTaskStatus task) {
+        this.deliveryPhone = deliveryPhone;
+        this.pickupPhone = pickupPhone;
+        this.task = task;
+    }
 
     @Override
     public int describeContents() {
@@ -131,20 +140,13 @@ public class Stop implements ParcelableModel {
         return status;
     }
 
-    public GeoCoordinate getGps() {
-        return gps;
-    }
-
     public String getName() {
         return name;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
-    public String getAddress() {
-        return address;
+    @Override
+    public String getPhoneNumber() {
+        return RouteStopTaskStatus.DELIVER == getTask() ? deliveryPhone : pickupPhone;
     }
 
     public RouteStopTaskStatus getTask() {
@@ -185,5 +187,25 @@ public class Stop implements ParcelableModel {
 
     public void setActivities(List<RouteStopActivity> activities) {
         this.activities = activities;
+    }
+
+    @Override
+    public GeoCoordinate getCoordinate() {
+        return gps;
+    }
+
+    @Override
+    public String getAddress() {
+        return address;
+    }
+
+    @Override
+    public String getComment() {
+        return comment;
+    }
+
+    @Override
+    public boolean isDoneButtonVisible() {
+        return status == Action.ON_THE_WAY;
     }
 }

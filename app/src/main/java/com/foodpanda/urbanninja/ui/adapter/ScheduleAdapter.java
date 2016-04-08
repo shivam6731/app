@@ -30,7 +30,7 @@ public class ScheduleAdapter extends SimpleBaseAdapter<ScheduleWrapper, Schedule
         ScheduleWrapper scheduleWrapper = getItem(position);
         if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
             holder.txtScheduleStartName.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getName());
-            holder.txtScheduleStartAddress.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getDescription());
+            holder.txtScheduleStartAddress.setText(scheduleWrapper.getDeliveryZone().getStartingPoint().getComment());
         }
         if (scheduleWrapper.getTimeWindow() != null) {
             holder.txtScheduleStartTime.setText(DateUtil.formatTimeHoursMinutes(scheduleWrapper.getTimeWindow().getStartAt()));

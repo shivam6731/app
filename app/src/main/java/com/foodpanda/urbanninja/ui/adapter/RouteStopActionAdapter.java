@@ -172,14 +172,14 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         int backgroundResource;
         if (expandableLayout.isExpanded()) {
             imageResource = R.drawable.icon_deliver_down;
-            backgroundResource = ContextCompat.getColor(context, R.color.action_header_footer);
+            backgroundResource = R.drawable.list_item_stop_header_not_selected;
         } else {
             imageResource = R.drawable.icon_deliver_up;
-            backgroundResource = ContextCompat.getColor(context, android.R.color.white);
+            backgroundResource = R.drawable.list_item_stop_header_selected;
             scrollToEndOfFooterView(expandableLayout, position);
         }
         imageView.setImageDrawable(ContextCompat.getDrawable(context, imageResource));
-        expandableLayout.setBackgroundColor(backgroundResource);
+        expandableLayout.setBackgroundResource(backgroundResource);
     }
 
     /**
