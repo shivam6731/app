@@ -400,4 +400,8 @@ public class ExpandableLayout extends LinearLayout {
 
         void onExpandOffset(ExpandableLayout view, View child, float offset, boolean isExpanding);
     }
+
+    public void setOnExpandListener(OnExpandListener listener) {
+        this.listener = listener;
+    }
 }

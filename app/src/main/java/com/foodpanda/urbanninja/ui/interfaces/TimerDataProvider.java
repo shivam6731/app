@@ -38,18 +38,4 @@ public interface TimerDataProvider {
      * @return link to the string resources
      */
     int provideActionButtonString();
-
-    /**
-     * provide label for the action that is expired
-     *
-     * @return description for the expired order
-     */
-    String provideExpireString();
-
-    /**
-     * provide label for the action in the future
-     *
-     * @return description for the future order
-     */
-    String provideFutureString();
 }

@@ -184,16 +184,6 @@ public class TimerHelperTest {
             public int provideActionButtonString() {
                 return 0;
             }
-
-            @Override
-            public String provideExpireString() {
-                return "Expired";
-            }
-
-            @Override
-            public String provideFutureString() {
-                return "Future";
-            }
         };
     }
 }

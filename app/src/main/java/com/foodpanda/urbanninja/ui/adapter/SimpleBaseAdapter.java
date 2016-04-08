@@ -28,6 +28,8 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
     protected Context context;
     private View selectedView;
 
+    private boolean selectableView = true;
+
     public SimpleBaseAdapter(final List<T> objects, Context context) {
         this.objects = objects;
         this.context = context;
@@ -118,13 +120,19 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
                 selectedView.setSelected(false);
                 selectedView = view;
             }
-            view.setSelected(true);
-            notifyItemChanged(getAdapterPosition());
+            if (selectableView) {
+                view.setSelected(true);
+                notifyItemChanged(getAdapterPosition());
+            }
         }
 
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    protected void setSelectable(boolean selectableView) {
+        this.selectableView = selectableView;
     }
 }

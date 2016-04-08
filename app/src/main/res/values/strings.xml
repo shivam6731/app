@@ -66,10 +66,6 @@
     <string name="action_at_delivery">I\'m at delivery</string>
     <string name="action_at_picked_up">I picked up</string>
     <string name="action_at_delivered">I delivered</string>
-    <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
-    <string name="action_order_in_future">in more than 24 hours</string>
-    <string name="action_ready_shift_expired">Your current shift has already finished</string>
-    <string name="action_order_expired">more than 24 hours ago</string>
     <string name="route_stop_details_my_location">My Location</string>
     <string name="route_error">This route status is not supported</string>
 
@@ -83,14 +79,16 @@
     <string name="gcm_defaultSenderId">975393205483</string>
 
     <!-- Route Actions  -->
-    <string name="route_action_items">%1$s Items</string>
-    <string name="route_action_pay">Pay</string>
-    <string name="route_action_pick_up">Pick up</string>
-    <string name="route_action_change">Prepare Change</string>
-    <string name="route_action_deliver">Deliver</string>
-    <string name="route_action_collect">Collect</string>
+    <string name="route_action_pay">Pay %1$s</string>
+    <string name="route_action_pick_up">Pick up %1$s Items </string>
+    <string name="route_action_change">Prepare Change %1$s</string>
+    <string name="route_action_deliver">Deliver %1$s Items</string>
+    <string name="route_action_collect">Collect %1$s</string>
     <string name="route_action_header_deliver">Deliver to %1$s</string>
     <string name="route_action_header_pick_up">Pickup from %1$s</string>
+    <string name="route_action_details">Details:</string>
+    <string name="route_action_last_step">Last Step</string>
+    <string name="route_action_up_step">Up Next</string>
 
     <!-- Cash Report-->
     <string name="cash_report_total">Total: %1$s</string>

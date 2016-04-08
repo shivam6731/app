@@ -40,6 +40,10 @@
         <item name="android:textColor">@color/stop_text_color</item>
     </style>
 
+    <style name="TextView.Dark.AllCaps">
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="TextView.Green">
         <item name="android:textColor">@color/green_text_color</item>
         <item name="android:textAllCaps">true</item>
@@ -47,13 +51,17 @@
 
     <style name="TextView.Dark.Multiline">
         <item name="android:singleLine">false</item>
-        <item name="android:layout_margin">@null</item>
     </style>
 
     <style name="TextView.Title">
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/default_title_size</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextView.Title.WithoutPaddingMargin">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
     </style>
 
     <style name="TextView.Title.CashReport">
@@ -125,6 +133,11 @@
         <item name="android:textSize">@dimen/description_text_size</item>
     </style>
 
+    <style name="TextView.CardDescription.ActionList">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
     <style name="Button">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -182,8 +195,15 @@
     </style>
 
     <style name="CardView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:background">@android:color/white</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DividerView">
+        <item name="android:background">@color/default_selected</item>
+        <item name="android:layout_height">@dimen/margin_tiny_tiny</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 </resources>
