@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.R;
@@ -37,21 +37,21 @@ public class CountryAdapter extends SimpleBaseAdapter<Country, CountryAdapter.Vi
         }
         if (selectedCountry != null &&
             selectedCountry.getCode().equalsIgnoreCase(getItem(position).getCode())) {
-            holder.imageSelected.setVisibility(View.VISIBLE);
+            holder.radioBtnSelectedCountry.setChecked(true);
         } else {
-            holder.imageSelected.setVisibility(View.INVISIBLE);
+            holder.radioBtnSelectedCountry.setChecked(false);
         }
 
     }
 
     public class ViewHolder extends SimpleBaseAdapter.BaseViewHolder {
         public TextView txtName;
-        public ImageView imageSelected;
+        public RadioButton radioBtnSelectedCountry;
 
         public ViewHolder(View itemView) {
             super(itemView);
             txtName = (TextView) itemView.findViewById(R.id.txt_country_name);
-            imageSelected = (ImageView) itemView.findViewById(R.id.image_selected_country);
+            radioBtnSelectedCountry = (RadioButton) itemView.findViewById(R.id.radio_btn_selected_country);
         }
     }
 

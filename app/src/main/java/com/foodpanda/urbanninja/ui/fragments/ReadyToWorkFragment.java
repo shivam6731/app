@@ -85,10 +85,11 @@ public class ReadyToWorkFragment extends BaseFragment implements
      */
     private void setData() {
         setType();
-        //Launch the map details fragment
+
         if (scheduleWrapper.getDeliveryZone() != null && scheduleWrapper.getDeliveryZone().getStartingPoint() != null) {
             txtEmptySchedule.setVisibility(View.GONE);
-            
+
+            //Launch the map details fragment
             MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
                 scheduleWrapper.getDeliveryZone().getStartingPoint(), MapPointType.CLOCK_IN);
             mapAddressDetailsChangeListener = mapAddressDetailsFragment;
@@ -101,6 +102,7 @@ public class ReadyToWorkFragment extends BaseFragment implements
         } else {
             txtEmptySchedule.setVisibility(View.VISIBLE);
         }
+        
     }
 
     /**

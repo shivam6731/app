@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="drawerArrowStyle">@style/ToolbarColoredBackArrow</item>
+        <item name="android:textColorSecondary">@color/description_text_color</item>
     </style>
 
     <style name="ToolbarColoredBackArrow" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -142,26 +143,6 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="Button">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">@dimen/default_title_size</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:layout_margin">@dimen/margin_default</item>
-    </style>
-
-    <style name="Button.NotBold">
-        <item name="android:textStyle">normal</item>
-    </style>
-
-    <style name="Button.NotBold.TransparentBackground">
-        <item name="android:layout_margin">@null</item>
-        <item name="android:layout_marginLeft">@dimen/margin_button_side</item>
-        <item name="android:layout_marginRight">@dimen/margin_button_side</item>
-        <item name="android:background">@drawable/see_map_btn_background</item>
-    </style>
-
     <style name="ButtonMainAction">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -207,7 +188,7 @@
 
     <style name="DividerView">
         <item name="android:background">@color/default_selected</item>
-        <item name="android:layout_height">@dimen/margin_tiny_tiny</item>
+        <item name="android:layout_height">@dimen/margin_tiny</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
@@ -216,4 +197,11 @@
         <item name="android:layout_height">@dimen/card_elevation</item>
         <item name="android:layout_width">match_parent</item>
     </style>
+
+    <style name="TextInputLayout">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColorHint">@drawable/login_hint_color</item>
+    </style>
+
 </resources>

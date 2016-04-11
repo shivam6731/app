@@ -116,6 +116,12 @@ public class LoginFragment extends BaseFragment implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        activity.setTitle(getResources().getString(R.string.logic_title), false);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         editEmail.setText(storageManager.getUsername());
@@ -179,5 +185,6 @@ public class LoginFragment extends BaseFragment implements
     public void onCountrySelected(Country country) {
         String title = new Locale("", country.getCode()).getDisplayCountry();
         txtCountry.setText(title);
+        activity.setTitle(getResources().getString(R.string.logic_title), false);
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 public abstract class BaseActivity extends AppCompatActivity {
     protected FragmentManager fragmentManager;
     private View progressBar;
+    protected Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
+    }
+
+    protected Toolbar initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+
+        return toolbar;
+    }
+
+    public void setTitle(String title, boolean showHomeButton) {
+        toolbar.setTitle(title);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(showHomeButton);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeButton);
+        }
     }
 
     @Override

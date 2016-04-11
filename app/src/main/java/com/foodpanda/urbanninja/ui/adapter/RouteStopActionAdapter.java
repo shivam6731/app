@@ -92,10 +92,10 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      * @param position in a list on content
      */
     @Override
-    public void onBindViewHolder(SimpleBaseAdapter.BaseViewHolder holder, final int position) {
+    public void onBindViewHolder(final SimpleBaseAdapter.BaseViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
-            final RouteStopActivity routeStopActivity = getItem(position);
+            final RouteStopActivity routeStopActivity = getItem(holder.getAdapterPosition());
             viewHolder.checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -141,13 +141,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         } else if (holder instanceof ViewHolderHeaderFooter && !TextUtils.isEmpty(stop.getOrderCode())) {
             final ViewHolderHeaderFooter viewHolder = (ViewHolderHeaderFooter) holder;
             viewHolder.txtName.setText(context.getResources().getString(R.string.task_details_go_to, stop.getName()));
-            int stringRes = position == 0 ? R.string.route_action_last_step : R.string.route_action_up_step;
+            int stringRes = holder.getAdapterPosition() == 0 ? R.string.route_action_last_step : R.string.route_action_up_step;
             viewHolder.txtType.setText(stringRes);
 
             viewHolder.expandableLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    expandLayout(viewHolder.expandableLayout, viewHolder.imageView, position);
+                    expandLayout(viewHolder.expandableLayout, viewHolder.imageView, holder.getAdapterPosition());
                 }
             });
         }

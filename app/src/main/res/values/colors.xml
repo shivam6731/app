@@ -12,7 +12,6 @@
     <color name="main_button_enable">#00b279</color>
     <color name="main_button_enable_selected">#0cc76f</color>
     <color name="default_selected">#40D3D3D3</color>
-    <color name="stop_background">#f5f7f9</color>
     <color name="stop_text_color">#32383e</color>
     <color name="location_radius_color">#33ea5b31</color>
     <color name="snack_bar_alert_text_color">#ffa500</color>

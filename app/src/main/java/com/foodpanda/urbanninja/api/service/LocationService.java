@@ -286,7 +286,7 @@ public class LocationService extends Service implements
         RiderLocation riderLocation = new RiderLocation();
         riderLocation.setGeoCoordinate(new GeoCoordinate(location.getLatitude(), location.getLongitude()));
         if (location.hasSpeed()) {
-            riderLocation.setSpeedInKmh((int) location.getSpeed() * 3600 / 1000);
+            riderLocation.setSpeedInKmh((int) location.getSpeed() * 1000 / 3600);
         }
         if (location.hasAccuracy()) {
             riderLocation.setAccuracyInMeters((int) location.getAccuracy());

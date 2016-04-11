@@ -15,7 +15,7 @@
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_date"
             style="@style/TextView.Title.SmallSize"
-            android:layout_margin="@dimen/margin_tiny_tiny"/>
+            android:layout_margin="@dimen/margin_tiny"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_name"
@@ -25,7 +25,7 @@
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_address"
             style="@style/TextView"
-            android:layout_margin="@dimen/margin_tiny_tiny"/>
+            android:layout_margin="@dimen/margin_tiny"/>
     </LinearLayout>
 
     <RelativeLayout

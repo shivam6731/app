@@ -2,12 +2,12 @@ package com.foodpanda.urbanninja.ui.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 import com.foodpanda.urbanninja.utils.FontCacheUtil;
 
-public class OpenSansEditText extends EditText {
+public class OpenSansEditText extends AppCompatEditText {
     public OpenSansEditText(Context context) {
         super(context);
 

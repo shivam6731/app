@@ -27,8 +27,6 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     private Country selectedCountry;
     private LoginActivityCallback loginActivityCallback;
 
-    private View progressBar;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -75,12 +73,7 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.image_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.getSupportFragmentManager().popBackStack();
-            }
-        });
+
         view.findViewById(R.id.btn_select).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +82,13 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
                 }
             }
         });
-        progressBar = view.findViewById(R.id.progress_spinner);
+        activity.showProgress();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.setTitle(getResources().getString(R.string.country_select_title), true);
     }
 
     @Override
@@ -97,20 +96,19 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
         super.onActivityCreated(savedInstanceState);
         apiManager.getCountries(this);
         adapter.setSelectedCountry(selectedCountry);
-        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onSuccess(CountryListWrapper countryListWrapper) {
         adapter.addAll(sortCountries(countryListWrapper.getData()));
         adapter.notifyDataSetChanged();
-        progressBar.setVisibility(View.GONE);
+        activity.hideProgress();
     }
 
     @Override
     public void onError(ErrorMessage errorMessage) {
         activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-        progressBar.setVisibility(View.GONE);
+        activity.hideProgress();
     }
 
     private List<Country> sortCountries(List<Country> list) {

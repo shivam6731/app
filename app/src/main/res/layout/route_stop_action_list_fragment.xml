@@ -9,7 +9,7 @@
         style="@style/CardView"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:cardCornerRadius="@dimen/margin_tiny_tiny"
+        app:cardCornerRadius="@dimen/margin_tiny"
         app:cardElevation="0dp"
         app:cardUseCompatPadding="true">
 
