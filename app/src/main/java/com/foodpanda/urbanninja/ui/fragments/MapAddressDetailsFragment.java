@@ -1,11 +1,14 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,8 +22,10 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.model.MapDetailsProvider;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
+import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -150,17 +155,26 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                MapAddressDetailsFragment.this.googleMap = googleMap;
-                MapAddressDetailsFragment.this.googleMap.getUiSettings().setScrollGesturesEnabled(false);
-                if (activity.isPermissionGranted()) {
-                    MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                    MapAddressDetailsFragment.this.googleMap.setMyLocationEnabled(false);
-                    MapAddressDetailsFragment.this.location = null;
-                    getLastKnownLocation();
-                }
+                setGoogleMapData(googleMap);
             }
         });
         setData();
+    }
+
+    private void setGoogleMapData(GoogleMap googleMap) {
+        MapAddressDetailsFragment.this.googleMap = googleMap;
+        //this change is not regarding to the user permission and map should be not clickable even if
+        //user denied permissions
+        MapAddressDetailsFragment.this.googleMap.getUiSettings().setScrollGesturesEnabled(false);
+
+        if (checkPermission()) {
+            MapAddressDetailsFragment.this.googleMap.setMyLocationEnabled(false);
+            MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+            MapAddressDetailsFragment.this.location = null;
+            getLastKnownLocation();
+        } else {
+            requestPermission();
+        }
     }
 
     @Override
@@ -231,13 +245,40 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     }
 
     private void getLastKnownLocation() {
-        LocationManager locationManager = (LocationManager) activity.getSystemService
-            (Context.LOCATION_SERVICE);
-        Location lastLocation = locationManager.getLastKnownLocation
-            (LocationManager.PASSIVE_PROVIDER);
-        if (lastLocation != null) {
-            drawMarkers(lastLocation);
+        if (checkPermission()) {
+            LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            Location lastLocation = locationManager.getLastKnownLocation
+                (LocationManager.PASSIVE_PROVIDER);
+            if (lastLocation != null) {
+                drawMarkers(lastLocation);
+            }
+        } else {
+            requestPermission();
         }
+    }
+
+    /**
+     * we have such method in {@link com.foodpanda.urbanninja.ui.activity.BaseActivity},
+     * however if we use it from there android lint has an error about permission
+     * so to get rid of it we have to copy this method from activity
+     *
+     * @return is permissions accepted
+     */
+    private boolean checkPermission() {
+        return ContextCompat.checkSelfPermission(activity,
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * if permissions are not access ask to them
+     * it would be standard android dialog with a list or permissions
+     */
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(activity,
+            ApiExecutor.PERMISSIONS_ARRAY,
+            MainActivity.PERMISSIONS_REQUEST_LOCATION);
     }
 
     private void drawMarkers(Location location) {

@@ -49,7 +49,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
     private NavigationView navigationView;
 
     private StorageManager storageManager;
@@ -194,15 +193,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void setSelectedNavigationItem() {
         navigationView.getMenu().getItem(0).setChecked(true);
         currentItemId = navigationView.getMenu().getItem(0).getItemId();
-    }
-
-    private Toolbar initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        return toolbar;
     }
 
     private void setActionBarDrawerToggle(Toolbar toolbar) {

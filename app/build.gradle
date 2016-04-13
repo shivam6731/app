@@ -48,8 +48,9 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
+    //I can't update the version of the lib because some required fields are missed in this new version
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-location:8.4.0'
@@ -71,7 +72,7 @@ dependencies {
     testCompile 'org.robolectric:shadows-support-v4:3.0'
 
     // Need Robolectric 3.1 shadows you GPS 7.8.0+
-    testCompile('com.google.android.gms:play-services-ads:7.5.0') {
+    testCompile('com.google.android.gms:play-services-ads:8.4.0') {
         // robolectric 3.1 needs to be released
         exclude module: 'support-v4'
         exclude module: 'support-annotations'

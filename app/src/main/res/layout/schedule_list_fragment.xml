@@ -6,12 +6,6 @@
               android:baselineAligned="false"
               android:orientation="vertical">
 
-    <ImageView
-        style="@style/ImageView"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="@string/content_description_schedule_list"
-        android:src="@drawable/ico_schedule"/>
-
     <com.foodpanda.urbanninja.ui.widget.MontserratTextView
         style="@style/TextView.Title"
         android:layout_gravity="center"

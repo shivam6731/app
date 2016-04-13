@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 import com.foodpanda.urbanninja.App;
@@ -22,7 +23,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.base_activity_container);
+        setContentView(R.layout.login_activity);
         storageManager = App.STORAGE_MANAGER;
         if (isLogged()) {
             openMainActivity();
@@ -36,6 +37,18 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
                 add(R.id.container, LoginFragment.newInstance()).
                 commit();
         }
+        initToolbar();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        // we have a home button in the action bar with the same behaviour as
+        // back button so that's why we call onBackPressed method
+        if (menuItem.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -83,6 +96,23 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             getCurrentFocus().clearFocus();
+        }
+    }
+
+    /**
+     * we Override this method only because
+     * needs to change title for activity when we have only {@link LoginFragment} in the stack
+     */
+    @Override
+    public void onBackPressed() {
+        int count = fragmentManager.getBackStackEntryCount();
+        if (count <= 0) {
+            super.onBackPressed();
+        } else {
+            //in a stack in fragment in this activity we have only two fragments
+            //and when we came back from select country fragment we should change the title
+            fragmentManager.popBackStack();
+            setTitle(getResources().getString(R.string.logic_title), false);
         }
     }
 }
