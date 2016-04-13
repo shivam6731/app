@@ -17,8 +17,8 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
-import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
@@ -140,7 +140,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      * @param task type of order
      */
     private void setType(RouteStopTaskStatus task) {
-        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
+        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
         txtType.setText(getResources().getText(textResource));
 
         int iconResource = task == RouteStopTaskStatus.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;

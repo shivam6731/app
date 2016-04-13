@@ -21,11 +21,11 @@
     <dimen name="padding_small">5dp</dimen>
     <dimen name="padding_default">10dp</dimen>
     <dimen name="padding_large">15dp</dimen>
-    <dimen name="padding_empty_description">60dp</dimen>
+    <dimen name="padding_empty_description">30dp</dimen>
 
     <!--Menu -->
-    <dimen name="menu_navigation_thickness">1dp</dimen>
-    <dimen name="menu_navigation_gap_between_bars">8dp</dimen>
+    <dimen name="menu_navigation_thickness">2dp</dimen>
+    <dimen name="menu_navigation_gap_between_bars">6dp</dimen>
     <dimen name="menu_navigation_bar_length">24dp</dimen>
 
     <!--Map -->

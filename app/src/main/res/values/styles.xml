@@ -112,6 +112,10 @@
         <item name="android:textSize">@dimen/default_details_timer_text_size</item>
     </style>
 
+    <style name="TextView.Title.Green.TaskType">
+        <item name="android:textSize">@dimen/default_title_size</item>
+    </style>
+
     <style name="TextView.Description">
         <item name="android:gravity">center</item>
         <item name="android:singleLine">false</item>

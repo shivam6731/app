@@ -34,8 +34,8 @@ public class CashReportListFragment extends BaseListFragment<CashReportAdapter> 
     }
 
     @Override
-    protected String provideEmptyListDescription() {
-        return getResources().getString(R.string.empty_list_cash_report);
+    protected CharSequence provideEmptyListDescription() {
+        return getResources().getText(R.string.empty_list_cash_report);
     }
 
     @Override

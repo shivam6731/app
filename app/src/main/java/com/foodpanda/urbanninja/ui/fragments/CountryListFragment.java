@@ -59,8 +59,8 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     }
 
     @Override
-    protected String provideEmptyListDescription() {
-        return getResources().getString(R.string.empty_list_country);
+    protected CharSequence provideEmptyListDescription() {
+        return getResources().getText(R.string.empty_list_country);
     }
 
     @Override

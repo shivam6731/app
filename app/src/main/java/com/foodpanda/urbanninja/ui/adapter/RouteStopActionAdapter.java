@@ -216,11 +216,12 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     @Override
     public int getItemViewType(int position) {
         int type = TYPE_ITEM;
-        if (position == 0) {
-            type = TYPE_HEADER;
-        } else if (position == getItemCount() - 1) {
-            type = TYPE_FOOTER;
-        }
+//TODO add header and footer for the next and previous step
+//        if (position == 0) {
+//            type = TYPE_HEADER;
+//        } else if (position == getItemCount() - 1) {
+//            type = TYPE_FOOTER;
+//        }
 
         return type;
     }
@@ -294,12 +295,16 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      */
     @Override
     public int getItemCount() {
-        return objects.size() + 2;
+        return objects.size();
+        //TODO should be changed when header and footer would be added
+//        return objects.size() + 2;
     }
 
     @Override
     public RouteStopActivity getItem(int position) {
-        return objects.get(position - 1);
+        return objects.get(position);
+        //TODO should be changed when header and footer would be added
+//        return objects.get(position - 1);
     }
 
 }
