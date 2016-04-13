@@ -46,11 +46,11 @@
             android:orientation="vertical">
 
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
                 style="@style/TextView.CardDescription"
                 android:text="@string/route_action_details"/>
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
                 android:id="@+id/txt_stop_description"
                 style="@style/TextView.Dark.Multiline"/>
 
@@ -58,12 +58,13 @@
                 style="@style/DividerView"/>
         </LinearLayout>
 
-        <CheckBox
+        <com.foodpanda.urbanninja.ui.widget.OpenSansCheckBox
             android:id="@+id/checkbox_done"
             style="@style/TextView.Dark.AllCaps"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/check_box_done_height"
-            android:text="@string/stop_list_done"/>
+            android:text="@string/stop_list_done"
+            android:textStyle="bold"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>
 

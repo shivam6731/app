@@ -12,12 +12,18 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 public interface NestedFragmentCallback {
     /**
      * Calls the activity callback to open the external map app
-     * to show the clock-in point
      *
      * @param geoCoordinate coordinates to the clock-in point in a map
      * @param pinLabel      name of the place where rider should clock-in
      */
     void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel);
+
+    /**
+     * Call the activity callback to open the external phone call app
+     *
+     * @param phoneNumber phone phoneNumber that would be called
+     */
+    void onPhoneNumberClicked(String phoneNumber);
 
     /**
      * Change the main action button state
@@ -36,7 +42,7 @@ public interface NestedFragmentCallback {
      *
      * @param isEnable is actionButton enable
      */
-    void setEnableActionButton(boolean isEnable);
+    void setActionButtonEnable(boolean isEnable);
 
     /**
      * Open clock-in fragment if rider as a schedule and doesn't clock-in jet

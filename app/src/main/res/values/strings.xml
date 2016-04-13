@@ -26,7 +26,7 @@
     <string name="main_activity_deliver_before">Deliver before: %1$s</string>
 
     <!-- Ready to work -->
-    <string name="ready_to_work_see_map">See map</string>
+    <string name="ready_to_work_clock_in">Clock in</string>
 
     <!-- Empty list -->
     <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>

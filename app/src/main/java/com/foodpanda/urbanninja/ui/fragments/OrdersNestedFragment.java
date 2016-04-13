@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +26,8 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
-import com.foodpanda.urbanninja.ui.interfaces.DrivingHereCallback;
-import com.foodpanda.urbanninja.ui.interfaces.LocationChangedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
@@ -41,7 +39,6 @@ import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
  */
 public class OrdersNestedFragment extends BaseFragment implements NestedFragmentCallback {
     private MainActivityCallback mainActivityCallback;
-    private FragmentManager fragmentManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private UserStatus userStatus = UserStatus.LOADING;
@@ -57,15 +54,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         return fragment;
     }
 
-    private LocationChangedCallback locationChangedCallback;
-    private DrivingHereCallback drivingHereCallback;
+    private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
 
     private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (locationChangedCallback != null) {
+            if (mapAddressDetailsChangeListener != null) {
                 Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
-                locationChangedCallback.onLocationChanged(location);
+                mapAddressDetailsChangeListener.onLocationChanged(location);
             }
         }
     };
@@ -79,7 +75,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getChildFragmentManager();
         storageManager = App.STORAGE_MANAGER;
         apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
         actionLayoutHelper = new ActionLayoutHelper(activity);
@@ -188,7 +183,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case VIEWING:
                 apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
                 userStatus = UserStatus.ARRIVING;
-                drivingHereCallback.changeActionDoneCheckboxVisibility(true);
+                showDoneCheckbox();
                 actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVING:
@@ -201,6 +196,16 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         }
     }
 
+    /**
+     * Next step checkbox should be visible only in Action.ON_THE_WAY status
+     * so we have to make it visible manually
+     */
+    private void showDoneCheckbox() {
+        if (mapAddressDetailsChangeListener != null) {
+            mapAddressDetailsChangeListener.setActionDoneCheckboxVisibility(true);
+        }
+    }
+
     private void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
         replaceFragment(RouteStopActionListFragment.newInstance(stop));
@@ -210,8 +215,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private void openRouteStopDetails(Stop stop) {
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
-        locationChangedCallback = fragment;
-        drivingHereCallback = fragment;
         replaceFragment(fragment);
     }
 
@@ -230,12 +233,17 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
+    public void onPhoneNumberClicked(String phoneNumber) {
+        mainActivityCallback.onPhoneSelected(phoneNumber);
+    }
+
+    @Override
     public void enableActionButton(boolean isEnabled, int textResLink) {
         enableButton(isEnabled, textResLink);
     }
 
     @Override
-    public void setEnableActionButton(boolean isEnable) {
+    public void setActionButtonEnable(boolean isEnable) {
         actionLayoutHelper.setEnabled(isEnable);
     }
 
@@ -305,6 +313,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     private void replaceFragment(BaseFragment baseFragment) {
+        if (baseFragment instanceof MapAddressDetailsChangeListener) {
+            mapAddressDetailsChangeListener = (MapAddressDetailsChangeListener) baseFragment;
+        }
         if (getActivity() != null && !getActivity().isFinishing() && isAdded()) {
             fragmentManager.
                 beginTransaction().

@@ -49,6 +49,10 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="TextView.Green.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextView.Dark.Multiline">
         <item name="android:singleLine">false</item>
     </style>
@@ -204,6 +208,12 @@
     <style name="DividerView">
         <item name="android:background">@color/default_selected</item>
         <item name="android:layout_height">@dimen/margin_tiny_tiny</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ShadowView">
+        <item name="android:background">@drawable/shadow_top_panel</item>
+        <item name="android:layout_height">@dimen/card_elevation</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 </resources>

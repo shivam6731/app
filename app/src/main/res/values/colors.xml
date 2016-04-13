@@ -22,5 +22,6 @@
     <color name="timer_in_time_text">#009a5c</color>
     <color name="timer_late_background">#1ad0011b</color>
     <color name="timer_late_text">#d0021b</color>
-    <color name="action_header_footer">#D1D1D1</color>
+    <color name="action_header_border">#D1D1D1</color>
+    <color name="action_header_footer">#e0e0e0</color>
 </resources>

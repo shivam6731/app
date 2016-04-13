@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:fillViewport="true">
 
     <LinearLayout
@@ -41,109 +41,10 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            style="@style/CardView"
-            android:layout_margin="@dimen/margin_default"
-            app:cardCornerRadius="@dimen/margin_tiny_tiny"
-            app:cardElevation="@dimen/card_elevation"
-            app:cardUseCompatPadding="true">
+        <FrameLayout
+            android:id="@+id/map_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-            <android.support.design.widget.CoordinatorLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                        android:id="@+id/txt_name"
-                        style="@style/TextView.Title"
-                        android:drawableLeft="@drawable/icon_goto_dark"
-                        android:padding="@dimen/padding_default"/>
-
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/map"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/map_height"/>
-
-                    <LinearLayout
-                        android:id="@+id/layout_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                            style="@style/TextView.CardDescription"
-                            android:text="@string/task_details_address"/>
-
-                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                            android:id="@+id/txt_address"
-                            style="@style/TextView.Title.Multiline.NotBold.Address"/>
-
-
-                        <View
-                            style="@style/DividerView"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_comment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                            style="@style/TextView.CardDescription"
-                            android:text="@string/task_details_comment"/>
-
-                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                            android:id="@+id/txt_comment"
-                            style="@style/TextView.Title.Multiline.NotBold.Address"/>
-
-
-                        <View
-                            style="@style/DividerView"/>
-
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <CheckBox
-                            android:id="@+id/checkbox_done"
-                            style="@style/TextView.Green"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/check_box_done_height"
-                            android:layout_centerVertical="true"
-                            android:text="@string/stop_list_done"/>
-
-                        <TextView
-                            android:id="@+id/txt_call"
-                            style="@style/TextView.Green"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:drawableLeft="@drawable/icon_phone_green"
-                            android:paddingRight="@dimen/padding_default"
-                            android:text="@string/task_details_call"
-                            android:textAllCaps="true"/>
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/floating_button_map"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/padding_default"
-                    android:src="@drawable/icon_map_green"
-                    app:backgroundTint="@android:color/white"
-                    app:layout_anchor="@id/map"
-                    app:layout_anchorGravity="bottom|right|end"/>
-
-            </android.support.design.widget.CoordinatorLayout>
-
-        </android.support.v7.widget.CardView>
     </LinearLayout>
 </ScrollView>
