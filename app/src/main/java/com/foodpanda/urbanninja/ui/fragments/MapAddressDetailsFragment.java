@@ -165,11 +165,17 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         MapAddressDetailsFragment.this.googleMap = googleMap;
         //this change is not regarding to the user permission and map should be not clickable even if
         //user denied permissions
-        MapAddressDetailsFragment.this.googleMap.getUiSettings().setScrollGesturesEnabled(false);
-
+        MapAddressDetailsFragment.this.googleMap.getUiSettings().setAllGesturesEnabled(false);
         if (checkPermission()) {
             MapAddressDetailsFragment.this.googleMap.setMyLocationEnabled(false);
             MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+            MapAddressDetailsFragment.this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    //to disable all marker default actions we should return true here
+                    return true;
+                }
+            });
             MapAddressDetailsFragment.this.location = null;
             getLastKnownLocation();
         } else {
