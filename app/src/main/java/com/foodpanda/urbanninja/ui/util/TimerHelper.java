@@ -81,15 +81,15 @@ public class TimerHelper {
                 if (baseFragment.isAdded()) {
                     timerDataProvider.provideTimerTextView().setText(setTimerValue());
                     if (nestedFragmentCallback != null) {
-                        enableActionButton();
+                        setActionButtonVisibility();
                     }
                 }
             }
         });
     }
 
-    private void enableActionButton() {
-        nestedFragmentCallback.enableActionButton(
+    private void setActionButtonVisibility() {
+        nestedFragmentCallback.setActionButtonVisible(
             isChangeAllowed(),
             timerDataProvider.provideActionButtonString());
     }

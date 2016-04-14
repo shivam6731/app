@@ -220,11 +220,11 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         replaceFragment(fragment);
     }
 
-    private void enableButton(final boolean isEnabled, final int textResourceLink) {
+    private void setButtonVisibility(final boolean isVisible, final int textResourceLink) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                actionLayoutHelper.updateActionButton(isEnabled, textResourceLink);
+                actionLayoutHelper.updateActionButton(isVisible, textResourceLink);
             }
         });
     }
@@ -240,13 +240,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void enableActionButton(boolean isEnabled, int textResLink) {
-        enableButton(isEnabled, textResLink);
+    public void setActionButtonVisible(boolean isVisible, int textResLink) {
+        setButtonVisibility(isVisible, textResLink);
     }
 
     @Override
-    public void setActionButtonEnable(boolean isEnable) {
-        actionLayoutHelper.setEnabled(isEnable);
+    public void setActionButtonVisible(boolean isVisible) {
+        actionLayoutHelper.setVisibility(isVisible);
     }
 
     @Override

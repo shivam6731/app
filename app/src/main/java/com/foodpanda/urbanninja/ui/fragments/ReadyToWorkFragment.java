@@ -170,8 +170,8 @@ public class ReadyToWorkFragment extends BaseFragment implements
     }
 
     @Override
-    public void setActionButtonEnable(boolean isEnable) {
-        nestedFragmentCallback.setActionButtonEnable(true);
+    public void setActionButtonVisible(boolean isVisible) {
+        nestedFragmentCallback.setActionButtonVisible(true);
     }
 
     @Override

@@ -102,7 +102,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     //Check if all task are done and if it's true enable bottom main action button
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
                     if (stop != null) {
-                        nestedFragmentCallback.enableActionButton(isAllChecked(),
+                        nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
                             stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                     }
                 }

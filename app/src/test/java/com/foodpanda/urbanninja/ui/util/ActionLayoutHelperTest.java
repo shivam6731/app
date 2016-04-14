@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -59,12 +58,12 @@ public class ActionLayoutHelperTest {
     }
 
     @Test
-    public void testEnable() {
-        actionLayoutHelper.setEnabled(true);
-        assertTrue(layoutAction.isEnabled());
+    public void testVisible() {
+        actionLayoutHelper.setVisibility(true);
+        assertTrue(layoutAction.getVisibility() == View.VISIBLE);
 
-        actionLayoutHelper.setEnabled(false);
-        assertFalse(layoutAction.isEnabled());
+        actionLayoutHelper.setVisibility(false);
+        assertTrue(layoutAction.getVisibility() == View.GONE);
     }
 
     @Test
@@ -72,7 +71,6 @@ public class ActionLayoutHelperTest {
         actionLayoutHelper.setReadyToWorkActionButton();
         assertEquals(btnAction.getText().toString(), "I'm ready to work");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertTrue(layoutAction.isEnabled());
     }
 
     @Test
@@ -88,15 +86,13 @@ public class ActionLayoutHelperTest {
         actionLayoutHelper.setRouteStopActionListButton(stop);
         assertEquals(btnAction.getText().toString(), "I delivered");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertTrue(layoutAction.isEnabled());
 
         stop.setTask(RouteStopTaskStatus.PICKUP);
         routeStopActivityList.add(new RouteStopActivity());
 
         actionLayoutHelper.setRouteStopActionListButton(stop);
         assertEquals(btnAction.getText().toString(), "I picked up");
-        assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertFalse(layoutAction.isEnabled());
+        assertTrue(layoutAction.getVisibility() == View.GONE);
     }
 
     @Test
@@ -104,7 +100,6 @@ public class ActionLayoutHelperTest {
         actionLayoutHelper.setDrivingHereStatusActionButton();
         assertEquals(btnAction.getText().toString(), "I'm driving there");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertTrue(layoutAction.isEnabled());
     }
 
     @Test
@@ -116,24 +111,25 @@ public class ActionLayoutHelperTest {
 
         actionLayoutHelper.setViewedStatusActionButton(stop);
         assertEquals(btnAction.getText().toString(), "I'm at delivery");
-        assertTrue(layoutAction.getVisibility() == View.VISIBLE);
-        assertFalse(layoutAction.isEnabled());
+        assertTrue(layoutAction.getVisibility() == View.GONE);
 
         stop.setTask(RouteStopTaskStatus.PICKUP);
         actionLayoutHelper.setViewedStatusActionButton(stop);
 
         assertEquals(btnAction.getText().toString(), "I'm at pickup");
+        assertTrue(layoutAction.getVisibility() == View.GONE);
     }
+
 
     @Test
     public void testUpdateActionButton() {
         int textRes = R.string.action_at_picked_up;
         actionLayoutHelper.updateActionButton(true, textRes);
-        assertTrue(layoutAction.isEnabled());
+        assertTrue(layoutAction.getVisibility() == View.VISIBLE);
         assertEquals(btnAction.getText().toString(), "I picked up");
 
         actionLayoutHelper.updateActionButton(false, 0);
-        assertFalse(layoutAction.isEnabled());
+        assertTrue(layoutAction.getVisibility() == View.GONE);
         assertEquals(btnAction.getText().toString(), "");
     }
 

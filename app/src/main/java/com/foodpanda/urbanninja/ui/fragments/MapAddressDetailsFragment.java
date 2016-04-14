@@ -128,7 +128,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (mapAddressDetailsCallback != null) {
-                    mapAddressDetailsCallback.setActionButtonEnable(isChecked);
+                    mapAddressDetailsCallback.setActionButtonVisible(isChecked);
                 }
             }
         });

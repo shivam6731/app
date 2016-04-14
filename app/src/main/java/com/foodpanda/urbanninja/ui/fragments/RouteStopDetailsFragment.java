@@ -194,8 +194,8 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     }
 
     @Override
-    public void setActionButtonEnable(boolean isEnable) {
-        nestedFragmentCallback.setActionButtonEnable(isEnable);
+    public void setActionButtonVisible(boolean isVisible) {
+        nestedFragmentCallback.setActionButtonVisible(isVisible);
     }
 
     @Override

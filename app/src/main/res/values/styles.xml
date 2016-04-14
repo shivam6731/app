@@ -198,7 +198,7 @@
 
     <style name="ShadowView">
         <item name="android:background">@drawable/shadow_top_panel</item>
-        <item name="android:layout_height">@dimen/card_elevation</item>
+        <item name="android:layout_height">@dimen/card_top_shadow_height</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
