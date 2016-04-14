@@ -8,7 +8,6 @@
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
     <string name="login_country_hint">Country</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="login_country_error">You have to select a country</string>
 
     <!-- Side Menu -->
@@ -27,30 +26,33 @@
     <string name="ready_to_work_clock_in">Clock in</string>
 
     <!-- Empty list -->
-    <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
-    <string name="empty_list_text">New orders\nare coming soon</string>
-    <string name="base_empty_list">No data</string>
-    <string name="empty_list_country">The country list couldn\'t be downloaded</string>
-    <string name="empty_list_schedule">You have no shift planned in the next few days</string>
-    <string name="empty_list_cash_report">No order was delivered in the past 15 days</string>
+    <string name="empty_list_header">Check your foodbox, wear\nyour helmet and  take a deep breath</string>
+    <string name="empty_list_text">New orders are coming soon!</string>
+    <string name="empty_list_pull_description">To refresh pull down</string>
+    <string name="base_empty_list">No data found</string>
+    <string name="empty_list_country"><b>Downloading country list</b>\n Wait a few seconds or check your connection.</string>
+    <string name="empty_list_schedule"><b>No planned shift today</b>\n If you feel this is wrong, contact your manager for assistance</string>
+    <string name="empty_list_cash_report">Looks like no order was delivered in the past 15 days</string>
 
     <!-- Task details -->
     <string name="task_details_canceled">One of the orders assigned to you just got canceled</string>
-    <string name="task_details_canceled_dismiss">I GOT IT</string>
+    <string name="task_details_canceled_dismiss">OK</string>
     <string name="task_details_address">Address:</string>
     <string name="task_details_comment">Comment:</string>
     <string name="task_details_go_to">Go to %1$s</string>
     <string name="task_details_call">Call</string>
+    <string name="task_details_pick_up">Pick up</string>
+    <string name="task_details_delivery">Delivery</string>
 
     <!-- Errors -->
     <string name="dialog_please_wait">Please wait…</string>
-    <string name="error_start_point_not_found">Start Point not found</string>
+    <string name="error_start_point_not_found">Starting Point not found</string>
 
     <!-- Dialog -->
     <string name="dialog_phone_title">Select Phone Number</string>
     <string name="dialog_phone_customer">Customer Phone</string>
     <string name="dialog_phone_restaurant">Restaurant Phone</string>
-    <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assi</string>
+    <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assigned</string>
     <string name="dialog_phone_not_numbers">This order doesn\'t contain any number</string>
 
     <!-- Country -->
@@ -78,13 +80,13 @@
 
     <!-- Route Actions  -->
     <string name="route_action_pay">Pay %1$s</string>
-    <string name="route_action_pick_up">Pick up %1$s Items </string>
+    <string name="route_action_pick_up">Pick up %1$s Item(s)</string>
     <string name="route_action_change">Prepare Change %1$s</string>
-    <string name="route_action_deliver">Deliver %1$s Items</string>
+    <string name="route_action_deliver">Deliver %1$s Item(s)</string>
     <string name="route_action_collect">Collect %1$s</string>
     <string name="route_action_details">Details:</string>
     <string name="route_action_last_step">Last Step</string>
-    <string name="route_action_up_step">Up Next</string>
+    <string name="route_action_up_step">Next Step</string>
 
     <!-- Cash Report-->
     <string name="cash_report_total">Total: %1$s</string>
@@ -92,9 +94,9 @@
     <string name="cash_report_cancelled">Cancelled</string>
 
     <!-- Content Description -->
-    <string name="content_description_empty_list">Ninja logo</string>
+    <string name="content_description_empty_list">Urban Ninja logo</string>
     <string name="content_description_list_item_action_stop">Action icon</string>
-    <string name="content_description_login_fragment">Ninja logo</string>
+    <string name="content_description_login_fragment">Urban Ninja logo</string>
     <string name="content_description_route_option_go_to">Go to icon</string>
     <string name="content_description_route_option_expand">Expand layout icon</string>
 </resources>

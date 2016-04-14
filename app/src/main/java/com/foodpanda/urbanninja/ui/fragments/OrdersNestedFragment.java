@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,6 +142,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private void setSwipeRefreshLayout(View view) {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(activity, R.color.colorPrimary));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -261,7 +263,10 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             @Override
             public void run() {
                 //Do not allow retrieve the data if empty list is already launched
-                if (!(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
+                //in case when the fragment stack is empty the data should be retrieved
+                if (fragmentManager.getFragments() != null &&
+                    !fragmentManager.getFragments().isEmpty() &&
+                    !(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
                     swipeRefreshLayout.setRefreshing(true);
                     apiExecutor.getRoute();
                 }

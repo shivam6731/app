@@ -73,7 +73,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
     @Override
     protected RouteStopActionAdapter provideListAdapter() {
-        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback,recyclerView);
+        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback, recyclerView);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
      * @param task type of order
      */
     private void setType(RouteStopTaskStatus task, TextView txtType) {
-        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.route_action_pick_up : R.string.route_action_deliver;
+        int textResource = task == RouteStopTaskStatus.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
         txtType.setText(activity.getResources().getText(textResource));
 
         int iconResource = task == RouteStopTaskStatus.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
@@ -95,7 +95,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     }
 
     @Override
-    protected String provideEmptyListDescription() {
+    protected CharSequence provideEmptyListDescription() {
         return "";
     }
 

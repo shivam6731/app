@@ -47,8 +47,8 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     }
 
     @Override
-    protected String provideEmptyListDescription() {
-        return getResources().getString(R.string.empty_list_schedule);
+    protected CharSequence provideEmptyListDescription() {
+        return getResources().getText(R.string.empty_list_schedule);
     }
 
     @Override
