@@ -63,7 +63,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        nestedFragmentCallback.setActionButtonEnable(false);
+        nestedFragmentCallback.setActionButtonVisible(false);
 
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
 

@@ -28,21 +28,21 @@ public interface NestedFragmentCallback {
     /**
      * Change the main action button state
      *
-     * @param isEnable    is action button is enable
+     * @param isVisible   is action button is visible
      * @param textResLink link to the android resources to set the text for button
      */
-    void enableActionButton(boolean isEnable, int textResLink);
+    void setActionButtonVisible(boolean isVisible, int textResLink);
 
     /**
-     * Set enable the main action button
+     * Set visibility the main action button
      * We need this logic for case when items were selected and it means that
      * button is enable to finish an order
      * however when this screen would be re-created all items would be not selected
-     * and the button should be disabled
+     * and the button should be invisible
      *
-     * @param isEnable is actionButton enable
+     * @param isVisible is actionButton visible
      */
-    void setActionButtonEnable(boolean isEnable);
+    void setActionButtonVisible(boolean isVisible);
 
     /**
      * Open clock-in fragment if rider as a schedule and doesn't clock-in jet
