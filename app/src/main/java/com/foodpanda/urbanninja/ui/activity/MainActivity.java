@@ -28,6 +28,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
+import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
@@ -355,12 +356,34 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     /**
      * Get sub title for action bar with information about delivery time
      *
-     * @param stop current stop that should be deliveried
+     * @param currentStop that should be delivered
      * @return secondary title with delivery time
      */
-    private String formatDeliverBefore(Stop stop) {
-        return stop != null ?
-            getString(R.string.main_activity_deliver_before, DateUtil.formatTimeHoursMinutes(stop.getArrivalTime())) : "";
+    private String formatDeliverBefore(Stop currentStop) {
+        return currentStop != null &&
+            !TextUtils.isEmpty(currentStop.getOrderCode()) ?
+            getDeliveryArrivalTimeForAllTaskTypes(currentStop) : "";
+    }
+
+    /**
+     * get arrival time for delivery part of each route stop
+     * no matter if it's pick-up or delivery type the arrival time would be
+     * for delivery part of current order
+     *
+     * @param currentStop current stop
+     * @return formatted arrival time for delivery part of route stop
+     */
+    private String getDeliveryArrivalTimeForAllTaskTypes(Stop currentStop) {
+        for (Stop stop : storageManager.getStopList()) {
+            if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode()) &&
+                stop.getTask() == RouteStopTaskStatus.DELIVER) {
+
+                return getString(R.string.main_activity_deliver_before,
+                    DateUtil.formatTimeHoursMinutes(stop.getArrivalTime()));
+            }
+        }
+
+        return "";
     }
 
     @Override
