@@ -31,7 +31,6 @@ import static org.robolectric.Robolectric.buildActivity;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class TimerHelperTest {
-    private Application app;
 
     private TextView contentTextView;
 
@@ -45,7 +44,7 @@ public class TimerHelperTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        app = RuntimeEnvironment.application;
+        Application app = RuntimeEnvironment.application;
         app.onCreate();
         mainActivity = buildActivity(MainActivity.class).get();
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());

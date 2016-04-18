@@ -37,4 +37,7 @@
     <!--CardView -->
     <dimen name="card_elevation">3dp</dimen>
     <dimen name="card_top_shadow_height">2dp</dimen>
+
+    <!--Schedule -->
+    <dimen name="schedule_circle_radius">60dp</dimen>
 </resources>
