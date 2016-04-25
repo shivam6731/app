@@ -33,7 +33,7 @@
 
                 <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     android:id="@+id/txt_type"
-                    style="@style/TextView.CardDescription.ActionList"/>
+                    style="@style/TextView.CardDescription.NoPaddingMargin"/>
 
                 <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     android:id="@+id/txt_name"

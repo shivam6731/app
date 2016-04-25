@@ -1,48 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_margin="@dimen/margin_default"
-              android:baselineAligned="false">
+              android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="@dimen/schedule_circle_radius"
+        android:layout_height="@dimen/schedule_circle_radius"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_default"
+        android:background="@drawable/circle_text_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_schedule_duration_hours"
+            style="@style/TextView.Title.WithoutPaddingMargin"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|bottom"/>
+
+        <TextView
+            android:id="@+id/txt_schedule_duration_minutes"
+            style="@style/TextView.CardDescription.NoPaddingMargin"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="2"
+            android:gravity="top"
+            android:textAllCaps="false"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_margin="@dimen/margin_default"
         android:orientation="vertical">
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_schedule_start_date"
-            style="@style/TextView.Title.SmallSize"
-            android:layout_margin="@dimen/margin_tiny"/>
+            android:id="@+id/txt_schedule_working_hours"
+            style="@style/TextView.Title.WithoutPaddingMargin"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_name"
-            style="@style/TextView.Italic"
-            android:textColor="@color/colorAccent"/>
+            style="@style/TextView.Green"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_schedule_start_address"
-            style="@style/TextView"
-            android:layout_margin="@dimen/margin_tiny"/>
+            style="@style/TextView.WithoutMargin"
+            android:textColor="@color/schedule_text_color"/>
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="3">
 
-        <com.foodpanda.urbanninja.ui.widget.MontserratTextView
-            android:id="@+id/txt_schedule_start_time"
-            style="@style/TextView.Title"
-            android:layout_alignParentRight="true"/>
-
-        <com.foodpanda.urbanninja.ui.widget.MontserratTextView
-            android:id="@+id/txt_schedule_end_time"
-            style="@style/TextView.Title"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/txt_schedule_start_time"/>
-    </RelativeLayout>
 </LinearLayout>

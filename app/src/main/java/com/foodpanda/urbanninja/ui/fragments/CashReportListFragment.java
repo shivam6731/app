@@ -1,7 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.foodpanda.urbanninja.R;
@@ -43,11 +42,6 @@ public class CashReportListFragment extends BaseListFragment<CashReportAdapter> 
         super.onActivityCreated(savedInstanceState);
         recyclerView.removeItemDecoration(dividerItemDecoration);
         recyclerView.addItemDecoration(new StickyRecyclerHeadersDecoration(adapter));
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     //TODO should be removed

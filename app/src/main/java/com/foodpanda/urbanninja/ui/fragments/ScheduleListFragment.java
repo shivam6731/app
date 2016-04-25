@@ -11,6 +11,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
         super.onActivityCreated(savedInstanceState);
         apiManager.getScheduleList(this);
         activity.showProgress();
+        recyclerView.addItemDecoration(new StickyRecyclerHeadersDecoration(adapter));
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
 
     @Override
     protected int provideListLayout() {
-        return R.layout.schedule_list_fragment;
+        return R.layout.base_list_fragment;
     }
 
     @Override

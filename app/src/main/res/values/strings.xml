@@ -73,7 +73,9 @@
     <string name="stop_list_done">Done</string>
 
     <!-- Schedule list-->
-    <string name="schedule_list_title">Next Shifts</string>
+    <string name="schedule_list_working_hours">%1$s till %2$s</string>
+    <string name="schedule_list_today">Today</string>
+    <string name="schedule_list_tomorrow">Tomorrow</string>
 
     <!-- GCM -->
     <string name="gcm_defaultSenderId">975393205483</string>
