@@ -38,6 +38,27 @@
             style="@style/DividerView"/>
 
         <LinearLayout
+            android:id="@+id/layout_restaurant_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_default"
+            android:clickable="false"
+            android:orientation="vertical">
+
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                style="@style/TextView.CardDescription"
+                android:text="@string/route_action_restaurant"/>
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                android:id="@+id/txt_stop_restaurant_name"
+                style="@style/TextView.Dark.Multiline"/>
+
+            <View
+                style="@style/DividerView"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layout_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

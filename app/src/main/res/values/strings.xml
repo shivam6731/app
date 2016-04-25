@@ -85,6 +85,7 @@
     <string name="route_action_deliver">Deliver %1$s Item(s)</string>
     <string name="route_action_collect">Collect %1$s</string>
     <string name="route_action_details">Details:</string>
+    <string name="route_action_restaurant">Restaurant:</string>
     <string name="route_action_last_step">Last Step</string>
     <string name="route_action_up_step">Next Step</string>
 
