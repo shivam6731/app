@@ -138,6 +138,16 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 viewHolder.layoutDetails.setVisibility(View.VISIBLE);
             }
 
+            // only for delivery type of item we need to show restaurant name to
+            // let rider know from witch restaurant  this delivery order is
+            if (routeStopActivity.getType() != RouteStopActivityType.DELIVER ||
+                TextUtils.isEmpty(stop.getName())) {
+                viewHolder.layoutRestaurantName.setVisibility(View.GONE);
+            } else {
+                viewHolder.txtRestaurantName.setText(stop.getName());
+                viewHolder.layoutRestaurantName.setVisibility(View.VISIBLE);
+            }
+
         } else if (holder instanceof ViewHolderHeaderFooter && !TextUtils.isEmpty(stop.getOrderCode())) {
             final ViewHolderHeaderFooter viewHolder = (ViewHolderHeaderFooter) holder;
             viewHolder.txtName.setText(context.getResources().getString(R.string.task_details_go_to, stop.getName()));
@@ -252,6 +262,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public CheckBox checkBoxDone;
         public LinearLayout layoutDetails;
 
+        public TextView txtRestaurantName;
+        public LinearLayout layoutRestaurantName;
+
         public ViewHolder(View view) {
             super(view);
             txtName = (TextView) view.findViewById(R.id.txt_stop_name);
@@ -259,6 +272,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             imageSelected = (ImageView) view.findViewById(R.id.image_stop_icon);
             checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
             layoutDetails = (LinearLayout) view.findViewById(R.id.layout_details);
+
+            layoutRestaurantName = (LinearLayout) view.findViewById(R.id.layout_restaurant_name);
+            txtRestaurantName = (TextView) view.findViewById(R.id.txt_stop_restaurant_name);
         }
     }
 
