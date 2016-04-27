@@ -8,7 +8,6 @@
     <dimen name="default_title_size">22sp</dimen>
     <dimen name="default_details_timer_text_size">26sp</dimen>
     <dimen name="default_timer_size">60sp</dimen>
-    <dimen name="default_timer_size_qe">400dp</dimen>
 
     <!--Margin -->
     <dimen name="margin_tiny">1dp</dimen>
@@ -28,6 +27,7 @@
     <dimen name="menu_navigation_thickness">2dp</dimen>
     <dimen name="menu_navigation_gap_between_bars">6dp</dimen>
     <dimen name="menu_navigation_bar_length">24dp</dimen>
+    <dimen name="menu_navigation_rider_icon_size">60dp</dimen>
 
     <!--Map -->
     <dimen name="map_height">180dp</dimen>

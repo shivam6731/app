@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/padding_large"
+                android:paddingTop="@dimen/padding_large">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_app_version"
+        style="@style/TextView.CardDescription.White"
+        android:textAllCaps="false"/>
+
+    <ImageView
+        android:id="@+id/image_rider_icon"
+        style="@style/ImageView.RiderAvatar"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/content_description_navigation_rider_icon"
+        android:src="@drawable/profile"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_rider_name"
+        style="@style/TextView.Title.NoBoldWhite"
+        android:layout_below="@+id/image_rider_icon"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
@@ -36,15 +38,16 @@ import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
-import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
+import com.foodpanda.urbanninja.ui.util.CircleTransform;
 import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
 import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
+public class MainActivity extends BaseActivity implements MainActivityCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PERMISSIONS_REQUEST_LOCATION = 100;
 
@@ -108,6 +111,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void setNavigationDrawer() {
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         setSelectedNavigationItem();
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -127,16 +131,51 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                     case R.id.cash_report:
                         onCashReportClicked();
                         break;
-                    case R.id.logout:
-                        onLogoutClicked();
-                        break;
                 }
 
                 return true;
             }
         });
 
+        NavigationView navigationBottomView = (NavigationView) findViewById(R.id.navigation_drawer_bottom);
+        if (navigationBottomView != null) {
+            navigationBottomView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.logout:
+                            onLogoutClicked();
+                            break;
+                    }
+
+                    return true;
+                }
+            });
+        }
+
         showAppVersion();
+    }
+
+    /**
+     * set rider name and rider picture to the header view
+     *
+     * @param rider current rider
+     */
+    public void setRiderContent(Rider rider) {
+        if (rider != null) {
+            TextView txtRiderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_rider_name);
+            txtRiderName.setText(getResources().getString(R.string.side_menu_rider_name, rider.getFirstName(), rider.getSurname()));
+
+            if (!TextUtils.isEmpty(rider.getPicture())) {
+                ImageView imageRiderIcon = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_rider_icon);
+
+                Picasso.with(this).
+                    load(rider.getPicture()).
+                    transform(new CircleTransform()).
+                    into(imageRiderIcon);
+            }
+        }
+
     }
 
     /**
@@ -145,10 +184,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
      * base on version in the gradle build file
      */
     private void showAppVersion() {
-        TextView textView = (TextView) findViewById(R.id.txt_app_version);
-        if (textView != null) {
-            textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
-        }
+        TextView txtAppVersion = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_app_version);
+        txtAppVersion.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
     }
 
     /**
@@ -220,7 +257,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 syncState();
             }
         };
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
@@ -261,7 +298,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void onLogoutClicked() {
         storageManager.cleanSession();
         stopLocationService();
@@ -282,7 +318,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         stopService(closeServiceIntent);
     }
 
-    @Override
     public void onScheduleClicked() {
         ScheduleListFragment scheduleListFragment = ScheduleListFragment.newInstance();
 
@@ -300,7 +335,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
      * In this case we don't have to recreate or reattach the fragment from activity
      * and all data would be present and the state would be the same
      */
-    @Override
     public void onOrdersClicked() {
         drawerLayout.closeDrawers();
 
@@ -332,7 +366,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         });
     }
 
-    @Override
     public void onCashReportClicked() {
         CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
 

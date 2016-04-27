@@ -7,22 +7,19 @@
 
         <item
             android:id="@+id/orders"
+            android:icon="@drawable/icon_orders"
             android:title="@string/side_menu_orders"/>
 
         <item
             android:id="@+id/shift"
+            android:icon="@drawable/icon_next_shifts"
             android:title="@string/side_menu_schedule"/>
 
         <item
             android:id="@+id/cash_report"
+            android:icon="@drawable/icon_history"
             android:title="@string/side_menu_cash_report"/>
 
     </group>
-    <group
-        android:id="@+id/logout_content_group"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/logout"
-            android:title="@string/side_menu_logout"/>
-    </group>
+
 </menu>
