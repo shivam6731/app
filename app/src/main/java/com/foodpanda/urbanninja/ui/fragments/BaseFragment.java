@@ -57,4 +57,18 @@ public abstract class BaseFragment extends Fragment {
         }
         isProgressShowed = false;
     }
+
+    /**
+     * Base method to add nested fragment
+     *
+     * @param viewContainerId id of container where fragment would be added
+     * @param baseFragment    fragment that would be added
+     */
+    protected void addFragment(int viewContainerId, BaseFragment baseFragment) {
+        fragmentManager.
+            beginTransaction().
+            add(viewContainerId,
+                baseFragment).
+            commitAllowingStateLoss();
+    }
 }
