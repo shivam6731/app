@@ -9,16 +9,19 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.MapPointType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
 
 public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter>
-    implements TimerDataProvider {
+    implements TimerDataProvider,
+    ShowMapAddressCallback {
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
 
@@ -73,7 +76,11 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
     @Override
     protected RouteStopActionAdapter provideListAdapter() {
-        return new RouteStopActionAdapter(currentStop, activity, nestedFragmentCallback, recyclerView);
+        return new RouteStopActionAdapter(
+            currentStop,
+            activity,
+            nestedFragmentCallback,
+            this);
     }
 
     @Override
@@ -123,4 +130,14 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
         return 0;
     }
 
+    @Override
+    public void showNextPreviousStep(Stop stop, int viewContainerId) {
+        MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
+            stop,
+            stop.getTask() == RouteStopTaskStatus.DELIVER ? MapPointType.DELIVERY : MapPointType.PICK_UP,
+            false,
+            false);
+
+        addFragment(viewContainerId, mapAddressDetailsFragment);
+    }
 }

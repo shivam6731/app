@@ -10,12 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,6 +57,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     private TextView txtAddress;
     private TextView txtComment;
     private CheckBox checkBoxDone;
+    private CardView cardView;
 
     private LinearLayout layoutComment;
     private LinearLayout layoutAddress;
@@ -68,18 +71,28 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     private MapDetailsProvider mapDetailsProvider;
     private boolean isMapActionShown;
+    private boolean isTopPanelShown;
     private MapPointType mapPointType;
 
     public static MapAddressDetailsFragment newInstance(MapDetailsProvider mapDetailsProvider, MapPointType mapPointType) {
-        return newInstance(mapDetailsProvider, mapPointType, false);
+        return newInstance(mapDetailsProvider, mapPointType, true);
     }
 
     public static MapAddressDetailsFragment newInstance(MapDetailsProvider mapDetailsProvider, MapPointType mapPointType, boolean isMapActionShown) {
+        return newInstance(mapDetailsProvider, mapPointType, isMapActionShown, true);
+    }
+
+    public static MapAddressDetailsFragment newInstance(
+        MapDetailsProvider mapDetailsProvider,
+        MapPointType mapPointType,
+        boolean isMapActionShown,
+        boolean isTopPanelShown) {
         Bundle bundle = new Bundle();
 
         bundle.putParcelable(Constants.BundleKeys.MAP_ADDRESS_DETAILS, mapDetailsProvider);
         bundle.putSerializable(Constants.BundleKeys.MAP_ADDRESS_POINT_TYPE, mapPointType);
         bundle.putBoolean(Constants.BundleKeys.MAP_ADDRESS_LAYOUT_SHOWN, isMapActionShown);
+        bundle.putBoolean(Constants.BundleKeys.MAP_TOP_LAYOUT_SHOWN, isTopPanelShown);
 
         MapAddressDetailsFragment fragment = new MapAddressDetailsFragment();
         fragment.setArguments(bundle);
@@ -90,7 +103,9 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mapAddressDetailsCallback = (MapAddressDetailsCallback) getParentFragment();
+        if (getParentFragment() instanceof MapAddressDetailsCallback) {
+            mapAddressDetailsCallback = (MapAddressDetailsCallback) getParentFragment();
+        }
     }
 
     @Override
@@ -99,6 +114,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         mapDetailsProvider = getArguments().getParcelable(Constants.BundleKeys.MAP_ADDRESS_DETAILS);
         mapPointType = (MapPointType) getArguments().getSerializable(Constants.BundleKeys.MAP_ADDRESS_POINT_TYPE);
         isMapActionShown = getArguments().getBoolean(Constants.BundleKeys.MAP_ADDRESS_LAYOUT_SHOWN);
+        isTopPanelShown = getArguments().getBoolean(Constants.BundleKeys.MAP_TOP_LAYOUT_SHOWN);
     }
 
     @Nullable
@@ -120,8 +136,13 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
         layoutAddress = (LinearLayout) view.findViewById(R.id.layout_address);
         layoutComment = (LinearLayout) view.findViewById(R.id.layout_comment);
+        cardView = (CardView) view.findViewById(R.id.card_view);
+
         RelativeLayout layoutMapActions = (RelativeLayout) view.findViewById(R.id.map_actions_layout);
         layoutMapActions.setVisibility(isMapActionShown ? View.VISIBLE : View.GONE);
+
+        txtName.setVisibility(isTopPanelShown ? View.VISIBLE : View.GONE);
+        hidePaddingAndElevationlIfNeeds();
 
         checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
         checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -146,7 +167,9 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         view.findViewById(R.id.txt_call).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mapAddressDetailsCallback.onPhoneNumberClicked(mapDetailsProvider.getPhoneNumber());
+                if (mapAddressDetailsCallback != null) {
+                    mapAddressDetailsCallback.onPhoneNumberClicked(mapDetailsProvider.getPhoneNumber());
+                }
             }
         });
 
@@ -159,6 +182,33 @@ public class MapAddressDetailsFragment extends BaseFragment implements
             }
         });
         setData();
+    }
+
+    /**
+     * In case when this map address fragments uses as additional information
+     * we have to hide padding and shadows for the whole card view
+     */
+    private void hidePaddingAndElevationlIfNeeds() {
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+
+        cardView.setUseCompatPadding(isTopPanelShown);
+        if (isTopPanelShown) {
+            cardView.setCardElevation(getResources().getDimension(R.dimen.margin_default));
+            layoutParams.setMargins(
+                getResources().getDimensionPixelSize(R.dimen.margin_default),
+                getResources().getDimensionPixelSize(R.dimen.margin_default),
+                getResources().getDimensionPixelSize(R.dimen.margin_default),
+                getResources().getDimensionPixelSize(R.dimen.margin_default));
+        } else {
+            cardView.setCardElevation(0);
+            layoutParams.setMargins(
+                getResources().getDimensionPixelSize(R.dimen.margin_tiny),
+                getResources().getDimensionPixelSize(R.dimen.margin_tiny),
+                getResources().getDimensionPixelSize(R.dimen.margin_tiny),
+                getResources().getDimensionPixelSize(R.dimen.margin_tiny));
+        }
+        cardView.setLayoutParams(layoutParams);
     }
 
     private void setGoogleMapData(GoogleMap googleMap) {

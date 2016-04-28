@@ -94,15 +94,11 @@ public class ReadyToWorkFragment extends BaseFragment implements
                 scheduleWrapper.getDeliveryZone().getStartingPoint(), MapPointType.CLOCK_IN);
             mapAddressDetailsChangeListener = mapAddressDetailsFragment;
 
-            fragmentManager.
-                beginTransaction().
-                replace(R.id.map_details_container,
-                    mapAddressDetailsFragment).
-                commitAllowingStateLoss();
+            addFragment(R.id.map_details_container, mapAddressDetailsFragment);
         } else {
             txtEmptySchedule.setVisibility(View.VISIBLE);
         }
-        
+
     }
 
     /**

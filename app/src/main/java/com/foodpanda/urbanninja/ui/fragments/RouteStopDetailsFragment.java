@@ -127,11 +127,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
 
         mapAddressDetailsChangeListener = mapAddressDetailsFragment;
 
-        fragmentManager.
-            beginTransaction().
-            replace(R.id.map_details_container,
-                mapAddressDetailsFragment).
-            commitAllowingStateLoss();
+        addFragment(R.id.map_details_container, mapAddressDetailsFragment);
     }
 
     /**

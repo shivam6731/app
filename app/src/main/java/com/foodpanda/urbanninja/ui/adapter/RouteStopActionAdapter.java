@@ -2,7 +2,6 @@ package com.foodpanda.urbanninja.ui.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +20,8 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
-import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 import com.foodpanda.urbanninja.utils.FormatUtil;
 
 import java.util.Iterator;
@@ -31,21 +30,20 @@ import java.util.List;
 
 public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_FOOTER = 1;
-    private static final int TYPE_ITEM = 2;
+    private static final int TYPE_ITEM = 1;
 
     private final StorageManager storageManager;
     private NestedFragmentCallback nestedFragmentCallback;
+    private ShowMapAddressCallback showMapAddressCallback;
+
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
     private Stop stop;
-
-    private RecyclerView recyclerView;
 
     public RouteStopActionAdapter(
         Stop stop,
         Context context,
         NestedFragmentCallback nestedFragmentCallback,
-        RecyclerViewEmpty recyclerView) {
+        ShowMapAddressCallback showMapAddressCallback) {
 
         super(stop.getActivities(), context);
         setSelectable(false);
@@ -53,8 +51,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         //blocked by https://foodpanda.atlassian.net/browse/LOGI-324
         objects = removePayActivity(stop.getActivities());
         this.nestedFragmentCallback = nestedFragmentCallback;
+        this.showMapAddressCallback = showMapAddressCallback;
         this.stop = stop;
-        this.recyclerView = recyclerView;
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
         }
@@ -73,10 +71,6 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
                 return new ViewHolder(view);
             case TYPE_HEADER:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_stop_header, parent, false);
-
-                return new ViewHolderHeaderFooter(view);
-            case TYPE_FOOTER:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_stop_header, parent, false);
 
                 return new ViewHolderHeaderFooter(view);
@@ -157,9 +151,10 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             viewHolder.expandableLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    expandLayout(viewHolder.expandableLayout, viewHolder.imageView, holder.getAdapterPosition());
+                    expandLayout(viewHolder.expandableLayout, viewHolder.imageView);
                 }
             });
+            showMapAddressCallback.showNextPreviousStep(stop, R.id.step_layout);
         }
     }
 
@@ -170,12 +165,10 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      *
      * @param expandableLayout expand layout that hide or show detail of the step
      * @param imageView        image view with arrow to show close or open mark
-     * @param position         position of item to know is it footer or header
      */
     private void expandLayout(
         ExpandableLayout expandableLayout,
-        ImageView imageView,
-        int position) {
+        ImageView imageView) {
 
         expandableLayout.toggleExpansion();
         int imageResource;
@@ -186,54 +179,22 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         } else {
             imageResource = R.drawable.icon_deliver_up;
             backgroundResource = R.drawable.list_item_stop_header_selected;
-            scrollToEndOfFooterView(expandableLayout, position);
         }
         imageView.setImageDrawable(ContextCompat.getDrawable(context, imageResource));
         expandableLayout.setBackgroundResource(backgroundResource);
     }
 
-    /**
-     * Scroll to the end of the view to show all content
-     * Only footer view should be animated
-     *
-     * @param expandableLayout layout that should be animated
-     * @param position         position of item to know is to last one
-     */
-    private void scrollToEndOfFooterView(ExpandableLayout expandableLayout, int position) {
-        if (position == getItemCount() - 1) {
-            expandableLayout.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
-                @Override
-                public void onToggle(ExpandableLayout view, View child, boolean isExpanded) {
-                    //TODO should be scrolled to the contet height
-                    recyclerView.smoothScrollBy(0, context.getResources().getDimensionPixelOffset(R.dimen.default_timer_size_qe));
-                }
-
-                @Override
-                public void onExpandOffset(ExpandableLayout view, View child, float offset, boolean isExpanding) {
-
-                }
-            });
-        }
-    }
 
     /**
-     * We have three types of view header, regular and footer item
-     * set type depend on position
+     * Set type depend on position
+     * we have two types of view header and regular item
      *
      * @param position position of the view
      * @return type of view
      */
     @Override
     public int getItemViewType(int position) {
-        int type = TYPE_ITEM;
-//TODO add header and footer for the next and previous step
-//        if (position == 0) {
-//            type = TYPE_HEADER;
-//        } else if (position == getItemCount() - 1) {
-//            type = TYPE_FOOTER;
-//        }
-
-        return type;
+        return position == 0 ? TYPE_HEADER : TYPE_ITEM;
     }
 
     private String getFormattedPrice(RouteStopActivity routeStopActivity) {
@@ -311,16 +272,19 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      */
     @Override
     public int getItemCount() {
-        return objects.size();
-        //TODO should be changed when header and footer would be added
-//        return objects.size() + 2;
+        return objects.size() + 1;
     }
 
+    /**
+     * In case of header with last step we have one more item in adapter
+     * and to get real data without header we use position -1
+     *
+     * @param position position of view in the list included header
+     * @return content date
+     */
     @Override
     public RouteStopActivity getItem(int position) {
-        return objects.get(position);
-        //TODO should be changed when header and footer would be added
-//        return objects.get(position - 1);
+        return objects.get(position - 1);
     }
 
 }
