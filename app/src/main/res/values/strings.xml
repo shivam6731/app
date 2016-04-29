@@ -93,8 +93,7 @@
     <string name="route_action_up_step">Next Step</string>
 
     <!-- Cash Report-->
-    <string name="cash_report_total">Total: %1$s</string>
-    <string name="cash_report_total_label">Total:</string>
+    <string name="cash_report_total">Total %1$s</string>
     <string name="cash_report_cancelled">Cancelled</string>
 
     <!-- Content Description -->
@@ -104,4 +103,5 @@
     <string name="content_description_route_option_go_to">Go to icon</string>
     <string name="content_description_route_option_expand">Expand layout icon</string>
     <string name="content_description_navigation_rider_icon">Rider profile photo</string>
+    <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
 </resources>

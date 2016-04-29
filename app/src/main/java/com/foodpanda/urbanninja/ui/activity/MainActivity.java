@@ -31,7 +31,7 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onLogoutClicked() {
+    private void onLogoutClicked() {
         storageManager.cleanSession();
         stopLocationService();
 
@@ -318,7 +318,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         stopService(closeServiceIntent);
     }
 
-    public void onScheduleClicked() {
+    private void onScheduleClicked() {
         ScheduleListFragment scheduleListFragment = ScheduleListFragment.newInstance();
 
         fragmentManager.
@@ -335,7 +335,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
      * In this case we don't have to recreate or reattach the fragment from activity
      * and all data would be present and the state would be the same
      */
-    public void onOrdersClicked() {
+    private void onOrdersClicked() {
         drawerLayout.closeDrawers();
 
         //After closing the drawer we have to redirect to the  nested fragment
@@ -366,7 +366,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         });
     }
 
-    public void onCashReportClicked() {
+    private void onCashReportClicked() {
         CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
 
         fragmentManager.
@@ -437,7 +437,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private String getDeliveryArrivalTimeForAllTaskTypes(Stop currentStop) {
         for (Stop stop : storageManager.getStopList()) {
             if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode()) &&
-                stop.getTask() == RouteStopTaskStatus.DELIVER) {
+                stop.getTask() == RouteStopStatus.DELIVER) {
 
                 return getString(R.string.main_activity_deliver_before,
                     DateUtil.formatTimeHoursMinutes(stop.getArrivalTime()));

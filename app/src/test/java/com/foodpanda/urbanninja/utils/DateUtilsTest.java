@@ -79,6 +79,12 @@ public class DateUtilsTest {
     }
 
     @Test
+    public void testFormatDayMonthYear() throws Exception {
+        assertEquals("6 April 2016", DateUtil.formatTimeDayMonthYear(
+            DateTime.now(DateTimeZone.UTC).withDate(2016, 4, 6)));
+    }
+
+    @Test
     public void testSetHoursMinutesOnlyHours() throws Exception {
         Application app = RuntimeEnvironment.application;
         app.onCreate();

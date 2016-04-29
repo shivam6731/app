@@ -3,7 +3,7 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 
 import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 import org.joda.time.DateTime;
 
@@ -23,7 +23,7 @@ public class Stop implements MapDetailsProvider {
     private String name;
     private String comment;
     private String address;
-    private RouteStopTaskStatus task;
+    private RouteStopStatus task;
     private List<RouteStopActivity> activities;
     private String pickupPhone;
     private String deliveryPhone;
@@ -33,7 +33,7 @@ public class Stop implements MapDetailsProvider {
     /**
      * need this constructor only for test
      */
-    Stop(String deliveryPhone, String pickupPhone, RouteStopTaskStatus task) {
+    Stop(String deliveryPhone, String pickupPhone, RouteStopStatus task) {
         this.deliveryPhone = deliveryPhone;
         this.pickupPhone = pickupPhone;
         this.task = task;
@@ -86,7 +86,7 @@ public class Stop implements MapDetailsProvider {
         this.comment = in.readString();
         this.address = in.readString();
         int tmpTask = in.readInt();
-        this.task = tmpTask == -1 ? null : RouteStopTaskStatus.values()[tmpTask];
+        this.task = tmpTask == -1 ? null : RouteStopStatus.values()[tmpTask];
         this.activities = in.createTypedArrayList(RouteStopActivity.CREATOR);
         this.pickupPhone = in.readString();
         this.deliveryPhone = in.readString();
@@ -146,10 +146,10 @@ public class Stop implements MapDetailsProvider {
 
     @Override
     public String getPhoneNumber() {
-        return RouteStopTaskStatus.DELIVER == getTask() ? deliveryPhone : pickupPhone;
+        return RouteStopStatus.DELIVER == getTask() ? deliveryPhone : pickupPhone;
     }
 
-    public RouteStopTaskStatus getTask() {
+    public RouteStopStatus getTask() {
         return task;
     }
 
@@ -181,7 +181,7 @@ public class Stop implements MapDetailsProvider {
         this.id = id;
     }
 
-    public void setTask(RouteStopTaskStatus task) {
+    public void setTask(RouteStopStatus task) {
         this.task = task;
     }
 

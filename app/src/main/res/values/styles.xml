@@ -132,6 +132,10 @@
         <item name="android:layout_margin">@dimen/margin_default</item>
     </style>
 
+    <style name="TextView.Title.SmallSize.DefaultColor">
+        <item name="android:textColor">@color/primary_text_color</item>
+    </style>
+
     <style name="TextView.Title.Green">
         <item name="android:gravity">left</item>
         <item name="android:textColor">@color/green_text_color</item>
