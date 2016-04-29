@@ -23,6 +23,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
@@ -123,6 +124,7 @@ public class ApiExecutorTest {
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
         Action action = Action.COMPLETED;
+        assertNotNull(apiExecutor);
         apiExecutor.notifyActionPerformed(action);
 
         verify(storageManager).storeAction(eq(routeStop.getId()), eq(action));

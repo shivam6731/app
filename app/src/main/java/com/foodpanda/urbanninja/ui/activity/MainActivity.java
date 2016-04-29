@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -145,7 +146,9 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
      */
     private void showAppVersion() {
         TextView textView = (TextView) findViewById(R.id.txt_app_version);
-        textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
+        if (textView != null) {
+            textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
+        }
     }
 
     /**
@@ -291,17 +294,42 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         drawerLayout.closeDrawers();
     }
 
+    /**
+     * When order menu selected we should close the drawer and only after redirect to the #OrdersNestedFragment
+     * like when we press back button.
+     * In this case we don't have to recreate or reattach the fragment from activity
+     * and all data would be present and the state would be the same
+     */
     @Override
     public void onOrdersClicked() {
-        if (ordersNestedFragment == null) {
-            ordersNestedFragment = OrdersNestedFragment.newInstance();
-        }
-        fragmentManager.
-            beginTransaction().
-            detach(ordersNestedFragment).
-            attach(ordersNestedFragment).
-            commit();
         drawerLayout.closeDrawers();
+
+        //After closing the drawer we have to redirect to the  nested fragment
+        //and to check the close action we need this callback to start onBackPressed method
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                //when drawer closed we should un subscribe this listener
+                //and call redirect method witch is onBackPressed
+                onBackPressed();
+                drawerLayout.removeDrawerListener(this);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     @Override
@@ -388,16 +416,22 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
 
     @Override
     public void onBackPressed() {
-        int count = fragmentManager.getBackStackEntryCount();
-        if (count <= 0) {
-            super.onBackPressed();
+        //if drawer in opened it should be closed by back button press
+        //otherwise we have to redirect to the OrdersNestedFragment
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawers();
         } else {
-            for (Fragment fragment : fragmentManager.getFragments()) {
-                if (!(fragment instanceof OrdersNestedFragment)) {
-                    fragmentManager.popBackStack();
+            int count = fragmentManager.getBackStackEntryCount();
+            if (count <= 0) {
+                super.onBackPressed();
+            } else {
+                for (Fragment fragment : fragmentManager.getFragments()) {
+                    if (!(fragment instanceof OrdersNestedFragment)) {
+                        fragmentManager.popBackStack();
+                    }
                 }
+                setSelectedNavigationItem();
             }
-            setSelectedNavigationItem();
         }
     }
 
