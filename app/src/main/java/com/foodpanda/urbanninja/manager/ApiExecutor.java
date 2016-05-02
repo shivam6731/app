@@ -181,6 +181,9 @@ public class ApiExecutor {
                 @Override
                 public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
                     ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
+                    if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
+                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
+                    }
                     getRidersSchedule();
                     hideProgressIndicators();
                 }

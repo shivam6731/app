@@ -25,6 +25,13 @@
         <item name="android:contentDescription">@null</item>
     </style>
 
+    <style name="ImageView.RiderAvatar">
+        <item name="android:layout_height">@dimen/menu_navigation_rider_icon_size</item>
+        <item name="android:layout_width">@dimen/menu_navigation_rider_icon_size</item>
+        <item name="android:layout_margin">@dimen/margin_default</item>
+        <item name="android:padding">@dimen/padding_tiny</item>
+    </style>
+
     <style name="TextView">
         <item name="android:textColor">@color/primary_text_color</item>
         <item name="android:textSize">@dimen/default_text_size</item>
@@ -118,6 +125,13 @@
         <item name="android:padding">@dimen/padding_default</item>
     </style>
 
+    <style name="TextView.Title.NoBoldWhite">
+        <item name="android:textSize">@dimen/schedule_date_text_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_margin">@dimen/margin_default</item>
+    </style>
+
     <style name="TextView.Title.Green">
         <item name="android:gravity">left</item>
         <item name="android:textColor">@color/green_text_color</item>
@@ -129,6 +143,10 @@
 
     <style name="TextView.Title.Green.TaskType">
         <item name="android:textSize">@dimen/default_title_size</item>
+    </style>
+
+    <style name="TextView.Title.NotBold.White">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="TextView.Description">
@@ -166,6 +184,10 @@
         <item name="android:gravity">center_horizontal|top</item>
     </style>
 
+    <style name="TextView.CardDescription.White">
+        <item name="android:textColor">@color/action_header_border</item>
+    </style>
+
     <style name="ButtonMainAction">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -200,6 +222,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
         <item name="android:theme">@style/Theme.AppCompat.Light</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
     <style name="CardView">

@@ -17,7 +17,8 @@
     <string name="side_menu_logout">Logout</string>
     <string name="side_menu_open">Open</string>
     <string name="side_menu_close">Close</string>
-    <string name="side_menu_version">App version: %1$s</string>
+    <string name="side_menu_version">Version %1$s</string>
+    <string name="side_menu_rider_name">%1$s %2$s</string>
 
     <!-- Main Activity -->
     <string name="main_activity_deliver_before">Deliver before: %1$s</string>
@@ -102,4 +103,5 @@
     <string name="content_description_login_fragment">Urban Ninja logo</string>
     <string name="content_description_route_option_go_to">Go to icon</string>
     <string name="content_description_route_option_expand">Expand layout icon</string>
+    <string name="content_description_navigation_rider_icon">Rider profile photo</string>
 </resources>
