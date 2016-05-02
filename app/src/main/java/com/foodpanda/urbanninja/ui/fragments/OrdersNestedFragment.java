@@ -174,7 +174,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         actionLayoutHelper.saveActionButtonState();
     }
 
-
     private void changeStatus() {
         switch (userStatus) {
             case CLOCK_IN:
