@@ -18,7 +18,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
@@ -97,7 +97,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
                     if (stop != null) {
                         nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
-                            stop.getTask() == RouteStopTaskStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
+                            stop.getTask() == RouteStopStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                     }
                 }
             });

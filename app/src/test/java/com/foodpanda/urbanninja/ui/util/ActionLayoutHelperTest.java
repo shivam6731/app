@@ -8,7 +8,7 @@ import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +79,7 @@ public class ActionLayoutHelperTest {
         List<RouteStopActivity> routeStopActivityList = new LinkedList<>();
 
         stop.setId(1L);
-        stop.setTask(RouteStopTaskStatus.DELIVER);
+        stop.setTask(RouteStopStatus.DELIVER);
 
         stop.setActivities(routeStopActivityList);
 
@@ -87,7 +87,7 @@ public class ActionLayoutHelperTest {
         assertEquals(btnAction.getText().toString(), "I delivered");
         assertTrue(layoutAction.getVisibility() == View.VISIBLE);
 
-        stop.setTask(RouteStopTaskStatus.PICKUP);
+        stop.setTask(RouteStopStatus.PICKUP);
         routeStopActivityList.add(new RouteStopActivity());
 
         actionLayoutHelper.setRouteStopActionListButton(stop);
@@ -107,13 +107,13 @@ public class ActionLayoutHelperTest {
         Stop stop = new Stop();
 
         stop.setId(1L);
-        stop.setTask(RouteStopTaskStatus.DELIVER);
+        stop.setTask(RouteStopStatus.DELIVER);
 
         actionLayoutHelper.setViewedStatusActionButton(stop);
         assertEquals(btnAction.getText().toString(), "I'm at delivery");
         assertTrue(layoutAction.getVisibility() == View.GONE);
 
-        stop.setTask(RouteStopTaskStatus.PICKUP);
+        stop.setTask(RouteStopStatus.PICKUP);
         actionLayoutHelper.setViewedStatusActionButton(stop);
 
         assertEquals(btnAction.getText().toString(), "I'm at pickup");

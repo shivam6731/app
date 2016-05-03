@@ -1,6 +1,6 @@
 package com.foodpanda.urbanninja.model.enums;
 
-public enum RouteStopTaskStatus {
+public enum RouteStopStatus {
     PICKUP,
     DELIVER
 }

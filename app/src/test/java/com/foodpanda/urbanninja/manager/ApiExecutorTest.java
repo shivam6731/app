@@ -12,6 +12,7 @@ import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +54,8 @@ public class ApiExecutorTest {
         MainActivity activity = mock(MainActivity.class);
         OrdersNestedFragment ordersNestedFragment = mock(OrdersNestedFragment.class);
         apiExecutor = new ApiExecutor(activity, ordersNestedFragment, apiManager, storageManager);
+
+        DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
 
     @Test
@@ -78,7 +81,7 @@ public class ApiExecutorTest {
     @Test
     public void testIsScheduleNotFinished() {
         ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
-        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(10), DateTime.now().plus(12)));
+        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(10), DateTime.now().plusMinutes(12)));
 
         ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
         scheduleWrappers.add(scheduleWrapper);
@@ -115,8 +118,12 @@ public class ApiExecutorTest {
     @Test
     public void testNotifyActionPerformedWithCompletedRouteStop() {
         ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
-        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(10), DateTime.now().plus(12)));
+        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusMinutes(10), DateTime.now().plusMinutes(12)));
+
+        ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
+        scheduleWrappers.add(scheduleWrapper);
         apiExecutor.setScheduleWrapper(scheduleWrapper);
+        apiExecutor.setScheduleWrappers(scheduleWrappers);
 
         Stop routeStop = new Stop();
         routeStop.setId(1L);

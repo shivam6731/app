@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 public class ActionLayoutHelper {
     private Context context;
@@ -51,7 +51,7 @@ public class ActionLayoutHelper {
     }
 
     public void setRouteStopActionListButton(Stop stop) {
-        int titleResourcesLink = stop.getTask() == RouteStopTaskStatus.DELIVER ?
+        int titleResourcesLink = stop.getTask() == RouteStopStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
         updateActionButton(stop.getActivities().isEmpty(), titleResourcesLink);
     }
@@ -61,7 +61,7 @@ public class ActionLayoutHelper {
     }
 
     public void setViewedStatusActionButton(Stop stop) {
-        int title = stop.getTask() == RouteStopTaskStatus.DELIVER ?
+        int title = stop.getTask() == RouteStopStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
         updateActionButton(false, title);
     }

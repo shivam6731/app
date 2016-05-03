@@ -26,6 +26,7 @@ public class DateUtil {
     //Date formatter
     private static SimpleDateFormat timerFormatWeekDayDateMonth = new SimpleDateFormat("EEEE - d MMMM", Locale.getDefault());
     private static SimpleDateFormat timerFormatWeekDayDateMonthYear = new SimpleDateFormat("EEEE - dd/MM/yyyy", Locale.getDefault());
+    private static SimpleDateFormat timerFormatDayMonthYear = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
 
     //Hour formatter for start and end of schedule 
     private static SimpleDateFormat timerFormatHoursMinutes = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -94,6 +95,11 @@ public class DateUtil {
     public static String formatTimeWeekDayDateMonthYear(DateTime dateTime) {
         return timerFormatWeekDayDateMonthYear.format(dateTime.toDate());
     }
+
+    public static String formatTimeDayMonthYear(DateTime dateTime) {
+        return timerFormatDayMonthYear.format(dateTime.toDate());
+    }
+
 
     /**
      * set formatter value for schedule circle section with duration of working day
