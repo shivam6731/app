@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/card_view"
+    style="@style/CardView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/margin_tiny">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                android:id="@+id/txt_name"
+                style="@style/TextView.Title"
+                android:drawableLeft="@drawable/icon_goto_dark"
+                android:padding="@dimen/padding_default"/>
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/map_height"/>
+
+            <LinearLayout
+                android:id="@+id/layout_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_default">
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                    style="@style/TextView.CardDescription"
+                    android:text="@string/task_details_address"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                    android:id="@+id/txt_address"
+                    style="@style/TextView.Title.Multiline.NotBold.Address"/>
+
+
+                <View
+                    style="@style/DividerView"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_default">
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                    style="@style/TextView.CardDescription"
+                    android:text="@string/task_details_comment"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                    android:id="@+id/txt_comment"
+                    style="@style/TextView.Title.Multiline.NotBold.Address"/>
+
+                <View
+                    style="@style/DividerView"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/map_actions_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansCheckBox
+                    android:id="@+id/checkbox_done"
+                    style="@style/TextView.Green.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/check_box_done_height"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/txt_call"
+                    android:text="@string/stop_list_done"
+                    app:buttonTint="@color/colorAccent"/>
+
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                    android:id="@+id/txt_call"
+                    style="@style/TextView.Green.Bold"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:drawableLeft="@drawable/icon_phone_green"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/padding_tiny"
+                    android:paddingRight="@dimen/padding_default"
+                    android:text="@string/task_details_call"
+
+                    android:textAllCaps="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating_button_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_default"
+            android:src="@drawable/icon_map_green"
+            app:backgroundTint="@android:color/white"
+            app:layout_anchor="@id/map"
+            app:layout_anchorGravity="bottom|right|end"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</android.support.v7.widget.CardView>

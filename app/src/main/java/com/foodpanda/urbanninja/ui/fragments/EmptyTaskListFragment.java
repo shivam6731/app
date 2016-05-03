@@ -26,5 +26,4 @@ public class EmptyTaskListFragment extends BaseFragment {
         return inflater.inflate(R.layout.empty_task_list_fragment, container, false);
     }
 
-
 }

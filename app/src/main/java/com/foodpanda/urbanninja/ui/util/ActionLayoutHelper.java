@@ -1,14 +1,14 @@
 package com.foodpanda.urbanninja.ui.util;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 public class ActionLayoutHelper {
     private Context context;
@@ -20,12 +20,9 @@ public class ActionLayoutHelper {
 
     // is action button visible
     private boolean isActionButtonVisible = false;
-    // is action button enable
-    private boolean isEnableActionButton;
     // text of action button
     private CharSequence textActionButton;
     // icon left from the the text in the action button
-    private Drawable drawableLeft;
 
     public ActionLayoutHelper(Context context) {
         this.context = context;
@@ -33,75 +30,90 @@ public class ActionLayoutHelper {
 
     public void setActionButtonState() {
         updateActionButton(isActionButtonVisible,
-            isEnableActionButton,
-            textActionButton,
-            drawableLeft);
+            textActionButton);
     }
 
     public void saveActionButtonState() {
         isActionButtonVisible = layoutAction.getVisibility() == View.VISIBLE;
-        isEnableActionButton = layoutAction.isEnabled();
         textActionButton = btnAction.getText();
-        drawableLeft = btnAction.getCompoundDrawables()[0];
     }
 
     public void hideActionButton() {
-        updateActionButton(false, false, 0, 0);
+        updateActionButton(false, 0);
+    }
+
+    public void setVisibility(boolean isVisible) {
+        showHideActionButtonWithAnimation(isVisible);
     }
 
     public void setReadyToWorkActionButton() {
-        updateActionButton(true, true, R.string.action_ready_to_work, 0);
+        updateActionButton(true, R.string.action_ready_to_work);
     }
 
     public void setRouteStopActionListButton(Stop stop) {
-        int titleResourcesLink = stop.getTask() == RouteStopTaskStatus.DELIVER ?
+        int titleResourcesLink = stop.getTask() == RouteStopStatus.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
-        updateActionButton(true, stop.getActivities().isEmpty(), titleResourcesLink, R.drawable.arrow_swipe);
+        updateActionButton(stop.getActivities().isEmpty(), titleResourcesLink);
     }
 
     public void setDrivingHereStatusActionButton() {
-        updateActionButton(true, true, R.string.action_driving, R.drawable.arrow_swipe);
+        updateActionButton(true, R.string.action_driving);
     }
 
     public void setViewedStatusActionButton(Stop stop) {
-        int title = stop.getTask() == RouteStopTaskStatus.DELIVER ?
+        int title = stop.getTask() == RouteStopStatus.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
-        updateActionButton(true, true, title, R.drawable.arrow_swipe);
+        updateActionButton(false, title);
     }
 
-    public void updateActionButton(boolean isEnabled, int textResourceLink) {
-        updateActionButton(true, isEnabled, textResourceLink, 0);
-    }
-
-    private void updateActionButton(
-        final boolean isVisible,
-        final boolean isEnable,
-        final int textResLink,
-        final int drawableResLinkLeft
-    ) {
+    public void updateActionButton(boolean isVisible, int textResourceLink) {
         updateActionButton(
             isVisible,
-            isEnable,
-            textResLink == 0 ? "" : context.getResources().getString(textResLink),
-            drawableResLinkLeft == 0 ? null : ContextCompat.getDrawable(context, drawableResLinkLeft));
+            textResourceLink == 0 ? "" : context.getResources().getString(textResourceLink));
     }
 
     private void updateActionButton(
         final boolean isVisible,
-        final boolean isEnable,
-        final CharSequence text,
-        final Drawable drawableLeft
+        final CharSequence text
     ) {
-        if (isVisible) {
-            layoutAction.setVisibility(View.VISIBLE);
-            layoutAction.setEnabled(isEnable);
-            if (drawableLeft != null) {
-                btnAction.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, null, null, null);
-            }
-            btnAction.setText(text);
+
+        if (isVisible != isActionButtonVisible) {
+            setVisibility(isVisible);
         } else {
-            layoutAction.setVisibility(View.GONE);
+            layoutAction.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         }
+        btnAction.setText(text);
+        isActionButtonVisible = isVisible;
+    }
+
+    /**
+     * Instead of making button disable we decided to hide or show it with animation
+     *
+     * @param isVisible show is view should be shown or hidden with animation
+     */
+    public void showHideActionButtonWithAnimation(final boolean isVisible) {
+        Animation animation = AnimationUtils.loadAnimation(context, isVisible ? R.anim.bottom_up : R.anim.bottom_down);
+
+        //we should disable button when animation in action to get rid of accidental clicks
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                layoutAction.setEnabled(false);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                layoutAction.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+                layoutAction.setEnabled(true);
+                layoutAction.invalidate();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        layoutAction.startAnimation(animation);
     }
 
     public void setBtnAction(Button btnAction) {
@@ -112,8 +124,4 @@ public class ActionLayoutHelper {
         this.layoutAction = layoutAction;
     }
 
-    public void disableActionButton() {
-        isEnableActionButton = false;
-        layoutAction.setEnabled(isEnableActionButton);
-    }
 }

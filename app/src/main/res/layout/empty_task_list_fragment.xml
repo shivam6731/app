@@ -5,30 +5,42 @@
     android:layout_height="match_parent"
     android:background="@color/main_background_color">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/main_background_color">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_default">
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                style="@style/TextView"
+                android:layout_gravity="center_horizontal"
+                android:drawableLeft="@drawable/icon_refresh"
+                android:text="@string/empty_list_pull_description"/>
+        </LinearLayout>
 
         <ImageView
-            android:id="@+id/image_top_logo"
             style="@style/ImageView"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:contentDescription="@string/content_description_empty_list"
-            android:src="@drawable/ninja"/>
+            android:paddingBottom="@dimen/padding_large"
+            android:paddingTop="@dimen/padding_empty_description"
+            android:src="@drawable/circle_standby"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/empty_list_text"
+            style="@style/TextView.Title"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/empty_list_text"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             style="@style/TextView.Description"
-            android:layout_below="@+id/image_top_logo"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:text="@string/empty_list_header"/>
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            style="@style/TextView.Title.Multiline"
-            android:layout_below="@+id/empty_list_text"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="@dimen/padding_empty_description"
-            android:text="@string/empty_list_text"/>
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>

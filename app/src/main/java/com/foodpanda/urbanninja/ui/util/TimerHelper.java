@@ -1,7 +1,8 @@
 package com.foodpanda.urbanninja.ui.util;
 
-import android.widget.TextView;
+import android.support.v4.content.ContextCompat;
 
+import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.ui.fragments.BaseFragment;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
@@ -80,15 +81,15 @@ public class TimerHelper {
                 if (baseFragment.isAdded()) {
                     timerDataProvider.provideTimerTextView().setText(setTimerValue());
                     if (nestedFragmentCallback != null) {
-                        enableActionButton();
+                        setActionButtonVisibility();
                     }
                 }
             }
         });
     }
 
-    private void enableActionButton() {
-        nestedFragmentCallback.enableActionButton(
+    private void setActionButtonVisibility() {
+        nestedFragmentCallback.setActionButtonVisible(
             isChangeAllowed(),
             timerDataProvider.provideActionButtonString());
     }
@@ -112,37 +113,31 @@ public class TimerHelper {
         DateTime now = new DateTime();
         DateTime startDate = timerDataProvider.provideScheduleDate() == null ? new DateTime() : timerDataProvider.provideScheduleDate();
         DateTime endDate = timerDataProvider.provideScheduleEndDate() == null ? new DateTime() : timerDataProvider.provideScheduleEndDate();
-        TextView textViewDescription = timerDataProvider.provideTimerDescriptionTextView();
 
         long date = Math.abs(startDate.getMillis() - now.getMillis());
 
         if (now.getMillis() < startDate.getMillis()) {
-            textViewDescription.setText(getTimeLeft(date));
+            timerDataProvider.provideTimerTextView().setBackgroundColor(
+                ContextCompat.getColor(baseActivity, R.color.timer_in_time_background));
+            timerDataProvider.provideTimerTextView().setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.icon_time_green, 0, 0, 0);
+            timerDataProvider.provideTimerTextView().setTextColor(
+                ContextCompat.getColor(baseActivity, R.color.timer_in_time_text));
 
             return DateUtil.formatTimeHoursMinutesSeconds(date);
         } else {
-            textViewDescription.setText(getTimePassed(endDate.getMillis(), now.getMillis()));
+            timerDataProvider.provideTimerTextView().setBackgroundColor(
+                ContextCompat.getColor(baseActivity, R.color.timer_late_background));
+            timerDataProvider.provideTimerTextView().setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.icon_time_red, 0, 0, 0);
+            timerDataProvider.provideTimerTextView().setTextColor(
+                ContextCompat.getColor(baseActivity, R.color.timer_late_text));
+
             if (endDate.getMillis() > now.getMillis()) {
                 return DateUtil.formatTimeHoursMinutesSeconds(date);
             } else {
                 return "";
             }
-        }
-    }
-
-    private String getTimeLeft(long date) {
-        if (date > DateUtil.ONE_DAY) {
-            return timerDataProvider.provideFutureString();
-        } else {
-            return timerDataProvider.provideLeftString();
-        }
-    }
-
-    private String getTimePassed(long endDate, long nowDate) {
-        if (endDate > nowDate) {
-            return timerDataProvider.providePassedString();
-        } else {
-            return timerDataProvider.provideExpireString();
         }
     }
 

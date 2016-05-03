@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,7 @@ import com.foodpanda.urbanninja.model.enums.Action;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
@@ -39,7 +40,6 @@ import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
  */
 public class OrdersNestedFragment extends BaseFragment implements NestedFragmentCallback {
     private MainActivityCallback mainActivityCallback;
-    private FragmentManager fragmentManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private UserStatus userStatus = UserStatus.LOADING;
@@ -55,14 +55,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         return fragment;
     }
 
-    private RouteStopDetailsFragment routeStopDetailsFragment;
+    private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
 
     private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (routeStopDetailsFragment != null) {
+            if (mapAddressDetailsChangeListener != null) {
                 Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
-                routeStopDetailsFragment.onLocationChanged(location);
+                mapAddressDetailsChangeListener.onLocationChanged(location);
             }
         }
     };
@@ -76,7 +76,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getChildFragmentManager();
         storageManager = App.STORAGE_MANAGER;
         apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
         actionLayoutHelper = new ActionLayoutHelper(activity);
@@ -143,6 +142,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     private void setSwipeRefreshLayout(View view) {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
+        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(activity, R.color.colorPrimary));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -174,7 +174,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         actionLayoutHelper.saveActionButtonState();
     }
 
-
     private void changeStatus() {
         switch (userStatus) {
             case CLOCK_IN:
@@ -185,6 +184,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case VIEWING:
                 apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
                 userStatus = UserStatus.ARRIVING;
+                showDoneCheckbox();
                 actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVING:
@@ -197,26 +197,33 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         }
     }
 
+    /**
+     * Next step checkbox should be visible only in Action.ON_THE_WAY status
+     * so we have to make it visible manually
+     */
+    private void showDoneCheckbox() {
+        if (mapAddressDetailsChangeListener != null) {
+            mapAddressDetailsChangeListener.setActionDoneCheckboxVisibility(true);
+        }
+    }
+
     private void openRouteStopActionList(Stop stop) {
         userStatus = UserStatus.ACTION_LIST;
-        swipeRefreshLayout.setEnabled(true);
         replaceFragment(RouteStopActionListFragment.newInstance(stop));
 
         actionLayoutHelper.setRouteStopActionListButton(storageManager.getCurrentStop());
     }
 
     private void openRouteStopDetails(Stop stop) {
-        swipeRefreshLayout.setEnabled(false);
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
-        routeStopDetailsFragment = fragment;
         replaceFragment(fragment);
     }
 
-    private void enableButton(final boolean isEnabled, final int textResourceLink) {
+    private void setButtonVisibility(final boolean isVisible, final int textResourceLink) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                actionLayoutHelper.updateActionButton(isEnabled, textResourceLink);
+                actionLayoutHelper.updateActionButton(isVisible, textResourceLink);
             }
         });
     }
@@ -227,19 +234,23 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void enableActionButton(boolean isEnabled, int textResLink) {
-        enableButton(isEnabled, textResLink);
+    public void onPhoneNumberClicked(String phoneNumber) {
+        mainActivityCallback.onPhoneSelected(phoneNumber);
     }
 
     @Override
-    public void disableActionButton() {
-        actionLayoutHelper.disableActionButton();
+    public void setActionButtonVisible(boolean isVisible, int textResLink) {
+        setButtonVisibility(isVisible, textResLink);
+    }
+
+    @Override
+    public void setActionButtonVisible(boolean isVisible) {
+        actionLayoutHelper.setVisibility(isVisible);
     }
 
     @Override
     public void openReadyToWork(ScheduleWrapper scheduleWrapper) {
         userStatus = UserStatus.CLOCK_IN;
-        swipeRefreshLayout.setEnabled(true);
         replaceFragment(ReadyToWorkFragment.newInstance(scheduleWrapper));
         actionLayoutHelper.setReadyToWorkActionButton();
     }
@@ -247,12 +258,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         userStatus = UserStatus.EMPTY_LIST;
-        swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
                 //Do not allow retrieve the data if empty list is already launched
-                if (!(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
+                //in case when the fragment stack is empty the data should be retrieved
+                if (fragmentManager.getFragments() != null &&
+                    !fragmentManager.getFragments().isEmpty() &&
+                    !(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
                     swipeRefreshLayout.setRefreshing(true);
                     apiExecutor.getRoute();
                 }
@@ -296,12 +309,17 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void hideProgressIndicator() {
         swipeRefreshLayout.setRefreshing(false);
-        if (routeStopDetailsFragment != null) {
-            routeStopDetailsFragment.refreshComplete();
-        }
+    }
+
+    @Override
+    public void setSwipeToRefreshEnable(boolean enable) {
+        swipeRefreshLayout.setEnabled(enable);
     }
 
     private void replaceFragment(BaseFragment baseFragment) {
+        if (baseFragment instanceof MapAddressDetailsChangeListener) {
+            mapAddressDetailsChangeListener = (MapAddressDetailsChangeListener) baseFragment;
+        }
         if (getActivity() != null && !getActivity().isFinishing() && isAdded()) {
             fragmentManager.
                 beginTransaction().
@@ -311,8 +329,4 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         }
     }
 
-    @Override
-    public void onRefresh() {
-        updateApiRequest();
-    }
 }

@@ -1,17 +1,15 @@
 <resources>
     <!-- Strings related to login -->
-    <string name="action_sign_in_short">Sign in</string>
     <string name="error_field_required">Country field is required</string>
 
     <!-- Login -->
+    <string name="logic_title">Login</string>
     <string name="logic_action">Login</string>
-    <string name="login_title">Rider login</string>
-    <string name="login_issue"><u>Issue with login?</u></string>
     <string name="login_password_hint">Password</string>
     <string name="login_username_hint">Username</string>
     <string name="login_country_hint">Country</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="login_country_error">You have to select a country</string>
+
     <!-- Side Menu -->
     <string name="side_menu_orders">Orders</string>
     <string name="side_menu_schedule">Schedule</string>
@@ -19,58 +17,56 @@
     <string name="side_menu_logout">Logout</string>
     <string name="side_menu_open">Open</string>
     <string name="side_menu_close">Close</string>
-    <string name="side_menu_version">App version: %1$s</string>
+    <string name="side_menu_version">Version %1$s</string>
+    <string name="side_menu_rider_name">%1$s %2$s</string>
+
+    <!-- Main Activity -->
+    <string name="main_activity_deliver_before">Deliver before: %1$s</string>
 
     <!-- Ready to work -->
-    <string name="ready_to_work_see_map">See map</string>
-    <string name="ready_to_work_time_left">MINUTES LEFT\n until your shift starts</string>
-    <string name="ready_to_work_time_passed">MINUTES PASSED\n since shift started</string>
+    <string name="ready_to_work_clock_in">Clock in</string>
 
     <!-- Empty list -->
-    <string name="empty_list_header">Check your foodbox, wear\nyour helmet, take a deep breath…</string>
-    <string name="empty_list_text">New orders\nare coming soon</string>
-    <string name="base_empty_list">No data</string>
-    <string name="empty_list_country">The country list couldn\'t be downloaded</string>
-    <string name="empty_list_schedule">You have no shift planned in the next few days</string>
-    <string name="empty_list_cash_report">No order was delivered in the past 15 days</string>
+    <string name="empty_list_header">Check your foodbox, wear\nyour helmet and  take a deep breath</string>
+    <string name="empty_list_text">New orders are coming soon!</string>
+    <string name="empty_list_pull_description">To refresh pull down</string>
+    <string name="base_empty_list">No data found</string>
+    <string name="empty_list_country"><b>Downloading country list</b>\n Wait a few seconds or check your connection.</string>
+    <string name="empty_list_schedule"><b>No planned shift today</b>\n If you feel this is wrong, contact your manager for assistance</string>
+    <string name="empty_list_cash_report">Looks like no order was delivered in the past 15 days</string>
 
     <!-- Task details -->
-    <string name="task_details_time_left">MINUTES LEFT</string>
-    <string name="task_details_time_passed">MINUTES AGO</string>
-    <string name="task_details_go_to">Go to</string>
-    <string name="task_details_to">to</string>
-    <string name="task_details_pick_up"><b>pickup</b></string>
-    <string name="task_details_delivery"><b>delivery</b></string>
     <string name="task_details_canceled">One of the orders assigned to you just got canceled</string>
-    <string name="task_details_canceled_dismiss">I GOT IT</string>
-    <string name="task_details_comment">\nComment: %1$s</string>
+    <string name="task_details_canceled_dismiss">OK</string>
+    <string name="task_details_address">Address:</string>
+    <string name="task_details_comment">Comment:</string>
+    <string name="task_details_go_to">Go to %1$s</string>
+    <string name="task_details_call">Call</string>
+    <string name="task_details_pick_up">Pick up</string>
+    <string name="task_details_delivery">Delivery</string>
 
     <!-- Errors -->
     <string name="dialog_please_wait">Please wait…</string>
-    <string name="error_start_point_not_found">Start Point not found</string>
+    <string name="error_start_point_not_found">Starting Point not found</string>
 
     <!-- Dialog -->
     <string name="dialog_phone_title">Select Phone Number</string>
     <string name="dialog_phone_customer">Customer Phone</string>
     <string name="dialog_phone_restaurant">Restaurant Phone</string>
-    <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assi</string>
+    <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assigned</string>
     <string name="dialog_phone_not_numbers">This order doesn\'t contain any number</string>
 
     <!-- Country -->
-    <string name="country_select_title">Select Country</string>
+    <string name="country_select_title">Select your country</string>
     <string name="country_select">Select</string>
 
     <!-- Ready to work -->
-    <string name="action_ready_to_work">I am ready to work</string>
-    <string name="action_driving">I am driving there</string>
-    <string name="action_at_pick_up">I am at pickup</string>
-    <string name="action_at_delivery">I am at delivery</string>
+    <string name="action_ready_to_work">I\'m ready to work</string>
+    <string name="action_driving">I\'m driving there</string>
+    <string name="action_at_pick_up">I\'m at pickup</string>
+    <string name="action_at_delivery">I\'m at delivery</string>
     <string name="action_at_picked_up">I picked up</string>
     <string name="action_at_delivered">I delivered</string>
-    <string name="action_ready_no_shift">You have no shift schedule\nfor the next 24 hours</string>
-    <string name="action_order_in_future">in more than 24 hours</string>
-    <string name="action_ready_shift_expired">Your current shift has already finished</string>
-    <string name="action_order_expired">more than 24 hours ago</string>
     <string name="route_stop_details_my_location">My Location</string>
     <string name="route_error">This route status is not supported</string>
 
@@ -78,35 +74,34 @@
     <string name="stop_list_done">Done</string>
 
     <!-- Schedule list-->
-    <string name="schedule_list_title">Next Shifts</string>
+    <string name="schedule_list_working_hours">%1$s till %2$s</string>
+    <string name="schedule_list_today">Today</string>
+    <string name="schedule_list_tomorrow">Tomorrow</string>
 
     <!-- GCM -->
     <string name="gcm_defaultSenderId">975393205483</string>
 
     <!-- Route Actions  -->
-    <string name="route_action_items">%1$s Items</string>
-    <string name="route_action_pay">Pay</string>
-    <string name="route_action_pick_up">Pick up</string>
-    <string name="route_action_change">Prepare Change</string>
-    <string name="route_action_deliver">Deliver</string>
-    <string name="route_action_collect">Collect</string>
-    <string name="route_action_header_deliver">Deliver to %1$s</string>
-    <string name="route_action_header_pick_up">Pickup from %1$s</string>
+    <string name="route_action_pay">Pay %1$s</string>
+    <string name="route_action_pick_up">Pick up %1$s Item(s)</string>
+    <string name="route_action_change">Prepare Change %1$s</string>
+    <string name="route_action_deliver">Deliver %1$s Item(s)</string>
+    <string name="route_action_collect">Collect %1$s</string>
+    <string name="route_action_details">Details:</string>
+    <string name="route_action_restaurant">Restaurant:</string>
+    <string name="route_action_last_step">Last Step</string>
+    <string name="route_action_up_step">Next Step</string>
 
     <!-- Cash Report-->
-    <string name="cash_report_total">Total: %1$s</string>
-    <string name="cash_report_total_label">Total:</string>
+    <string name="cash_report_total">Total %1$s</string>
     <string name="cash_report_cancelled">Cancelled</string>
 
     <!-- Content Description -->
-    <string name="content_description_empty_list">Ninja logo</string>
-    <string name="content_description_list_item_country_check">Country selected check</string>
+    <string name="content_description_empty_list">Urban Ninja logo</string>
     <string name="content_description_list_item_action_stop">Action icon</string>
-    <string name="content_description_list_item_header_action_stop">Route type icon</string>
-    <string name="content_description_login_fragment">Ninja logo</string>
-    <string name="content_description_ready_to_work_fragment">Ninja logo</string>
-    <string name="content_description_schedule_list">Schedule logo</string>
-    <string name="content_description_select_country_back">Back button</string>
-    <string name="content_description_select_country_logo">Country logo</string>
-
+    <string name="content_description_login_fragment">Urban Ninja logo</string>
+    <string name="content_description_route_option_go_to">Go to icon</string>
+    <string name="content_description_route_option_expand">Expand layout icon</string>
+    <string name="content_description_navigation_rider_icon">Rider profile photo</string>
+    <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
 </resources>

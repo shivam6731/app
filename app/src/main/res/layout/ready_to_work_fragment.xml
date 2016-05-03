@@ -1,49 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/main_background_color">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/main_background_color">
 
-        <ImageView
-            android:id="@+id/image_top_logo"
-            style="@style/ImageView"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="0dp"
-            android:contentDescription="@string/content_description_ready_to_work_fragment"
-            android:src="@drawable/logo"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical">
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_start_point"
-            style="@style/TextView.Title.NotBold"
-            android:layout_below="@+id/image_top_logo"
-            android:layout_centerHorizontal="true"/>
+            <android.support.v7.widget.CardView
+                style="@style/CardView"
+                app:cardCornerRadius="@dimen/margin_tiny"
+                app:cardElevation="0dp"
+                app:cardUseCompatPadding="true">
 
-        <com.foodpanda.urbanninja.ui.widget.MontserratButton
-            android:id="@+id/btn_see_map"
-            style="@style/Button.NotBold.TransparentBackground"
-            android:layout_below="@+id/txt_start_point"
-            android:text="@string/ready_to_work_see_map"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_timer"
-            style="@style/TextView.Title.Timer"
-            android:layout_below="@+id/btn_see_map"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="0dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white"
+                        android:orientation="horizontal">
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_timer_description"
-            style="@style/TextView.Title.Multiline.NotBold"
-            android:layout_below="@+id/txt_timer"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="0dp"
-            android:text="@string/ready_to_work_time_left"/>
+                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                            android:id="@+id/txt_type"
+                            style="@style/TextView.Title.Green.TaskType"
+                            android:layout_weight="1"
+                            android:drawableLeft="@drawable/icon_restaurant_green"
+                            android:textColor="@color/colorAccent"/>
 
-    </RelativeLayout>
-</ScrollView>
+                        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                            android:id="@+id/txt_timer"
+                            style="@style/TextView.Title.Green"
+                            android:layout_weight="1"
+                            android:background="@color/timer_in_time_background"
+                            android:drawableLeft="@drawable/icon_time_green"/>
+
+                    </LinearLayout>
+
+                    <View
+                        style="@style/ShadowView"/>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <FrameLayout
+                android:id="@+id/map_details_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+        android:id="@+id/txt_empty_schedule"
+        style="@style/TextView.Title.Multiline"
+        android:layout_centerInParent="true"
+        android:text="@string/empty_list_schedule"/>
+
+</RelativeLayout>

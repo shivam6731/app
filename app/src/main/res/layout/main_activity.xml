@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:background="@color/toolbar_color"
             app:popupTheme="@style/AppTheme"
             app:theme="@style/ToolbarColoredBackArrow">
 
@@ -38,15 +39,32 @@
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigation_view"
         style="@style/NavigationView"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:menu="@menu/drawer">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-            android:id="@+id/txt_app_version"
-            style="@style/TextView.Dark"
-            android:layout_gravity="bottom"/>
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            style="@style/NavigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            app:headerLayout="@layout/navigation_header_layout"
+            app:itemBackground="@drawable/drawer_item_background"
+            app:itemIconTint="@color/drawer_item"
+            app:itemTextColor="@color/drawer_item"
+            app:menu="@menu/drawer"/>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_drawer_bottom"
+            style="@style/NavigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:itemBackground="@drawable/drawer_item_background"
+            app:itemIconTint="@color/drawer_item"
+            app:itemTextColor="@color/drawer_item"
+            app:menu="@menu/drawer_logout"/>
+
     </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

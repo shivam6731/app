@@ -61,7 +61,7 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
 
     protected abstract int provideListLayout();
 
-    protected abstract String provideEmptyListDescription();
+    protected abstract CharSequence provideEmptyListDescription();
 
     protected RecyclerView.LayoutManager provideLayoutManager() {
 

@@ -17,7 +17,7 @@
         android:paddingRight="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"/>
 
-    <TextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
         android:id="@+id/empty_view"
         style="@style/TextView.Title.Multiline"
         android:layout_centerInParent="true"

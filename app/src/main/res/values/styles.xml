@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="drawerArrowStyle">@style/ToolbarColoredBackArrow</item>
+        <item name="android:textColorSecondary">@color/description_text_color</item>
     </style>
 
     <style name="ToolbarColoredBackArrow" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -24,6 +25,13 @@
         <item name="android:contentDescription">@null</item>
     </style>
 
+    <style name="ImageView.RiderAvatar">
+        <item name="android:layout_height">@dimen/menu_navigation_rider_icon_size</item>
+        <item name="android:layout_width">@dimen/menu_navigation_rider_icon_size</item>
+        <item name="android:layout_margin">@dimen/margin_default</item>
+        <item name="android:padding">@dimen/padding_tiny</item>
+    </style>
+
     <style name="TextView">
         <item name="android:textColor">@color/primary_text_color</item>
         <item name="android:textSize">@dimen/default_text_size</item>
@@ -36,19 +44,45 @@
         <item name="android:layout_margin">@dimen/margin_small</item>
     </style>
 
+    <style name="TextView.WithoutMargin">
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
     <style name="TextView.Dark">
         <item name="android:textColor">@color/stop_text_color</item>
     </style>
 
+    <style name="TextView.Dark.AllCaps">
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextView.Green">
+        <item name="android:textColor">@color/green_text_color</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
+    <style name="TextView.Green.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextView.Dark.Multiline">
         <item name="android:singleLine">false</item>
-        <item name="android:layout_margin">@null</item>
     </style>
 
     <style name="TextView.Title">
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/default_title_size</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextView.Title.WithoutPaddingMargin">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="TextView.Title.WithoutPaddingMargin.Center">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
     </style>
 
     <style name="TextView.Title.CashReport">
@@ -74,16 +108,49 @@
     </style>
 
     <style name="TextView.Title.Multiline.NotBold.Address">
+        <item name="android:gravity">left</item>
+        <item name="android:layout_marginLeft">@dimen/margin_default</item>
+        <item name="android:layout_marginRight">@dimen/margin_default</item>
         <item name="android:textSize">@dimen/address_description_size</item>
         <item name="android:maxLines">@integer/max_lines_number_address</item>
     </style>
 
     <style name="TextView.Title.SmallSize">
         <item name="android:textSize">@dimen/schedule_date_text_size</item>
+        <item name="android:textColor">@color/schedule_text_color</item>
+        <item name="android:background">@color/main_background_color</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:padding">@dimen/padding_default</item>
+    </style>
+
+    <style name="TextView.Title.NoBoldWhite">
+        <item name="android:textSize">@dimen/schedule_date_text_size</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_margin">@dimen/margin_default</item>
+    </style>
+
+    <style name="TextView.Title.SmallSize.DefaultColor">
+        <item name="android:textColor">@color/primary_text_color</item>
     </style>
 
     <style name="TextView.Title.Green">
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:gravity">left</item>
+        <item name="android:textColor">@color/green_text_color</item>
+        <item name="android:padding">@dimen/padding_default</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:textSize">@dimen/default_details_timer_text_size</item>
+    </style>
+
+    <style name="TextView.Title.Green.TaskType">
+        <item name="android:textSize">@dimen/default_title_size</item>
+    </style>
+
+    <style name="TextView.Title.NotBold.White">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="TextView.Description">
@@ -102,24 +169,27 @@
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">@dimen/default_title_size</item>
-        <item name="android:textStyle">bold</item>
+    <style name="TextView.CardDescription">
+        <item name="android:layout_marginLeft">@dimen/margin_default</item>
+        <item name="android:layout_marginRight">@dimen/margin_default</item>
+        <item name="android:layout_marginTop">@dimen/margin_default</item>
+        <item name="android:layout_marginBottom">@dimen/margin_default</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:layout_margin">@dimen/margin_default</item>
+        <item name="android:textColor">@color/description_text_color</item>
+        <item name="android:textSize">@dimen/description_text_size</item>
     </style>
 
-    <style name="Button.NotBold">
-        <item name="android:textStyle">normal</item>
+    <style name="TextView.CardDescription.NoPaddingMargin">
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
     </style>
 
-    <style name="Button.NotBold.TransparentBackground">
-        <item name="android:layout_margin">@null</item>
-        <item name="android:layout_marginLeft">@dimen/margin_button_side</item>
-        <item name="android:layout_marginRight">@dimen/margin_button_side</item>
-        <item name="android:background">@drawable/see_map_btn_background</item>
+    <style name="TextView.CardDescription.NoPaddingMargin.TopCenter">
+        <item name="android:gravity">center_horizontal|top</item>
+    </style>
+
+    <style name="TextView.CardDescription.White">
+        <item name="android:textColor">@color/action_header_border</item>
     </style>
 
     <style name="ButtonMainAction">
@@ -129,7 +199,7 @@
         <item name="android:background">@drawable/main_button_background</item>
         <item name="android:padding">@dimen/padding_large</item>
         <item name="android:textSize">@dimen/default_title_size</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
 
@@ -156,6 +226,32 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
         <item name="android:theme">@style/Theme.AppCompat.Light</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+    <style name="CardView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DividerView">
+        <item name="android:background">@color/default_selected</item>
+        <item name="android:layout_height">@dimen/margin_tiny</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ShadowView">
+        <item name="android:background">@drawable/shadow_top_panel</item>
+        <item name="android:layout_height">@dimen/card_top_shadow_height</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="TextInputLayout">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColorHint">@drawable/login_hint_color</item>
     </style>
 
 </resources>

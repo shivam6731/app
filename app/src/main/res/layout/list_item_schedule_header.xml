@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+    android:id="@+id/txt_schedule_header_date"
+    style="@style/TextView.Title.SmallSize"
+    xmlns:android="http://schemas.android.com/apk/res/android"/>

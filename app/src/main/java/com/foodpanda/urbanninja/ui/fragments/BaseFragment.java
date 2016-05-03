@@ -1,7 +1,10 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.foodpanda.urbanninja.ui.activity.BaseActivity;
@@ -11,11 +14,18 @@ public abstract class BaseFragment extends Fragment {
     protected BaseActivity activity;
     private ProgressDialogFragment progressDialogFragment;
     private boolean isProgressShowed;
+    protected FragmentManager fragmentManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         activity = (BaseActivity) context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fragmentManager = getChildFragmentManager();
     }
 
     @Override
@@ -46,5 +56,19 @@ public abstract class BaseFragment extends Fragment {
             progressDialogFragment.dismiss();
         }
         isProgressShowed = false;
+    }
+
+    /**
+     * Base method to add nested fragment
+     *
+     * @param viewContainerId id of container where fragment would be added
+     * @param baseFragment    fragment that would be added
+     */
+    protected void addFragment(int viewContainerId, BaseFragment baseFragment) {
+        fragmentManager.
+            beginTransaction().
+            add(viewContainerId,
+                baseFragment).
+            commitAllowingStateLoss();
     }
 }

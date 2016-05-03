@@ -11,9 +11,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,29 +28,32 @@ import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
-import com.foodpanda.urbanninja.ui.interfaces.SlideMenuCallback;
+import com.foodpanda.urbanninja.ui.util.CircleTransform;
 import com.foodpanda.urbanninja.ui.util.SnackbarHelper;
+import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements SlideMenuCallback, MainActivityCallback {
+public class MainActivity extends BaseActivity implements MainActivityCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PERMISSIONS_REQUEST_LOCATION = 100;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
     private NavigationView navigationView;
 
     private StorageManager storageManager;
@@ -106,6 +111,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     private void setNavigationDrawer() {
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         setSelectedNavigationItem();
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -125,16 +131,51 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                     case R.id.cash_report:
                         onCashReportClicked();
                         break;
-                    case R.id.logout:
-                        onLogoutClicked();
-                        break;
                 }
 
                 return true;
             }
         });
 
+        NavigationView navigationBottomView = (NavigationView) findViewById(R.id.navigation_drawer_bottom);
+        if (navigationBottomView != null) {
+            navigationBottomView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.logout:
+                            onLogoutClicked();
+                            break;
+                    }
+
+                    return true;
+                }
+            });
+        }
+
         showAppVersion();
+    }
+
+    /**
+     * set rider name and rider picture to the header view
+     *
+     * @param rider current rider
+     */
+    public void setRiderContent(Rider rider) {
+        if (rider != null) {
+            TextView txtRiderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_rider_name);
+            txtRiderName.setText(getResources().getString(R.string.side_menu_rider_name, rider.getFirstName(), rider.getSurname()));
+
+            if (!TextUtils.isEmpty(rider.getPicture())) {
+                ImageView imageRiderIcon = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.image_rider_icon);
+
+                Picasso.with(this).
+                    load(rider.getPicture()).
+                    transform(new CircleTransform()).
+                    into(imageRiderIcon);
+            }
+        }
+
     }
 
     /**
@@ -143,8 +184,8 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
      * base on version in the gradle build file
      */
     private void showAppVersion() {
-        TextView textView = (TextView) findViewById(R.id.txt_app_version);
-        textView.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
+        TextView txtAppVersion = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_app_version);
+        txtAppVersion.setText(getResources().getString(R.string.side_menu_version, BuildConfig.VERSION_NAME));
     }
 
     /**
@@ -195,15 +236,6 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         currentItemId = navigationView.getMenu().getItem(0).getItemId();
     }
 
-    private Toolbar initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        return toolbar;
-    }
-
     private void setActionBarDrawerToggle(Toolbar toolbar) {
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
             this,
@@ -225,7 +257,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
                 syncState();
             }
         };
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 
@@ -266,8 +298,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onLogoutClicked() {
+    private void onLogoutClicked() {
         storageManager.cleanSession();
         stopLocationService();
 
@@ -287,8 +318,7 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         stopService(closeServiceIntent);
     }
 
-    @Override
-    public void onScheduleClicked() {
+    private void onScheduleClicked() {
         ScheduleListFragment scheduleListFragment = ScheduleListFragment.newInstance();
 
         fragmentManager.
@@ -299,21 +329,44 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
         drawerLayout.closeDrawers();
     }
 
-    @Override
-    public void onOrdersClicked() {
-        if (ordersNestedFragment == null) {
-            ordersNestedFragment = OrdersNestedFragment.newInstance();
-        }
-        fragmentManager.
-            beginTransaction().
-            detach(ordersNestedFragment).
-            attach(ordersNestedFragment).
-            commit();
+    /**
+     * When order menu selected we should close the drawer and only after redirect to the #OrdersNestedFragment
+     * like when we press back button.
+     * In this case we don't have to recreate or reattach the fragment from activity
+     * and all data would be present and the state would be the same
+     */
+    private void onOrdersClicked() {
         drawerLayout.closeDrawers();
+
+        //After closing the drawer we have to redirect to the  nested fragment
+        //and to check the close action we need this callback to start onBackPressed method
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                //when drawer closed we should un subscribe this listener
+                //and call redirect method witch is onBackPressed
+                onBackPressed();
+                drawerLayout.removeDrawerListener(this);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
-    @Override
-    public void onCashReportClicked() {
+    private void onCashReportClicked() {
         CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
 
         fragmentManager.
@@ -358,24 +411,64 @@ public class MainActivity extends BaseActivity implements SlideMenuCallback, Mai
     @Override
     public void writeCodeAsTitle(Stop stop) {
         toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
+        toolbar.setSubtitle(formatDeliverBefore(stop));
+    }
+
+    /**
+     * Get sub title for action bar with information about delivery time
+     *
+     * @param currentStop that should be delivered
+     * @return secondary title with delivery time
+     */
+    private String formatDeliverBefore(Stop currentStop) {
+        return currentStop != null &&
+            !TextUtils.isEmpty(currentStop.getOrderCode()) ?
+            getDeliveryArrivalTimeForAllTaskTypes(currentStop) : "";
+    }
+
+    /**
+     * get arrival time for delivery part of each route stop
+     * no matter if it's pick-up or delivery type the arrival time would be
+     * for delivery part of current order
+     *
+     * @param currentStop current stop
+     * @return formatted arrival time for delivery part of route stop
+     */
+    private String getDeliveryArrivalTimeForAllTaskTypes(Stop currentStop) {
+        for (Stop stop : storageManager.getStopList()) {
+            if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode()) &&
+                stop.getTask() == RouteStopStatus.DELIVER) {
+
+                return getString(R.string.main_activity_deliver_before,
+                    DateUtil.formatTimeHoursMinutes(stop.getArrivalTime()));
+            }
+        }
+
+        return "";
     }
 
     @Override
     public void onBackPressed() {
-        int count = fragmentManager.getBackStackEntryCount();
-        if (count <= 0) {
-            super.onBackPressed();
+        //if drawer in opened it should be closed by back button press
+        //otherwise we have to redirect to the OrdersNestedFragment
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawers();
         } else {
-            for (Fragment fragment : fragmentManager.getFragments()) {
-                if (!(fragment instanceof OrdersNestedFragment)) {
-                    fragmentManager.popBackStack();
+            int count = fragmentManager.getBackStackEntryCount();
+            if (count <= 0) {
+                super.onBackPressed();
+            } else {
+                for (Fragment fragment : fragmentManager.getFragments()) {
+                    if (!(fragment instanceof OrdersNestedFragment)) {
+                        fragmentManager.popBackStack();
+                    }
                 }
+                setSelectedNavigationItem();
             }
-            setSelectedNavigationItem();
         }
     }
 
-    protected void showPhoneDialog() {
+    private void showPhoneDialog() {
         if (storageManager.getCurrentStop() != null) {
             PhoneNumberSingleChoiceDialog phoneNumberSingleChoiceDialog = PhoneNumberSingleChoiceDialog.newInstance(storageManager.getCurrentStop());
             phoneNumberSingleChoiceDialog.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());

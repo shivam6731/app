@@ -3,13 +3,13 @@ package com.foodpanda.urbanninja.model;
 import android.os.Parcel;
 
 import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopTaskStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 
 import org.joda.time.DateTime;
 
 import java.util.List;
 
-public class Stop implements ParcelableModel {
+public class Stop implements MapDetailsProvider {
     private long id;
     private int locationId;
     private int sequence;
@@ -23,12 +23,21 @@ public class Stop implements ParcelableModel {
     private String name;
     private String comment;
     private String address;
-    private RouteStopTaskStatus task;
+    private RouteStopStatus task;
     private List<RouteStopActivity> activities;
     private String pickupPhone;
     private String deliveryPhone;
     private long orderId;
     private String orderCode;
+
+    /**
+     * need this constructor only for test
+     */
+    Stop(String deliveryPhone, String pickupPhone, RouteStopStatus task) {
+        this.deliveryPhone = deliveryPhone;
+        this.pickupPhone = pickupPhone;
+        this.task = task;
+    }
 
     @Override
     public int describeContents() {
@@ -77,7 +86,7 @@ public class Stop implements ParcelableModel {
         this.comment = in.readString();
         this.address = in.readString();
         int tmpTask = in.readInt();
-        this.task = tmpTask == -1 ? null : RouteStopTaskStatus.values()[tmpTask];
+        this.task = tmpTask == -1 ? null : RouteStopStatus.values()[tmpTask];
         this.activities = in.createTypedArrayList(RouteStopActivity.CREATOR);
         this.pickupPhone = in.readString();
         this.deliveryPhone = in.readString();
@@ -131,23 +140,16 @@ public class Stop implements ParcelableModel {
         return status;
     }
 
-    public GeoCoordinate getGps() {
-        return gps;
-    }
-
     public String getName() {
         return name;
     }
 
-    public String getComment() {
-        return comment;
+    @Override
+    public String getPhoneNumber() {
+        return RouteStopStatus.DELIVER == getTask() ? deliveryPhone : pickupPhone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public RouteStopTaskStatus getTask() {
+    public RouteStopStatus getTask() {
         return task;
     }
 
@@ -179,11 +181,31 @@ public class Stop implements ParcelableModel {
         this.id = id;
     }
 
-    public void setTask(RouteStopTaskStatus task) {
+    public void setTask(RouteStopStatus task) {
         this.task = task;
     }
 
     public void setActivities(List<RouteStopActivity> activities) {
         this.activities = activities;
+    }
+
+    @Override
+    public GeoCoordinate getCoordinate() {
+        return gps;
+    }
+
+    @Override
+    public String getAddress() {
+        return address;
+    }
+
+    @Override
+    public String getComment() {
+        return comment;
+    }
+
+    @Override
+    public boolean isDoneButtonVisible() {
+        return status == Action.ON_THE_WAY;
     }
 }
