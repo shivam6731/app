@@ -4,18 +4,23 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
+import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
 import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
@@ -29,10 +34,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     TimerDataProvider,
     MapAddressDetailsChangeListener,
     MapAddressDetailsCallback {
+    private static final int POSITION_FOR_HALAL_LAYOUT = 1;
 
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
 
+    private LinearLayout layoutContent;
     private TextView txtType;
     private TextView txtTimer;
 
@@ -75,6 +82,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        layoutContent = (LinearLayout) view.findViewById(R.id.layout_content);
         txtType = (TextView) view.findViewById(R.id.txt_type);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
 
@@ -128,6 +136,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         mapAddressDetailsChangeListener = mapAddressDetailsFragment;
 
         addFragment(R.id.map_details_container, mapAddressDetailsFragment);
+        setHalalLayoutIfNeeds();
     }
 
     /**
@@ -153,6 +162,71 @@ public class RouteStopDetailsFragment extends BaseFragment implements
             nestedFragmentCallback.setSwipeToRefreshEnable(true);
             nestedFragmentCallback = null;
         }
+    }
+
+    /**
+     * In some countries we support halal orders
+     * and to let rider know to what bag he should put order
+     * we need to add this layout
+     */
+    private void setHalalLayoutIfNeeds() {
+        if (stop.getActivities() != null) {
+            for (RouteStopActivity routeStopActivity : stop.getActivities()) {
+                if (routeStopActivity.getType() == RouteStopActivityType.HALAL ||
+                    routeStopActivity.getType() == RouteStopActivityType.NON_HALAL) {
+                    addHalalLayout(putContentForHalalLayout(routeStopActivity.getType()));
+                }
+            }
+        }
+    }
+
+    /**
+     * set background for the whole halal layout
+     * set background for header layout
+     * set title and description for halal order
+     *
+     * @param routeStopActivityType type of halal order
+     * @return halalLayout
+     */
+    private View putContentForHalalLayout(RouteStopActivityType routeStopActivityType) {
+        View view = View.inflate(activity, R.layout.route_stop_details_halal_layout, null);
+
+        View layoutHalal = view.findViewById(R.id.layout_halal_content);
+        View layoutHeaderHalal = view.findViewById(R.id.layout_halal_header);
+        ImageView imageHalalAlert = (ImageView) view.findViewById(R.id.image_halal_icon);
+        TextView txtHalalName = (TextView) view.findViewById(R.id.txt_halal_title);
+        TextView txtHalalDescription = (TextView) view.findViewById(R.id.txt_halal_description);
+
+        boolean isHalal = routeStopActivityType == RouteStopActivityType.HALAL;
+
+        layoutHalal.setBackgroundColor(ContextCompat.getColor(
+            activity, isHalal ? R.color.halal_background_color : R.color.not_halal_background_color));
+
+        layoutHeaderHalal.setBackgroundColor(ContextCompat.getColor(
+            activity, isHalal ? R.color.green_text_color : R.color.toolbar_color));
+
+        imageHalalAlert.setImageResource(isHalal ? R.drawable.icon_alert_green : R.drawable.icon_alert_red);
+        txtHalalName.setText(isHalal ? R.string.route_action_halal : R.string.route_action_not_halal);
+        txtHalalDescription.setText(isHalal ? R.string.task_details_halal : R.string.task_details_not_halal);
+
+        return view;
+    }
+
+    /**
+     * add layout with information about halal order
+     *
+     * @param view halal layout
+     */
+    private void addHalalLayout(View view) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(
+            getResources().getDimensionPixelSize(R.dimen.margin_card),
+            getResources().getDimensionPixelSize(R.dimen.margin_card),
+            getResources().getDimensionPixelSize(R.dimen.margin_card),
+            getResources().getDimensionPixelSize(R.dimen.margin_card));
+
+        layoutContent.addView(view, POSITION_FOR_HALAL_LAYOUT, layoutParams);
     }
 
     @Override

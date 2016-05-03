@@ -168,6 +168,9 @@
     <style name="TextView.Italic">
         <item name="android:textStyle">italic</item>
     </style>
+    <style name="TextView.SmallSize">
+        <item name="android:textSize">@dimen/description_text_size</item>
+    </style>
 
     <style name="TextView.CardDescription">
         <item name="android:layout_marginLeft">@dimen/margin_default</item>

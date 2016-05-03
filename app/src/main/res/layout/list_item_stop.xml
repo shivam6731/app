@@ -9,9 +9,16 @@
     app:cardUseCompatPadding="true">
 
     <LinearLayout
+        android:id="@+id/main_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/halal_background_color"
         android:orientation="vertical">
+
+        <View
+            android:id="@+id/halal_header_layout"
+            style="@style/DividerView"
+            android:background="@color/green_text_color"/>
 
         <LinearLayout
             android:id="@+id/layout_main_content"
