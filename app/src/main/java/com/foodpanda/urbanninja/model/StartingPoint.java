@@ -72,6 +72,11 @@ public class StartingPoint implements MapDetailsProvider {
     }
 
     @Override
+    public String getRestaurantName() {
+        return null;
+    }
+
+    @Override
     public boolean isDoneButtonVisible() {
         return false;
     }

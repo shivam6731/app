@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_default">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+        android:id="@+id/txt_restaurant_name_title"
+        style="@style/TextView.CardDescription"
+        android:text="@string/task_details_restaurant_name"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+        android:id="@+id/txt_restaurant_name"
+        style="@style/TextView.Title.Multiline.NotBold.Address"/>
+
+    <View
+        style="@style/DividerView"/>
+
+</LinearLayout>

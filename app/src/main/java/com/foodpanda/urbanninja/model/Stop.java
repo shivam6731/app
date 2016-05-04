@@ -29,6 +29,7 @@ public class Stop implements MapDetailsProvider {
     private String deliveryPhone;
     private long orderId;
     private String orderCode;
+    private String restaurantName;
 
     /**
      * need this constructor only for test
@@ -65,6 +66,7 @@ public class Stop implements MapDetailsProvider {
         dest.writeString(deliveryPhone);
         dest.writeLong(orderId);
         dest.writeString(orderCode);
+        dest.writeString(restaurantName);
     }
 
     public Stop() {
@@ -92,6 +94,7 @@ public class Stop implements MapDetailsProvider {
         this.deliveryPhone = in.readString();
         this.orderId = in.readLong();
         this.orderCode = in.readString();
+        this.restaurantName = in.readString();
     }
 
     public static final Creator<Stop> CREATOR = new Creator<Stop>() {
@@ -169,8 +172,8 @@ public class Stop implements MapDetailsProvider {
         return orderId;
     }
 
-    public String getOrderCode() {
-        return orderCode;
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
     public void setStatus(Action status) {
@@ -202,6 +205,10 @@ public class Stop implements MapDetailsProvider {
     @Override
     public String getComment() {
         return comment;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
     }
 
     @Override

@@ -135,10 +135,10 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             // only for delivery type of item we need to show restaurant name to
             // let rider know from witch restaurant  this delivery order is
             if (routeStopActivity.getType() != RouteStopActivityType.DELIVER ||
-                TextUtils.isEmpty(stop.getName())) {
+                TextUtils.isEmpty(stop.getRestaurantName())) {
                 viewHolder.layoutRestaurantName.setVisibility(View.GONE);
             } else {
-                viewHolder.txtRestaurantName.setText(stop.getName());
+                viewHolder.txtRestaurantName.setText(stop.getRestaurantName());
                 viewHolder.layoutRestaurantName.setVisibility(View.VISIBLE);
             }
 

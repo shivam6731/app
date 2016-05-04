@@ -22,7 +22,7 @@ public class Constants {
         public static final String COUNTRY = "country";
         public static final String VEHICLE_ID = "VehicleId";
         public static final String MAP_ADDRESS_DETAILS = "mapAddressDetails";
-        public static final String MAP_ADDRESS_LAYOUT_SHOWN = "mapAddressLayoutShown";
+        public static final String IS_ROUTE_DETAILS_SHOWN = "isRouteDetailsShown";
         public static final String MAP_TOP_LAYOUT_SHOWN = "mapTopLayoutShown";
         public static final String MAP_ADDRESS_POINT_TYPE = "mapAddressPointType";
         public static final String SCHEDULE_WRAPPER = "ScheduleWrapper";
