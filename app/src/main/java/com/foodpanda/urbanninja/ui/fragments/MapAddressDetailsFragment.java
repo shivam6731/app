@@ -53,12 +53,16 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     public static final float MARKER_ANCHOR = 0.5f;
 
+    private static final int POSITION_RESTAURANT_NAME_PICK_UP = 2;
+    private static final int POSITION_RESTAURANT_NAME_DELIVERY = 3;
+
     private TextView txtName;
     private TextView txtAddress;
     private TextView txtComment;
     private CheckBox checkBoxDone;
     private CardView cardView;
 
+    private LinearLayout layoutAllContent;
     private LinearLayout layoutComment;
     private LinearLayout layoutAddress;
 
@@ -70,7 +74,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     private MapAddressDetailsCallback mapAddressDetailsCallback;
 
     private MapDetailsProvider mapDetailsProvider;
-    private boolean isMapActionShown;
+    private boolean isRouteDetailsShown;
     private boolean isTopPanelShown;
     private MapPointType mapPointType;
 
@@ -78,8 +82,8 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         return newInstance(mapDetailsProvider, mapPointType, true);
     }
 
-    public static MapAddressDetailsFragment newInstance(MapDetailsProvider mapDetailsProvider, MapPointType mapPointType, boolean isMapActionShown) {
-        return newInstance(mapDetailsProvider, mapPointType, isMapActionShown, true);
+    public static MapAddressDetailsFragment newInstance(MapDetailsProvider mapDetailsProvider, MapPointType mapPointType, boolean isRouteDetailsShouldBeShown) {
+        return newInstance(mapDetailsProvider, mapPointType, isRouteDetailsShouldBeShown, true);
     }
 
     public static MapAddressDetailsFragment newInstance(
@@ -91,7 +95,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
         bundle.putParcelable(Constants.BundleKeys.MAP_ADDRESS_DETAILS, mapDetailsProvider);
         bundle.putSerializable(Constants.BundleKeys.MAP_ADDRESS_POINT_TYPE, mapPointType);
-        bundle.putBoolean(Constants.BundleKeys.MAP_ADDRESS_LAYOUT_SHOWN, isMapActionShown);
+        bundle.putBoolean(Constants.BundleKeys.IS_ROUTE_DETAILS_SHOWN, isMapActionShown);
         bundle.putBoolean(Constants.BundleKeys.MAP_TOP_LAYOUT_SHOWN, isTopPanelShown);
 
         MapAddressDetailsFragment fragment = new MapAddressDetailsFragment();
@@ -113,7 +117,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         mapDetailsProvider = getArguments().getParcelable(Constants.BundleKeys.MAP_ADDRESS_DETAILS);
         mapPointType = (MapPointType) getArguments().getSerializable(Constants.BundleKeys.MAP_ADDRESS_POINT_TYPE);
-        isMapActionShown = getArguments().getBoolean(Constants.BundleKeys.MAP_ADDRESS_LAYOUT_SHOWN);
+        isRouteDetailsShown = getArguments().getBoolean(Constants.BundleKeys.IS_ROUTE_DETAILS_SHOWN);
         isTopPanelShown = getArguments().getBoolean(Constants.BundleKeys.MAP_TOP_LAYOUT_SHOWN);
     }
 
@@ -134,15 +138,16 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         txtComment = (TextView) view.findViewById(R.id.txt_comment);
         txtAddress = (TextView) view.findViewById(R.id.txt_address);
 
+        layoutAllContent = (LinearLayout) view.findViewById(R.id.layout_all_content);
         layoutAddress = (LinearLayout) view.findViewById(R.id.layout_address);
         layoutComment = (LinearLayout) view.findViewById(R.id.layout_comment);
         cardView = (CardView) view.findViewById(R.id.card_view);
 
         RelativeLayout layoutMapActions = (RelativeLayout) view.findViewById(R.id.map_actions_layout);
-        layoutMapActions.setVisibility(isMapActionShown ? View.VISIBLE : View.GONE);
+        layoutMapActions.setVisibility(isRouteDetailsShown ? View.VISIBLE : View.GONE);
 
         txtName.setVisibility(isTopPanelShown ? View.VISIBLE : View.GONE);
-        hidePaddingAndElevationlIfNeeds();
+        hidePaddingAndElevationIfNeeds();
 
         checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
         checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -188,7 +193,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
      * In case when this map address fragments uses as additional information
      * we have to hide padding and shadows for the whole card view
      */
-    private void hidePaddingAndElevationlIfNeeds() {
+    private void hidePaddingAndElevationIfNeeds() {
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 
@@ -260,6 +265,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         txtName.setText(getResources().getString(R.string.task_details_go_to, mapDetailsProvider.getName()));
         setComment(mapDetailsProvider.getComment());
         setAddress(mapDetailsProvider.getAddress());
+        showRestaurantName();
     }
 
     /**
@@ -287,6 +293,36 @@ public class MapAddressDetailsFragment extends BaseFragment implements
             layoutAddress.setVisibility(View.GONE);
         } else {
             txtAddress.setText(address);
+        }
+    }
+
+    /**
+     * The restaurant name is required field for route details information screen
+     * In case when restaurant name is long and needs more then one line
+     * we show this details in a separate details layout
+     * when type is #DELIVERY this name should be below the map
+     * if type is #PICK_UP the name should be the last item
+     */
+    private void showRestaurantName() {
+        if (isRouteDetailsShown) {
+            LinearLayout restaurantNameLayout = (LinearLayout)
+                View.inflate(activity, R.layout.map_address_restaurant_name_layout, null);
+
+            TextView txtRestaurantName = (TextView) restaurantNameLayout.findViewById(R.id.txt_restaurant_name);
+            TextView txtRestaurantNameTitle = (TextView) restaurantNameLayout.findViewById(R.id.txt_restaurant_name_title);
+
+            txtRestaurantName.setText(mapDetailsProvider.getRestaurantName());
+
+            switch (mapPointType) {
+                case DELIVERY:
+                    txtRestaurantNameTitle.setText(getString(R.string.task_details_restaurant_name_at_customer));
+                    layoutAllContent.addView(restaurantNameLayout, POSITION_RESTAURANT_NAME_DELIVERY);
+                    break;
+                case PICK_UP:
+                    txtRestaurantNameTitle.setText(getString(R.string.task_details_restaurant_name));
+                    layoutAllContent.addView(restaurantNameLayout, POSITION_RESTAURANT_NAME_PICK_UP);
+                    break;
+            }
         }
     }
 
