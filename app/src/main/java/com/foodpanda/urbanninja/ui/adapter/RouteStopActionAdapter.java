@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
+import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 import com.foodpanda.urbanninja.utils.FormatUtil;
 
 import java.util.Iterator;
@@ -28,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity, SimpleBaseAdapter.BaseViewHolder> {
-    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_HEADER_OR_FOOTER = 0;
     private static final int TYPE_ITEM = 1;
 
     private final StorageManager storageManager;
@@ -38,11 +40,14 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     private LinkedHashMap<RouteStopActivity, Boolean> checkedActionsHashMap = new LinkedHashMap<>();
     private Stop stop;
 
+    private RecyclerViewEmpty recyclerView;
+
     public RouteStopActionAdapter(
         Stop stop,
         Context context,
         NestedFragmentCallback nestedFragmentCallback,
-        ShowMapAddressCallback showMapAddressCallback) {
+        ShowMapAddressCallback showMapAddressCallback,
+        RecyclerViewEmpty recyclerView) {
 
         super(stop.getActivities(), context);
         setSelectable(false);
@@ -52,21 +57,25 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.showMapAddressCallback = showMapAddressCallback;
         this.stop = stop;
+        this.recyclerView = recyclerView;
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
         }
         storageManager = App.STORAGE_MANAGER;
     }
 
+    // All both of this ViewHolders extend BaseView Holder
+    // So this call is safe
+    @SuppressWarnings("unchecked")
     @Override
-    public SimpleBaseAdapter.BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
             case TYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_stop, parent, false);
 
                 return new ViewHolder(view);
-            case TYPE_HEADER:
+            case TYPE_HEADER_OR_FOOTER:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_stop_header, parent, false);
 
                 return new ViewHolderHeaderFooter(view);
@@ -79,82 +88,127 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      * and set action or header value to the ViewMainContentHolder
      *
      * @param holder   SimpleBaseAdapter.BaseViewHolder holder instance
-     * @param position in a list on content
+     * @param position in the list of content
      */
     @Override
     public void onBindViewHolder(final SimpleBaseAdapter.BaseViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
-            ViewHolder viewHolder = (ViewHolder) holder;
-            final RouteStopActivity routeStopActivity = getItem(holder.getAdapterPosition());
-            viewHolder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                //Check if all task are done and if it's true enable bottom main action button
-                checkedActionsHashMap.put(routeStopActivity, isChecked);
-                if (stop != null) {
-                    nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
-                        stop.getTask() == RouteStopTask.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
-                }
-            });
-            if (TextUtils.isEmpty(routeStopActivity.getDescription())) {
-                viewHolder.layoutDetails.setVisibility(View.GONE);
-            } else {
-                viewHolder.txtDescription.setText(routeStopActivity.getDescription());
-                viewHolder.layoutDetails.setVisibility(View.VISIBLE);
-            }
-
-            if (routeStopActivity.getType() != null) {
-                switch (routeStopActivity.getType()) {
-                    case PICKUP:
-                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
-                        viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
-                        setNotRelatedToHalalActionLayout(viewHolder);
-                        break;
-                    case DELIVER:
-                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
-                        viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
-                        setNotRelatedToHalalActionLayout(viewHolder);
-                        break;
-                    case PAY_RESTAURANT:
-                        viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
-                        setNotRelatedToHalalActionLayout(viewHolder);
-                        break;
-                    case PREPARE_CHANGE:
-                        viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
-                        setNotRelatedToHalalActionLayout(viewHolder);
-                        break;
-                    case COLLECT:
-                        viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
-                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
-                        setNotRelatedToHalalActionLayout(viewHolder);
-                        break;
-                    case HALAL:
-                    case NON_HALAL:
-                        setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
-                        break;
-                }
-            }
-
-
-            // only for delivery type of item we need to show restaurant name to
-            // let rider know from witch restaurant  this delivery order is
-            if (routeStopActivity.getType() != RouteStopActivityType.DELIVER ||
-                TextUtils.isEmpty(stop.getVendorName())) {
-                viewHolder.layoutVendorName.setVisibility(View.GONE);
-            } else {
-                viewHolder.txtVendorName.setText(stop.getVendorName());
-                viewHolder.layoutVendorName.setVisibility(View.VISIBLE);
-            }
-
-        } else if (holder instanceof ViewHolderHeaderFooter && !TextUtils.isEmpty(stop.getOrderCode())) {
-            final ViewHolderHeaderFooter viewHolder = (ViewHolderHeaderFooter) holder;
-            viewHolder.txtName.setText(context.getResources().getString(R.string.task_details_go_to, stop.getName()));
-            int stringRes = holder.getAdapterPosition() == 0 ? R.string.route_action_last_step : R.string.route_action_up_step;
-            viewHolder.txtType.setText(stringRes);
-
-            viewHolder.expandableLayout.setOnClickListener(v -> expandLayout(viewHolder.expandableLayout, viewHolder.imageView));
-            showMapAddressCallback.showNextPreviousStep(stop, R.id.step_layout);
+            setRouteStopActionView((ViewHolder) holder);
+        } else if (holder instanceof ViewHolderHeaderFooter) {
+            setDataForNextLastStep((ViewHolderHeaderFooter) holder);
         }
+    }
+
+    /**
+     * Set data for each order action
+     * add action type name
+     * add action type icons
+     * add details if they exist
+     * add restaurant name for delivery type
+     *
+     * @param viewHolder action view layout container
+     */
+    private void setRouteStopActionView(ViewHolder viewHolder) {
+        final RouteStopActivity routeStopActivity = getItem(viewHolder.getAdapterPosition());
+        viewHolder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //Check if all task are done and if it's true enable bottom main action button
+            checkedActionsHashMap.put(routeStopActivity, isChecked);
+            if (stop != null) {
+                nestedFragmentCallback.setActionButtonVisible(
+                    isAllChecked(),
+                    stop.getTask() == RouteStopTask.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered
+                );
+            }
+        });
+
+        if (TextUtils.isEmpty(routeStopActivity.getDescription())) {
+            viewHolder.layoutDetails.setVisibility(View.GONE);
+        } else {
+            viewHolder.txtDescription.setText(routeStopActivity.getDescription());
+            viewHolder.layoutDetails.setVisibility(View.VISIBLE);
+        }
+        if (routeStopActivity.getType() != null) {
+            switch (routeStopActivity.getType()) {
+                case PICKUP:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case DELIVER:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case PAY_RESTAURANT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case PREPARE_CHANGE:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case COLLECT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case HALAL:
+                case NON_HALAL:
+                    setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
+                    break;
+
+            }
+        }
+
+        // only for delivery type of item we need to show restaurant name to
+        // let rider know from witch restaurant  this delivery order is
+        if (routeStopActivity.getType() != RouteStopActivityType.DELIVER ||
+            TextUtils.isEmpty(stop.getVendorName())) {
+            viewHolder.layoutVendorName.setVisibility(View.GONE);
+        } else {
+            viewHolder.txtVendorName.setText(stop.getVendorName());
+            viewHolder.layoutVendorName.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Set data for next and last step for
+     * with arrow, expandable view and labels
+     * add preview content to the {@link com.foodpanda.urbanninja.ui.fragments.MapAddressDetailsFragment}
+     *
+     * @param viewHolder last, next step layout container
+     */
+    private void setDataForNextLastStep(ViewHolderHeaderFooter viewHolder) {
+        //get last of next step depend on position of the view
+        Stop stop = isHeaderView(viewHolder) ? this.stop : storageManager.getNextStop();
+
+        viewHolder.txtName.setText(context.getResources().getString(R.string.task_details_go_to, stop.getName()));
+
+        int stringRes = isHeaderView(viewHolder) ? R.string.route_action_last_step : R.string.route_action_up_step;
+        viewHolder.txtType.setText(stringRes);
+
+        viewHolder.expandableLayout.setOnClickListener(v ->
+            expandLayout(viewHolder.expandableLayout, viewHolder.imageView, viewHolder.getAdapterPosition()));
+
+        //to make pre-view unique and to not replace it with last or next step
+        //we need to set custom id for each type of view
+        viewHolder.stepFrameLayout.setId(isHeaderView(viewHolder) ? R.id.last_step : R.id.next_step);
+
+        //add fragment with pre-view content
+        showMapAddressCallback.showNextPreviousStep(stop, viewHolder.stepFrameLayout.getId());
+    }
+
+    /**
+     * Detect adapter position
+     * for the header view return true
+     *
+     * @param viewHolder view which position we need to check
+     * @return true if this is header view last step in our case
+     */
+    private boolean isHeaderView(ViewHolderHeaderFooter viewHolder) {
+        return viewHolder.getAdapterPosition() == 0;
     }
 
     /**
@@ -206,7 +260,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      */
     private void expandLayout(
         ExpandableLayout expandableLayout,
-        ImageView imageView) {
+        ImageView imageView,
+        int position
+    ) {
 
         expandableLayout.toggleExpansion();
         int imageResource;
@@ -217,22 +273,52 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         } else {
             imageResource = R.drawable.icon_deliver_up;
             backgroundResource = R.drawable.list_item_stop_header_selected;
+            scrollToEndOfFooterView(expandableLayout, position);
         }
         imageView.setImageDrawable(ContextCompat.getDrawable(context, imageResource));
         expandableLayout.setBackgroundResource(backgroundResource);
     }
 
+    /**
+     * Scroll to the end of the view to show all content
+     * Only footer view should be animated
+     *
+     * @param expandableLayout layout that should be animated
+     * @param position         position of item to know is to last one
+     */
+    private void scrollToEndOfFooterView(ExpandableLayout expandableLayout, int position) {
+        if (position == getItemCount() - 1) {
+            expandableLayout.setOnExpandListener(new ExpandableLayout.OnExpandListener() {
+                @Override
+                public void onToggle(ExpandableLayout view, View child, boolean isExpanded) {
+                    recyclerView.smoothScrollBy(0, child.getMeasuredHeight());
+                }
+
+                @Override
+                public void onExpandOffset(ExpandableLayout view, View child, float offset, boolean isExpanding) {
+
+                }
+            });
+        }
+    }
 
     /**
      * Set type depend on position
-     * we have two types of view header and regular item
+     * we have three types of view header, footer and regular item
      *
      * @param position position of the view
      * @return type of view
      */
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? TYPE_HEADER : TYPE_ITEM;
+        int type = TYPE_ITEM;
+        //if the position is first one or the last one and we have more stops to do we show
+        //last or next step layout with expandable map inside
+        if (position == 0 || (position == getItemCount() - 1 && storageManager.hasNextStop())) {
+            type = TYPE_HEADER_OR_FOOTER;
+        }
+
+        return type;
     }
 
     private String getFormattedPrice(RouteStopActivity routeStopActivity) {
@@ -244,6 +330,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public TextView txtName;
         public ExpandableLayout expandableLayout;
         public ImageView imageView;
+        public FrameLayout stepFrameLayout;
 
         public ViewHolderHeaderFooter(View view) {
             super(view);
@@ -251,6 +338,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             txtName = (TextView) view.findViewById(R.id.txt_name);
             expandableLayout = (ExpandableLayout) view.findViewById(R.id.expand_layout);
             imageView = (ImageView) view.findViewById(R.id.image_arrow);
+            stepFrameLayout = (FrameLayout) view.findViewById(R.id.step_layout);
         }
     }
 
@@ -280,12 +368,12 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             halalHeaderView = view.findViewById(R.id.halal_header_layout);
             contentLayout = (LinearLayout) view.findViewById(R.id.main_content_layout);
         }
+
     }
 
     private boolean isAllChecked() {
         for (RouteStopActivity routeStopActivity : objects) {
             if (!checkedActionsHashMap.get(routeStopActivity)) {
-
                 return false;
             }
         }
@@ -310,12 +398,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      * Here we set the number of not only content items count
      * but also include footer and header view
      * so we have +2 here because of header and footer
+     * however in case when we don't have next step we only should add header
      *
      * @return count of ALL items in a recycler view with header and footer
      */
     @Override
     public int getItemCount() {
-        return objects.size() + 1;
+        return objects.size() + (storageManager.hasNextStop() ? 2 : 1);
     }
 
     /**

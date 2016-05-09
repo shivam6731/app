@@ -10,10 +10,12 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
+import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
@@ -24,7 +26,8 @@ import org.joda.time.DateTime;
 
 public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter>
     implements TimerDataProvider,
-    ShowMapAddressCallback {
+    ShowMapAddressCallback,
+    MapAddressDetailsCallback {
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
 
@@ -84,7 +87,8 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
             currentStop,
             activity,
             nestedFragmentCallback,
-            this);
+            this,
+            recyclerView);
     }
 
     @Override
@@ -131,5 +135,21 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
             false);
 
         addFragment(viewContainerId, mapAddressDetailsFragment);
+
+    }
+
+    @Override
+    public void setActionButtonVisible(boolean isVisible) {
+
+    }
+
+    @Override
+    public void onSeeMapClicked(GeoCoordinate geoCoordinate, String pinLabel) {
+        nestedFragmentCallback.onSeeMapClicked(geoCoordinate, pinLabel);
+    }
+
+    @Override
+    public void onPhoneNumberClicked(String phoneNumber) {
+
     }
 }

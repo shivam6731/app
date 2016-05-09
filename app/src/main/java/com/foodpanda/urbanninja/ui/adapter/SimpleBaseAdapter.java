@@ -113,7 +113,7 @@ public abstract class SimpleBaseAdapter<T, VH extends SimpleBaseAdapter.BaseView
 
         @Override
         public void onClick(View view) {
-            if (onItemClickListener != null) {
+            if (onItemClickListener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
                 onItemClickListener.onItemClick(view, getAdapterPosition());
             }
             if (selectedView != null) {
