@@ -101,36 +101,45 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     }
                 }
             });
-
-            switch (routeStopActivity.getType()) {
-                case PICKUP:
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
-                    break;
-                case DELIVER:
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
-                    break;
-                case PAY_RESTAURANT:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
-                    break;
-                case PREPARE_CHANGE:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
-                    break;
-                case COLLECT:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
-                    break;
-
-            }
             if (TextUtils.isEmpty(routeStopActivity.getDescription())) {
                 viewHolder.layoutDetails.setVisibility(View.GONE);
             } else {
                 viewHolder.txtDescription.setText(routeStopActivity.getDescription());
                 viewHolder.layoutDetails.setVisibility(View.VISIBLE);
             }
+
+            switch (routeStopActivity.getType()) {
+                case PICKUP:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case DELIVER:
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case PAY_RESTAURANT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case PREPARE_CHANGE:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case COLLECT:
+                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
+                    setNotRelatedToHalalActionLayout(viewHolder);
+                    break;
+                case HALAL:
+                case NON_HALAL:
+                    setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
+                    break;
+            }
+
 
             // only for delivery type of item we need to show restaurant name to
             // let rider know from witch restaurant  this delivery order is
@@ -155,6 +164,45 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 }
             });
             showMapAddressCallback.showNextPreviousStep(stop, R.id.step_layout);
+        }
+    }
+
+    /**
+     * set default layout background color and header view state for all task not related to halal
+     *
+     * @param viewHolder container for action
+     */
+    private void setNotRelatedToHalalActionLayout(ViewHolder viewHolder) {
+        viewHolder.halalHeaderView.setVisibility(View.GONE);
+        viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.main_background_color));
+    }
+
+    /**
+     * set layout background color and header view state for halal and not-halal tasks
+     * moreover set name for action section
+     *
+     * @param viewHolder        container for action
+     * @param routeStopActivity route stop action related to halal
+     */
+    private void setRelatedToHalalActionLayout(ViewHolder viewHolder, RouteStopActivity routeStopActivity) {
+        viewHolder.halalHeaderView.setVisibility(View.VISIBLE);
+        viewHolder.layoutDetails.setVisibility(View.VISIBLE);
+
+        switch (routeStopActivity.getType()) {
+            case HALAL:
+                viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.halal_background_color));
+                viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.green_text_color));
+                viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_green);
+                viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_halal));
+                viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_halal_description));
+                break;
+            case NON_HALAL:
+                viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.not_halal_background_color));
+                viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.toolbar_color));
+                viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_red);
+                viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_not_halal));
+                viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_not_halal_description));
+                break;
         }
     }
 
@@ -222,6 +270,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public ImageView imageSelected;
         public CheckBox checkBoxDone;
         public LinearLayout layoutDetails;
+        public View halalHeaderView;
+        public LinearLayout contentLayout;
 
         public TextView txtRestaurantName;
         public LinearLayout layoutRestaurantName;
@@ -236,6 +286,9 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
             layoutRestaurantName = (LinearLayout) view.findViewById(R.id.layout_restaurant_name);
             txtRestaurantName = (TextView) view.findViewById(R.id.txt_stop_restaurant_name);
+
+            halalHeaderView = view.findViewById(R.id.halal_header_layout);
+            contentLayout = (LinearLayout) view.findViewById(R.id.main_content_layout);
         }
     }
 

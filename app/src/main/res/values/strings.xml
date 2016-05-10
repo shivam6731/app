@@ -46,6 +46,8 @@
     <string name="task_details_call">Call</string>
     <string name="task_details_pick_up">Pick up</string>
     <string name="task_details_delivery">Delivery</string>
+    <string name="task_details_halal">Make sure you put the food in the green box</string>
+    <string name="task_details_not_halal">Make sure you put the food in the orange box</string>
 
     <!-- Errors -->
     <string name="dialog_please_wait">Please wait…</string>
@@ -93,6 +95,10 @@
     <string name="route_action_restaurant">Restaurant:</string>
     <string name="route_action_last_step">Last Step</string>
     <string name="route_action_up_step">Next Step</string>
+    <string name="route_action_halal">Halal order</string>
+    <string name="route_action_not_halal">Non-Halal order</string>
+    <string name="route_action_halal_description">Put the food in the green box!</string>
+    <string name="route_action_not_halal_description">Put the food in the orange box!</string>
 
     <!-- Cash Report-->
     <string name="cash_report_total">Total %1$s</string>

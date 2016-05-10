@@ -25,4 +25,6 @@
     <color name="action_header_footer">#e0e0e0</color>
     <color name="schedule_circle_background">#EAE8E3</color>
     <color name="schedule_text_color">#8E969D</color>
+    <color name="halal_background_color">#E3F1EC</color>
+    <color name="not_halal_background_color">#F7E9E5</color>
 </resources>

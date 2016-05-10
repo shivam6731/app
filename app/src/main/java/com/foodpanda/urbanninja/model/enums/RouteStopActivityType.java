@@ -5,5 +5,7 @@ public enum RouteStopActivityType {
     PAY_RESTAURANT,
     PREPARE_CHANGE,
     COLLECT,
-    DELIVER;
+    DELIVER,
+    HALAL,
+    NON_HALAL
 }
