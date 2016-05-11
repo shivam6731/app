@@ -17,7 +17,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.receiver.ScheduleFinishedReceiver;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
@@ -89,23 +89,23 @@ public class ApiExecutor {
     }
 
     /**
-     * Notify server if any kind of action with route was happened
-     * and store this action to the map to save up to date status for each route
+     * Notify server if any kind of status with route was happened
+     * and store this status to the map to save up to date status for each route
      * <p/>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
      *
-     * @param action that should be sent to the server side
+     * @param status that should be sent to the server side
      */
-    public void notifyActionPerformed(final Action action) {
+    public void notifyActionPerformed(final Status status) {
         if (storageManager.getCurrentStop() != null) {
             long routeId = storageManager.getCurrentStop().getId();
 
-            storageManager.storeAction(routeId, action);
-            apiManager.notifyActionPerformed(routeId, action);
+            storageManager.storeStatus(routeId, status);
+            apiManager.notifyActionPerformed(routeId, status);
 
-            if (action == Action.COMPLETED) {
+            if (status == Status.COMPLETED) {
                 finishWithCurrentRoute();
             }
         }
@@ -286,7 +286,7 @@ public class ApiExecutor {
      * here we get current emulated schedule as part of schedule list
      * {@link #setScheduleWrappers(ScheduleCollectionWrapper)}
      */
-    public ScheduleWrapper getScheduleWrapper() {
+    ScheduleWrapper getScheduleWrapper() {
         return scheduleWrapper;
     }
 }

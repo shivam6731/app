@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.api.request;
 
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
@@ -37,8 +38,8 @@ public interface LogisticsService {
     @GET(ApiTag.GET_SCHEDULE_URL)
     Call<ScheduleCollectionWrapper> getRiderSchedule(
         @Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId,
-        @Query(ApiTag.SCHEDULE_START_TIME_TAG) DateTime startAt,
-        @Query(ApiTag.SCHEDULE_END_TIME_TAG) DateTime endAt,
+        @Query(ApiTag.START_TIME_TAG) DateTime startAt,
+        @Query(ApiTag.END_TIME_TAG) DateTime endAt,
         @Query(ApiTag.SORT) String sort);
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
@@ -58,4 +59,11 @@ public interface LogisticsService {
     Call<RiderLocationCollectionWrapper> sendLocation(
         @Path(ApiTag.VEHICLE_TAG) int vehicleId,
         @Body RiderLocationCollectionWrapper riderLocation);
+
+    @GET(ApiTag.ORDERS_REPORT)
+    Call<OrdersReportCollection> getOrdersReport(
+        @Path(ApiTag.USER_TAG) int riderId,
+        @Query(ApiTag.START_TIME_TAG) DateTime startAt,
+        @Query(ApiTag.END_TIME_TAG) DateTime endAt,
+        @Query(ApiTag.ORER_REPORT_TIME_ZONE) String timezone);
 }

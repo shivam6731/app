@@ -8,12 +8,12 @@
     android:padding="@dimen/padding_default">
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
-        android:id="@+id/txt_restaurant_name_title"
+        android:id="@+id/txt_vendor_name_title"
         style="@style/TextView.CardDescription"
-        android:text="@string/task_details_restaurant_name"/>
+        android:text="@string/task_details_vendor_name"/>
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
-        android:id="@+id/txt_restaurant_name"
+        android:id="@+id/txt_vendor_name"
         style="@style/TextView.Title.Multiline.NotBold.Address"/>
 
     <View

@@ -24,7 +24,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -50,9 +50,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private StorageManager storageManager;
 
     public static OrdersNestedFragment newInstance() {
-        OrdersNestedFragment fragment = new OrdersNestedFragment();
-
-        return fragment;
+        return new OrdersNestedFragment();
     }
 
     private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
@@ -182,23 +180,23 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case EMPTY_LIST:
                 break;
             case VIEWING:
-                apiExecutor.notifyActionPerformed(Action.ON_THE_WAY);
+                apiExecutor.notifyActionPerformed(Status.ON_THE_WAY);
                 userStatus = UserStatus.ARRIVING;
                 showDoneCheckbox();
                 actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVING:
                 openRouteStopActionList(storageManager.getCurrentStop());
-                apiExecutor.notifyActionPerformed(Action.ARRIVED);
+                apiExecutor.notifyActionPerformed(Status.ARRIVED);
                 break;
             case ACTION_LIST:
-                apiExecutor.notifyActionPerformed(Action.COMPLETED);
+                apiExecutor.notifyActionPerformed(Status.COMPLETED);
                 break;
         }
     }
 
     /**
-     * Next step checkbox should be visible only in Action.ON_THE_WAY status
+     * Next step checkbox should be visible only in Status.ON_THE_WAY status
      * so we have to make it visible manually
      */
     private void showDoneCheckbox() {
@@ -288,7 +286,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case ASSIGNED:
             case VIEWED:
                 userStatus = UserStatus.VIEWING;
-                apiExecutor.notifyActionPerformed(Action.VIEWED);
+                apiExecutor.notifyActionPerformed(Status.VIEWED);
                 openRouteStopDetails(stop);
                 actionLayoutHelper.setDrivingHereStatusActionButton();
                 break;

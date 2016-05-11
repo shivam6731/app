@@ -6,9 +6,10 @@ import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
-import com.foodpanda.urbanninja.api.model.StorableAction;
+import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.Status;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -23,13 +24,13 @@ public class ApiQueue {
     private static ApiQueue instance = new ApiQueue();
     private StorageManager storageManager;
 
-    private Queue<StorableAction> requestsQueue = new LinkedList<>();
+    private Queue<StorableStatus> requestsQueue = new LinkedList<>();
     private Queue<RiderLocation> requestsLocationQueue = new LinkedList<>();
     private int vehicleId;
 
     private ApiQueue() {
         storageManager = App.STORAGE_MANAGER;
-        requestsQueue = storageManager.getActionApiRequestList();
+        requestsQueue = storageManager.getStatusApiRequestList();
         requestsLocationQueue = storageManager.getLocationApiRequestList();
         vehicleId = storageManager.getVehicleId();
     }
@@ -42,15 +43,15 @@ public class ApiQueue {
     /**
      * store riders action request data
      *
-     * @param performActionWrapper wrapper for user Action
-     *                             {@link com.foodpanda.urbanninja.model.enums.Action}
+     * @param performActionWrapper wrapper for user Status
+     *                             {@link Status}
      *                             and executed time
      * @param routeId              route id is required param from the API request
      */
     public void enqueueAction(PerformActionWrapper performActionWrapper, long routeId) {
 
-        requestsQueue.add(new StorableAction(performActionWrapper, routeId));
-        storageManager.storeActionApiRequests(requestsQueue);
+        requestsQueue.add(new StorableStatus(performActionWrapper, routeId));
+        storageManager.storeStatusApiRequests(requestsQueue);
     }
 
     public void enqueueLocation(RiderLocationCollectionWrapper riderLocationCollectionWrapper, int vehicleId) {
@@ -70,12 +71,12 @@ public class ApiQueue {
      */
     private void resendAction(LogisticsService service) {
         if (!requestsQueue.isEmpty()) {
-            StorableAction storableAction = requestsQueue.remove();
-            Call<Stop> call = service.notifyActionPerformed(storableAction.getRouteId(), storableAction.getPerformActionWrapper());
-            call.enqueue(new RetryActionCallback<>(call, storableAction.getRouteId(), storableAction.getPerformActionWrapper()));
+            StorableStatus storableStatus = requestsQueue.remove();
+            Call<Stop> call = service.notifyActionPerformed(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper());
+            call.enqueue(new RetryActionCallback<>(call, storableStatus.getRouteId(), storableStatus.getPerformActionWrapper()));
             resendAction(service);
         }
-        storageManager.storeActionApiRequests(requestsQueue);
+        storageManager.storeStatusApiRequests(requestsQueue);
     }
 
     /**

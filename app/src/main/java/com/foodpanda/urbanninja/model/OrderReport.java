@@ -7,19 +7,19 @@ import java.util.List;
 
 public class OrderReport implements ParcelableModel {
     private String code;
-    private List<OrderStop> orderSteps;
+    private List<OrderStop> orderStops;
 
     public OrderReport() {
     }
 
-    public OrderReport(String code, List<OrderStop> orderSteps) {
+    public OrderReport(String code, List<OrderStop> orderStops) {
         this.code = code;
-        this.orderSteps = orderSteps;
+        this.orderStops = orderStops;
     }
 
     protected OrderReport(Parcel in) {
         this.code = in.readString();
-        this.orderSteps = in.createTypedArrayList(OrderStop.CREATOR);
+        this.orderStops = in.createTypedArrayList(OrderStop.CREATOR);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class OrderReport implements ParcelableModel {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.code);
-        dest.writeTypedList(orderSteps);
+        dest.writeTypedList(orderStops);
     }
 
     public static final Parcelable.Creator<OrderReport> CREATOR = new Parcelable.Creator<OrderReport>() {
@@ -49,7 +49,7 @@ public class OrderReport implements ParcelableModel {
         return code;
     }
 
-    public List<OrderStop> getOrderSteps() {
-        return orderSteps;
+    public List<OrderStop> getOrderStops() {
+        return orderStops;
     }
 }

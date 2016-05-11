@@ -72,7 +72,7 @@ public class StartingPoint implements MapDetailsProvider {
     }
 
     @Override
-    public String getRestaurantName() {
+    public String getVendorName() {
         return null;
     }
 

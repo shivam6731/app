@@ -8,28 +8,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.model.OrderReport;
-import com.foodpanda.urbanninja.model.OrderStop;
-import com.foodpanda.urbanninja.model.WorkingDay;
-import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.api.BaseApiCallback;
+import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
+import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.ui.adapter.CashReportAdapter;
 import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
 import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
-import org.joda.time.DateTime;
+public class CashReportListFragment extends BaseFragment implements BaseApiCallback<OrdersReportCollection> {
+    private ApiManager apiManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CashReportListFragment extends BaseFragment {
     private RecyclerViewEmpty recyclerView;
 
     public static CashReportListFragment newInstance() {
         CashReportListFragment loginFragment = new CashReportListFragment();
 
         return loginFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiManager = App.API_MANAGER;
     }
 
     @Override
@@ -40,8 +43,10 @@ public class CashReportListFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        super.onViewCreated(view, savedInstanceState);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+            getActivity(),
+            DividerItemDecoration.VERTICAL_LIST,
+            R.drawable.divider);
 
         recyclerView = (RecyclerViewEmpty) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -56,42 +61,19 @@ public class CashReportListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        CashReportAdapter adapter = new CashReportAdapter(list(), activity);
+        activity.showProgress();
+        apiManager.getWorkingDayReport(this);
+    }
+
+    @Override
+    public void onSuccess(OrdersReportCollection workingDays) {
+        CashReportAdapter adapter = new CashReportAdapter(workingDays, activity);
         recyclerView.setAdapter(adapter);
+        activity.hideProgress();
     }
 
-    //TODO should be removed
-    //This is test date it would be deleted with real API
-    private List<WorkingDay> list() {
-        List<WorkingDay> list = new ArrayList<>();
-        for (int i = 0; i < 15; i++) {
-            WorkingDay workingDay = new WorkingDay();
-            workingDay.setDateTime(DateTime.now());
-            workingDay.setTotal(i);
-            List<OrderReport> orderReports = new ArrayList<>();
-            for (int j = 0; j < 5; j++) {
-                OrderReport orderReport = new OrderReport("code" + i, generateReportSteps());
-                orderReports.add(orderReport);
-            }
-            workingDay.setOrderReports(orderReports);
-            list.add(workingDay);
-        }
-
-        return list;
-    }
-
-    //TODO should be removed
-    //This is test date it would be deleted with real API
-    private List<OrderStop> generateReportSteps() {
-        List<OrderStop> orderStops = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            orderStops.add(new OrderStop(
-                "name" + i,
-                i,
-                i % 2 == 0 ? RouteStopStatus.DELIVER : RouteStopStatus.PICKUP,
-                i % 3 == 0 ? Action.CANCELED : Action.COMPLETED));
-        }
-
-        return orderStops;
+    @Override
+    public void onError(ErrorMessage errorMessage) {
+        activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
     }
 }

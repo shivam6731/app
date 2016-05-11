@@ -10,7 +10,6 @@ public class DeliveryZone implements ParcelableModel {
     public DeliveryZone() {
     }
 
-
     @Override
     public int describeContents() {
         return 0;

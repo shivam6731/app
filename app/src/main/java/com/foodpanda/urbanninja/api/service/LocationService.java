@@ -150,7 +150,7 @@ public class LocationService extends Service implements
         Toast.makeText(this, connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
-    public void disconnect() {
+    private void disconnect() {
         unregisterReceiver(batteryLevelReceiver);
         if (timer != null) {
             timer.cancel();
@@ -281,6 +281,13 @@ public class LocationService extends Service implements
         sendBroadcast(intent);
     }
 
+    /**
+     * Store new location to the list with additional information
+     * such as accuracy speed and battery level
+     * this data would be send with #sendRiderLocation() will be triggered
+     *
+     * @param location new rider location
+     */
     private void storeLocation(Location location) {
         RiderLocation riderLocation = new RiderLocation();
         riderLocation.setGeoCoordinate(new GeoCoordinate(location.getLatitude(), location.getLongitude()));

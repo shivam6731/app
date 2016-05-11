@@ -21,7 +21,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.OrderReport;
 import com.foodpanda.urbanninja.model.OrderStop;
 import com.foodpanda.urbanninja.model.WorkingDay;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.utils.DateUtil;
 import com.foodpanda.urbanninja.utils.FormatUtil;
 
@@ -56,22 +56,25 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
     @Override
     public void onBindParentViewHolder(ViewHolderHeader parentViewHolder, int position, ParentListItem parentListItem) {
         WorkingDay workingDay = (WorkingDay) parentListItem;
-        parentViewHolder.txtDate.setText(DateUtil.formatTimeDayMonthYear(workingDay.getDateTime()));
+        parentViewHolder.txtDate.setText(DateUtil.formatTimeDayMonthYear(workingDay.getDate()));
         parentViewHolder.txtTotal.setText(context.getString(R.string.cash_report_total,
             FormatUtil.getValueWithCurrencySymbolFromNumber(
                 storageManager.getCountry(), workingDay.getTotal())));
+        parentViewHolder.txtTotal.setTextColor(
+            ContextCompat.getColor(context, workingDay.getTotal() >= 0 ? R.color.green_text_color : R.color.warnining_text_color))
+        ;
     }
 
     @Override
     public void onBindChildViewHolder(ViewHolderItem childViewHolder, int position, Object childListItem) {
         OrderReport orderReport = (OrderReport) childListItem;
-        childViewHolder.txtCode.setText(orderReport.getCode());
 
+        childViewHolder.txtCode.setText(orderReport.getCode());
         childViewHolder.reportStepsLayout.removeAllViews();
 
         //each order step should be set in separate layout to be able
         //to the information for orders with more then two steps
-        for (OrderStop orderStop : orderReport.getOrderSteps()) {
+        for (OrderStop orderStop : orderReport.getOrderStops()) {
             drawOrderSteps(childViewHolder.reportStepsLayout, orderStop);
         }
     }
@@ -82,7 +85,7 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
      * order name and value of money that was earned or paid
      *
      * @param reportStepsLayout root layout where data would be drawn
-     * @param orderStop   step object that should be set
+     * @param orderStop         step object that should be set
      */
     private void drawOrderSteps(LinearLayout reportStepsLayout, OrderStop orderStop) {
         View view = View.inflate(context, R.layout.list_item_cash_report_step, null);
@@ -94,9 +97,9 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
             txtName.setText(orderStop.getName());
         }
 
-        if (orderStop.getAction() == Action.CANCELED) {
+        if (orderStop.getStatus() == Status.CANCELED) {
             txtName.setText(context.getString(R.string.cash_report_cancelled));
-            txtName.setTextColor(ContextCompat.getColor(context, R.color.timer_late_text));
+            txtName.setTextColor(ContextCompat.getColor(context, R.color.warnining_text_color));
         }
 
         setImageForOrderType(orderStop, txtName);
@@ -109,11 +112,11 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
      * set image marker for order step
      *
      * @param orderStop order step
-     * @param txtName         textView where drawable left would be set
+     * @param txtName   textView where drawable left would be set
      */
     private void setImageForOrderType(OrderStop orderStop, TextView txtName) {
         int drawableResource = 0;
-        switch (orderStop.getRouteStopStatus()) {
+        switch (orderStop.getTask()) {
             case PICKUP:
                 drawableResource = R.drawable.icon_pickup_small_black;
                 break;
@@ -121,7 +124,7 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
                 drawableResource = R.drawable.icon_deliver_small_black;
                 break;
         }
-        if (orderStop.getAction() == Action.CANCELED) {
+        if (orderStop.getStatus() == Status.CANCELED) {
             drawableResource = R.drawable.icon_cancelled_small_red;
         }
 

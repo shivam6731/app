@@ -2,8 +2,8 @@ package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
 
-import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 
 import org.joda.time.DateTime;
 
@@ -18,23 +18,23 @@ public class Stop implements MapDetailsProvider {
     private int loadUponArrival;
     private TimeWindow timeWindow;
     private DateTime arrivalTime;
-    private Action status;
+    private Status status;
     private GeoCoordinate gps;
     private String name;
     private String comment;
     private String address;
-    private RouteStopStatus task;
+    private RouteStopTask task;
     private List<RouteStopActivity> activities;
     private String pickupPhone;
     private String deliveryPhone;
     private long orderId;
     private String orderCode;
-    private String restaurantName;
+    private String vendorName;
 
     /**
      * need this constructor only for test
      */
-    Stop(String deliveryPhone, String pickupPhone, RouteStopStatus task) {
+    Stop(String deliveryPhone, String pickupPhone, RouteStopTask task) {
         this.deliveryPhone = deliveryPhone;
         this.pickupPhone = pickupPhone;
         this.task = task;
@@ -66,7 +66,7 @@ public class Stop implements MapDetailsProvider {
         dest.writeString(deliveryPhone);
         dest.writeLong(orderId);
         dest.writeString(orderCode);
-        dest.writeString(restaurantName);
+        dest.writeString(vendorName);
     }
 
     public Stop() {
@@ -82,19 +82,19 @@ public class Stop implements MapDetailsProvider {
         this.timeWindow = in.readParcelable(TimeWindow.class.getClassLoader());
         this.arrivalTime = (DateTime) in.readSerializable();
         int tmpStatus = in.readInt();
-        this.status = tmpStatus == -1 ? null : Action.values()[tmpStatus];
+        this.status = tmpStatus == -1 ? null : Status.values()[tmpStatus];
         this.gps = in.readParcelable(GeoCoordinate.class.getClassLoader());
         this.name = in.readString();
         this.comment = in.readString();
         this.address = in.readString();
         int tmpTask = in.readInt();
-        this.task = tmpTask == -1 ? null : RouteStopStatus.values()[tmpTask];
+        this.task = tmpTask == -1 ? null : RouteStopTask.values()[tmpTask];
         this.activities = in.createTypedArrayList(RouteStopActivity.CREATOR);
         this.pickupPhone = in.readString();
         this.deliveryPhone = in.readString();
         this.orderId = in.readLong();
         this.orderCode = in.readString();
-        this.restaurantName = in.readString();
+        this.vendorName = in.readString();
     }
 
     public static final Creator<Stop> CREATOR = new Creator<Stop>() {
@@ -139,7 +139,7 @@ public class Stop implements MapDetailsProvider {
         return arrivalTime;
     }
 
-    public Action getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -149,10 +149,10 @@ public class Stop implements MapDetailsProvider {
 
     @Override
     public String getPhoneNumber() {
-        return RouteStopStatus.DELIVER == getTask() ? deliveryPhone : pickupPhone;
+        return RouteStopTask.DELIVER == getTask() ? deliveryPhone : pickupPhone;
     }
 
-    public RouteStopStatus getTask() {
+    public RouteStopTask getTask() {
         return task;
     }
 
@@ -172,11 +172,11 @@ public class Stop implements MapDetailsProvider {
         return orderId;
     }
 
-    public String getRestaurantName() {
-        return restaurantName;
+    public String getVendorName() {
+        return vendorName;
     }
 
-    public void setStatus(Action status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -184,7 +184,7 @@ public class Stop implements MapDetailsProvider {
         this.id = id;
     }
 
-    public void setTask(RouteStopStatus task) {
+    public void setTask(RouteStopTask task) {
         this.task = task;
     }
 
@@ -213,6 +213,6 @@ public class Stop implements MapDetailsProvider {
 
     @Override
     public boolean isDoneButtonVisible() {
-        return status == Action.ON_THE_WAY;
+        return status == Status.ON_THE_WAY;
     }
 }

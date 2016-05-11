@@ -53,8 +53,8 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     public static final float MARKER_ANCHOR = 0.5f;
 
-    private static final int POSITION_RESTAURANT_NAME_PICK_UP = 2;
-    private static final int POSITION_RESTAURANT_NAME_DELIVERY = 3;
+    private static final int POSITION_VENDOR_NAME_PICK_UP = 2;
+    private static final int POSITION_VENDOR_NAME_DELIVERY = 3;
 
     private TextView txtName;
     private TextView txtAddress;
@@ -265,7 +265,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         txtName.setText(getResources().getString(R.string.task_details_go_to, mapDetailsProvider.getName()));
         setComment(mapDetailsProvider.getComment());
         setAddress(mapDetailsProvider.getAddress());
-        showRestaurantName();
+        showVendorName();
     }
 
     /**
@@ -297,30 +297,30 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     }
 
     /**
-     * The restaurant name is required field for route details information screen
-     * In case when restaurant name is long and needs more then one line
+     * The vendor name is required field for route details information screen
+     * In case when vendor name is long and needs more then one line
      * we show this details in a separate details layout
      * when type is #DELIVERY this name should be below the map
      * if type is #PICK_UP the name should be the last item
      */
-    private void showRestaurantName() {
-        if (isRouteDetailsShown) {
-            LinearLayout restaurantNameLayout = (LinearLayout)
-                View.inflate(activity, R.layout.map_address_restaurant_name_layout, null);
+    private void showVendorName() {
+        if (isRouteDetailsShown && !TextUtils.isEmpty(mapDetailsProvider.getVendorName())) {
+            LinearLayout vendorNameLayout = (LinearLayout)
+                View.inflate(activity, R.layout.map_address_vendor_name_layout, null);
 
-            TextView txtRestaurantName = (TextView) restaurantNameLayout.findViewById(R.id.txt_restaurant_name);
-            TextView txtRestaurantNameTitle = (TextView) restaurantNameLayout.findViewById(R.id.txt_restaurant_name_title);
+            TextView txtVendorName = (TextView) vendorNameLayout.findViewById(R.id.txt_vendor_name);
+            TextView txtVendorNameTitle = (TextView) vendorNameLayout.findViewById(R.id.txt_vendor_name_title);
 
-            txtRestaurantName.setText(mapDetailsProvider.getRestaurantName());
+            txtVendorName.setText(mapDetailsProvider.getVendorName());
 
             switch (mapPointType) {
                 case DELIVERY:
-                    txtRestaurantNameTitle.setText(getString(R.string.task_details_restaurant_name_at_customer));
-                    layoutAllContent.addView(restaurantNameLayout, POSITION_RESTAURANT_NAME_DELIVERY);
+                    txtVendorNameTitle.setText(getString(R.string.task_details_vendor_name_at_customer));
+                    layoutAllContent.addView(vendorNameLayout, POSITION_VENDOR_NAME_DELIVERY);
                     break;
                 case PICK_UP:
-                    txtRestaurantNameTitle.setText(getString(R.string.task_details_restaurant_name));
-                    layoutAllContent.addView(restaurantNameLayout, POSITION_RESTAURANT_NAME_PICK_UP);
+                    txtVendorNameTitle.setText(getString(R.string.task_details_vendor_name));
+                    layoutAllContent.addView(vendorNameLayout, POSITION_VENDOR_NAME_PICK_UP);
                     break;
             }
         }

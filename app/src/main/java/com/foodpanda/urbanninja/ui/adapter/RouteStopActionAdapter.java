@@ -18,7 +18,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.widget.ExpandableLayout;
@@ -97,7 +97,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     checkedActionsHashMap.put(routeStopActivity, isChecked);
                     if (stop != null) {
                         nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
-                            stop.getTask() == RouteStopStatus.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
+                            stop.getTask() == RouteStopTask.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                     }
                 }
             });
@@ -144,11 +144,11 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             // only for delivery type of item we need to show restaurant name to
             // let rider know from witch restaurant  this delivery order is
             if (routeStopActivity.getType() != RouteStopActivityType.DELIVER ||
-                TextUtils.isEmpty(stop.getRestaurantName())) {
-                viewHolder.layoutRestaurantName.setVisibility(View.GONE);
+                TextUtils.isEmpty(stop.getVendorName())) {
+                viewHolder.layoutVendorName.setVisibility(View.GONE);
             } else {
-                viewHolder.txtRestaurantName.setText(stop.getRestaurantName());
-                viewHolder.layoutRestaurantName.setVisibility(View.VISIBLE);
+                viewHolder.txtVendorName.setText(stop.getVendorName());
+                viewHolder.layoutVendorName.setVisibility(View.VISIBLE);
             }
 
         } else if (holder instanceof ViewHolderHeaderFooter && !TextUtils.isEmpty(stop.getOrderCode())) {
@@ -273,8 +273,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public View halalHeaderView;
         public LinearLayout contentLayout;
 
-        public TextView txtRestaurantName;
-        public LinearLayout layoutRestaurantName;
+        public TextView txtVendorName;
+        public LinearLayout layoutVendorName;
 
         public ViewHolder(View view) {
             super(view);
@@ -284,8 +284,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
             layoutDetails = (LinearLayout) view.findViewById(R.id.layout_details);
 
-            layoutRestaurantName = (LinearLayout) view.findViewById(R.id.layout_restaurant_name);
-            txtRestaurantName = (TextView) view.findViewById(R.id.txt_stop_restaurant_name);
+            layoutVendorName = (LinearLayout) view.findViewById(R.id.layout_vendor_name);
+            txtVendorName = (TextView) view.findViewById(R.id.txt_stop_vendor_name);
 
             halalHeaderView = view.findViewById(R.id.halal_header_layout);
             contentLayout = (LinearLayout) view.findViewById(R.id.main_content_layout);

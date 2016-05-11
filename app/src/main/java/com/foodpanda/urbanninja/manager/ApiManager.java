@@ -15,6 +15,7 @@ import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
+import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
@@ -30,7 +31,8 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -175,7 +177,7 @@ public class ApiManager implements Managable {
     public void getScheduleList(BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
     ) {
         DateTime dateTimeNow = DateTime.now();
-        DateTime dateTimeEnd = DateTime.now().plusDays(Constants.SCHEDULE_LIST_RANGE);
+        DateTime dateTimeEnd = DateTime.now().plusDays(Constants.SCHEDULE_ORDERS_REPORT_LIST_RANGE_DAYS);
 
         getScheduleList(dateTimeNow, dateTimeEnd, baseApiCallback);
     }
@@ -219,8 +221,8 @@ public class ApiManager implements Managable {
         });
     }
 
-    public void notifyActionPerformed(long routeId, Action action) {
-        PerformActionWrapper performActionWrapper = new PerformActionWrapper(action, new DateTime());
+    public void notifyActionPerformed(long routeId, Status status) {
+        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
         Call<Stop> call = service.notifyActionPerformed(routeId, performActionWrapper);
         call.enqueue(new RetryActionCallback<>(call, routeId, performActionWrapper));
     }
@@ -270,6 +272,35 @@ public class ApiManager implements Managable {
         }
     }
 
+    public void getWorkingDayReport(BaseApiCallback<OrdersReportCollection> baseApiCallback) {
+        DateTime dateTimeStart = DateTime.now().withTimeAtStartOfDay().minusDays(Constants.SCHEDULE_ORDERS_REPORT_LIST_RANGE_DAYS);
+        DateTime dateTimeEnd = DateTime.now();
+        getWorkingDayReport(
+            dateTimeStart,
+            dateTimeEnd,
+            DateUtil.formatTimeZone(dateTimeStart.toDate()),
+            baseApiCallback);
+    }
+
+    private void getWorkingDayReport(
+        DateTime startAt,
+        DateTime endAt,
+        String timezone,
+        @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
+        TokenData tokenData = storageManager.getTokenData();
+
+        Call<OrdersReportCollection> call = service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone);
+        call.enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback, call) {
+            @Override
+            public void onResponse(Response<OrdersReportCollection> response, Retrofit retrofit) {
+                super.onResponse(response, retrofit);
+                if (response.isSuccess()) {
+                    baseApiCallback.onSuccess(response.body());
+                }
+            }
+        });
+    }
+
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
         Call<CountryListWrapper> call = countryService.getCountries();
@@ -283,5 +314,4 @@ public class ApiManager implements Managable {
             }
         });
     }
-
 }

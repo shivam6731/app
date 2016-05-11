@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/main_background_color">
+    android:background="@android:color/white">
 
     <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_header_date"
         style="@style/TextView.Title.SmallSize.DefaultColor"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/txt_header_total"
-        android:background="@color/main_background_color"
         android:gravity="left"
         android:padding="@dimen/padding_default"/>
 

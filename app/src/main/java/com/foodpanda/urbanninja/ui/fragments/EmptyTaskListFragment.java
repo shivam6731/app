@@ -11,9 +11,8 @@ import com.foodpanda.urbanninja.R;
 public class EmptyTaskListFragment extends BaseFragment {
 
     public static EmptyTaskListFragment newInstance() {
-        EmptyTaskListFragment emptyTaskListFragment = new EmptyTaskListFragment();
 
-        return emptyTaskListFragment;
+        return new EmptyTaskListFragment();
     }
 
     @Nullable

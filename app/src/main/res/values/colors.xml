@@ -20,11 +20,12 @@
     <color name="timer_in_time_background">#e5f5ef</color>
     <color name="timer_in_time_text">#009a5c</color>
     <color name="timer_late_background">#1ad0011b</color>
-    <color name="timer_late_text">#d0021b</color>
+    <color name="warnining_text_color">#d0021b</color>
     <color name="action_header_border">#D1D1D1</color>
     <color name="action_header_footer">#e0e0e0</color>
     <color name="schedule_circle_background">#EAE8E3</color>
     <color name="schedule_text_color">#8E969D</color>
     <color name="halal_background_color">#E3F1EC</color>
     <color name="not_halal_background_color">#F7E9E5</color>
+    <color name="list_divider_color">#33686868</color>
 </resources>

@@ -2,21 +2,14 @@ package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
 
-import com.foodpanda.urbanninja.model.enums.Action;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 
 public class OrderStop implements ParcelableModel {
     private String name;
     private double value;
-    private RouteStopStatus routeStopStatus;
-    private Action action;
-
-    public OrderStop(String name, double value, RouteStopStatus routeStopStatus, Action action) {
-        this.name = name;
-        this.value = value;
-        this.routeStopStatus = routeStopStatus;
-        this.action = action;
-    }
+    private RouteStopTask task;
+    private Status status;
 
     public OrderStop() {
     }
@@ -25,9 +18,9 @@ public class OrderStop implements ParcelableModel {
         this.name = in.readString();
         this.value = in.readDouble();
         int tmpRouteStopTaskStatus = in.readInt();
-        this.routeStopStatus = tmpRouteStopTaskStatus == -1 ? null : RouteStopStatus.values()[tmpRouteStopTaskStatus];
+        this.task = tmpRouteStopTaskStatus == -1 ? null : RouteStopTask.values()[tmpRouteStopTaskStatus];
         int tmpAction = in.readInt();
-        this.action = tmpAction == -1 ? null : Action.values()[tmpAction];
+        this.status = tmpAction == -1 ? null : Status.values()[tmpAction];
     }
 
     @Override
@@ -39,8 +32,8 @@ public class OrderStop implements ParcelableModel {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
         dest.writeDouble(this.value);
-        dest.writeInt(this.routeStopStatus == null ? -1 : this.routeStopStatus.ordinal());
-        dest.writeInt(this.action == null ? -1 : this.action.ordinal());
+        dest.writeInt(this.task == null ? -1 : this.task.ordinal());
+        dest.writeInt(this.status == null ? -1 : this.status.ordinal());
     }
 
     public static final Creator<OrderStop> CREATOR = new Creator<OrderStop>() {
@@ -63,11 +56,11 @@ public class OrderStop implements ParcelableModel {
         return value;
     }
 
-    public RouteStopStatus getRouteStopStatus() {
-        return routeStopStatus;
+    public RouteStopTask getTask() {
+        return task;
     }
 
-    public Action getAction() {
-        return action;
+    public Status getStatus() {
+        return status;
     }
 }

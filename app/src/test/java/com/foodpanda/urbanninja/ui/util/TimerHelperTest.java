@@ -117,7 +117,7 @@ public class TimerHelperTest {
         ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
         int colorId = buttonColor.getColor();
         assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
-        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.warnining_text_color));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class TimerHelperTest {
         ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
         int colorId = buttonColor.getColor();
         assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
-        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.warnining_text_color));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class TimerHelperTest {
         ColorDrawable buttonColor = (ColorDrawable) contentTextView.getBackground();
         int colorId = buttonColor.getColor();
         assertTrue(colorId == ContextCompat.getColor(mainActivity, R.color.timer_late_background));
-        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.timer_late_text));
+        assertTrue(contentTextView.getCurrentTextColor() == ContextCompat.getColor(mainActivity, R.color.warnining_text_color));
     }
 
     @Test
