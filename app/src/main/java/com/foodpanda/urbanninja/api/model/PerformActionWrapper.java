@@ -5,11 +5,11 @@ import com.foodpanda.urbanninja.model.enums.Status;
 import org.joda.time.DateTime;
 
 public class PerformActionWrapper {
-    private Status status;
+    private Status action;
     private DateTime actionPerformedAt;
 
-    public PerformActionWrapper(Status status, DateTime actionPerformedAt) {
-        this.status = status;
+    public PerformActionWrapper(Status action, DateTime actionPerformedAt) {
+        this.action = action;
         this.actionPerformedAt = actionPerformedAt;
     }
 }
