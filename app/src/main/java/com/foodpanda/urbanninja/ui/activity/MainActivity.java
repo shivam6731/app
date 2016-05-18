@@ -1,8 +1,12 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -62,6 +66,15 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     private OrdersNestedFragment ordersNestedFragment;
 
+    //Receive push notification content and force to update data without triggering with click
+    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sendApiRequestAfterPush(intent);
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +98,23 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     }
 
+    /**
+     * Triggers when push notification was clicked
+     *
+     * @param intent contains type on notification
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        sendApiRequestAfterPush(intent);
+    }
+
+    /**
+     * send API request to be up-to-date for all notification types
+     *
+     * @param intent with push notification type to trigger correct API request
+     */
+    private void sendApiRequestAfterPush(Intent intent) {
         if (intent == null) {
             return;
         }
@@ -106,6 +133,18 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
             }
         }
+    }
+
+    @Override
+    public void onStop() {
+        unregisterReceiver(notificationReceiver);
+        super.onStop();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver(notificationReceiver, new IntentFilter(Constants.PUSH_NOTIFICATION_RECEIVED));
     }
 
     private void setNavigationDrawer() {
@@ -262,7 +301,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {

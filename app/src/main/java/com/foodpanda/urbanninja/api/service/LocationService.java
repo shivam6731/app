@@ -281,7 +281,6 @@ public class LocationService extends Service implements
         sendBroadcast(intent);
     }
 
-
     private void storeLocation(Location location) {
         RiderLocation riderLocation = new RiderLocation();
         riderLocation.setGeoCoordinate(new GeoCoordinate(location.getLatitude(), location.getLongitude()));

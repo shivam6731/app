@@ -63,7 +63,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        showNotification(PushNotificationType.valueOf(data.getString("type")));
+        showNotification(PushNotificationType.valueOf(data.getString(Constants.PUSH_NOTIFICATION_TYPE)));
+
+        sendPushNotificationContentToActivity(PushNotificationType.valueOf(data.getString(Constants.PUSH_NOTIFICATION_TYPE)));
     }
 
     /**
@@ -108,5 +110,19 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
 
         notificationManager.notify(0, notificationBuilder.build());
     }
+
+    /**
+     * BroadcastReceiver is only one good way to inform about notification
+     * to the Activity without clicking to notification view in the bar
+     *
+     * @param pushNotificationType type of notification
+     */
+    private void sendPushNotificationContentToActivity(@NonNull PushNotificationType pushNotificationType) {
+        Intent intent = new Intent(Constants.PUSH_NOTIFICATION_RECEIVED);
+        intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE, pushNotificationType);
+
+        sendBroadcast(intent);
+    }
+
 }
 
