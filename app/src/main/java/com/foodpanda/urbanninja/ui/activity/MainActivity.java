@@ -74,7 +74,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +95,15 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+        //Subscribe for all push updates
+        registerReceiver(notificationReceiver, new IntentFilter(Constants.PUSH_NOTIFICATION_RECEIVED));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Un-subscribe from all push updates
+        unregisterReceiver(notificationReceiver);
     }
 
     /**
@@ -133,18 +141,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
             }
         }
-    }
-
-    @Override
-    public void onStop() {
-        unregisterReceiver(notificationReceiver);
-        super.onStop();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        registerReceiver(notificationReceiver, new IntentFilter(Constants.PUSH_NOTIFICATION_RECEIVED));
     }
 
     private void setNavigationDrawer() {

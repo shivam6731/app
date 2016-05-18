@@ -81,6 +81,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //if the view fragment is not alive anymore we shouldn't execute any API request
+        //it allows us to get rid of memory leaks 
+        apiExecutor = null;
+    }
+
+    @Override
     public void onStop() {
         activity.unregisterReceiver(locationChangeReceiver);
         super.onStop();
@@ -111,15 +119,21 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     public void getRidersSchedule() {
-        apiExecutor.getRidersSchedule();
+        if (apiExecutor != null) {
+            apiExecutor.getRidersSchedule();
+        }
     }
 
     public void getRoute() {
-        apiExecutor.getRoute();
+        if (apiExecutor != null) {
+            apiExecutor.getRoute();
+        }
     }
 
     public void startLocationSerivce() {
-        apiExecutor.startLocationService();
+        if (apiExecutor != null) {
+            apiExecutor.startLocationService();
+        }
     }
 
     private void setActionButton(View view) {
