@@ -7,7 +7,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 
@@ -94,11 +94,11 @@ public class ApiExecutorTest {
 
     @Test
     public void testNotifyActionPerformedDoNothingWhenNoCurrentStop() {
-        Action action = Action.COMPLETED;
-        apiExecutor.notifyActionPerformed(action);
+        Status status = Status.COMPLETED;
+        apiExecutor.notifyActionPerformed(status);
 
-        verify(storageManager, never()).storeAction(anyLong(), eq(action));
-        verify(apiManager, never()).notifyActionPerformed(anyLong(), eq(action));
+        verify(storageManager, never()).storeStatus(anyLong(), eq(status));
+        verify(apiManager, never()).notifyActionPerformed(anyLong(), eq(status));
     }
 
     @Test
@@ -108,11 +108,11 @@ public class ApiExecutorTest {
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
-        Action action = Action.ON_THE_WAY;
-        apiExecutor.notifyActionPerformed(action);
+        Status status = Status.ON_THE_WAY;
+        apiExecutor.notifyActionPerformed(status);
 
-        verify(storageManager).storeAction(eq(routeStop.getId()), eq(action));
-        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(action));
+        verify(storageManager).storeStatus(eq(routeStop.getId()), eq(status));
+        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(status));
     }
 
     @Test
@@ -130,12 +130,12 @@ public class ApiExecutorTest {
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
-        Action action = Action.COMPLETED;
+        Status status = Status.COMPLETED;
         assertNotNull(apiExecutor);
-        apiExecutor.notifyActionPerformed(action);
+        apiExecutor.notifyActionPerformed(status);
 
-        verify(storageManager).storeAction(eq(routeStop.getId()), eq(action));
-        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(action));
+        verify(storageManager).storeStatus(eq(routeStop.getId()), eq(status));
+        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(status));
 
         verify(storageManager).removeCurrentStop();
     }

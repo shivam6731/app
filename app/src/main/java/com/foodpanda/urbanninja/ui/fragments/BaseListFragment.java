@@ -18,8 +18,6 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     implements SimpleBaseAdapter.OnItemClickListener {
 
     protected RecyclerViewEmpty recyclerView;
-    protected DividerItemDecoration dividerItemDecoration;
-    private TextView textViewEmpty;
 
     protected U adapter;
 
@@ -37,14 +35,17 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+            getActivity(),
+            DividerItemDecoration.VERTICAL_LIST,
+            R.drawable.divider);
 
         recyclerView = (RecyclerViewEmpty) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(provideLayoutManager());
 
-        textViewEmpty = (TextView) view.findViewById(R.id.empty_view);
+        TextView textViewEmpty = (TextView) view.findViewById(R.id.empty_view);
         textViewEmpty.setText(provideEmptyListDescription());
         recyclerView.setEmptyView(textViewEmpty);
     }

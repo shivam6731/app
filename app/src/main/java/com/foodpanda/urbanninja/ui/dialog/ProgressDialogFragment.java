@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.ui.dialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import com.foodpanda.urbanninja.R;
@@ -14,6 +15,7 @@ public class ProgressDialogFragment extends DialogFragment {
         setCancelable(false);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         ProgressDialog dialog = new ProgressDialog(getActivity(), getTheme());

@@ -35,7 +35,7 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
@@ -250,6 +250,10 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         return true;
     }
 
+    /**
+     * After push notification send API request to update
+     * rider schedule to get up to date information
+     */
     private void updateRiderSchedule() {
         if (ordersNestedFragment != null) {
             ordersNestedFragment.getRidersSchedule();
@@ -258,6 +262,10 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     }
 
+    /**
+     * After push notification send API request to update
+     * rider route list to get up to date information
+     */
     private void updateRiderRoutes() {
         if (ordersNestedFragment != null) {
             ordersNestedFragment.getRoute();
@@ -266,6 +274,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     }
 
+    /**
+     * Show error message in the snackBar and after
+     */
     private void showSnackbar() {
         new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
     }
@@ -476,7 +487,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private String getDeliveryArrivalTimeForAllTaskTypes(Stop currentStop) {
         for (Stop stop : storageManager.getStopList()) {
             if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode()) &&
-                stop.getTask() == RouteStopStatus.DELIVER) {
+                stop.getTask() == RouteStopTask.DELIVER) {
 
                 return getString(R.string.main_activity_deliver_before,
                     DateUtil.formatTimeHoursMinutes(stop.getArrivalTime()));

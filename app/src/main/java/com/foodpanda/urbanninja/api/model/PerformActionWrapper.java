@@ -1,15 +1,15 @@
 package com.foodpanda.urbanninja.api.model;
 
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 
 import org.joda.time.DateTime;
 
 public class PerformActionWrapper {
-    private Action action;
+    private Status status;
     private DateTime actionPerformedAt;
 
-    public PerformActionWrapper(Action action, DateTime actionPerformedAt) {
-        this.action = action;
+    public PerformActionWrapper(Status status, DateTime actionPerformedAt) {
+        this.status = status;
         this.actionPerformedAt = actionPerformedAt;
     }
 }

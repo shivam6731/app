@@ -80,8 +80,12 @@ public class DateUtilsTest {
 
     @Test
     public void testFormatDayMonthYear() throws Exception {
-        assertEquals("6 April 2016", DateUtil.formatTimeDayMonthYear(
-            DateTime.now(DateTimeZone.UTC).withDate(2016, 4, 6)));
+        assertEquals("6 April 2016", DateUtil.formatTimeDayMonthYear("2016-04-06"));
+    }
+
+    @Test
+    public void testFormatTimeZone() throws Exception {
+        assertEquals("+0000", DateUtil.formatTimeZone(new DateTime(DateTimeZone.UTC).toDate()));
     }
 
     @Test

@@ -5,12 +5,10 @@ import android.os.Parcelable;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 
-import org.joda.time.DateTime;
-
 import java.util.List;
 
 public class WorkingDay implements ParentListItem, ParcelableModel {
-    private DateTime dateTime;
+    private String date;
     private double total;
     private List<OrderReport> orderReports;
 
@@ -24,13 +22,13 @@ public class WorkingDay implements ParentListItem, ParcelableModel {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeSerializable(this.dateTime);
+        dest.writeString(this.date);
         dest.writeDouble(this.total);
         dest.writeTypedList(orderReports);
     }
 
     protected WorkingDay(Parcel in) {
-        this.dateTime = (DateTime) in.readSerializable();
+        this.date = in.readString();
         this.total = in.readDouble();
         this.orderReports = in.createTypedArrayList(OrderReport.CREATOR);
     }
@@ -57,8 +55,8 @@ public class WorkingDay implements ParentListItem, ParcelableModel {
         return false;
     }
 
-    public void setDateTime(DateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void setTotal(int total) {
@@ -69,8 +67,8 @@ public class WorkingDay implements ParentListItem, ParcelableModel {
         this.orderReports = orderReports;
     }
 
-    public DateTime getDateTime() {
-        return dateTime;
+    public String getDate() {
+        return date;
     }
 
     public double getTotal() {

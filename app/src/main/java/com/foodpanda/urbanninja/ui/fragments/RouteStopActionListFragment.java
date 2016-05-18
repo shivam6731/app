@@ -10,7 +10,7 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
-import com.foodpanda.urbanninja.model.enums.RouteStopStatus;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
@@ -93,11 +93,11 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
      *
      * @param task type of order
      */
-    private void setType(RouteStopStatus task, TextView txtType) {
-        int textResource = task == RouteStopStatus.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
+    private void setType(RouteStopTask task, TextView txtType) {
+        int textResource = task == RouteStopTask.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
         txtType.setText(activity.getResources().getText(textResource));
 
-        int iconResource = task == RouteStopStatus.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
+        int iconResource = task == RouteStopTask.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
         txtType.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
     }
 
@@ -134,7 +134,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     public void showNextPreviousStep(Stop stop, int viewContainerId) {
         MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
             stop,
-            stop.getTask() == RouteStopStatus.DELIVER ? MapPointType.DELIVERY : MapPointType.PICK_UP,
+            stop.getTask() == RouteStopTask.DELIVER ? MapPointType.DELIVERY : MapPointType.PICK_UP,
             false,
             false);
 

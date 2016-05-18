@@ -41,11 +41,11 @@ public interface MapDetailsProvider extends ParcelableModel {
     String getPhoneNumber();
 
     /**
-     * get a restaurant name where an order has been picked up
+     * get a vendor name where an order has been picked up
      *
-     * @return name of restaurant
+     * @return name of vendor
      */
-    String getRestaurantName();
+    String getVendorName();
 
     /**
      * we don't need to show done checkbox in some cases

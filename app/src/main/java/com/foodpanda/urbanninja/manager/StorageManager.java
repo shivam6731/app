@@ -8,13 +8,13 @@ import android.util.Base64;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
-import com.foodpanda.urbanninja.api.model.StorableAction;
+import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
-import com.foodpanda.urbanninja.model.enums.Action;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -36,7 +36,7 @@ public class StorageManager implements Managable {
 
     private Token token;
     private List<Stop> stopList = new LinkedList<>();
-    private Map<Long, Action> stopActionMap = new LinkedHashMap<>();
+    private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
 
     @Override
     public void init(Context context) {
@@ -45,7 +45,7 @@ public class StorageManager implements Managable {
         gson = new GsonBuilder().
             registerTypeAdapter(DateTime.class, new DateTimeDeserializer()).
             create();
-        setActionMap();
+        setStatusMap();
     }
 
     public boolean storeToken(Token token) {
@@ -113,7 +113,7 @@ public class StorageManager implements Managable {
      */
     public void cleanSession() {
         storeToken(null);
-        stopActionMap.clear();
+        stopStatusMap.clear();
         stopList.clear();
     }
 
@@ -125,18 +125,18 @@ public class StorageManager implements Managable {
 
     public void storeStopList(List<Stop> stopList) {
         this.stopList = getUpToDateList(stopList);
-        cleanActionMap();
+        cleanStatusMap();
     }
 
     public List<Stop> getStopList() {
         return stopList == null ? new LinkedList<Stop>() : stopList;
     }
 
-    public boolean storeAction(long routeId, Action action) {
-        stopActionMap.put(routeId, action);
-        String json = gson.toJson(stopActionMap);
+    public boolean storeStatus(long routeId, Status status) {
+        stopStatusMap.put(routeId, status);
+        String json = gson.toJson(stopStatusMap);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.Preferences.ACTION_LIST, json);
+        editor.putString(Constants.Preferences.STATUS_LIST, json);
 
         return editor.commit();
     }
@@ -159,18 +159,18 @@ public class StorageManager implements Managable {
         return stop;
     }
 
-    public boolean storeActionApiRequests(Queue<StorableAction> requestsQueue) {
+    public boolean storeStatusApiRequests(Queue<StorableStatus> requestsQueue) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         String json = gson.toJson(requestsQueue);
-        editor.putString(Constants.Preferences.ACTION_REQUEST_LIST, json);
+        editor.putString(Constants.Preferences.STATUS_REQUEST_LIST, json);
 
         return editor.commit();
     }
 
-    public Queue<StorableAction> getActionApiRequestList() {
-        Queue<StorableAction> requestsQueue = new LinkedList<>();
-        String json = cachedRequestPreferences.getString(Constants.Preferences.ACTION_REQUEST_LIST, "");
-        Queue<StorableAction> calls = gson.fromJson(json, new TypeToken<Queue<StorableAction>>() {
+    public Queue<StorableStatus> getStatusApiRequestList() {
+        Queue<StorableStatus> requestsQueue = new LinkedList<>();
+        String json = cachedRequestPreferences.getString(Constants.Preferences.STATUS_REQUEST_LIST, "");
+        Queue<StorableStatus> calls = gson.fromJson(json, new TypeToken<Queue<StorableStatus>>() {
         }.getType());
 
         return calls != null ? calls : requestsQueue;
@@ -206,26 +206,26 @@ public class StorageManager implements Managable {
 
     private List<Stop> getUpToDateList(List<Stop> stopList) {
         for (Stop stop : stopList) {
-            if (stopActionMap.get(stop.getId()) != null) {
-                stop.setStatus(stopActionMap.get(stop.getId()));
+            if (stopStatusMap.get(stop.getId()) != null) {
+                stop.setStatus(stopStatusMap.get(stop.getId()));
             }
         }
 
         return removeCompletedStops(stopList);
     }
 
-    private boolean cleanActionMap() {
-        stopActionMap.clear();
+    private boolean cleanStatusMap() {
+        stopStatusMap.clear();
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.Preferences.ACTION_LIST, "");
+        editor.putString(Constants.Preferences.STATUS_LIST, "");
 
         return editor.commit();
     }
 
-    private void setActionMap() {
-        String json = sharedPreferences.getString(Constants.Preferences.ACTION_LIST, "");
+    private void setStatusMap() {
+        String json = sharedPreferences.getString(Constants.Preferences.STATUS_LIST, "");
         if (!TextUtils.isEmpty(json)) {
-            stopActionMap = gson.fromJson(json, new TypeToken<LinkedHashMap<Long, Action>>() {
+            stopStatusMap = gson.fromJson(json, new TypeToken<LinkedHashMap<Long, Status>>() {
             }.getType());
         }
     }
@@ -233,8 +233,8 @@ public class StorageManager implements Managable {
     private List<Stop> removeCompletedStops(List<Stop> stopList) {
         for (Iterator<Stop> iterator = stopList.iterator(); iterator.hasNext(); ) {
             Stop stop = iterator.next();
-            if (stop.getStatus() == Action.CANCELED ||
-                stop.getStatus() == Action.COMPLETED) {
+            if (stop.getStatus() == Status.CANCELED ||
+                stop.getStatus() == Status.COMPLETED) {
                 iterator.remove();
             }
         }

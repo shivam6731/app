@@ -64,9 +64,7 @@ public class LoginFragment extends BaseFragment implements
     }
 
     public static LoginFragment newInstance() {
-        LoginFragment loginFragment = new LoginFragment();
-
-        return loginFragment;
+        return new LoginFragment();
     }
 
     @Override

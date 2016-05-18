@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -11,7 +12,9 @@ import com.foodpanda.urbanninja.model.TimeWindow;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -35,6 +38,10 @@ public class DateUtil {
     private static SimpleDateFormat timerFormatHours = new SimpleDateFormat("H'h'", Locale.getDefault());
     private static SimpleDateFormat timerFormatMinutes = new SimpleDateFormat("m'm'", Locale.getDefault());
 
+    //Cash Report
+    private static SimpleDateFormat cashReportFormatDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static SimpleDateFormat cashReportFormatTimeZone = new SimpleDateFormat("Z", Locale.getDefault());
+
     /**
      * We need to set UTC time zone only for cases when we have to show only
      * difference between two long values with ignoring time zone, such as timer
@@ -44,7 +51,9 @@ public class DateUtil {
         timerFormatWithHour.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         timerFormatHours.setTimeZone(TimeZone.getTimeZone("UTC"));
-        timerFormatHours.setTimeZone(TimeZone.getTimeZone("UTC"));
+        timerFormatMinutes.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cashReportFormatDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cashReportFormatTimeZone.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private static String formatTimeMinute(long date) {
@@ -96,10 +105,24 @@ public class DateUtil {
         return timerFormatWeekDayDateMonthYear.format(dateTime.toDate());
     }
 
-    public static String formatTimeDayMonthYear(DateTime dateTime) {
-        return timerFormatDayMonthYear.format(dateTime.toDate());
+    public static String formatTimeDayMonthYear(String dateString) {
+        try {
+            return timerFormatDayMonthYear.format(cashReportFormatDate.parse(dateString));
+        } catch (ParseException e) {
+            Log.e(ParseException.class.getSimpleName(), e.getLocalizedMessage());
+        }
+        return "";
     }
 
+    /**
+     * format date to get timeZone for cash report API request
+     *
+     * @param date object to get time zone
+     * @return formatted string with timezone
+     */
+    public static String formatTimeZone(Date date) {
+        return cashReportFormatTimeZone.format(date);
+    }
 
     /**
      * set formatter value for schedule circle section with duration of working day

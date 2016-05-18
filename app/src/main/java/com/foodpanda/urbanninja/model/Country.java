@@ -11,7 +11,6 @@ public class Country implements ParcelableModel {
     private String version;
     private String component;
 
-
     @Override
     public int describeContents() {
         return 0;
