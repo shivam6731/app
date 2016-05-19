@@ -52,7 +52,7 @@ public class LocationService extends Service implements
     GoogleApiClient.ConnectionCallbacks {
     /**
      * Battery level param, according to this param we set location update interval
-     * When the battery level more then {@value #BIG_BATTERY_LEVEL} get location updates every {@value #SMALL_UPDATE_PERIOD}
+     * When the battery level more then @see #BIG_BATTERY_LEVEL get location updates every {@value #SMALL_UPDATE_PERIOD}
      * When the battery level less then {@value #BIG_BATTERY_LEVEL},
      * but more then {@value #LOW_BATTERY_LEVEL} we get location updates every {@link #MIDDLE_UPDATE_PERIOD},
      * otherwise we set {@value #BIG_UPDATE_PERIOD}
@@ -63,16 +63,18 @@ public class LocationService extends Service implements
     private static final int LOW_BATTERY_LEVEL = 25;
     //Minimal distance that should trigger our location service
     private static final int DISTANCE_RANGE = 0;
-    //Default location update interval
-    private static final int FASTEST_UPDATE_PERIOD = 5000;
+    //Location update interval for not requested location it means we will receive this location
+    //in case when some other app needs location and we just subscribe to this updates
+    private static final int FASTEST_UPDATE_PERIOD = 30000;
     //The shortest location update interval for the full battery level
     private static final int SMALL_UPDATE_PERIOD = 30000;
     //Middle location update interval for the not full battery level
     private static final int MIDDLE_UPDATE_PERIOD = 60000;
     //The longest location update interval for the low battery level
     private static final int BIG_UPDATE_PERIOD = 90000;
-    ///Interval for sending location to the server side
-    private static final int SEND_DATA_INTERVAL = 10000;
+    //Interval for sending location to the server side
+    //the data would be send if only location bundle is not empty
+    private static final int SEND_DATA_INTERVAL = 30000;
 
     private ApiManager apiManager;
     private Timer timer;

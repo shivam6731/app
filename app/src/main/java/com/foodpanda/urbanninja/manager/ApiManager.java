@@ -9,9 +9,6 @@ import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.BaseCallback;
-import com.foodpanda.urbanninja.api.RetryActionCallback;
-import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
@@ -23,8 +20,14 @@ import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
+import com.foodpanda.urbanninja.api.rx.action.RetryAction;
+import com.foodpanda.urbanninja.api.rx.action.RetryLocation;
+import com.foodpanda.urbanninja.api.rx.action.RetryWithDelay;
+import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
+import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
@@ -36,24 +39,33 @@ import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
+
 
 public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
+
+    //Will store all requests that are executing right now
+    //and after logout will un-subscribe from all of them
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     public void init(Context context) {
@@ -62,11 +74,10 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.networkInterceptors().add(
-            new Interceptor() {
+        OkHttpClient httpClient = new OkHttpClient.Builder().
+            addInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                public Response intercept(Chain chain) throws IOException {
                     Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
                     Token token = storageManager.getToken();
                     if (token != null) {
@@ -78,10 +89,11 @@ public class ApiManager implements Managable {
 
                     return chain.proceed(build.build());
                 }
-            }
-        );
+            }).build();
+
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
             .build();
@@ -90,9 +102,11 @@ public class ApiManager implements Managable {
 
         retrofit = new Retrofit.Builder().
             baseUrl(Config.ApiUrbanNinjaUrl.BASE_URL).
+            addCallAdapterFactory(RxJavaCallAdapterFactory.create()).
             addConverterFactory(GsonConverterFactory.create(createCountryGson())).
             build();
         countryService = retrofit.create(CountryService.class);
+
         sendAllFailedRequests();
     }
 
@@ -116,53 +130,57 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<Token> tokenBaseApiCallback
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
-        Call<Token> call = service.auth(authRequest);
-        call.enqueue(new BaseCallback<Token>(tokenBaseApiCallback, call) {
+
+        BaseSubscriber<Token> baseSubscriber = new BaseSubscriber<Token>(tokenBaseApiCallback) {
             @Override
-            public void onResponse(Response<Token> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    storageManager.storeToken(response.body());
-                    initService();
-                    tokenBaseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(Token token) {
+                storageManager.storeToken(token);
+                initService();
+                tokenBaseApiCallback.onSuccess(token);
             }
-        });
+        };
+
+        compositeSubscription.add(
+            wrapObservable(
+                service.auth(authRequest)).
+                subscribe(baseSubscriber));
+
     }
 
-    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
+    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> baseApiCallback) {
+
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
-            Call<VehicleDeliveryAreaRiderBundle> call = service.getRider(tokenData.getUserId());
-            call.enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback, call) {
+            BaseSubscriber<VehicleDeliveryAreaRiderBundle> baseSubscriber = new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(baseApiCallback) {
                 @Override
-                public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
-                    super.onResponse(response, retrofit);
-                    if (response.isSuccess()) {
-                        riderBundleBaseApiCallback.onSuccess(response.body());
-                    }
+                public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                    baseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
                 }
-            });
-        }
+            };
 
+            compositeSubscription.add(
+                wrapRetryObservable(
+                    service.getRider(tokenData.getUserId())).
+                    subscribe(baseSubscriber));
+        }
     }
 
     public void getRoute(
         int vehicleId,
         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
-        Call<RouteWrapper> call = service.getRoute(vehicleId);
-        call.enqueue(new BaseCallback<RouteWrapper>(baseApiCallback, call) {
+        BaseSubscriber<RouteWrapper> baseSubscriber = new BaseSubscriber<RouteWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<RouteWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    storageManager.storeStopList(response.body().getStops());
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(RouteWrapper routeWrapper) {
+                storageManager.storeStopList(routeWrapper.getStops());
+                baseApiCallback.onSuccess(routeWrapper);
             }
-        });
+        };
 
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRoute(vehicleId)).
+                subscribe(baseSubscriber));
     }
 
     public void getCurrentSchedule(
@@ -188,87 +206,96 @@ public class ApiManager implements Managable {
     ) {
         TokenData tokenData = storageManager.getTokenData();
 
-        Call<ScheduleCollectionWrapper> call = service.getRiderSchedule(
-            tokenData.getUserId(),
-            dateTimeStart,
-            dateTimeEnd,
-            ApiTag.SORT_VALUE);
-
-        call.enqueue(new BaseCallback<ScheduleCollectionWrapper>(baseApiCallback, call) {
+        BaseSubscriber<ScheduleCollectionWrapper> baseSubscriber = new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<ScheduleCollectionWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
+                baseApiCallback.onSuccess(scheduleWrappers);
             }
-        });
+        };
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRiderSchedule(
+                    tokenData.getUserId(),
+                    dateTimeStart,
+                    dateTimeEnd,
+                    ApiTag.SORT_VALUE)).
+                subscribe(baseSubscriber));
     }
 
     public void scheduleClockIn(
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
-        Call<ScheduleWrapper> call = service.clockInSchedule(scheduleId);
-        call.enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback, call) {
+        BaseSubscriber<ScheduleWrapper> baseSubscriber = new BaseSubscriber<ScheduleWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(ScheduleWrapper scheduleWrapper) {
+                baseApiCallback.onSuccess(scheduleWrapper);
             }
-        });
+        };
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.clockInSchedule(scheduleId)).
+                subscribe(baseSubscriber));
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
-        Call<Stop> call = service.notifyActionPerformed(routeId, performActionWrapper);
-        call.enqueue(new RetryActionCallback<>(call, routeId, performActionWrapper));
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.notifyActionPerformed(routeId, performActionWrapper),
+                new RetryAction(routeId, performActionWrapper)).
+                subscribe(new BackgroundSubscriber<Stop>()));
+    }
+
+    public void notifyStoredAction(StorableStatus storableStatus) {
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.notifyActionPerformed(
+                    storableStatus.getRouteId(),
+                    storableStatus.getPerformActionWrapper()),
+                new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).
+                subscribe(new BackgroundSubscriber<Stop>()));
     }
 
     public void sendLocation(
         int vehicleId,
-        List<RiderLocation> riderLocation,
-        @NonNull final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
+        List<RiderLocation> riderLocationList,
+        final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
-        riderLocationCollectionWrapper.addAll(riderLocation);
+        riderLocationCollectionWrapper.addAll(riderLocationList);
 
-        Call<RiderLocationCollectionWrapper> call = service.sendLocation(vehicleId, riderLocationCollectionWrapper);
-        call.enqueue(new RetryLocationCallback<RiderLocationCollectionWrapper>(
-            baseApiCallback,
-            call,
-            vehicleId,
-            riderLocationCollectionWrapper) {
+        BaseSubscriber<RiderLocationCollectionWrapper> baseSubscriber = new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<RiderLocationCollectionWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
+            public void onNext(RiderLocationCollectionWrapper riderLocations) {
+                if (baseApiCallback != null) {
+                    baseApiCallback.onSuccess(riderLocations);
                 }
             }
-        });
+        };
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.sendLocation(
+                    vehicleId, riderLocationCollectionWrapper),
+                new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
+                subscribe(baseSubscriber));
     }
 
     public void sendAllFailedRequests() {
-        ApiQueue.getInstance().resendRequests(service);
+        ApiQueue.getInstance().resendRequests();
     }
 
     public void registerDeviceId(String token) {
         if (!TextUtils.isEmpty(token)) {
             TokenData tokenData = storageManager.getTokenData();
-
-            Call<Rider> call = service.registerDeviceId(
-                tokenData.getUserId(),
-                new PushNotificationRegistrationWrapper(token));
-
-            call.enqueue(new BaseCallback<Rider>(null, call) {
-                @Override
-                public void onResponse(Response<Rider> response, Retrofit retrofit) {
-                    super.onResponse(response, retrofit);
-                }
-            });
+            wrapRetryObservable(
+                service.registerDeviceId(tokenData.getUserId(),
+                    new PushNotificationRegistrationWrapper(token)))
+                .subscribe(new BackgroundSubscriber<Rider>());
         }
     }
 
@@ -289,29 +316,82 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
 
-        Call<OrdersReportCollection> call = service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone);
-        call.enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback, call) {
+        BaseSubscriber<OrdersReportCollection> baseSubscriber = new BaseSubscriber<OrdersReportCollection>(baseApiCallback) {
             @Override
-            public void onResponse(Response<OrdersReportCollection> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(OrdersReportCollection workingDays) {
+                baseApiCallback.onSuccess(workingDays);
             }
-        });
+        };
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getOrdersReport(
+                    tokenData.getUserId(),
+                    startAt,
+                    endAt,
+                    timezone))
+                .subscribe(baseSubscriber));
     }
 
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        Call<CountryListWrapper> call = countryService.getCountries();
-        call.enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback, call) {
+        BaseSubscriber<CountryListWrapper> baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Response<CountryListWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(CountryListWrapper countryListWrapper) {
+                baseApiCallback.onSuccess(countryListWrapper);
             }
-        });
+        };
+        wrapRetryObservable(
+            countryService.getCountries()).subscribe(baseSubscriber);
+    }
+
+    /**
+     * logout from rider from api side
+     * cancel all API requests that are in flight right now
+     * TODO un-subscribe from push notification for current rider
+     */
+    public void logout() {
+        compositeSubscription.unsubscribe();
+        compositeSubscription = new CompositeSubscription();
+    }
+
+    /**
+     * Wrap rx Observable to be executed in background thread
+     * and result would come to android main thread
+     *
+     * @param observable that would be executed
+     * @param <T>        type of expected result
+     * @return Observable with thread options
+     */
+    private <T> Observable<T> wrapObservable(Observable<T> observable) {
+        return observable.subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Simple wrapping method with just retry logic
+     * Observable with retry logic that would be executed
+     * if API call was failed
+     *
+     * @param observable Observable that would be executed in case of fail
+     * @param <T>        type of expected result
+     * @return Observable with injected retry logic
+     */
+    private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
+        return wrapRetryObservable(observable, new RetryWithDelay());
+    }
+
+    /**
+     * Base wrapping method with possible saving
+     * Wrap Observable with retry logic that would be executed
+     * if API call was failed
+     *
+     * @param observable     Observable that would be executed in case of fail
+     * @param retryWithDelay basic setting for retry logic such as delay count of tries
+     * @param <T>            type of expected result
+     * @return Observable with injected retry logic
+     */
+    private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
+        return wrapObservable(observable).retryWhen(retryWithDelay);
     }
 }

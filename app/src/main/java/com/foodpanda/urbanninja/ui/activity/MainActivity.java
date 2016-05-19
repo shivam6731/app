@@ -30,6 +30,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
+import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private NavigationView navigationView;
 
     private StorageManager storageManager;
+    private ApiManager apiManager;
 
     private int currentItemId;
 
@@ -80,6 +82,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         setContentView(R.layout.main_activity);
 
         storageManager = App.STORAGE_MANAGER;
+        apiManager = App.API_MANAGER;
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -298,7 +301,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         navigationView.getMenu().getItem(0).setChecked(true);
         currentItemId = navigationView.getMenu().getItem(0).getItemId();
 
-        //set order code for action bar
+        //set title and subtitle for order section
         writeCodeAsTitle(storageManager.getCurrentStop());
     }
 
@@ -368,6 +371,8 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         storageManager.cleanSession();
         stopLocationService();
 
+        apiManager.logout();
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -385,12 +390,25 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     private void onScheduleClicked() {
+        setTitleNotForOrderPage(R.string.side_menu_schedule);
         ScheduleListFragment scheduleListFragment = ScheduleListFragment.newInstance();
 
         fragmentManager.
             beginTransaction().
             add(R.id.container, scheduleListFragment).
             addToBackStack(ScheduleListFragment.class.getSimpleName()).
+            commit();
+        drawerLayout.closeDrawers();
+    }
+
+    private void onCashReportClicked() {
+        setTitleNotForOrderPage(R.string.side_menu_cash_report);
+        CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
+
+        fragmentManager.
+            beginTransaction().
+            add(R.id.container, cashReportListFragment).
+            addToBackStack(CashReportListFragment.class.getSimpleName()).
             commit();
         drawerLayout.closeDrawers();
     }
@@ -402,7 +420,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
      * and all data would be present and the state would be the same
      */
     private void onOrdersClicked() {
-        drawerLayout.closeDrawers();
+        writeCodeAsTitle(storageManager.getCurrentStop());
 
         //After closing the drawer we have to redirect to the  nested fragment
         //and to check the close action we need this callback to start onBackPressed method
@@ -430,16 +448,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
             }
         });
-    }
-
-    private void onCashReportClicked() {
-        CashReportListFragment cashReportListFragment = CashReportListFragment.newInstance();
-
-        fragmentManager.
-            beginTransaction().
-            add(R.id.container, cashReportListFragment).
-            addToBackStack(CashReportListFragment.class.getSimpleName()).
-            commit();
         drawerLayout.closeDrawers();
     }
 
@@ -551,5 +559,15 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         } else {
             Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * set title for all section except only orders with detail about current route stop
+     *
+     * @param stringResource link for title string resource
+     */
+    private void setTitleNotForOrderPage(int stringResource) {
+        toolbar.setTitle(getResources().getString(stringResource));
+        toolbar.setSubtitle("");
     }
 }
