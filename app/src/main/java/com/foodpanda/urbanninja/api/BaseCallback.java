@@ -18,16 +18,14 @@ public abstract class BaseCallback<T extends Model> implements Callback<T> {
 
     private BaseApiCallback baseApiCallback;
 
-    private Call<T> call;
 
-    public BaseCallback(BaseApiCallback callback, Call<T> call) {
+    public BaseCallback(BaseApiCallback callback) {
         this.baseApiCallback = callback;
-        this.call = call;
     }
 
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
-        if (!response.isSuccessful()) {
+        if (!response.isSuccessful() && !call.isCanceled()) {
             ErrorMessage errorMessage = new ErrorMessage();
             try {
                 errorMessage = new GsonBuilder().create().fromJson(response.errorBody().string(), ErrorMessage.class);
@@ -38,19 +36,21 @@ public abstract class BaseCallback<T extends Model> implements Callback<T> {
                 baseApiCallback.onError(errorMessage);
             }
 
-            sendRetry();
+            sendRetry(call);
         }
     }
 
     @Override
     public void onFailure(Call<T> call, Throwable t) {
-        sendRetry();
+        if (!call.isCanceled()) {
+            sendRetry(call);
+        }
         if (baseApiCallback != null) {
             baseApiCallback.onError(new ErrorMessage(500, t.getMessage()));
         }
     }
 
-    protected boolean sendRetry() {
+    protected boolean sendRetry(Call<T> call) {
         if (retryCount++ < TOTAL_RETRIES) {
             call.clone().enqueue(this);
 

@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.manager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Config;
@@ -56,7 +57,7 @@ public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
-    private Retrofit retrofit;
+    private OkHttpClient httpClient;
 
     @Override
     public void init(Context context) {
@@ -65,7 +66,7 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        OkHttpClient httpClient = new CancelableOkHttpClient.Builder().
+        httpClient = new CancelableOkHttpClient.Builder().
             addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -82,7 +83,7 @@ public class ApiManager implements Managable {
                 }
             }).build();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
@@ -118,8 +119,7 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<Token> tokenBaseApiCallback
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
-        Call<Token> call = service.auth(authRequest);
-        call.enqueue(new BaseCallback<Token>(tokenBaseApiCallback, call) {
+        service.auth(authRequest).enqueue(new BaseCallback<Token>(tokenBaseApiCallback) {
             @Override
             public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                 super.onResponse(call, response);
@@ -135,8 +135,7 @@ public class ApiManager implements Managable {
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
-            Call<VehicleDeliveryAreaRiderBundle> call = service.getRider(tokenData.getUserId());
-            call.enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback, call) {
+            service.getRider(tokenData.getUserId()).enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback) {
 
                 @Override
                 public void onResponse(Call<VehicleDeliveryAreaRiderBundle> call, retrofit2.Response<VehicleDeliveryAreaRiderBundle> response) {
@@ -154,8 +153,7 @@ public class ApiManager implements Managable {
         int vehicleId,
         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
-        Call<RouteWrapper> call = service.getRoute(vehicleId);
-        call.enqueue(new BaseCallback<RouteWrapper>(baseApiCallback, call) {
+        service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
             @Override
             public void onResponse(Call<RouteWrapper> call, retrofit2.Response<RouteWrapper> response) {
                 super.onResponse(call, response);
@@ -191,30 +189,28 @@ public class ApiManager implements Managable {
     ) {
         TokenData tokenData = storageManager.getTokenData();
 
-        Call<ScheduleCollectionWrapper> call = service.getRiderSchedule(
+        service.getRiderSchedule(
             tokenData.getUserId(),
             dateTimeStart,
             dateTimeEnd,
-            ApiTag.SORT_VALUE);
-
-        call.enqueue(new BaseCallback<ScheduleCollectionWrapper>(baseApiCallback, call) {
-            @Override
-            public void onResponse(Call<ScheduleCollectionWrapper> call, retrofit2.Response<ScheduleCollectionWrapper> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    baseApiCallback.onSuccess(response.body());
+            ApiTag.SORT_VALUE)
+            .enqueue(new BaseCallback<ScheduleCollectionWrapper>(baseApiCallback) {
+                @Override
+                public void onResponse(Call<ScheduleCollectionWrapper> call, retrofit2.Response<ScheduleCollectionWrapper> response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        baseApiCallback.onSuccess(response.body());
+                    }
                 }
-            }
 
-        });
+            });
     }
 
     public void scheduleClockIn(
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
-        Call<ScheduleWrapper> call = service.clockInSchedule(scheduleId);
-        call.enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback, call) {
+        service.clockInSchedule(scheduleId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
             @Override
             public void onResponse(Call<ScheduleWrapper> call, retrofit2.Response<ScheduleWrapper> response) {
                 super.onResponse(call, response);
@@ -240,10 +236,8 @@ public class ApiManager implements Managable {
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocation);
 
-        Call<RiderLocationCollectionWrapper> call = service.sendLocation(vehicleId, riderLocationCollectionWrapper);
-        call.enqueue(new RetryLocationCallback<RiderLocationCollectionWrapper>(
+        service.sendLocation(vehicleId, riderLocationCollectionWrapper).enqueue(new RetryLocationCallback<RiderLocationCollectionWrapper>(
             baseApiCallback,
-            call,
             vehicleId,
             riderLocationCollectionWrapper) {
             @Override
@@ -264,12 +258,11 @@ public class ApiManager implements Managable {
         if (!TextUtils.isEmpty(token)) {
             TokenData tokenData = storageManager.getTokenData();
 
-            Call<Rider> call = service.registerDeviceId(
+            service.registerDeviceId(
                 tokenData.getUserId(),
-                new PushNotificationRegistrationWrapper(token));
-
-            call.enqueue(new BaseCallback<Rider>(null, call) {
-            });
+                new PushNotificationRegistrationWrapper(token))
+                .enqueue(new BaseCallback<Rider>(null) {
+                });
         }
     }
 
@@ -290,23 +283,22 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
 
-        Call<OrdersReportCollection> call = service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone);
-        call.enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback, call) {
-            @Override
-            public void onResponse(Call<OrdersReportCollection> call, retrofit2.Response<OrdersReportCollection> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    baseApiCallback.onSuccess(response.body());
+        service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone)
+            .enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback) {
+                @Override
+                public void onResponse(Call<OrdersReportCollection> call, retrofit2.Response<OrdersReportCollection> response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        baseApiCallback.onSuccess(response.body());
+                    }
                 }
-            }
 
-        });
+            });
     }
 
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        Call<CountryListWrapper> call = countryService.getCountries();
-        call.enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback, call) {
+        countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {
             @Override
             public void onResponse(Call<CountryListWrapper> call, retrofit2.Response<CountryListWrapper> response) {
                 super.onResponse(call, response);
@@ -323,8 +315,7 @@ public class ApiManager implements Managable {
      * and un-subscribe from push notification for current rider
      */
     public void logout() {
-//        service.
-//        retrofit.
-//        retrofit.callAdapterFactories().get(0).caclient().cancel(CancelableOkHttpClient.TAG_CALL);
+        Log.e("Calls", String.valueOf(httpClient.dispatcher().runningCallsCount()));
+        httpClient.dispatcher().cancelAll();
     }
 }

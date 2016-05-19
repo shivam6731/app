@@ -26,38 +26,34 @@ public class RetryLocationCallback<T extends RiderLocationCollectionWrapper> ext
      *
      * @param storableApiCallback       callback inform us about the statuses of request success,
      *                                  failed and stored
-     * @param call                      required param for {@link BaseCallback} to be able to retry request
      * @param vehicleId                 id of rider vehicle that should be saved and sent
      * @param locationCollectionWrapper wrapper with a list of all information about rider status such as
      *                                  {@link DateTime} and {@link GeoCoordinate}
      */
     public RetryLocationCallback(StorableApiCallback<T> storableApiCallback,
-                                 Call<T> call,
                                  int vehicleId,
                                  RiderLocationCollectionWrapper locationCollectionWrapper) {
-        this(call, vehicleId, locationCollectionWrapper);
+        this(vehicleId, locationCollectionWrapper);
         this.storableApiCallback = storableApiCallback;
     }
 
     /**
      * Default constructor for sendLocation API request
      *
-     * @param call                      required param for {@link BaseCallback} to be able to retry request
      * @param vehicleId                 id of rider vehicle that should be saved and sent
      * @param locationCollectionWrapper wrapper with a list of all information about rider status such as
      *                                  {@link DateTime} and {@link GeoCoordinate}
      */
-    public RetryLocationCallback(Call<T> call,
-                                 int vehicleId,
+    public RetryLocationCallback(int vehicleId,
                                  RiderLocationCollectionWrapper locationCollectionWrapper) {
-        super(null, call);
+        super(null);
         this.vehicleId = vehicleId;
         this.locationCollectionWrapper = locationCollectionWrapper;
     }
 
     @Override
-    protected boolean sendRetry() {
-        boolean isSent = super.sendRetry();
+    protected boolean sendRetry(Call call) {
+        boolean isSent = super.sendRetry(call);
         if (!isSent) {
             ApiQueue.getInstance().enqueueLocation(locationCollectionWrapper, vehicleId);
             if (storableApiCallback != null) {
