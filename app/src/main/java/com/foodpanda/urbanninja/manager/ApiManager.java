@@ -40,9 +40,13 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -61,24 +65,23 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        OkHttpClient httpClient = new CancelableOkHttpClient();
-//        httpClient.networkInterceptors().add(
-//            new Interceptor() {
-//                @Override
-//                public Response intercept(Chain chain) throws IOException {
-//                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
-//                    Token token = storageManager.getToken();
-//                    if (token != null) {
-//                        build.addHeader("Authorization", token.getTokenType() +
-//                            " " +
-//                            token.getAccessToken())
-//                            .build();
-//                    }
-//
-//                    return chain.proceed(build.build());
-//                }
-//            }
-//        );
+        OkHttpClient httpClient = new CancelableOkHttpClient.Builder().
+            addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
+                    Token token = storageManager.getToken();
+                    if (token != null) {
+                        build.addHeader("Authorization", token.getTokenType() +
+                            " " +
+                            token.getAccessToken())
+                            .build();
+                    }
+
+                    return chain.proceed(build.build());
+                }
+            }).build();
+
         retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
