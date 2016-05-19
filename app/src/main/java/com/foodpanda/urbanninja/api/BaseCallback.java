@@ -7,10 +7,10 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public abstract class BaseCallback<T extends Model> implements Callback<T> {
     private static final int TOTAL_RETRIES = 3;
@@ -26,8 +26,8 @@ public abstract class BaseCallback<T extends Model> implements Callback<T> {
     }
 
     @Override
-    public void onResponse(Response<T> response, Retrofit retrofit) {
-        if (!response.isSuccess()) {
+    public void onResponse(Call<T> call, Response<T> response) {
+        if (!response.isSuccessful()) {
             ErrorMessage errorMessage = new ErrorMessage();
             try {
                 errorMessage = new GsonBuilder().create().fromJson(response.errorBody().string(), ErrorMessage.class);
@@ -40,11 +40,10 @@ public abstract class BaseCallback<T extends Model> implements Callback<T> {
 
             sendRetry();
         }
-
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onFailure(Call<T> call, Throwable t) {
         sendRetry();
         if (baseApiCallback != null) {
             baseApiCallback.onError(new ErrorMessage(500, t.getMessage()));

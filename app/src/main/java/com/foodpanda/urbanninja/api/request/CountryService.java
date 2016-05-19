@@ -3,8 +3,9 @@ package com.foodpanda.urbanninja.api.request;
 import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 
-import retrofit.Call;
-import retrofit.http.GET;
+import retrofit2.Call;
+import retrofit2.http.GET;
+
 
 public interface CountryService {
     @GET(Config.ApiUrbanNinjaTag.PARAMS)

@@ -37,19 +37,16 @@ import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class ApiManager implements Managable {
     private LogisticsService service;
@@ -65,23 +62,23 @@ public class ApiManager implements Managable {
 
     private void initService() {
         OkHttpClient httpClient = new CancelableOkHttpClient();
-        httpClient.networkInterceptors().add(
-            new Interceptor() {
-                @Override
-                public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
-                    Token token = storageManager.getToken();
-                    if (token != null) {
-                        build.addHeader("Authorization", token.getTokenType() +
-                            " " +
-                            token.getAccessToken())
-                            .build();
-                    }
-
-                    return chain.proceed(build.build());
-                }
-            }
-        );
+//        httpClient.networkInterceptors().add(
+//            new Interceptor() {
+//                @Override
+//                public Response intercept(Chain chain) throws IOException {
+//                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
+//                    Token token = storageManager.getToken();
+//                    if (token != null) {
+//                        build.addHeader("Authorization", token.getTokenType() +
+//                            " " +
+//                            token.getAccessToken())
+//                            .build();
+//                    }
+//
+//                    return chain.proceed(build.build());
+//                }
+//            }
+//        );
         retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
@@ -121,9 +118,9 @@ public class ApiManager implements Managable {
         Call<Token> call = service.auth(authRequest);
         call.enqueue(new BaseCallback<Token>(tokenBaseApiCallback, call) {
             @Override
-            public void onResponse(Response<Token> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     storageManager.storeToken(response.body());
                     initService();
                     tokenBaseApiCallback.onSuccess(response.body());
@@ -137,10 +134,11 @@ public class ApiManager implements Managable {
         if (tokenData != null) {
             Call<VehicleDeliveryAreaRiderBundle> call = service.getRider(tokenData.getUserId());
             call.enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback, call) {
+
                 @Override
-                public void onResponse(Response<VehicleDeliveryAreaRiderBundle> response, Retrofit retrofit) {
-                    super.onResponse(response, retrofit);
-                    if (response.isSuccess()) {
+                public void onResponse(Call<VehicleDeliveryAreaRiderBundle> call, retrofit2.Response<VehicleDeliveryAreaRiderBundle> response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
                         riderBundleBaseApiCallback.onSuccess(response.body());
                     }
                 }
@@ -156,9 +154,9 @@ public class ApiManager implements Managable {
         Call<RouteWrapper> call = service.getRoute(vehicleId);
         call.enqueue(new BaseCallback<RouteWrapper>(baseApiCallback, call) {
             @Override
-            public void onResponse(Response<RouteWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<RouteWrapper> call, retrofit2.Response<RouteWrapper> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     storageManager.storeStopList(response.body().getStops());
                     baseApiCallback.onSuccess(response.body());
                 }
@@ -198,12 +196,13 @@ public class ApiManager implements Managable {
 
         call.enqueue(new BaseCallback<ScheduleCollectionWrapper>(baseApiCallback, call) {
             @Override
-            public void onResponse(Response<ScheduleCollectionWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<ScheduleCollectionWrapper> call, retrofit2.Response<ScheduleCollectionWrapper> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     baseApiCallback.onSuccess(response.body());
                 }
             }
+
         });
     }
 
@@ -214,12 +213,13 @@ public class ApiManager implements Managable {
         Call<ScheduleWrapper> call = service.clockInSchedule(scheduleId);
         call.enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback, call) {
             @Override
-            public void onResponse(Response<ScheduleWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<ScheduleWrapper> call, retrofit2.Response<ScheduleWrapper> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     baseApiCallback.onSuccess(response.body());
                 }
             }
+
         });
     }
 
@@ -244,9 +244,9 @@ public class ApiManager implements Managable {
             vehicleId,
             riderLocationCollectionWrapper) {
             @Override
-            public void onResponse(Response<RiderLocationCollectionWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<RiderLocationCollectionWrapper> call, retrofit2.Response<RiderLocationCollectionWrapper> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     baseApiCallback.onSuccess(response.body());
                 }
             }
@@ -266,10 +266,6 @@ public class ApiManager implements Managable {
                 new PushNotificationRegistrationWrapper(token));
 
             call.enqueue(new BaseCallback<Rider>(null, call) {
-                @Override
-                public void onResponse(Response<Rider> response, Retrofit retrofit) {
-                    super.onResponse(response, retrofit);
-                }
             });
         }
     }
@@ -294,12 +290,13 @@ public class ApiManager implements Managable {
         Call<OrdersReportCollection> call = service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone);
         call.enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback, call) {
             @Override
-            public void onResponse(Response<OrdersReportCollection> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<OrdersReportCollection> call, retrofit2.Response<OrdersReportCollection> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     baseApiCallback.onSuccess(response.body());
                 }
             }
+
         });
     }
 
@@ -308,9 +305,9 @@ public class ApiManager implements Managable {
         Call<CountryListWrapper> call = countryService.getCountries();
         call.enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback, call) {
             @Override
-            public void onResponse(Response<CountryListWrapper> response, Retrofit retrofit) {
-                super.onResponse(response, retrofit);
-                if (response.isSuccess()) {
+            public void onResponse(Call<CountryListWrapper> call, retrofit2.Response<CountryListWrapper> response) {
+                super.onResponse(call, response);
+                if (response.isSuccessful()) {
                     baseApiCallback.onSuccess(response.body());
                 }
             }
@@ -323,6 +320,8 @@ public class ApiManager implements Managable {
      * and un-subscribe from push notification for current rider
      */
     public void logout() {
-        retrofit.client().cancel(CancelableOkHttpClient.TAG_CALL);
+//        service.
+//        retrofit.
+//        retrofit.callAdapterFactories().get(0).caclient().cancel(CancelableOkHttpClient.TAG_CALL);
     }
 }

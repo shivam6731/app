@@ -4,7 +4,8 @@ import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.manager.ApiQueue;
 import com.foodpanda.urbanninja.model.Stop;
 
-import retrofit.Call;
+import retrofit2.Call;
+
 
 /**
  * Child of {@see BaseCallback} to allows to store rider actions to the {@link ApiQueue}

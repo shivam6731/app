@@ -1,8 +1,9 @@
 package com.foodpanda.urbanninja.api.client;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class CancelableOkHttpClient extends OkHttpClient {
     public static final Object TAG_CALL = new Object();

@@ -14,7 +14,8 @@ import com.foodpanda.urbanninja.model.enums.Status;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import retrofit.Call;
+import retrofit2.Call;
+
 
 /**
  * This class store all API requests that should be resended as soon as connection

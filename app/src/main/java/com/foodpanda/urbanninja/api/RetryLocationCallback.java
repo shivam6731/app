@@ -7,7 +7,8 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 
 import org.joda.time.DateTime;
 
-import retrofit.Call;
+import retrofit2.Call;
+
 
 /**
  * Child of {@see BaseCallback} to allows to store location updates params to the {@link ApiQueue}
