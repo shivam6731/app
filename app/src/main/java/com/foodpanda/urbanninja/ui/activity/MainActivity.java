@@ -30,6 +30,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
+import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
@@ -61,6 +62,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private NavigationView navigationView;
 
     private StorageManager storageManager;
+    private ApiManager apiManager;
 
     private int currentItemId;
 
@@ -80,6 +82,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         setContentView(R.layout.main_activity);
 
         storageManager = App.STORAGE_MANAGER;
+        apiManager = App.API_MANAGER;
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -367,6 +370,8 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private void onLogoutClicked() {
         storageManager.cleanSession();
         stopLocationService();
+
+        apiManager.logout();
 
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

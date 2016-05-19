@@ -13,6 +13,7 @@ import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.RetryActionCallback;
 import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
+import com.foodpanda.urbanninja.api.client.CancelableOkHttpClient;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
@@ -54,6 +55,7 @@ public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
+    private Retrofit retrofit;
 
     @Override
     public void init(Context context) {
@@ -62,7 +64,7 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        OkHttpClient httpClient = new OkHttpClient();
+        OkHttpClient httpClient = new CancelableOkHttpClient();
         httpClient.networkInterceptors().add(
             new Interceptor() {
                 @Override
@@ -80,7 +82,7 @@ public class ApiManager implements Managable {
                 }
             }
         );
-        Retrofit retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
@@ -313,5 +315,14 @@ public class ApiManager implements Managable {
                 }
             }
         });
+    }
+
+    /**
+     * logout from rider from api side
+     * cancel all API requests that are in flight right now
+     * and un-subscribe from push notification for current rider
+     */
+    public void logout() {
+        retrofit.client().cancel(CancelableOkHttpClient.TAG_CALL);
     }
 }
