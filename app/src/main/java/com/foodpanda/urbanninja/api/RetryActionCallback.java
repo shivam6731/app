@@ -18,18 +18,17 @@ public class RetryActionCallback<T extends Stop> extends BaseCallback<T> {
     private PerformActionWrapper performActionWrapper;
 
     public RetryActionCallback(
-        Call<T> call,
         long routeId,
         PerformActionWrapper performActionWrapper
     ) {
-        super(null, call);
+        super(null);
         this.routeId = routeId;
         this.performActionWrapper = performActionWrapper;
     }
 
     @Override
-    protected boolean sendRetry() {
-        boolean isSent = super.sendRetry();
+    protected boolean sendRetry(Call<T> call) {
+        boolean isSent = super.sendRetry(call);
         if (!isSent) {
             ApiQueue.getInstance().enqueueAction(performActionWrapper, routeId);
         }

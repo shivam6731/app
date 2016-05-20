@@ -8,13 +8,10 @@ import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
-import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.Status;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
-import retrofit2.Call;
 
 
 /**
@@ -73,8 +70,8 @@ public class ApiQueue {
     private void resendAction(LogisticsService service) {
         if (!requestsQueue.isEmpty()) {
             StorableStatus storableStatus = requestsQueue.remove();
-            Call<Stop> call = service.notifyActionPerformed(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper());
-            call.enqueue(new RetryActionCallback<>(call, storableStatus.getRouteId(), storableStatus.getPerformActionWrapper()));
+            service.notifyActionPerformed(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())
+                .enqueue(new RetryActionCallback<>(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper()));
             resendAction(service);
         }
         storageManager.storeStatusApiRequests(requestsQueue);
@@ -90,12 +87,9 @@ public class ApiQueue {
             RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
             riderLocations.addAll(requestsLocationQueue);
 
-            Call<RiderLocationCollectionWrapper> call = service.sendLocation(
+            service.sendLocation(
                 vehicleId,
-                riderLocations);
-
-            call.enqueue(new RetryLocationCallback<>(
-                call,
+                riderLocations).enqueue(new RetryLocationCallback<>(
                 vehicleId,
                 riderLocations));
 

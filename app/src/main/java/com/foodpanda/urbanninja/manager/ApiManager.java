@@ -29,7 +29,6 @@ import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Rider;
-import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -224,8 +223,7 @@ public class ApiManager implements Managable {
 
     public void notifyActionPerformed(long routeId, Status status) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
-        Call<Stop> call = service.notifyActionPerformed(routeId, performActionWrapper);
-        call.enqueue(new RetryActionCallback<>(call, routeId, performActionWrapper));
+        service.notifyActionPerformed(routeId, performActionWrapper).enqueue(new RetryActionCallback<>(routeId, performActionWrapper));
     }
 
     public void sendLocation(
