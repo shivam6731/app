@@ -23,11 +23,12 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Observable;
 
 
 public interface LogisticsService {
     @POST(ApiTag.AUTH_URL)
-    Call<Token> auth(
+    Observable<Token> auth(
         @Body AuthRequest authRequest);
 
     @GET(ApiTag.GET_RIDER_URL)

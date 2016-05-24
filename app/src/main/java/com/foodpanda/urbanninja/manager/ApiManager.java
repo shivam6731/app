@@ -14,7 +14,6 @@ import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.RetryActionCallback;
 import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
-import com.foodpanda.urbanninja.api.client.CancelableOkHttpClient;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
@@ -49,7 +48,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class ApiManager implements Managable {
@@ -65,7 +69,7 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        httpClient = new CancelableOkHttpClient.Builder().
+        httpClient = new OkHttpClient.Builder().
             addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -84,6 +88,7 @@ public class ApiManager implements Managable {
 
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
             .build();
@@ -118,17 +123,28 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<Token> tokenBaseApiCallback
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
-        service.auth(authRequest).enqueue(new BaseCallback<Token>(tokenBaseApiCallback) {
-            @Override
-            public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    storageManager.storeToken(response.body());
-                    initService();
-                    tokenBaseApiCallback.onSuccess(response.body());
+        Observable<Token> observable = service.auth(authRequest);
+        observable.
+            subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread()).
+            subscribe(new Subscriber<Token>() {
+                @Override
+                public void onCompleted() {
+
                 }
-            }
-        });
+
+                @Override
+                public void onError(Throwable e) {
+//                    tokenBaseApiCallback.onError(e.getMessage());
+                }
+
+                @Override
+                public void onNext(Token token) {
+                    storageManager.storeToken(token);
+                    initService();
+                    tokenBaseApiCallback.onSuccess(token);
+                }
+            });
     }
 
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
@@ -145,7 +161,6 @@ public class ApiManager implements Managable {
                 }
             });
         }
-
     }
 
     public void getRoute(

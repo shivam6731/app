@@ -55,12 +55,15 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-location:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
+
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
+
     compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile 'joda-time:joda-time:2.3'
     compile 'com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.2.0'
-    compile 'io.reactivex.rxandroid:1.1.5'
+    compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
 
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3'
