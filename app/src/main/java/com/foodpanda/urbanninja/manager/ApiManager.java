@@ -26,6 +26,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
+import com.foodpanda.urbanninja.api.rx.RetryWithDelay;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.subsriber.BaseSubscriber;
 import com.foodpanda.urbanninja.model.Rider;
@@ -51,6 +52,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -123,9 +125,7 @@ public class ApiManager implements Managable {
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
 
-        service.auth(authRequest).
-            subscribeOn(Schedulers.newThread()).
-            observeOn(AndroidSchedulers.mainThread()).
+        wrapObservable(service.auth(authRequest)).
             subscribe(new BaseSubscriber<Token>(tokenBaseApiCallback) {
                 @Override
                 public void onNext(Token token) {
@@ -315,4 +315,24 @@ public class ApiManager implements Managable {
         Log.e("Calls", String.valueOf(httpClient.dispatcher().runningCallsCount()));
         httpClient.dispatcher().cancelAll();
     }
+
+    /**
+     * @param observable
+     * @param <T>
+     * @return
+     */
+    private <T> Observable<T> wrapObservable(Observable<T> observable) {
+        return observable.subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * @param observable
+     * @param <T>
+     * @return
+     */
+    private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
+        return wrapRetryObservable(observable).retryWhen(new RetryWithDelay());
+    }
+
 }
