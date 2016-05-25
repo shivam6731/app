@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,7 +11,6 @@ import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.RetryActionCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
@@ -22,8 +22,11 @@ import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
+import com.foodpanda.urbanninja.api.rx.RetryAction;
+import com.foodpanda.urbanninja.api.rx.RetryLocation;
 import com.foodpanda.urbanninja.api.rx.RetryWithDelay;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.subsriber.BaseSubscriber;
@@ -148,8 +151,6 @@ public class ApiManager implements Managable {
             };
             wrapRetryObservable(service.getRider(tokenData.getUserId())).
                 subscribe(baseSubscriber);
-
-//            mCompositeSubscription.add(baseSubscriber);
         }
     }
 
@@ -168,7 +169,6 @@ public class ApiManager implements Managable {
         wrapRetryObservable(service.getRoute(vehicleId)).
             subscribe(baseSubscriber);
 
-//        mCompositeSubscription.add(baseSubscriber);
     }
 
     public void getCurrentSchedule(
@@ -206,8 +206,6 @@ public class ApiManager implements Managable {
                 dateTimeEnd,
                 ApiTag.SORT_VALUE)).
             subscribe(baseSubscriber);
-
-//        mCompositeSubscription.add(baseSubscriber);
     }
 
     public void scheduleClockIn(
@@ -226,29 +224,42 @@ public class ApiManager implements Managable {
 
     public void notifyActionPerformed(long routeId, Status status) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
-        service.notifyActionPerformed(routeId, performActionWrapper).enqueue(new RetryActionCallback<>(routeId, performActionWrapper));
+        wrapRetryObservable(
+            service.notifyActionPerformed(routeId, performActionWrapper),
+            new RetryAction(routeId, performActionWrapper)
+        ).subscribe();
+    }
+
+    public void notifyStoredAction(StorableStatus storableStatus) {
+        wrapRetryObservable(
+            service.notifyActionPerformed(
+                storableStatus.getRouteId(),
+                storableStatus.getPerformActionWrapper()),
+            new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).subscribe();
     }
 
     public void sendLocation(
         int vehicleId,
         final List<RiderLocation> riderLocationList,
-        @NonNull final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
+        @Nullable final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
 
         wrapRetryObservable(
-            service.sendLocation(vehicleId, riderLocationCollectionWrapper)).
+            service.sendLocation(vehicleId, riderLocationCollectionWrapper), new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
             subscribe(new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
                 @Override
                 public void onNext(RiderLocationCollectionWrapper riderLocations) {
-                    baseApiCallback.onSuccess(riderLocations);
+                    if (baseApiCallback != null) {
+                        baseApiCallback.onSuccess(riderLocations);
+                    }
                 }
             });
     }
 
     public void sendAllFailedRequests() {
-        ApiQueue.getInstance().resendRequests(service);
+        ApiQueue.getInstance().resendRequests();
     }
 
     public void registerDeviceId(String token) {
@@ -328,7 +339,18 @@ public class ApiManager implements Managable {
      * @return
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
-        return wrapObservable(observable).retryWhen(new RetryWithDelay());
+        return wrapRetryObservable(observable, new RetryWithDelay());
     }
+
+    /**
+     * @param observable
+     * @param retryWithDelay
+     * @param <T>
+     * @return
+     */
+    private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
+        return wrapObservable(observable).retryWhen(retryWithDelay);
+    }
+
 
 }

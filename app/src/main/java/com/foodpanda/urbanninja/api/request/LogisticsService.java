@@ -16,7 +16,6 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
 import org.joda.time.DateTime;
 
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -48,7 +47,7 @@ public interface LogisticsService {
     Observable<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
 
     @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
-    Call<Stop> notifyActionPerformed(
+    Observable<Stop> notifyActionPerformed(
         @Path(ApiTag.ROUTE_STOP_ID_TAG) long routeId,
         @Body PerformActionWrapper performActionWrapper);
 

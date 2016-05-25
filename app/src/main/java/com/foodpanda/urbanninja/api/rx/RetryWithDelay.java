@@ -26,11 +26,18 @@ public class RetryWithDelay implements Func1<Observable<? extends Throwable>, Ob
                             TimeUnit.SECONDS);
                     } else {
                         Log.e("Retry", "Completed");
+                        storeAction();
                     }
 
                     // Max retries hit. Just pass the error along.
                     return Observable.error(throwable);
                 }
             });
+    }
+
+    /**
+     * 
+     */
+    protected void storeAction() {
     }
 }

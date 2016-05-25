@@ -1,12 +1,10 @@
 package com.foodpanda.urbanninja.manager;
 
 import com.foodpanda.urbanninja.App;
-import com.foodpanda.urbanninja.api.RetryActionCallback;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.StorableStatus;
-import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.model.enums.Status;
 
 import java.util.LinkedList;
@@ -20,6 +18,7 @@ import java.util.Queue;
 public class ApiQueue {
     private static ApiQueue instance = new ApiQueue();
     private StorageManager storageManager;
+    private ApiManager apiManager;
 
     private Queue<StorableStatus> requestsQueue = new LinkedList<>();
     private Queue<RiderLocation> requestsLocationQueue = new LinkedList<>();
@@ -27,6 +26,8 @@ public class ApiQueue {
 
     private ApiQueue() {
         storageManager = App.STORAGE_MANAGER;
+        apiManager = App.API_MANAGER;
+
         requestsQueue = storageManager.getStatusApiRequestList();
         requestsLocationQueue = storageManager.getLocationApiRequestList();
         vehicleId = storageManager.getVehicleId();
@@ -63,43 +64,33 @@ public class ApiQueue {
 
     /**
      * Try to execute all users action api calls
-     *
-     * @param service implementation of {@link LogisticsService} where all call would be executed
      */
-    private void resendAction(LogisticsService service) {
+    private void resendAction() {
         if (!requestsQueue.isEmpty()) {
             StorableStatus storableStatus = requestsQueue.remove();
-            service.notifyActionPerformed(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())
-                .enqueue(new RetryActionCallback<>(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper()));
-            resendAction(service);
+            apiManager.notifyStoredAction(storableStatus);
+            resendAction();
         }
         storageManager.storeStatusApiRequests(requestsQueue);
     }
 
     /**
      * Try to execute all users location api calls
-     *
-     * @param service implementation of {@link LogisticsService} where all call would be executed
      */
-    private void resendLocation(LogisticsService service) {
+    private void resendLocation() {
         if (!requestsLocationQueue.isEmpty()) {
             RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
             riderLocations.addAll(requestsLocationQueue);
-//TODO fix send
-//            service.sendLocation(
-//                vehicleId,
-//                riderLocations).enqueue(new RetryLocationCallback<>(
-//                vehicleId,
-//                riderLocations));
+            apiManager.sendLocation(vehicleId, riderLocations, null);
 
             requestsLocationQueue.clear();
             storageManager.storeLocationApiRequests(requestsLocationQueue);
         }
     }
 
-    public void resendRequests(LogisticsService logisticsService) {
-        resendAction(logisticsService);
-        resendLocation(logisticsService);
+    public void resendRequests() {
+        resendAction();
+        resendLocation();
     }
 
 }
