@@ -2,7 +2,6 @@ package com.foodpanda.urbanninja.manager;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.api.RetryActionCallback;
-import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
@@ -86,12 +85,12 @@ public class ApiQueue {
         if (!requestsLocationQueue.isEmpty()) {
             RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
             riderLocations.addAll(requestsLocationQueue);
-
-            service.sendLocation(
-                vehicleId,
-                riderLocations).enqueue(new RetryLocationCallback<>(
-                vehicleId,
-                riderLocations));
+//TODO fix send
+//            service.sendLocation(
+//                vehicleId,
+//                riderLocations).enqueue(new RetryLocationCallback<>(
+//                vehicleId,
+//                riderLocations));
 
             requestsLocationQueue.clear();
             storageManager.storeLocationApiRequests(requestsLocationQueue);

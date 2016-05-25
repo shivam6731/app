@@ -10,9 +10,7 @@ import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.BaseCallback;
 import com.foodpanda.urbanninja.api.RetryActionCallback;
-import com.foodpanda.urbanninja.api.RetryLocationCallback;
 import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
@@ -47,7 +45,6 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -97,6 +94,7 @@ public class ApiManager implements Managable {
 
         retrofit = new Retrofit.Builder().
             baseUrl(Config.ApiUrbanNinjaUrl.BASE_URL).
+            addCallAdapterFactory(RxJavaCallAdapterFactory.create()).
             addConverterFactory(GsonConverterFactory.create(createCountryGson())).
             build();
         countryService = retrofit.create(CountryService.class);
@@ -124,29 +122,34 @@ public class ApiManager implements Managable {
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
 
+        BaseSubscriber<Token> baseSubscriber = new BaseSubscriber<Token>(tokenBaseApiCallback) {
+            @Override
+            public void onNext(Token token) {
+                Log.e("Login", "OnNext");
+                storageManager.storeToken(token);
+                initService();
+                tokenBaseApiCallback.onSuccess(token);
+            }
+        };
         wrapObservable(service.auth(authRequest)).
-            subscribe(new BaseSubscriber<Token>(tokenBaseApiCallback) {
-                @Override
-                public void onNext(Token token) {
-                    storageManager.storeToken(token);
-                    initService();
-                    tokenBaseApiCallback.onSuccess(token);
-                }
-            });
+            subscribe(baseSubscriber);
+
     }
 
-    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
+    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
-            service.getRider(tokenData.getUserId()).
-                subscribeOn(Schedulers.newThread()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback) {
-                    @Override
-                    public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                        riderBundleBaseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
-                    }
-                });
+            BaseSubscriber<VehicleDeliveryAreaRiderBundle> baseSubscriber = new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(baseApiCallback) {
+                @Override
+                public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                    Log.e("getCurrentRider", "OnNext");
+                    baseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
+                }
+            };
+            wrapRetryObservable(service.getRider(tokenData.getUserId())).
+                subscribe(baseSubscriber);
+
+//            mCompositeSubscription.add(baseSubscriber);
         }
     }
 
@@ -154,14 +157,18 @@ public class ApiManager implements Managable {
         int vehicleId,
         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
+        BaseSubscriber<RouteWrapper> baseSubscriber = new BaseSubscriber<RouteWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(RouteWrapper routeWrapper) {
+                Log.e("getRoute", "OnNext");
+                storageManager.storeStopList(routeWrapper.getStops());
+                baseApiCallback.onSuccess(routeWrapper);
+            }
+        };
         wrapRetryObservable(service.getRoute(vehicleId)).
-            subscribe(new BaseSubscriber<RouteWrapper>(baseApiCallback) {
-                @Override
-                public void onNext(RouteWrapper routeWrapper) {
-                    storageManager.storeStopList(routeWrapper.getStops());
-                    baseApiCallback.onSuccess(routeWrapper);
-                }
-            });
+            subscribe(baseSubscriber);
+
+//        mCompositeSubscription.add(baseSubscriber);
     }
 
     public void getCurrentSchedule(
@@ -186,19 +193,21 @@ public class ApiManager implements Managable {
                                  @NonNull final BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
     ) {
         TokenData tokenData = storageManager.getTokenData();
-
+        BaseSubscriber<ScheduleCollectionWrapper> baseSubscriber = new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
+                baseApiCallback.onSuccess(scheduleWrappers);
+            }
+        };
         wrapRetryObservable(
             service.getRiderSchedule(
                 tokenData.getUserId(),
                 dateTimeStart,
                 dateTimeEnd,
                 ApiTag.SORT_VALUE)).
-            subscribe(new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
-                @Override
-                public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
-                    baseApiCallback.onSuccess(scheduleWrappers);
-                }
-            });
+            subscribe(baseSubscriber);
+
+//        mCompositeSubscription.add(baseSubscriber);
     }
 
     public void scheduleClockIn(
@@ -222,24 +231,20 @@ public class ApiManager implements Managable {
 
     public void sendLocation(
         int vehicleId,
-        List<RiderLocation> riderLocation,
+        final List<RiderLocation> riderLocationList,
         @NonNull final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
-        riderLocationCollectionWrapper.addAll(riderLocation);
+        riderLocationCollectionWrapper.addAll(riderLocationList);
 
-        service.sendLocation(vehicleId, riderLocationCollectionWrapper).enqueue(new RetryLocationCallback<RiderLocationCollectionWrapper>(
-            baseApiCallback,
-            vehicleId,
-            riderLocationCollectionWrapper) {
-            @Override
-            public void onResponse(Call<RiderLocationCollectionWrapper> call, retrofit2.Response<RiderLocationCollectionWrapper> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    baseApiCallback.onSuccess(response.body());
+        wrapRetryObservable(
+            service.sendLocation(vehicleId, riderLocationCollectionWrapper)).
+            subscribe(new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
+                @Override
+                public void onNext(RiderLocationCollectionWrapper riderLocations) {
+                    baseApiCallback.onSuccess(riderLocations);
                 }
-            }
-        });
+            });
     }
 
     public void sendAllFailedRequests() {
@@ -273,28 +278,27 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
 
-        service.getOrdersReport(tokenData.getUserId(), startAt, endAt, timezone)
-            .enqueue(new BaseCallback<OrdersReportCollection>(baseApiCallback) {
+        wrapRetryObservable(
+            service.getOrdersReport(
+                tokenData.getUserId(),
+                startAt,
+                endAt,
+                timezone))
+            .subscribe(new BaseSubscriber<OrdersReportCollection>(baseApiCallback) {
                 @Override
-                public void onResponse(Call<OrdersReportCollection> call, retrofit2.Response<OrdersReportCollection> response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        baseApiCallback.onSuccess(response.body());
-                    }
+                public void onNext(OrdersReportCollection workingDays) {
+                    baseApiCallback.onSuccess(workingDays);
                 }
-
             });
     }
 
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        countryService.getCountries().enqueue(new BaseCallback<CountryListWrapper>(baseApiCallback) {
+        wrapRetryObservable(
+            countryService.getCountries()).subscribe(new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
             @Override
-            public void onResponse(Call<CountryListWrapper> call, retrofit2.Response<CountryListWrapper> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    baseApiCallback.onSuccess(response.body());
-                }
+            public void onNext(CountryListWrapper countryListWrapper) {
+                baseApiCallback.onSuccess(countryListWrapper);
             }
         });
     }
@@ -306,7 +310,6 @@ public class ApiManager implements Managable {
      */
     public void logout() {
         Log.e("Calls", String.valueOf(httpClient.dispatcher().runningCallsCount()));
-        httpClient.dispatcher().cancelAll();
     }
 
     /**
@@ -325,7 +328,7 @@ public class ApiManager implements Managable {
      * @return
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
-        return wrapRetryObservable(observable).retryWhen(new RetryWithDelay());
+        return wrapObservable(observable).retryWhen(new RetryWithDelay());
     }
 
 }

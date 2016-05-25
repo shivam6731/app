@@ -58,12 +58,12 @@ public interface LogisticsService {
         @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper);
 
     @POST(ApiTag.POST_LOCATION)
-    Call<RiderLocationCollectionWrapper> sendLocation(
+    Observable<RiderLocationCollectionWrapper> sendLocation(
         @Path(ApiTag.VEHICLE_TAG) int vehicleId,
         @Body RiderLocationCollectionWrapper riderLocation);
 
     @GET(ApiTag.ORDERS_REPORT)
-    Call<OrdersReportCollection> getOrdersReport(
+    Observable<OrdersReportCollection> getOrdersReport(
         @Path(ApiTag.USER_TAG) int riderId,
         @Query(ApiTag.START_TIME_TAG) DateTime startAt,
         @Query(ApiTag.END_TIME_TAG) DateTime endAt,
