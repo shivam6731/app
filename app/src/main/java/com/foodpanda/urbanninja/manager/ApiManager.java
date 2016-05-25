@@ -27,6 +27,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.request.CountryService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
+import com.foodpanda.urbanninja.api.subsriber.BaseSubscriber;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
@@ -50,8 +51,6 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -123,21 +122,11 @@ public class ApiManager implements Managable {
         @NonNull final BaseApiCallback<Token> tokenBaseApiCallback
     ) {
         AuthRequest authRequest = new AuthRequest(username, password);
-        Observable<Token> observable = service.auth(authRequest);
-        observable.
+
+        service.auth(authRequest).
             subscribeOn(Schedulers.newThread()).
             observeOn(AndroidSchedulers.mainThread()).
-            subscribe(new Subscriber<Token>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-//                    tokenBaseApiCallback.onError(e.getMessage());
-                }
-
+            subscribe(new BaseSubscriber<Token>(tokenBaseApiCallback) {
                 @Override
                 public void onNext(Token token) {
                     storageManager.storeToken(token);
@@ -150,16 +139,15 @@ public class ApiManager implements Managable {
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> riderBundleBaseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
-            service.getRider(tokenData.getUserId()).enqueue(new BaseCallback<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback) {
-
-                @Override
-                public void onResponse(Call<VehicleDeliveryAreaRiderBundle> call, retrofit2.Response<VehicleDeliveryAreaRiderBundle> response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        riderBundleBaseApiCallback.onSuccess(response.body());
+            service.getRider(tokenData.getUserId()).
+                subscribeOn(Schedulers.newThread()).
+                observeOn(AndroidSchedulers.mainThread()).
+                subscribe(new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(riderBundleBaseApiCallback) {
+                    @Override
+                    public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                        riderBundleBaseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
                     }
-                }
-            });
+                });
         }
     }
 
@@ -167,17 +155,16 @@ public class ApiManager implements Managable {
         int vehicleId,
         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
-        service.getRoute(vehicleId).enqueue(new BaseCallback<RouteWrapper>(baseApiCallback) {
-            @Override
-            public void onResponse(Call<RouteWrapper> call, retrofit2.Response<RouteWrapper> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    storageManager.storeStopList(response.body().getStops());
-                    baseApiCallback.onSuccess(response.body());
+        service.getRoute(vehicleId).
+            subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread()).
+            subscribe(new BaseSubscriber<RouteWrapper>(baseApiCallback) {
+                @Override
+                public void onNext(RouteWrapper routeWrapper) {
+                    storageManager.storeStopList(routeWrapper.getStops());
+                    baseApiCallback.onSuccess(routeWrapper);
                 }
-            }
-        });
-
+            });
     }
 
     public void getCurrentSchedule(
@@ -207,16 +194,14 @@ public class ApiManager implements Managable {
             tokenData.getUserId(),
             dateTimeStart,
             dateTimeEnd,
-            ApiTag.SORT_VALUE)
-            .enqueue(new BaseCallback<ScheduleCollectionWrapper>(baseApiCallback) {
+            ApiTag.SORT_VALUE).
+            subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread()).
+            subscribe(new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
                 @Override
-                public void onResponse(Call<ScheduleCollectionWrapper> call, retrofit2.Response<ScheduleCollectionWrapper> response) {
-                    super.onResponse(call, response);
-                    if (response.isSuccessful()) {
-                        baseApiCallback.onSuccess(response.body());
-                    }
+                public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
+                    baseApiCallback.onSuccess(scheduleWrappers);
                 }
-
             });
     }
 
@@ -224,16 +209,15 @@ public class ApiManager implements Managable {
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
-        service.clockInSchedule(scheduleId).enqueue(new BaseCallback<ScheduleWrapper>(baseApiCallback) {
-            @Override
-            public void onResponse(Call<ScheduleWrapper> call, retrofit2.Response<ScheduleWrapper> response) {
-                super.onResponse(call, response);
-                if (response.isSuccessful()) {
-                    baseApiCallback.onSuccess(response.body());
+        service.clockInSchedule(scheduleId).
+            subscribeOn(Schedulers.newThread()).
+            observeOn(AndroidSchedulers.mainThread()).
+            subscribe(new BaseSubscriber<ScheduleWrapper>(baseApiCallback) {
+                @Override
+                public void onNext(ScheduleWrapper scheduleWrapper) {
+                    baseApiCallback.onSuccess(scheduleWrapper);
                 }
-            }
-
-        });
+            });
     }
 
     public void notifyActionPerformed(long routeId, Status status) {

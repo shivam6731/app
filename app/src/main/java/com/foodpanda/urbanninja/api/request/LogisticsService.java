@@ -32,20 +32,20 @@ public interface LogisticsService {
         @Body AuthRequest authRequest);
 
     @GET(ApiTag.GET_RIDER_URL)
-    Call<VehicleDeliveryAreaRiderBundle> getRider(@Path(ApiTag.USER_TAG) int riderId);
+    Observable<VehicleDeliveryAreaRiderBundle> getRider(@Path(ApiTag.USER_TAG) int riderId);
 
     @GET(ApiTag.GET_ROUTE_URL)
-    Call<RouteWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
+    Observable<RouteWrapper> getRoute(@Path(ApiTag.VEHICLE_TAG) int vehicleId);
 
     @GET(ApiTag.GET_SCHEDULE_URL)
-    Call<ScheduleCollectionWrapper> getRiderSchedule(
+    Observable<ScheduleCollectionWrapper> getRiderSchedule(
         @Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId,
         @Query(ApiTag.START_TIME_TAG) DateTime startAt,
         @Query(ApiTag.END_TIME_TAG) DateTime endAt,
         @Query(ApiTag.SORT) String sort);
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
-    Call<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
+    Observable<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
 
     @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
     Call<Stop> notifyActionPerformed(
