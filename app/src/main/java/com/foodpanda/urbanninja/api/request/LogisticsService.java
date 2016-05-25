@@ -53,7 +53,7 @@ public interface LogisticsService {
         @Body PerformActionWrapper performActionWrapper);
 
     @PUT(ApiTag.REGISTRY_PUSH_NOTIFICATION)
-    Call<Rider> registerDeviceId(
+    Observable<Rider> registerDeviceId(
         @Path(ApiTag.USER_TAG) int riderId,
         @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper);
 

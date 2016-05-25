@@ -29,7 +29,6 @@ import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.rx.RetryWithDelay;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.subsriber.BaseSubscriber;
-import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -155,9 +154,7 @@ public class ApiManager implements Managable {
         int vehicleId,
         @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
     ) {
-        service.getRoute(vehicleId).
-            subscribeOn(Schedulers.newThread()).
-            observeOn(AndroidSchedulers.mainThread()).
+        wrapRetryObservable(service.getRoute(vehicleId)).
             subscribe(new BaseSubscriber<RouteWrapper>(baseApiCallback) {
                 @Override
                 public void onNext(RouteWrapper routeWrapper) {
@@ -190,13 +187,12 @@ public class ApiManager implements Managable {
     ) {
         TokenData tokenData = storageManager.getTokenData();
 
-        service.getRiderSchedule(
-            tokenData.getUserId(),
-            dateTimeStart,
-            dateTimeEnd,
-            ApiTag.SORT_VALUE).
-            subscribeOn(Schedulers.newThread()).
-            observeOn(AndroidSchedulers.mainThread()).
+        wrapRetryObservable(
+            service.getRiderSchedule(
+                tokenData.getUserId(),
+                dateTimeStart,
+                dateTimeEnd,
+                ApiTag.SORT_VALUE)).
             subscribe(new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
                 @Override
                 public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
@@ -209,9 +205,8 @@ public class ApiManager implements Managable {
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
-        service.clockInSchedule(scheduleId).
-            subscribeOn(Schedulers.newThread()).
-            observeOn(AndroidSchedulers.mainThread()).
+        wrapRetryObservable(
+            service.clockInSchedule(scheduleId)).
             subscribe(new BaseSubscriber<ScheduleWrapper>(baseApiCallback) {
                 @Override
                 public void onNext(ScheduleWrapper scheduleWrapper) {
@@ -254,12 +249,10 @@ public class ApiManager implements Managable {
     public void registerDeviceId(String token) {
         if (!TextUtils.isEmpty(token)) {
             TokenData tokenData = storageManager.getTokenData();
-
-            service.registerDeviceId(
-                tokenData.getUserId(),
-                new PushNotificationRegistrationWrapper(token))
-                .enqueue(new BaseCallback<Rider>(null) {
-                });
+            wrapRetryObservable(
+                service.registerDeviceId(tokenData.getUserId(),
+                    new PushNotificationRegistrationWrapper(token)))
+                .subscribe();
         }
     }
 
