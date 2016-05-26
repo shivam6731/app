@@ -55,6 +55,10 @@ public class ReadyToWorkFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         scheduleWrapper = getArguments().getParcelable(Constants.BundleKeys.SCHEDULE_WRAPPER);
+        //The case for empty schedule
+        if (scheduleWrapper == null) {
+            scheduleWrapper = new ScheduleWrapper();
+        }
         timerHelper = new TimerHelper(activity, this, this, nestedFragmentCallback);
     }
 
