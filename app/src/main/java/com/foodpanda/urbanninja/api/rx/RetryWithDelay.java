@@ -36,7 +36,7 @@ public class RetryWithDelay implements Func1<Observable<? extends Throwable>, Ob
     }
 
     /**
-     * 
+     *
      */
     protected void storeAction() {
     }
