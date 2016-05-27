@@ -54,13 +54,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 
 public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
-    private OkHttpClient httpClient;
+    private CompositeSubscription compositeSubscription;
 
     @Override
     public void init(Context context) {
@@ -69,7 +70,7 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        httpClient = new OkHttpClient.Builder().
+        OkHttpClient httpClient = new OkHttpClient.Builder().
             addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
@@ -80,6 +81,8 @@ public class ApiManager implements Managable {
                             " " +
                             token.getAccessToken())
                             .build();
+
+                        Log.e("Token", token.getTokenType() + "");
                     }
 
                     return chain.proceed(build.build());
@@ -101,6 +104,8 @@ public class ApiManager implements Managable {
             addConverterFactory(GsonConverterFactory.create(createCountryGson())).
             build();
         countryService = retrofit.create(CountryService.class);
+        compositeSubscription = new CompositeSubscription();
+
         sendAllFailedRequests();
     }
 
@@ -136,6 +141,7 @@ public class ApiManager implements Managable {
         };
         wrapObservable(service.auth(authRequest)).
             subscribe(baseSubscriber);
+        compositeSubscription.add(baseSubscriber);
 
     }
 
@@ -151,6 +157,8 @@ public class ApiManager implements Managable {
             };
             wrapRetryObservable(service.getRider(tokenData.getUserId())).
                 subscribe(baseSubscriber);
+
+            compositeSubscription.add(baseSubscriber);
         }
     }
 
@@ -169,6 +177,7 @@ public class ApiManager implements Managable {
         wrapRetryObservable(service.getRoute(vehicleId)).
             subscribe(baseSubscriber);
 
+        compositeSubscription.add(baseSubscriber);
     }
 
     public void getCurrentSchedule(
@@ -206,20 +215,25 @@ public class ApiManager implements Managable {
                 dateTimeEnd,
                 ApiTag.SORT_VALUE)).
             subscribe(baseSubscriber);
+
+        compositeSubscription.add(baseSubscriber);
     }
 
     public void scheduleClockIn(
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
+        BaseSubscriber<ScheduleWrapper> baseSubscriber = new BaseSubscriber<ScheduleWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(ScheduleWrapper scheduleWrapper) {
+                baseApiCallback.onSuccess(scheduleWrapper);
+            }
+        };
         wrapRetryObservable(
             service.clockInSchedule(scheduleId)).
-            subscribe(new BaseSubscriber<ScheduleWrapper>(baseApiCallback) {
-                @Override
-                public void onNext(ScheduleWrapper scheduleWrapper) {
-                    baseApiCallback.onSuccess(scheduleWrapper);
-                }
-            });
+            subscribe(baseSubscriber);
+
+        compositeSubscription.add(baseSubscriber);
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
@@ -240,22 +254,23 @@ public class ApiManager implements Managable {
 
     public void sendLocation(
         int vehicleId,
-        final List<RiderLocation> riderLocationList,
+        List<RiderLocation> riderLocationList,
         @Nullable final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
-
+        BaseSubscriber<RiderLocationCollectionWrapper> baseSubscriber = new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(RiderLocationCollectionWrapper riderLocations) {
+                if (baseApiCallback != null) {
+                    baseApiCallback.onSuccess(riderLocations);
+                }
+            }
+        };
         wrapRetryObservable(
             service.sendLocation(vehicleId, riderLocationCollectionWrapper), new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
-            subscribe(new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
-                @Override
-                public void onNext(RiderLocationCollectionWrapper riderLocations) {
-                    if (baseApiCallback != null) {
-                        baseApiCallback.onSuccess(riderLocations);
-                    }
-                }
-            });
+            subscribe(baseSubscriber);
+        compositeSubscription.add(baseSubscriber);
     }
 
     public void sendAllFailedRequests() {
@@ -288,19 +303,21 @@ public class ApiManager implements Managable {
         String timezone,
         @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
-
+        BaseSubscriber<OrdersReportCollection> baseSubscriber = new BaseSubscriber<OrdersReportCollection>(baseApiCallback) {
+            @Override
+            public void onNext(OrdersReportCollection workingDays) {
+                baseApiCallback.onSuccess(workingDays);
+            }
+        };
         wrapRetryObservable(
             service.getOrdersReport(
                 tokenData.getUserId(),
                 startAt,
                 endAt,
                 timezone))
-            .subscribe(new BaseSubscriber<OrdersReportCollection>(baseApiCallback) {
-                @Override
-                public void onNext(OrdersReportCollection workingDays) {
-                    baseApiCallback.onSuccess(workingDays);
-                }
-            });
+            .subscribe(baseSubscriber);
+
+        compositeSubscription.add(baseSubscriber);
     }
 
     //Internal foodpanda API
@@ -320,7 +337,7 @@ public class ApiManager implements Managable {
      * and un-subscribe from push notification for current rider
      */
     public void logout() {
-        Log.e("Calls", String.valueOf(httpClient.dispatcher().runningCallsCount()));
+        compositeSubscription.unsubscribe();
     }
 
     /**
