@@ -23,4 +23,17 @@ public class ScheduleWrapperTest {
         scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now(), DateTime.now().plusSeconds(10)));
         assertFalse(scheduleWrapper.isScheduleFinished());
     }
+
+    @Test
+    public void testIsTimeWindowNull() {
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        assertFalse(scheduleWrapper.isScheduleFinished());
+    }
+
+    @Test
+    public void testIsEndAtNull() {
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now(), null));
+        assertFalse(scheduleWrapper.isScheduleFinished());
+    }
 }

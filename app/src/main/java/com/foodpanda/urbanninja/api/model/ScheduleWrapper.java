@@ -83,6 +83,15 @@ public class ScheduleWrapper implements ParcelableModel {
     }
 
     public boolean isScheduleFinished() {
-        return getTimeWindow().getEndAt().isBeforeNow();
+        return (getTimeWindow() != null && getTimeWindow().getEndAt() != null) && getTimeWindow().getEndAt().isBeforeNow();
+    }
+
+    /**
+     * needs only for unit tests
+     *
+     * @param clockedIn flag is clock-in
+     */
+    public void setClockedIn(boolean clockedIn) {
+        this.clockedIn = clockedIn;
     }
 }

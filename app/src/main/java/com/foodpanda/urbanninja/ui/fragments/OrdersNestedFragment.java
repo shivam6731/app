@@ -23,7 +23,6 @@ import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
@@ -268,7 +267,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+    public void openEmptyListFragment() {
         userStatus = UserStatus.EMPTY_LIST;
         swipeRefreshLayout.post(new Runnable() {
             @Override

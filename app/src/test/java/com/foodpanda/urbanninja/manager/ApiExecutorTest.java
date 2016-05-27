@@ -9,7 +9,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
-import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
+import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -22,12 +22,17 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -45,6 +50,9 @@ public class ApiExecutorTest {
     @Mock
     private StorageManager storageManager;
 
+    @Mock
+    private NestedFragmentCallback nestedFragmentCallback;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -52,8 +60,8 @@ public class ApiExecutorTest {
         app.onCreate();
 
         MainActivity activity = mock(MainActivity.class);
-        OrdersNestedFragment ordersNestedFragment = mock(OrdersNestedFragment.class);
-        apiExecutor = new ApiExecutor(activity, ordersNestedFragment, apiManager, storageManager);
+
+        apiExecutor = new ApiExecutor(activity, nestedFragmentCallback, apiManager, storageManager);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
@@ -63,8 +71,7 @@ public class ApiExecutorTest {
         ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
         scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(10), DateTime.now().minusSeconds(12)));
 
-        ScheduleWrapper scheduleWrapperNext = new ScheduleWrapper();
-        scheduleWrapperNext.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(5), DateTime.now().minusSeconds(6)));
+        ScheduleWrapper scheduleWrapperNext = createScheduleWrapper();
 
         ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
         scheduleWrappers.add(scheduleWrapper);
@@ -73,15 +80,16 @@ public class ApiExecutorTest {
         apiExecutor.setScheduleWrappers(scheduleWrappers);
         apiExecutor.setScheduleWrapper(scheduleWrapper);
 
-        assertTrue(apiExecutor.openNextScheduleIfCurrentIsFinished());
+        assertTrue(apiExecutor.openRiderScheduleScreen());
+        verify(nestedFragmentCallback).openReadyToWork(scheduleWrapperNext);
 
         assertEquals(apiExecutor.getScheduleWrapper(), scheduleWrapperNext);
     }
 
     @Test
-    public void testIsScheduleNotFinished() {
-        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
-        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusSeconds(10), DateTime.now().plusMinutes(12)));
+    public void testIsScheduleNotFinishedClockedIn() {
+        ScheduleWrapper scheduleWrapper = createScheduleWrapper();
+        scheduleWrapper.setClockedIn(true);
 
         ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
         scheduleWrappers.add(scheduleWrapper);
@@ -89,7 +97,43 @@ public class ApiExecutorTest {
         apiExecutor.setScheduleWrappers(scheduleWrappers);
         apiExecutor.setScheduleWrapper(scheduleWrapper);
 
-        assertFalse(apiExecutor.openNextScheduleIfCurrentIsFinished());
+        assertFalse(apiExecutor.openRiderScheduleScreen());
+        verify(nestedFragmentCallback, never()).openReadyToWork(any(ScheduleWrapper.class));
+    }
+
+    @Test
+    public void testIsScheduleNotFinishedNotClockedIn() {
+        ScheduleWrapper scheduleWrapper = createScheduleWrapper();
+        scheduleWrapper.setClockedIn(false);
+
+        ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
+        scheduleWrappers.add(scheduleWrapper);
+
+        apiExecutor.setScheduleWrappers(scheduleWrappers);
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+
+        assertTrue(apiExecutor.openRiderScheduleScreen());
+        verify(nestedFragmentCallback).openReadyToWork(scheduleWrapper);
+    }
+
+    @Test
+    public void testIsScheduleNull() {
+
+        apiExecutor.setScheduleWrappers(null);
+        apiExecutor.setScheduleWrapper(null);
+
+        assertTrue(apiExecutor.openRiderScheduleScreen());
+        verify(nestedFragmentCallback).openReadyToWork(any(ScheduleWrapper.class));
+    }
+
+    @Test
+    public void testIsScheduleEmpty() {
+
+        apiExecutor.setScheduleWrappers(new ScheduleCollectionWrapper());
+        apiExecutor.setScheduleWrapper(null);
+
+        assertTrue(apiExecutor.openRiderScheduleScreen());
+        verify(nestedFragmentCallback).openReadyToWork(any(ScheduleWrapper.class));
     }
 
     @Test
@@ -117,8 +161,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNotifyActionPerformedWithCompletedRouteStop() {
-        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
-        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusMinutes(10), DateTime.now().plusMinutes(12)));
+        ScheduleWrapper scheduleWrapper = createScheduleWrapper();
 
         ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
         scheduleWrappers.add(scheduleWrapper);
@@ -140,4 +183,80 @@ public class ApiExecutorTest {
         verify(storageManager).removeCurrentStop();
     }
 
+    @Test
+    public void testOpenCurrentFragmentWithRoute() {
+        Stop routeStop = new Stop();
+
+        List<Stop> stopList = new LinkedList<>();
+        stopList.add(routeStop);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(routeStop);
+
+        apiExecutor.openCurrentFragment();
+
+        verify(nestedFragmentCallback).openRoute(routeStop);
+        verify(nestedFragmentCallback, never()).openReadyToWork(any(ScheduleWrapper.class));
+        verify(nestedFragmentCallback, never()).openEmptyListFragment();
+    }
+
+
+    @Test
+    public void testOpenCurrentFragmentWithoutRouteAndSchedule() {
+
+        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+
+        apiExecutor.openCurrentFragment();
+
+        verify(nestedFragmentCallback).openReadyToWork(isNull(ScheduleWrapper.class));
+        verify(nestedFragmentCallback, never()).openRoute(any(Stop.class));
+        verify(nestedFragmentCallback, never()).openEmptyListFragment();
+    }
+
+    @Test
+    public void testOpenCurrentFragmentWithoutRouteButWithScheduleClockedIn() {
+
+        ScheduleWrapper scheduleWrapper = createScheduleWrapper();
+        scheduleWrapper.setClockedIn(true);
+
+        ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
+        scheduleWrappers.add(scheduleWrapper);
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+        apiExecutor.setScheduleWrappers(scheduleWrappers);
+
+        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+
+        apiExecutor.openCurrentFragment();
+
+        verify(nestedFragmentCallback).openEmptyListFragment();
+        verify(nestedFragmentCallback, never()).openReadyToWork(any(ScheduleWrapper.class));
+        verify(nestedFragmentCallback, never()).openRoute(any(Stop.class));
+    }
+
+    @Test
+    public void testOpenCurrentFragmentWithoutRouteButWithScheduleNotClockedIn() {
+
+        ScheduleWrapper scheduleWrapper = createScheduleWrapper();
+        scheduleWrapper.setClockedIn(false);
+
+        ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
+        scheduleWrappers.add(scheduleWrapper);
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+        apiExecutor.setScheduleWrappers(scheduleWrappers);
+
+        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+
+        apiExecutor.openCurrentFragment();
+
+        verify(nestedFragmentCallback).openReadyToWork(scheduleWrapper);
+        verify(nestedFragmentCallback, never()).openRoute(any(Stop.class));
+        verify(nestedFragmentCallback, never()).openEmptyListFragment();
+    }
+
+    private ScheduleWrapper createScheduleWrapper() {
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusMinutes(10), DateTime.now().plusMinutes(12)));
+
+        return scheduleWrapper;
+    }
 }

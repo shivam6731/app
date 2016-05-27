@@ -56,8 +56,7 @@ public class ApiExecutor {
             apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
                 @Override
                 public void onSuccess(RouteWrapper routeWrapper) {
-                    activity.writeCodeAsTitle(storageManager.getCurrentStop());
-                    openCurrentRouteFragment();
+                    openCurrentFragment();
                     hideProgressIndicators();
                 }
 
@@ -68,6 +67,37 @@ public class ApiExecutor {
                 }
             });
         }
+
+    }
+
+    /**
+     * Retrieve rider schedule
+     */
+    public void getRidersSchedule() {
+        apiManager.getCurrentSchedule(
+            new BaseApiCallback<ScheduleCollectionWrapper>() {
+
+                @Override
+                public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
+                    // Remove action title for cases when user is not clocked-in
+                    activity.writeCodeAsTitle(null);
+                    setScheduleWrappers(scheduleWrappers);
+                    // Here we get all future and current working schedule
+                    // However we need only first one as current
+                    if (scheduleWrappers.size() > 0) {
+                        scheduleWrapper = scheduleWrappers.get(0);
+                    }
+                    //after receive schedule we need request route stop
+                    getRoute();
+                    launchServiceOrAskForPermissions();
+                }
+
+                @Override
+                public void onError(ErrorMessage errorMessage) {
+                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                    hideProgressIndicators();
+                }
+            });
     }
 
     public void clockIn() {
@@ -123,51 +153,23 @@ public class ApiExecutor {
         }
     }
 
-    public void getRidersSchedule() {
-        apiManager.getCurrentSchedule(
-            new BaseApiCallback<ScheduleCollectionWrapper>() {
-
-                @Override
-                public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
-                    // Remove action title for cased when user is not clocked-in
-                    activity.writeCodeAsTitle(null);
-                    ApiExecutor.this.setScheduleWrappers(scheduleWrappers);
-                    // Here we get all future and current working schedule
-                    // However we need only first one as current
-                    if (scheduleWrappers.size() > 0) {
-                        ApiExecutor.this.scheduleWrapper = scheduleWrappers.get(0);
-
-                        // If isClockIn flag is false we
-                        // Would open clock in screen or route related screens
-                        if (scheduleWrapper.isClockedIn()) {
-                            getRoute();
-                        } else {
-                            nestedFragmentCallback.openReadyToWork(scheduleWrapper);
-                        }
-                        setScheduleFinishedAlarm();
-                    } else {
-                        nestedFragmentCallback.openReadyToWork(new ScheduleWrapper());
-                    }
-                    launchServiceOrAskForPermissions();
-                    hideProgressIndicators();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    hideProgressIndicators();
-                }
-            });
-    }
-
     /**
-     * Open clock-in screen if current schedule is over
+     * Open clock-in screen if rider is not clocked-in
+     * Open clock-in for the next schedule if current one is over
+     * Open empty clock-in screen if riders doesn't have schedule
      *
-     * @return true is rider's schedule is over
+     * @return true is rider's schedule is over or he is not clocked-in
      */
-    public boolean openNextScheduleIfCurrentIsFinished() {
-        if (scheduleWrapper.isScheduleFinished()) {
-            nestedFragmentCallback.openReadyToWork(switchSchedule());
+    boolean openRiderScheduleScreen() {
+        //open next schedule
+        if (scheduleWrapper == null || scheduleWrapper.isScheduleFinished()) {
+            nestedFragmentCallback.openReadyToWork(moveToNextSchedule());
+
+            return true;
+        }
+        //open current schedule in case when rider is not clocked-in
+        if (scheduleWrapper != null && !scheduleWrapper.isClockedIn()) {
+            nestedFragmentCallback.openReadyToWork(scheduleWrapper);
 
             return true;
         }
@@ -211,6 +213,8 @@ public class ApiExecutor {
      * Set up {@link AlarmManager} to trigger {@link ScheduleFinishedReceiver} when the
      * working day of current rider would be finished
      * by setting PendingIntent with endTime of current schedule
+     * <p/>
+     * Right now we don't need to stop sending location to always have up-to-date location
      */
     private void setScheduleFinishedAlarm() {
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
@@ -220,16 +224,35 @@ public class ApiExecutor {
         alarmManager.set(AlarmManager.RTC_WAKEUP, scheduleWrapper.getTimeWindow().getEndAt().getMillis(), pendingIntent);
     }
 
-    private void openCurrentRouteFragment() {
+    /**
+     * Open proper screen depend on rider current state
+     * <p/>
+     * in case when rider has route the route
+     * #nestedFragmentCallback.openRoute()should be called
+     * <p/>
+     * in case when rider doesn't have route and clocked-in
+     * #nestedFragmentCallback.openEmptyListFragment should be called
+     * <p/>
+     * in case when rider doesn't have route stop and not clock-in and schedule is not empty
+     * #nestedFragmentCallback.openReadyToWork should be called
+     * <p/>
+     * in case when rider doesn't have route stop and not clock-in and schedule is empty
+     * #nestedFragmentCallback.openReadyToWork with empty data should be called
+     * <p/>
+     */
+    void openCurrentFragment() {
         if (storageManager.getStopList().isEmpty()) {
             // will be called only of rider doesn't have any route to do
-            if (!openNextScheduleIfCurrentIsFinished()) {
-                nestedFragmentCallback.openEmptyListFragment(vehicleDeliveryAreaRiderBundle);
+            if (!openRiderScheduleScreen()) {
+                //will be called only if rider has valid schedule
+                nestedFragmentCallback.openEmptyListFragment();
             }
         } else {
+            // will be called only if rider has route to work with
             nestedFragmentCallback.openRoute(storageManager.getCurrentStop());
         }
     }
+
 
     /**
      * finish with current schedule and get next from the list
@@ -238,12 +261,16 @@ public class ApiExecutor {
      *
      * @return next schedule object from the API request
      */
-    private ScheduleWrapper switchSchedule() {
-        scheduleWrappers.remove(0);
-        if (scheduleWrappers.isEmpty()) {
-            scheduleWrapper = new ScheduleWrapper();
+    private ScheduleWrapper moveToNextSchedule() {
+        if (scheduleWrapper == null || scheduleWrappers == null || scheduleWrappers.isEmpty()) {
+            scheduleWrapper = null;
         } else {
-            scheduleWrapper = scheduleWrappers.get(0);
+            scheduleWrappers.remove(0);
+            if (scheduleWrappers.isEmpty()) {
+                scheduleWrapper = null;
+            } else {
+                scheduleWrapper = scheduleWrappers.get(0);
+            }
         }
 
         return scheduleWrapper;
@@ -252,7 +279,7 @@ public class ApiExecutor {
     private void finishWithCurrentRoute() {
         storageManager.removeCurrentStop();
         activity.writeCodeAsTitle(storageManager.getCurrentStop());
-        openCurrentRouteFragment();
+        openCurrentFragment();
     }
 
     private void hideProgressIndicators() {

@@ -3,7 +3,6 @@ package com.foodpanda.urbanninja.ui.interfaces;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
-import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
 /**
  * Interface describe all possible state for rider working work flow
@@ -53,11 +52,8 @@ public interface NestedFragmentCallback {
 
     /**
      * Open empty list screen if rider is clocked-in and doesn't have any order to do
-     *
-     * @param vehicleDeliveryAreaRiderBundle information about rider to send api request to retrieve the
-     *                                       order list
      */
-    void openEmptyListFragment(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle);
+    void openEmptyListFragment();
 
     /**
      * Open both of route details screen and route action screen depend on order state
