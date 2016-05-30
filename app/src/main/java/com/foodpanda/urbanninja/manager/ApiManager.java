@@ -341,9 +341,12 @@ public class ApiManager implements Managable {
     }
 
     /**
-     * @param observable
-     * @param <T>
-     * @return
+     * Wrap rx Observable to be executed in background thread
+     * and result would come to android main thread
+     *
+     * @param observable that would be executed
+     * @param <T>        type of expected result
+     * @return Observable with thread options
      */
     private <T> Observable<T> wrapObservable(Observable<T> observable) {
         return observable.subscribeOn(Schedulers.newThread()).
@@ -351,19 +354,27 @@ public class ApiManager implements Managable {
     }
 
     /**
-     * @param observable
-     * @param <T>
-     * @return
+     * Simple wrapping method with just retry logic
+     * Observable with retry logic that would be executed
+     * if API call was failed
+     *
+     * @param observable Observable that would be executed in case of fail
+     * @param <T>        type of expected result
+     * @return Observable with injected retry logic
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
         return wrapRetryObservable(observable, new RetryWithDelay());
     }
 
     /**
-     * @param observable
-     * @param retryWithDelay
-     * @param <T>
-     * @return
+     * Base wrapping method with possible saving
+     * Wrap Observable with retry logic that would be executed
+     * if API call was failed
+     *
+     * @param observable     Observable that would be executed in case of fail
+     * @param retryWithDelay basic setting for retry logic such as delay count of tries
+     * @param <T>            type of expected result
+     * @return Observable with injected retry logic
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
         return wrapObservable(observable).retryWhen(retryWithDelay);
