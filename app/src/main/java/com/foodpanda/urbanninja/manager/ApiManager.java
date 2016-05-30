@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Config;
@@ -81,8 +80,6 @@ public class ApiManager implements Managable {
                             " " +
                             token.getAccessToken())
                             .build();
-
-                        Log.e("Token", token.getTokenType() + "");
                     }
 
                     return chain.proceed(build.build());
@@ -132,7 +129,6 @@ public class ApiManager implements Managable {
         BaseSubscriber<Token> baseSubscriber = new BaseSubscriber<Token>(tokenBaseApiCallback) {
             @Override
             public void onNext(Token token) {
-                Log.e("Login", "OnNext");
                 storageManager.storeToken(token);
                 initService();
                 tokenBaseApiCallback.onSuccess(token);
@@ -150,7 +146,6 @@ public class ApiManager implements Managable {
             BaseSubscriber<VehicleDeliveryAreaRiderBundle> baseSubscriber = new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(baseApiCallback) {
                 @Override
                 public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                    Log.e("getCurrentRider", "OnNext");
                     baseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
                 }
             };
@@ -168,7 +163,6 @@ public class ApiManager implements Managable {
         BaseSubscriber<RouteWrapper> baseSubscriber = new BaseSubscriber<RouteWrapper>(baseApiCallback) {
             @Override
             public void onNext(RouteWrapper routeWrapper) {
-                Log.e("getRoute", "OnNext");
                 storageManager.storeStopList(routeWrapper.getStops());
                 baseApiCallback.onSuccess(routeWrapper);
             }
