@@ -1,7 +1,5 @@
 package com.foodpanda.urbanninja.api.rx;
 
-import android.util.Log;
-
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -25,7 +23,6 @@ public class RetryWithDelay implements Func1<Observable<? extends Throwable>, Ob
                         return Observable.timer(RETRY_DELAY_SECONDS,
                             TimeUnit.SECONDS);
                     } else {
-                        Log.e("Retry", "Completed");
                         storeAction();
                     }
 
@@ -36,7 +33,7 @@ public class RetryWithDelay implements Func1<Observable<? extends Throwable>, Ob
     }
 
     /**
-     *
+     * Needs only for API calls that should be stored
      */
     protected void storeAction() {
     }

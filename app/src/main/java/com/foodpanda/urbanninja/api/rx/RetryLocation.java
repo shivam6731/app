@@ -13,7 +13,9 @@ public class RetryLocation extends RetryWithDelay {
     private StorableApiCallback storableApiCallback;
 
     /**
-     * We should be able to clean rider locations list if data was sent or was stored
+     * Api call with retry logic inside
+     * In case this request was failed rider location
+     * would be added to the queue and send as soon as connection would be available again
      *
      * @param storableApiCallback       callback inform us about the statuses of request success,
      *                                  failed and stored
