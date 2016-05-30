@@ -61,7 +61,7 @@ public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
-    private CompositeSubscription compositeSubscription;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     public void init(Context context) {
@@ -104,7 +104,6 @@ public class ApiManager implements Managable {
             addConverterFactory(GsonConverterFactory.create(createCountryGson())).
             build();
         countryService = retrofit.create(CountryService.class);
-        compositeSubscription = new CompositeSubscription();
 
         sendAllFailedRequests();
     }
@@ -338,6 +337,7 @@ public class ApiManager implements Managable {
      */
     public void logout() {
         compositeSubscription.unsubscribe();
+        compositeSubscription = new CompositeSubscription();
     }
 
     /**
@@ -379,6 +379,4 @@ public class ApiManager implements Managable {
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
         return wrapObservable(observable).retryWhen(retryWithDelay);
     }
-
-
 }
