@@ -300,7 +300,8 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private void setSelectedNavigationItem() {
         navigationView.getMenu().getItem(0).setChecked(true);
         currentItemId = navigationView.getMenu().getItem(0).getItemId();
-        //set order code for action bar
+
+        //set title and subtitle for order section
         writeCodeAsTitle(storageManager.getCurrentStop());
     }
 
@@ -547,9 +548,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     }
                 }
                 setSelectedNavigationItem();
-
-                //set title and subtitle for order section
-                writeCodeAsTitle(storageManager.getCurrentStop());
             }
         }
     }
