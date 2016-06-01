@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,10 +16,12 @@ import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.ui.adapter.CashReportAdapter;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
 import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
 public class CashReportListFragment extends BaseFragment implements BaseApiCallback<OrdersReportCollection> {
+    private MainActivityCallback mainActivityCallback;
     private ApiManager apiManager;
 
     private RecyclerViewEmpty recyclerView;
@@ -27,6 +30,12 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
         CashReportListFragment loginFragment = new CashReportListFragment();
 
         return loginFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
     }
 
     @Override
@@ -63,6 +72,7 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
         super.onActivityCreated(savedInstanceState);
         activity.showProgress();
         apiManager.getWorkingDayReport(this);
+        mainActivityCallback.writeFragmentTitle(getResources().getString(R.string.side_menu_cash_report));
     }
 
     @Override

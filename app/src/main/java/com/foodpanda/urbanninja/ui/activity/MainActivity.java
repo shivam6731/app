@@ -280,6 +280,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private void setSelectedNavigationItem() {
         navigationView.getMenu().getItem(0).setChecked(true);
         currentItemId = navigationView.getMenu().getItem(0).getItemId();
+
+        //set order code for action bar
+        writeCodeAsTitle(storageManager.getCurrentStop());
     }
 
     private void setActionBarDrawerToggle(Toolbar toolbar) {
@@ -456,8 +459,18 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     @Override
     public void writeCodeAsTitle(Stop stop) {
-        toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
-        toolbar.setSubtitle(formatDeliverBefore(stop));
+        if (toolbar != null) {
+            toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
+            toolbar.setSubtitle(formatDeliverBefore(stop));
+        }
+    }
+
+    @Override
+    public void writeFragmentTitle(String title) {
+        if (toolbar != null) {
+            toolbar.setTitle(title);
+            toolbar.setSubtitle("");
+        }
     }
 
     /**

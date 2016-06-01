@@ -121,7 +121,7 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of status with route was happened
      * and store this status to the map to save up to date status for each route
-     * <p/>
+     * <p>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
@@ -213,7 +213,7 @@ public class ApiExecutor {
      * Set up {@link AlarmManager} to trigger {@link ScheduleFinishedReceiver} when the
      * working day of current rider would be finished
      * by setting PendingIntent with endTime of current schedule
-     * <p/>
+     * <p>
      * Right now we don't need to stop sending location to always have up-to-date location
      */
     private void setScheduleFinishedAlarm() {
@@ -226,22 +226,24 @@ public class ApiExecutor {
 
     /**
      * Open proper screen depend on rider current state
-     * <p/>
+     * <p>
      * in case when rider has route the route
      * #nestedFragmentCallback.openRoute()should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route and clocked-in
      * #nestedFragmentCallback.openEmptyListFragment should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is not empty
      * #nestedFragmentCallback.openReadyToWork should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is empty
      * #nestedFragmentCallback.openReadyToWork with empty data should be called
-     * <p/>
+     * <p>
      */
     void openCurrentFragment() {
         if (storageManager.getStopList().isEmpty()) {
+            //set empty toolbar title and subtitle
+            activity.writeCodeAsTitle(null);
             // will be called only of rider doesn't have any route to do
             if (!openRiderScheduleScreen()) {
                 //will be called only if rider has valid schedule
@@ -250,6 +252,8 @@ public class ApiExecutor {
         } else {
             // will be called only if rider has route to work with
             nestedFragmentCallback.openRoute(storageManager.getCurrentStop());
+            //set order based toolbar title and subtitle
+            activity.writeCodeAsTitle(storageManager.getCurrentStop());
         }
     }
 
