@@ -141,6 +141,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
             }
         }
+
+        //we need to navigate to the just updated screen after receiving push notification
+        onBackPressed();
     }
 
     private void setNavigationDrawer() {
