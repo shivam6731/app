@@ -30,4 +30,11 @@ public interface MainActivityCallback {
      * @param stop current stop
      */
     void writeCodeAsTitle(Stop stop);
+
+    /**
+     * Write the title for the main activity
+     *
+     * @param title for the action bar with information about current selected fragment
+     */
+    void writeFragmentTitle(String title);
 }

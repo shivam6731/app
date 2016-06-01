@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,17 +12,25 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
+import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
 import java.util.ArrayList;
 
 public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<ScheduleCollectionWrapper> {
+    private MainActivityCallback mainActivityCallback;
     private ApiManager apiManager;
 
     public static ScheduleListFragment newInstance() {
         ScheduleListFragment fragment = new ScheduleListFragment();
 
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
     }
 
     @Override
@@ -36,6 +45,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
         apiManager.getScheduleList(this);
         activity.showProgress();
         recyclerView.addItemDecoration(new StickyRecyclerHeadersDecoration(adapter));
+        mainActivityCallback.writeFragmentTitle(getResources().getString(R.string.side_menu_schedule));
     }
 
     @Override
