@@ -289,7 +289,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     @Override
     public void openLoadFragment() {
-        replaceFragment(LoadDataFragment.newInstance());
+        addFragment(R.id.container, LoadDataFragment.newInstance());
     }
 
     @Override
