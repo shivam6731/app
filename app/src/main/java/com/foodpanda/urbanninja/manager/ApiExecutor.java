@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.foodpanda.urbanninja.Constants;
@@ -121,14 +122,14 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of status with route was happened
      * and store this status to the map to save up to date status for each route
-     * <p>
+     * <p/>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
      *
      * @param status that should be sent to the server side
      */
-    public void notifyActionPerformed(final Status status) {
+    public void notifyActionPerformed(@NonNull final Status status) {
         if (storageManager.getCurrentStop() != null) {
             long routeId = storageManager.getCurrentStop().getId();
 
@@ -213,7 +214,7 @@ public class ApiExecutor {
      * Set up {@link AlarmManager} to trigger {@link ScheduleFinishedReceiver} when the
      * working day of current rider would be finished
      * by setting PendingIntent with endTime of current schedule
-     * <p>
+     * <p/>
      * Right now we don't need to stop sending location to always have up-to-date location
      */
     private void setScheduleFinishedAlarm() {
@@ -226,19 +227,19 @@ public class ApiExecutor {
 
     /**
      * Open proper screen depend on rider current state
-     * <p>
+     * <p/>
      * in case when rider has route the route
      * #nestedFragmentCallback.openRoute()should be called
-     * <p>
+     * <p/>
      * in case when rider doesn't have route and clocked-in
      * #nestedFragmentCallback.openEmptyListFragment should be called
-     * <p>
+     * <p/>
      * in case when rider doesn't have route stop and not clock-in and schedule is not empty
      * #nestedFragmentCallback.openReadyToWork should be called
-     * <p>
+     * <p/>
      * in case when rider doesn't have route stop and not clock-in and schedule is empty
      * #nestedFragmentCallback.openReadyToWork with empty data should be called
-     * <p>
+     * <p/>
      */
     void openCurrentFragment() {
         if (storageManager.getStopList().isEmpty()) {

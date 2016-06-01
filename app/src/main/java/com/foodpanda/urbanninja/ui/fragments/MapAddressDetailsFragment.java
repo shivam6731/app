@@ -240,20 +240,26 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     @Override
     public void onResume() {
-        mapView.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
         super.onDestroy();
-        mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
         super.onLowMemory();
-        mapView.onLowMemory();
     }
 
     /**

@@ -151,16 +151,18 @@ public class LocationService extends Service implements
     }
 
     private void disconnect() {
-        unregisterReceiver(batteryLevelReceiver);
+        if (batteryLevelReceiver != null) {
+            unregisterReceiver(batteryLevelReceiver);
+        }
         if (timer != null) {
             timer.cancel();
         }
         timer = null;
-        if (googleApiClient.isConnected()) {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                 googleApiClient, this);
+            googleApiClient.disconnect();
         }
-        googleApiClient.disconnect();
     }
 
     private void setApiClient() {

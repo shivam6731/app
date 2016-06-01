@@ -129,9 +129,15 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         }
     }
 
-    public void startLocationSerivce() {
+    public void startLocationService() {
         if (apiExecutor != null) {
             apiExecutor.startLocationService();
+        }
+    }
+
+    private void notifyActionPerformed(Status status) {
+        if (apiExecutor != null && status != null) {
+            apiExecutor.notifyActionPerformed(status);
         }
     }
 
@@ -171,10 +177,10 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case VIEWING:
             case EMPTY_LIST:
             case ARRIVING:
-                apiExecutor.getRoute();
+                getRoute();
                 break;
             case CLOCK_IN:
-                apiExecutor.getRidersSchedule();
+                getRidersSchedule();
                 break;
         }
     }
@@ -193,17 +199,17 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case EMPTY_LIST:
                 break;
             case VIEWING:
-                apiExecutor.notifyActionPerformed(Status.ON_THE_WAY);
+                notifyActionPerformed(Status.ON_THE_WAY);
                 userStatus = UserStatus.ARRIVING;
                 showDoneCheckbox();
                 actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
                 break;
             case ARRIVING:
                 openRouteStopActionList(storageManager.getCurrentStop());
-                apiExecutor.notifyActionPerformed(Status.ARRIVED);
+                notifyActionPerformed(Status.ARRIVED);
                 break;
             case ACTION_LIST:
-                apiExecutor.notifyActionPerformed(Status.COMPLETED);
+                notifyActionPerformed(Status.COMPLETED);
                 break;
         }
     }
@@ -278,7 +284,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                     !fragmentManager.getFragments().isEmpty() &&
                     !(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
                     swipeRefreshLayout.setRefreshing(true);
-                    apiExecutor.getRoute();
+                    getRoute();
                 }
             }
         });
@@ -299,7 +305,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case ASSIGNED:
             case VIEWED:
                 userStatus = UserStatus.VIEWING;
-                apiExecutor.notifyActionPerformed(Status.VIEWED);
+                notifyActionPerformed(Status.VIEWED);
                 openRouteStopDetails(stop);
                 actionLayoutHelper.setDrivingHereStatusActionButton();
                 break;
