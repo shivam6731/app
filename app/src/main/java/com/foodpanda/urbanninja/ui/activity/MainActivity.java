@@ -141,9 +141,18 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
             }
         }
+        navigateToMainFragmentIfNecessary();
+    }
 
-        //we need to navigate to the just updated screen after receiving push notification
-        onBackPressed();
+    /**
+     * We need to navigate to the just updated screen after receiving push notification
+     * if only we are not in OrdersNestedFragment we should navigate to this screen
+     */
+    private void navigateToMainFragmentIfNecessary() {
+        Fragment fragment = fragmentManager.findFragmentById(R.id.container);
+        if (fragment != null && !(fragment instanceof OrdersNestedFragment)) {
+            onBackPressed();
+        }
     }
 
     private void setNavigationDrawer() {
