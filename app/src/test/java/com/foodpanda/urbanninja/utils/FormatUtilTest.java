@@ -31,7 +31,6 @@ public class FormatUtilTest {
         assertEquals("", FormatUtil.getValueWithCurrencySymbol(getCountryForCode("hk"), null));
     }
 
-
     @Test
     public void testGetValueWithCurrencySymbolWithNumeric() throws Exception {
         assertEquals("HKD2.00", FormatUtil.getValueWithCurrencySymbolFromNumber(getCountryForCode("hk"), 2.0d));

@@ -101,9 +101,11 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     @Override
     public void onDestroy() {
+        if (notificationReceiver != null) {
+            //Un-subscribe from all push updates
+            unregisterReceiver(notificationReceiver);
+        }
         super.onDestroy();
-        //Un-subscribe from all push updates
-        unregisterReceiver(notificationReceiver);
     }
 
     /**
@@ -147,10 +149,13 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     /**
      * We need to navigate to the just updated screen after receiving push notification
      * if only we are not in OrdersNestedFragment we should navigate to this screen
+     * Should be called only if activity in a foreground
      */
     private void navigateToMainFragmentIfNecessary() {
         Fragment fragment = fragmentManager.findFragmentById(R.id.container);
-        if (fragment != null && !(fragment instanceof OrdersNestedFragment)) {
+        if (App.isInterestingActivityVisible() &&
+            fragment != null &&
+            !(fragment instanceof OrdersNestedFragment)) {
             onBackPressed();
         }
     }
@@ -328,7 +333,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length && ordersNestedFragment != null) {
-                    ordersNestedFragment.startLocationSerivce();
+                    ordersNestedFragment.startLocationService();
                 } else {
                     Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
                 }

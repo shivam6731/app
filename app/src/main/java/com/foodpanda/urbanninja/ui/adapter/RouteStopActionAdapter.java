@@ -108,36 +108,38 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 viewHolder.layoutDetails.setVisibility(View.VISIBLE);
             }
 
-            switch (routeStopActivity.getType()) {
-                case PICKUP:
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
-                    setNotRelatedToHalalActionLayout(viewHolder);
-                    break;
-                case DELIVER:
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
-                    setNotRelatedToHalalActionLayout(viewHolder);
-                    break;
-                case PAY_RESTAURANT:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
-                    setNotRelatedToHalalActionLayout(viewHolder);
-                    break;
-                case PREPARE_CHANGE:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
-                    setNotRelatedToHalalActionLayout(viewHolder);
-                    break;
-                case COLLECT:
-                    viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
-                    setNotRelatedToHalalActionLayout(viewHolder);
-                    break;
-                case HALAL:
-                case NON_HALAL:
-                    setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
-                    break;
+            if (routeStopActivity.getType() != null) {
+                switch (routeStopActivity.getType()) {
+                    case PICKUP:
+                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
+                        viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
+                        setNotRelatedToHalalActionLayout(viewHolder);
+                        break;
+                    case DELIVER:
+                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
+                        viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
+                        setNotRelatedToHalalActionLayout(viewHolder);
+                        break;
+                    case PAY_RESTAURANT:
+                        viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
+                        setNotRelatedToHalalActionLayout(viewHolder);
+                        break;
+                    case PREPARE_CHANGE:
+                        viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
+                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
+                        setNotRelatedToHalalActionLayout(viewHolder);
+                        break;
+                    case COLLECT:
+                        viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
+                        viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
+                        setNotRelatedToHalalActionLayout(viewHolder);
+                        break;
+                    case HALAL:
+                    case NON_HALAL:
+                        setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
+                        break;
+                }
             }
 
 
