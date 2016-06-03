@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Config;
@@ -53,14 +54,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 
 public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+//    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     public void init(Context context) {
@@ -88,7 +88,7 @@ public class ApiManager implements Managable {
 
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
             .build();
@@ -134,13 +134,16 @@ public class ApiManager implements Managable {
                 tokenBaseApiCallback.onSuccess(token);
             }
         };
+
+//        compositeSubscription.add(
         wrapObservable(service.auth(authRequest)).
             subscribe(baseSubscriber);
-        compositeSubscription.add(baseSubscriber);
 
     }
 
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> baseApiCallback) {
+        Log.e("getCurrentRider", "getCurrentRider");
+
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
             BaseSubscriber<VehicleDeliveryAreaRiderBundle> baseSubscriber = new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(baseApiCallback) {
@@ -149,10 +152,11 @@ public class ApiManager implements Managable {
                     baseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
                 }
             };
-            wrapRetryObservable(service.getRider(tokenData.getUserId())).
-                subscribe(baseSubscriber);
 
-            compositeSubscription.add(baseSubscriber);
+//            compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRider(tokenData.getUserId())).
+                subscribe(baseSubscriber);
         }
     }
 
@@ -167,10 +171,11 @@ public class ApiManager implements Managable {
                 baseApiCallback.onSuccess(routeWrapper);
             }
         };
-        wrapRetryObservable(service.getRoute(vehicleId)).
-            subscribe(baseSubscriber);
 
-        compositeSubscription.add(baseSubscriber);
+//        compositeSubscription.add(
+        wrapRetryObservable(
+            service.getRoute(vehicleId)).
+            subscribe(baseSubscriber);
     }
 
     public void getCurrentSchedule(
@@ -201,6 +206,8 @@ public class ApiManager implements Managable {
                 baseApiCallback.onSuccess(scheduleWrappers);
             }
         };
+
+//        compositeSubscription.add(
         wrapRetryObservable(
             service.getRiderSchedule(
                 tokenData.getUserId(),
@@ -208,8 +215,6 @@ public class ApiManager implements Managable {
                 dateTimeEnd,
                 ApiTag.SORT_VALUE)).
             subscribe(baseSubscriber);
-
-        compositeSubscription.add(baseSubscriber);
     }
 
     public void scheduleClockIn(
@@ -222,11 +227,11 @@ public class ApiManager implements Managable {
                 baseApiCallback.onSuccess(scheduleWrapper);
             }
         };
+
+//        compositeSubscription.add(
         wrapRetryObservable(
             service.clockInSchedule(scheduleId)).
             subscribe(baseSubscriber);
-
-        compositeSubscription.add(baseSubscriber);
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
@@ -260,10 +265,13 @@ public class ApiManager implements Managable {
                 }
             }
         };
+
+//        compositeSubscription.add(
         wrapRetryObservable(
-            service.sendLocation(vehicleId, riderLocationCollectionWrapper), new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
+            service.sendLocation(
+                vehicleId, riderLocationCollectionWrapper),
+            new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
             subscribe(baseSubscriber);
-        compositeSubscription.add(baseSubscriber);
     }
 
     public void sendAllFailedRequests() {
@@ -302,15 +310,15 @@ public class ApiManager implements Managable {
                 baseApiCallback.onSuccess(workingDays);
             }
         };
-        wrapRetryObservable(
-            service.getOrdersReport(
-                tokenData.getUserId(),
-                startAt,
-                endAt,
-                timezone))
-            .subscribe(baseSubscriber);
 
-        compositeSubscription.add(baseSubscriber);
+//        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getOrdersReport(
+                    tokenData.getUserId(),
+                    startAt,
+                    endAt,
+                    timezone))
+                .subscribe(baseSubscriber);
     }
 
     //Internal foodpanda API
@@ -330,8 +338,8 @@ public class ApiManager implements Managable {
      * and un-subscribe from push notification for current rider
      */
     public void logout() {
-        compositeSubscription.unsubscribe();
-        compositeSubscription = new CompositeSubscription();
+//        compositeSubscription.unsubscribe();
+//        compositeSubscription = new CompositeSubscription();
     }
 
     /**
@@ -343,7 +351,7 @@ public class ApiManager implements Managable {
      * @return Observable with thread options
      */
     private <T> Observable<T> wrapObservable(Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.newThread()).
+        return observable.subscribeOn(Schedulers.io()).
             observeOn(AndroidSchedulers.mainThread());
     }
 
