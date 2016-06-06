@@ -23,9 +23,10 @@ public class RetryLocation extends RetryWithDelay {
      * @param locationCollectionWrapper wrapper with a list of all information about rider status such as
      *                                  {@link DateTime} and {@link GeoCoordinate}
      */
-    public RetryLocation(StorableApiCallback storableApiCallback,
-                         int vehicleId,
-                         RiderLocationCollectionWrapper locationCollectionWrapper) {
+    public RetryLocation(
+        StorableApiCallback storableApiCallback,
+        int vehicleId,
+        RiderLocationCollectionWrapper locationCollectionWrapper) {
         this.vehicleId = vehicleId;
         this.locationCollectionWrapper = locationCollectionWrapper;
         this.storableApiCallback = storableApiCallback;
