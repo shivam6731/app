@@ -1,4 +1,4 @@
-package com.foodpanda.urbanninja.api.rx;
+package com.foodpanda.urbanninja.api.rx.action;
 
 import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;

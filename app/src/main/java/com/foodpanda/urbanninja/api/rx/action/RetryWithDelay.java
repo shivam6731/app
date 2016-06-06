@@ -1,4 +1,4 @@
-package com.foodpanda.urbanninja.api.rx;
+package com.foodpanda.urbanninja.api.rx.action;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,4 +1,4 @@
-package com.foodpanda.urbanninja.api.subsriber;
+package com.foodpanda.urbanninja.api.rx.subscriber;
 
 import android.util.Log;
 
@@ -44,6 +44,6 @@ public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
 
     @Override
     public void onCompleted() {
-
+        Log.i(TAG, "onCompleted");
     }
 }

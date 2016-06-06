@@ -1,4 +1,4 @@
-package com.foodpanda.urbanninja.api.subsriber;
+package com.foodpanda.urbanninja.api.rx.subscriber;
 
 import android.util.Log;
 
@@ -7,7 +7,7 @@ import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.model.Model;
 
 /**
- * Need to that API call that shouldn't chance UI
+ * Needs for that API call that shouldn't chance UI
  * or inform user about some changes
  * For instance it can be push notification subscription
  *
@@ -19,12 +19,12 @@ public class BackgroundSubscriber<T extends Model> extends BaseSubscriber<T> {
         super(new BaseApiCallback<T>() {
             @Override
             public void onSuccess(T t) {
-                Log.i("success", t.toString());
+                Log.i("onSuccess", t.toString());
             }
 
             @Override
             public void onError(ErrorMessage errorMessage) {
-                Log.e("Error", errorMessage.getMessage());
+                Log.e("onError", errorMessage.getMessage());
             }
         });
     }
