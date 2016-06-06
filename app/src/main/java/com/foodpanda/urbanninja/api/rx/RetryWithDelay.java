@@ -7,8 +7,8 @@ import rx.functions.Func1;
 
 public class RetryWithDelay implements Func1<Observable<? extends Throwable>, Observable<?>> {
 
-    private static final int MAX_RETRIES_COUNT = 5;
-    private static final int RETRY_DELAY_SECONDS = 1;
+    private static final int MAX_RETRIES_COUNT = 3;
+    private static final int RETRY_DELAY_SECONDS = 15;
     private int retryCount;
 
     @Override

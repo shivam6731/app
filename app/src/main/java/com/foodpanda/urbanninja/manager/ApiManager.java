@@ -379,7 +379,7 @@ public class ApiManager implements Managable {
      * @return Observable with injected retry logic
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
-        return wrapObservable(observable);
+        return wrapRetryObservable(observable, new RetryWithDelay());
     }
 
     /**
