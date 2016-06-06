@@ -15,7 +15,7 @@ import rx.Subscriber;
 
 public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
     private static final String TAG = BaseSubscriber.class.getSimpleName();
-    private BaseApiCallback<T> baseApiCallback;
+    protected BaseApiCallback<T> baseApiCallback;
 
     public BaseSubscriber(BaseApiCallback<T> baseApiCallback) {
         this.baseApiCallback = baseApiCallback;
@@ -31,7 +31,7 @@ public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
             } else {
                 errorMessage = new ErrorMessage(500, throwable.getMessage());
             }
-
+            Log.e(TAG, throwable.getMessage());
         } catch (IOException | JsonSyntaxException e) {
             Log.e(TAG, e.getMessage());
         }

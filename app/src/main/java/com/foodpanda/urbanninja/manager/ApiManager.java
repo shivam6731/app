@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Config;
@@ -29,7 +28,10 @@ import com.foodpanda.urbanninja.api.rx.RetryAction;
 import com.foodpanda.urbanninja.api.rx.RetryLocation;
 import com.foodpanda.urbanninja.api.rx.RetryWithDelay;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
+import com.foodpanda.urbanninja.api.subsriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.subsriber.BaseSubscriber;
+import com.foodpanda.urbanninja.model.Rider;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -54,13 +56,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 
 public class ApiManager implements Managable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
-//    private CompositeSubscription compositeSubscription = new CompositeSubscription();
+
+    //Will store all requests that are executing right now
+    //and after logout will un-subscribe from all of them
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     public void init(Context context) {
@@ -88,7 +94,7 @@ public class ApiManager implements Managable {
 
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(httpClient)
             .build();
@@ -135,14 +141,14 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
-        wrapObservable(service.auth(authRequest)).
-            subscribe(baseSubscriber);
+        compositeSubscription.add(
+            wrapObservable(
+                service.auth(authRequest)).
+                subscribe(baseSubscriber));
 
     }
 
     public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> baseApiCallback) {
-        Log.e("getCurrentRider", "getCurrentRider");
 
         TokenData tokenData = storageManager.getTokenData();
         if (tokenData != null) {
@@ -153,10 +159,10 @@ public class ApiManager implements Managable {
                 }
             };
 
-//            compositeSubscription.add(
-            wrapRetryObservable(
-                service.getRider(tokenData.getUserId())).
-                subscribe(baseSubscriber);
+            compositeSubscription.add(
+                wrapRetryObservable(
+                    service.getRider(tokenData.getUserId())).
+                    subscribe(baseSubscriber));
         }
     }
 
@@ -172,10 +178,10 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
-        wrapRetryObservable(
-            service.getRoute(vehicleId)).
-            subscribe(baseSubscriber);
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRoute(vehicleId)).
+                subscribe(baseSubscriber));
     }
 
     public void getCurrentSchedule(
@@ -200,6 +206,7 @@ public class ApiManager implements Managable {
                                  @NonNull final BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
     ) {
         TokenData tokenData = storageManager.getTokenData();
+
         BaseSubscriber<ScheduleCollectionWrapper> baseSubscriber = new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
             @Override
             public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
@@ -207,14 +214,14 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
-        wrapRetryObservable(
-            service.getRiderSchedule(
-                tokenData.getUserId(),
-                dateTimeStart,
-                dateTimeEnd,
-                ApiTag.SORT_VALUE)).
-            subscribe(baseSubscriber);
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRiderSchedule(
+                    tokenData.getUserId(),
+                    dateTimeStart,
+                    dateTimeEnd,
+                    ApiTag.SORT_VALUE)).
+                subscribe(baseSubscriber));
     }
 
     public void scheduleClockIn(
@@ -228,26 +235,30 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
-        wrapRetryObservable(
-            service.clockInSchedule(scheduleId)).
-            subscribe(baseSubscriber);
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.clockInSchedule(scheduleId)).
+                subscribe(baseSubscriber));
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
-        wrapRetryObservable(
-            service.notifyActionPerformed(routeId, performActionWrapper),
-            new RetryAction(routeId, performActionWrapper)
-        ).subscribe();
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.notifyActionPerformed(routeId, performActionWrapper),
+                new RetryAction(routeId, performActionWrapper)).
+                subscribe(new BackgroundSubscriber<Stop>()));
     }
 
     public void notifyStoredAction(StorableStatus storableStatus) {
-        wrapRetryObservable(
-            service.notifyActionPerformed(
-                storableStatus.getRouteId(),
-                storableStatus.getPerformActionWrapper()),
-            new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).subscribe();
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.notifyActionPerformed(
+                    storableStatus.getRouteId(),
+                    storableStatus.getPerformActionWrapper()),
+                new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).
+                subscribe(new BackgroundSubscriber<Stop>()));
     }
 
     public void sendLocation(
@@ -257,6 +268,7 @@ public class ApiManager implements Managable {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
+
         BaseSubscriber<RiderLocationCollectionWrapper> baseSubscriber = new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
             @Override
             public void onNext(RiderLocationCollectionWrapper riderLocations) {
@@ -266,12 +278,12 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
-        wrapRetryObservable(
-            service.sendLocation(
-                vehicleId, riderLocationCollectionWrapper),
-            new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
-            subscribe(baseSubscriber);
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.sendLocation(
+                    vehicleId, riderLocationCollectionWrapper),
+                new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
+                subscribe(baseSubscriber));
     }
 
     public void sendAllFailedRequests() {
@@ -284,7 +296,7 @@ public class ApiManager implements Managable {
             wrapRetryObservable(
                 service.registerDeviceId(tokenData.getUserId(),
                     new PushNotificationRegistrationWrapper(token)))
-                .subscribe();
+                .subscribe(new BackgroundSubscriber<Rider>());
         }
     }
 
@@ -304,6 +316,7 @@ public class ApiManager implements Managable {
         String timezone,
         @NonNull final BaseApiCallback<OrdersReportCollection> baseApiCallback) {
         TokenData tokenData = storageManager.getTokenData();
+
         BaseSubscriber<OrdersReportCollection> baseSubscriber = new BaseSubscriber<OrdersReportCollection>(baseApiCallback) {
             @Override
             public void onNext(OrdersReportCollection workingDays) {
@@ -311,35 +324,36 @@ public class ApiManager implements Managable {
             }
         };
 
-//        compositeSubscription.add(
+        compositeSubscription.add(
             wrapRetryObservable(
                 service.getOrdersReport(
                     tokenData.getUserId(),
                     startAt,
                     endAt,
                     timezone))
-                .subscribe(baseSubscriber);
+                .subscribe(baseSubscriber));
     }
 
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        wrapRetryObservable(
-            countryService.getCountries()).subscribe(new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
+        BaseSubscriber baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
             @Override
             public void onNext(CountryListWrapper countryListWrapper) {
                 baseApiCallback.onSuccess(countryListWrapper);
             }
-        });
+        };
+        wrapRetryObservable(
+            countryService.getCountries()).subscribe(baseSubscriber);
     }
 
     /**
      * logout from rider from api side
      * cancel all API requests that are in flight right now
-     * and un-subscribe from push notification for current rider
+     * TODO un-subscribe from push notification for current rider
      */
     public void logout() {
-//        compositeSubscription.unsubscribe();
-//        compositeSubscription = new CompositeSubscription();
+        compositeSubscription.unsubscribe();
+        compositeSubscription = new CompositeSubscription();
     }
 
     /**
@@ -351,7 +365,7 @@ public class ApiManager implements Managable {
      * @return Observable with thread options
      */
     private <T> Observable<T> wrapObservable(Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.io()).
+        return observable.subscribeOn(Schedulers.newThread()).
             observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -365,7 +379,7 @@ public class ApiManager implements Managable {
      * @return Observable with injected retry logic
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable) {
-        return wrapRetryObservable(observable, new RetryWithDelay());
+        return wrapObservable(observable);
     }
 
     /**

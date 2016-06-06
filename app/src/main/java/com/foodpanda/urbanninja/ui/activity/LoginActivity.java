@@ -84,8 +84,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     private void openMainActivity() {
-        //TODO check header 
-        App.API_MANAGER.init(this);
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
