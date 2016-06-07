@@ -2,7 +2,6 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.foodpanda.urbanninja.App;
@@ -27,9 +26,9 @@ import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.rx.action.RetryAction;
 import com.foodpanda.urbanninja.api.rx.action.RetryLocation;
 import com.foodpanda.urbanninja.api.rx.action.RetryWithDelay;
-import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
+import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
@@ -264,7 +263,7 @@ public class ApiManager implements Managable {
     public void sendLocation(
         int vehicleId,
         List<RiderLocation> riderLocationList,
-        @Nullable final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
+        final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
