@@ -336,7 +336,7 @@ public class ApiManager implements Managable {
 
     //Internal foodpanda API
     public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        BaseSubscriber baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
+        BaseSubscriber<CountryListWrapper> baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
             @Override
             public void onNext(CountryListWrapper countryListWrapper) {
                 baseApiCallback.onSuccess(countryListWrapper);
