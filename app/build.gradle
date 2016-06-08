@@ -88,5 +88,4 @@ dependencies {
 
     //Hockey app
     compile 'net.hockeyapp.android:HockeySDK:3.7.1'
-
 }
