@@ -17,6 +17,7 @@ import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.receiver.ScheduleFinishedReceiver;
+import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
@@ -26,9 +27,7 @@ import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import org.joda.time.DateTime;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class ApiExecutor {
@@ -90,8 +89,6 @@ public class ApiExecutor {
 
                 @Override
                 public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
-                    // Remove action title for cases when user is not clocked-in
-                    activity.writeCodeAsTitle(null);
                     setScheduleWrappers(scheduleWrappers);
                     // Here we get all future and current working schedule
                     // However we need only first one as current
@@ -191,50 +188,32 @@ public class ApiExecutor {
     private void getAllData() {
         apiManager.getService().getRider(2).
             concatMap(
-                new Func1<VehicleDeliveryAreaRiderBundle, Observable<ScheduleCollectionWrapper>>() {
-
-                    @Override
-                    public Observable<ScheduleCollectionWrapper> call(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                        ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
-                        if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
-//                            activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
-                        }
-                        hideProgressIndicators();
-
-                        return getCurrentScheduleObservable();
+                vehicleDeliveryAreaRiderBundle1 -> {
+                    ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle1;
+                    if (vehicleDeliveryAreaRiderBundle1.getRider() != null) {
+                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
                     }
+                    hideProgressIndicators();
+
+                    return getCurrentScheduleObservable();
                 }
             ).
-            concatMap(new Func1<ScheduleCollectionWrapper, Observable<RouteWrapper>>() {
-
-                @Override
-                public Observable<RouteWrapper> call(ScheduleCollectionWrapper scheduleWrappers) {
-                    // Remove action title for cases when user is not clocked-in
-//                    activity.writeCodeAsTitle(null);
-                    setScheduleWrappers(scheduleWrappers);
-                    // Here we get all future and current working schedule
-                    // However we need only first one as current
-                    if (scheduleWrappers.size() > 0) {
-                        scheduleWrapper = scheduleWrappers.get(0);
-                    }
-                    //after receive schedule we need request route stop
-//                    launchServiceOrAskForPermissions();
-                    return getRouteObservable();
+            concatMap(scheduleWrappers1 -> {
+                // Remove action title for cases when user is not clocked-in
+                activity.writeCodeAsTitle(null);
+                setScheduleWrappers(scheduleWrappers1);
+                // Here we get all future and current working schedule
+                // However we need only first one as current
+                if (scheduleWrappers1.size() > 0) {
+                    scheduleWrapper = scheduleWrappers1.get(0);
                 }
+                //after receive schedule we need request route stop
+                launchServiceOrAskForPermissions();
+                return getRouteObservable();
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<RouteWrapper>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
+            .subscribe(new BaseSubscriber<RouteWrapper>() {
                 @Override
                 public void onNext(RouteWrapper routeWrapper) {
                     openCurrentFragment();
@@ -243,33 +222,6 @@ public class ApiExecutor {
             });
     }
 
-//    private void test() {
-//                final HashMap<Section, Collection<Article>> allArticles = new HashMap<>();
-//        final ArticleArchiveModelManager articleArchiveModelManager = application.component().provideArticleArchiveModelManager();
-//        final ModelCache modelCache = application.component().provideModelCache();
-//        Observable.from(sectionWithArchives).flatMap(new Func1<Section, Observable<ImmutableTriple<Issue, Section, File>>>() {
-//
-//            @Override
-//            public Observable<ImmutableTriple<Issue, Section, File>> call(final Section section) {
-//                return sectionGroupModelManager.get(issue, section);
-//            }
-//        }).concatMap(new Func1<ImmutableTriple<Issue, Section, File>, Observable<ImmutableTriple<Issue, Section, ArticleArchive>>>() {
-//
-//            @Override
-//            public Observable<ImmutableTriple<Issue, Section, ArticleArchive>> call(final ImmutableTriple<Issue, Section, File> triple) {
-//                return articleArchiveModelManager.get(issue, triple.middle);
-//            }
-//        }).toBlocking().forEach(new Action1<ImmutableTriple<Issue, Section, ArticleArchive>>() {
-//
-//            @Override
-//            public void call(final ImmutableTriple<Issue, Section, ArticleArchive> triple) {
-//                modelCache.setArticleArchive(triple.middle, triple.right);
-//                allArticles.put(triple.middle, triple.right.getArticles());
-//            }
-//        });
-//    }
-
-    //
     public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
         DateTime dateTimeNow = DateTime.now();
         DateTime datePlusOneDay = DateTime.now().plusDays(1);
