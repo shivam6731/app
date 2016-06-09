@@ -345,6 +345,10 @@ public class ApiManager implements Managable {
             countryService.getCountries()).subscribe(baseSubscriber);
     }
 
+    public LogisticsService getService() {
+        return service;
+    }
+
     /**
      * logout from rider from api side
      * cancel all API requests that are in flight right now

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.foodpanda.urbanninja.Constants;
+import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
@@ -21,6 +22,14 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+
+import org.joda.time.DateTime;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class ApiExecutor {
     public static final String[] PERMISSIONS_ARRAY = new String[]{
@@ -46,7 +55,8 @@ public class ApiExecutor {
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
-        getCurrentRider();
+        getAllData();
+//        getCurrentRider();
     }
 
     public void getRoute() {
@@ -122,7 +132,7 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of status with route was happened
      * and store this status to the map to save up to date status for each route
-     * <p/>
+     * <p>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
@@ -178,6 +188,99 @@ public class ApiExecutor {
         return false;
     }
 
+    private void getAllData() {
+        apiManager.getService().getRider(2).
+            concatMap(
+                new Func1<VehicleDeliveryAreaRiderBundle, Observable<ScheduleCollectionWrapper>>() {
+
+                    @Override
+                    public Observable<ScheduleCollectionWrapper> call(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+                        ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
+                        if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
+//                            activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
+                        }
+                        hideProgressIndicators();
+
+                        return getCurrentScheduleObservable();
+                    }
+                }
+            ).
+            concatMap(new Func1<ScheduleCollectionWrapper, Observable<RouteWrapper>>() {
+
+                @Override
+                public Observable<RouteWrapper> call(ScheduleCollectionWrapper scheduleWrappers) {
+                    // Remove action title for cases when user is not clocked-in
+//                    activity.writeCodeAsTitle(null);
+                    setScheduleWrappers(scheduleWrappers);
+                    // Here we get all future and current working schedule
+                    // However we need only first one as current
+                    if (scheduleWrappers.size() > 0) {
+                        scheduleWrapper = scheduleWrappers.get(0);
+                    }
+                    //after receive schedule we need request route stop
+//                    launchServiceOrAskForPermissions();
+                    return getRouteObservable();
+                }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<RouteWrapper>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(RouteWrapper routeWrapper) {
+                    openCurrentFragment();
+                    hideProgressIndicators();
+                }
+            });
+    }
+
+//    private void test() {
+//                final HashMap<Section, Collection<Article>> allArticles = new HashMap<>();
+//        final ArticleArchiveModelManager articleArchiveModelManager = application.component().provideArticleArchiveModelManager();
+//        final ModelCache modelCache = application.component().provideModelCache();
+//        Observable.from(sectionWithArchives).flatMap(new Func1<Section, Observable<ImmutableTriple<Issue, Section, File>>>() {
+//
+//            @Override
+//            public Observable<ImmutableTriple<Issue, Section, File>> call(final Section section) {
+//                return sectionGroupModelManager.get(issue, section);
+//            }
+//        }).concatMap(new Func1<ImmutableTriple<Issue, Section, File>, Observable<ImmutableTriple<Issue, Section, ArticleArchive>>>() {
+//
+//            @Override
+//            public Observable<ImmutableTriple<Issue, Section, ArticleArchive>> call(final ImmutableTriple<Issue, Section, File> triple) {
+//                return articleArchiveModelManager.get(issue, triple.middle);
+//            }
+//        }).toBlocking().forEach(new Action1<ImmutableTriple<Issue, Section, ArticleArchive>>() {
+//
+//            @Override
+//            public void call(final ImmutableTriple<Issue, Section, ArticleArchive> triple) {
+//                modelCache.setArticleArchive(triple.middle, triple.right);
+//                allArticles.put(triple.middle, triple.right.getArticles());
+//            }
+//        });
+//    }
+
+    //
+    public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
+        DateTime dateTimeNow = DateTime.now();
+        DateTime datePlusOneDay = DateTime.now().plusDays(1);
+
+        return apiManager.getService().getRiderSchedule(2, dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
+    }
+
+    public Observable<RouteWrapper> getRouteObservable() {
+        return apiManager.getService().getRoute(2);
+    }
+
     private void getCurrentRider() {
         apiManager.getCurrentRider(
             new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
@@ -214,7 +317,7 @@ public class ApiExecutor {
      * Set up {@link AlarmManager} to trigger {@link ScheduleFinishedReceiver} when the
      * working day of current rider would be finished
      * by setting PendingIntent with endTime of current schedule
-     * <p/>
+     * <p>
      * Right now we don't need to stop sending location to always have up-to-date location
      */
     private void setScheduleFinishedAlarm() {
@@ -227,19 +330,19 @@ public class ApiExecutor {
 
     /**
      * Open proper screen depend on rider current state
-     * <p/>
+     * <p>
      * in case when rider has route the route
      * #nestedFragmentCallback.openRoute()should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route and clocked-in
      * #nestedFragmentCallback.openEmptyListFragment should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is not empty
      * #nestedFragmentCallback.openReadyToWork should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is empty
      * #nestedFragmentCallback.openReadyToWork with empty data should be called
-     * <p/>
+     * <p>
      */
     void openCurrentFragment() {
         if (storageManager.getStopList().isEmpty()) {

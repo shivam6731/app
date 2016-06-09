@@ -21,6 +21,9 @@ public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
         this.baseApiCallback = baseApiCallback;
     }
 
+    public BaseSubscriber() {
+    }
+
     @Override
     public void onError(Throwable throwable) {
         ErrorMessage errorMessage = new ErrorMessage();
