@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty # Faster then default
+
 language: android
 android:
   components:
@@ -25,7 +28,7 @@ android:
     #- sys-img-x86-android-17
 
 script:
-  - ./gradlew build --stacktrace
+  - ./gradlew build
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
