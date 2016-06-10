@@ -40,6 +40,5 @@ out/
 # gradle
 build/
 .gradle
-/gradle.properties
 
 app/manifest-merger-release-report.txt
