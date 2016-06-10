@@ -1,6 +1,3 @@
-sudo: required
-dist: trusty # Faster then default
-
 language: android
 android:
   components:
