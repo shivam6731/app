@@ -51,45 +51,9 @@ public class ApiExecutor {
     }
 
     private void getAllData() {
-        updateRoute(getScheduleObservable(getCurrentRiderObservable()));
-
-
-//        apiManager.getRiderObservable()
-//            .concatMap(
-//                vehicleDeliveryAreaRiderBundle1 -> {
-//                    ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle1;
-//                    if (vehicleDeliveryAreaRiderBundle1.getRider() != null) {
-////                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
-//                    }
-//                    hideProgressIndicators();
-//
-//                    return apiManager.getCurrentScheduleObservable();
-//                }
-//            )
-//            .concatMap(
-//                scheduleWrappers1 -> {
-//                    // Remove action title for cases when user is not clocked-in
-////                    activity.writeCodeAsTitle(null);
-//                    setScheduleWrappers(scheduleWrappers1);
-//                    // Here we get all future and current working schedule
-//                    // However we need only first one as current
-//                    if (scheduleWrappers1.size() > 0) {
-//                        scheduleWrapper = scheduleWrappers1.get(0);
-//                    }
-//                    //after receive schedule we need request route stop
-//                    launchServiceOrAskForPermissions();
-//
-//                    return apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId());
-//                })
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(new BaseSubscriber<RouteWrapper>() {
-//                @Override
-//                public void onNext(RouteWrapper routeWrapper) {
-//                    openCurrentFragment();
-//                    hideProgressIndicators();
-//                }
-//            });
+        updateRoute(
+            getScheduleObservable(
+                getCurrentRiderObservable()));
     }
 
     public void updateScheduleAndRouteStop() {
@@ -179,15 +143,12 @@ public class ApiExecutor {
     }
 
     private void updateRoute(Observable<RouteWrapper> observable) {
-        if (vehicleDeliveryAreaRiderBundle == null ||
-            vehicleDeliveryAreaRiderBundle.getVehicle() == null) {
-            getAllData();
-        }
         observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new BaseSubscriber<RouteWrapper>() {
                 @Override
                 public void onNext(RouteWrapper routeWrapper) {
+                    storageManager.storeStopList(routeWrapper.getStops());
                     openCurrentFragment();
                     hideProgressIndicators();
                 }
