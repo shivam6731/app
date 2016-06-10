@@ -29,8 +29,6 @@ import com.foodpanda.urbanninja.api.rx.action.RetryWithDelay;
 import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
-import com.foodpanda.urbanninja.model.Rider;
-import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -42,13 +40,10 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -75,20 +70,17 @@ public class ApiManager implements Managable {
 
     private void initService() {
         OkHttpClient httpClient = new OkHttpClient.Builder().
-            addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
-                    Token token = storageManager.getToken();
-                    if (token != null) {
-                        build.addHeader("Authorization", token.getTokenType() +
-                            " " +
-                            token.getAccessToken())
-                            .build();
-                    }
-
-                    return chain.proceed(build.build());
+            addInterceptor(chain -> {
+                Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
+                Token token = storageManager.getToken();
+                if (token != null) {
+                    build.addHeader("Authorization", token.getTokenType() +
+                        " " +
+                        token.getAccessToken())
+                        .build();
                 }
+
+                return chain.proceed(build.build());
             }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -247,7 +239,7 @@ public class ApiManager implements Managable {
             wrapRetryObservable(
                 service.notifyActionPerformed(routeId, performActionWrapper),
                 new RetryAction(routeId, performActionWrapper)).
-                subscribe(new BackgroundSubscriber<Stop>()));
+                subscribe(new BackgroundSubscriber<>()));
     }
 
     public void notifyStoredAction(StorableStatus storableStatus) {
@@ -257,7 +249,7 @@ public class ApiManager implements Managable {
                     storableStatus.getRouteId(),
                     storableStatus.getPerformActionWrapper()),
                 new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).
-                subscribe(new BackgroundSubscriber<Stop>()));
+                subscribe(new BackgroundSubscriber<>()));
     }
 
     public void sendLocation(
@@ -295,7 +287,7 @@ public class ApiManager implements Managable {
             wrapRetryObservable(
                 service.registerDeviceId(tokenData.getUserId(),
                     new PushNotificationRegistrationWrapper(token)))
-                .subscribe(new BackgroundSubscriber<Rider>());
+                .subscribe(new BackgroundSubscriber<>());
         }
     }
 
@@ -345,8 +337,22 @@ public class ApiManager implements Managable {
             countryService.getCountries()).subscribe(baseSubscriber);
     }
 
-    public LogisticsService getService() {
-        return service;
+    public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
+        DateTime dateTimeNow = DateTime.now();
+        DateTime datePlusOneDay = DateTime.now().plusDays(1);
+        TokenData tokenData = storageManager.getTokenData();
+
+        return service.getRiderSchedule(tokenData.getUserId(), dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
+    }
+
+    public Observable<RouteWrapper> getRouteObservable(int vehicleId) {
+        return service.getRoute(vehicleId);
+    }
+
+    public Observable<VehicleDeliveryAreaRiderBundle> getRiderObservable() {
+        TokenData tokenData = storageManager.getTokenData();
+
+        return tokenData == null ? null : service.getRider(tokenData.getUserId());
     }
 
     /**

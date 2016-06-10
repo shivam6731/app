@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
 import com.foodpanda.urbanninja.Constants;
-import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
@@ -24,9 +23,6 @@ import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
-import org.joda.time.DateTime;
-
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -55,7 +51,7 @@ public class ApiExecutor {
         this.apiManager = apiManager;
         this.storageManager = storageManager;
         getAllData();
-//        getCurrentRider();
+        getCurrentRider();
     }
 
     public void getRoute() {
@@ -186,31 +182,33 @@ public class ApiExecutor {
     }
 
     private void getAllData() {
-        apiManager.getService().getRider(2).
+        apiManager.getRiderObservable().
             concatMap(
                 vehicleDeliveryAreaRiderBundle1 -> {
                     ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle1;
                     if (vehicleDeliveryAreaRiderBundle1.getRider() != null) {
-                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
+//                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
                     }
                     hideProgressIndicators();
 
-                    return getCurrentScheduleObservable();
+                    return apiManager.getCurrentScheduleObservable();
                 }
             ).
-            concatMap(scheduleWrappers1 -> {
-                // Remove action title for cases when user is not clocked-in
-                activity.writeCodeAsTitle(null);
-                setScheduleWrappers(scheduleWrappers1);
-                // Here we get all future and current working schedule
-                // However we need only first one as current
-                if (scheduleWrappers1.size() > 0) {
-                    scheduleWrapper = scheduleWrappers1.get(0);
-                }
-                //after receive schedule we need request route stop
-                launchServiceOrAskForPermissions();
-                return getRouteObservable();
-            })
+            concatMap(
+                scheduleWrappers1 -> {
+                    // Remove action title for cases when user is not clocked-in
+//                    activity.writeCodeAsTitle(null);
+                    setScheduleWrappers(scheduleWrappers1);
+                    // Here we get all future and current working schedule
+                    // However we need only first one as current
+                    if (scheduleWrappers1.size() > 0) {
+                        scheduleWrapper = scheduleWrappers1.get(0);
+                    }
+                    //after receive schedule we need request route stop
+                    launchServiceOrAskForPermissions();
+
+                    return apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId());
+                })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new BaseSubscriber<RouteWrapper>() {
@@ -222,16 +220,14 @@ public class ApiExecutor {
             });
     }
 
-    public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
-        DateTime dateTimeNow = DateTime.now();
-        DateTime datePlusOneDay = DateTime.now().plusDays(1);
-
-        return apiManager.getService().getRiderSchedule(2, dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
-    }
-
-    public Observable<RouteWrapper> getRouteObservable() {
-        return apiManager.getService().getRoute(2);
-    }
+//    private void updateScheduleAndRouteStop() {
+//        getCurrentScheduleObservable().concatMap(new Func1<ScheduleCollectionWrapper, Observable<?>>() {
+//            @Override
+//            public Observable<?> call(ScheduleCollectionWrapper scheduleWrappers) {
+//                return null;
+//            }
+//        }).concatMap(scheduleWrapper )
+//    }
 
     private void getCurrentRider() {
         apiManager.getCurrentRider(
