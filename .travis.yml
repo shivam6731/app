@@ -25,7 +25,7 @@ android:
     #- sys-img-x86-android-17
 
 script:
-  - ./gradlew build --info --stacktrace
+  - ./gradlew build
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
