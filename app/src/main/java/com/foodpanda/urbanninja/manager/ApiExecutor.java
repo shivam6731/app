@@ -23,6 +23,7 @@ import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -51,10 +52,10 @@ public class ApiExecutor {
         this.apiManager = apiManager;
         this.storageManager = storageManager;
         getAllData();
-        getCurrentRider();
+//        getCurrentRider();
     }
 
-    public void getRoute() {
+    private void getRoute() {
         if (vehicleDeliveryAreaRiderBundle == null ||
             vehicleDeliveryAreaRiderBundle.getVehicle() == null) {
             getCurrentRider();
@@ -79,7 +80,7 @@ public class ApiExecutor {
     /**
      * Retrieve rider schedule
      */
-    public void getRidersSchedule() {
+    private void getRidersSchedule() {
         apiManager.getCurrentSchedule(
             new BaseApiCallback<ScheduleCollectionWrapper>() {
 
@@ -181,9 +182,17 @@ public class ApiExecutor {
         return false;
     }
 
+    public void updateScheduleAndRouteStop() {
+        updateRoute(getScheduleObserbable());
+    }
+
+    public void updateRoute() {
+        updateRoute(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
+    }
+
     private void getAllData() {
-        apiManager.getRiderObservable().
-            concatMap(
+        apiManager.getRiderObservable()
+            .concatMap(
                 vehicleDeliveryAreaRiderBundle1 -> {
                     ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle1;
                     if (vehicleDeliveryAreaRiderBundle1.getRider() != null) {
@@ -193,8 +202,8 @@ public class ApiExecutor {
 
                     return apiManager.getCurrentScheduleObservable();
                 }
-            ).
-            concatMap(
+            )
+            .concatMap(
                 scheduleWrappers1 -> {
                     // Remove action title for cases when user is not clocked-in
 //                    activity.writeCodeAsTitle(null);
@@ -220,14 +229,43 @@ public class ApiExecutor {
             });
     }
 
-//    private void updateScheduleAndRouteStop() {
-//        getCurrentScheduleObservable().concatMap(new Func1<ScheduleCollectionWrapper, Observable<?>>() {
-//            @Override
-//            public Observable<?> call(ScheduleCollectionWrapper scheduleWrappers) {
-//                return null;
-//            }
-//        }).concatMap(scheduleWrapper )
-//    }
+    private void updateRoute(Observable<RouteWrapper> observable) {
+        observable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new BaseSubscriber<RouteWrapper>() {
+                @Override
+                public void onNext(RouteWrapper routeWrapper) {
+                    openCurrentFragment();
+                    hideProgressIndicators();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    super.onError(throwable);
+                    activity.onError(500, throwable.getMessage());
+                    hideProgressIndicators();
+                }
+            });
+    }
+
+    private Observable<RouteWrapper> getScheduleObserbable() {
+        return apiManager.getCurrentScheduleObservable().
+            concatMap(
+                scheduleWrappers1 -> {
+                    // Remove action title for cases when user is not clocked-in
+//                    activity.writeCodeAsTitle(null);
+                    setScheduleWrappers(scheduleWrappers1);
+                    // Here we get all future and current working schedule
+                    // However we need only first one as current
+                    if (scheduleWrappers1.size() > 0) {
+                        scheduleWrapper = scheduleWrappers1.get(0);
+                    }
+                    //after receive schedule we need request route stop
+                    launchServiceOrAskForPermissions();
+
+                    return apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId());
+                });
+    }
 
     private void getCurrentRider() {
         apiManager.getCurrentRider(

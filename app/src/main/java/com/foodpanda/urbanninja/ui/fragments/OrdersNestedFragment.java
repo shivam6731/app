@@ -119,13 +119,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     public void getRidersSchedule() {
         if (apiExecutor != null) {
-            apiExecutor.getRidersSchedule();
+            apiExecutor.updateScheduleAndRouteStop();
         }
     }
 
     public void getRoute() {
         if (apiExecutor != null) {
-            apiExecutor.getRoute();
+            apiExecutor.updateRoute();
         }
     }
 
