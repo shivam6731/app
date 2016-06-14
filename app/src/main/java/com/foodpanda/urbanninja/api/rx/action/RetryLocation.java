@@ -26,7 +26,8 @@ public class RetryLocation extends RetryWithDelay {
     public RetryLocation(
         StorableApiCallback storableApiCallback,
         int vehicleId,
-        RiderLocationCollectionWrapper locationCollectionWrapper) {
+        RiderLocationCollectionWrapper locationCollectionWrapper
+    ) {
         this.vehicleId = vehicleId;
         this.locationCollectionWrapper = locationCollectionWrapper;
         this.storableApiCallback = storableApiCallback;
