@@ -4,13 +4,9 @@ import android.util.Log;
 
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Model;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
-
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 
 public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
@@ -21,24 +17,9 @@ public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
         this.baseApiCallback = baseApiCallback;
     }
 
-    public BaseSubscriber() {
-    }
-
     @Override
     public void onError(Throwable throwable) {
-        ErrorMessage errorMessage = new ErrorMessage();
-        try {
-            if (throwable instanceof HttpException) {
-                HttpException httpException = (HttpException) throwable;
-                errorMessage = new GsonBuilder().create().fromJson(httpException.response().errorBody().string(), ErrorMessage.class);
-            } else {
-                errorMessage = new ErrorMessage(500, throwable.getMessage());
-            }
-            Log.e(TAG, throwable.getMessage());
-        } catch (IOException | JsonSyntaxException e) {
-            Log.e(TAG, e.getMessage());
-        }
-
+        ErrorMessage errorMessage = ApiUtils.handleError(throwable);
         if (baseApiCallback != null) {
             baseApiCallback.onError(errorMessage);
         }
