@@ -1,9 +1,6 @@
 package com.foodpanda.urbanninja.manager;
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,12 +12,14 @@ import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
-import com.foodpanda.urbanninja.api.receiver.ScheduleFinishedReceiver;
 import com.foodpanda.urbanninja.api.service.LocationService;
+import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+
+import rx.Observable;
 
 public class ApiExecutor {
     public static final String[] PERMISSIONS_ARRAY = new String[]{
@@ -46,59 +45,25 @@ public class ApiExecutor {
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
-        getCurrentRider();
-    }
-
-    public void getRoute() {
-        if (vehicleDeliveryAreaRiderBundle == null ||
-            vehicleDeliveryAreaRiderBundle.getVehicle() == null) {
-            getCurrentRider();
-        } else {
-            apiManager.getRoute(vehicleDeliveryAreaRiderBundle.getVehicle().getId(), new BaseApiCallback<RouteWrapper>() {
-                @Override
-                public void onSuccess(RouteWrapper routeWrapper) {
-                    openCurrentFragment();
-                    hideProgressIndicators();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    hideProgressIndicators();
-                }
-            });
-        }
-
+        getAllData();
     }
 
     /**
-     * Retrieve rider schedule
+     * Based on the requirements when we receive push notification
+     * with schedule changes type we need to update schedule list
+     * and after route stop list, to allow rider to finish all assigned
+     * order even if schedule is over
      */
-    public void getRidersSchedule() {
-        apiManager.getCurrentSchedule(
-            new BaseApiCallback<ScheduleCollectionWrapper>() {
+    public void updateScheduleAndRouteStop() {
+        updateRoute(getScheduleObservable(apiManager.getCurrentScheduleObservable()));
+    }
 
-                @Override
-                public void onSuccess(ScheduleCollectionWrapper scheduleWrappers) {
-                    // Remove action title for cases when user is not clocked-in
-                    activity.writeCodeAsTitle(null);
-                    setScheduleWrappers(scheduleWrappers);
-                    // Here we get all future and current working schedule
-                    // However we need only first one as current
-                    if (scheduleWrappers.size() > 0) {
-                        scheduleWrapper = scheduleWrappers.get(0);
-                    }
-                    //after receive schedule we need request route stop
-                    getRoute();
-                    launchServiceOrAskForPermissions();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    hideProgressIndicators();
-                }
-            });
+    /**
+     * Update route stop list when rider receives
+     * push notification about route plan updates or some route canceled
+     */
+    public void updateRoute() {
+        updateRoute(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
     }
 
     public void clockIn() {
@@ -107,7 +72,7 @@ public class ApiExecutor {
                 @Override
                 public void onSuccess(ScheduleWrapper scheduleWrapper) {
                     ApiExecutor.this.scheduleWrapper = scheduleWrapper;
-                    getRoute();
+                    updateRoute();
                     hideProgressIndicators();
                 }
 
@@ -122,7 +87,7 @@ public class ApiExecutor {
     /**
      * Notify server if any kind of status with route was happened
      * and store this status to the map to save up to date status for each route
-     * <p/>
+     * <p>
      * Moreover this method should work offline and in this case
      * rider will be redirected to the next route or empty route list fragment
      * as soon as we finish with one particular route.
@@ -155,6 +120,96 @@ public class ApiExecutor {
     }
 
     /**
+     * Retrieve  all rider information in a sequence
+     * with only one error handler and result callback
+     * <p>
+     * This method should be executed only when app is just launched
+     */
+    private void getAllData() {
+        ApiUtils.wrapObservable(
+            apiManager.getRiderObservable())
+            .doOnNext(this::updateRiderInfo)
+            .concatMap(vehicleDeliveryAreaRiderBundle1 -> ApiUtils.wrapObservable(apiManager.getCurrentScheduleObservable()))
+            .doOnNext(this::updateScheduleInfo)
+            .concatMap(scheduleWrappers1 -> ApiUtils.wrapObservable(getRouteStopObservable()))
+            .subscribe(this::updateRouteStopInfo, throwable -> {
+                ApiUtils.showErrorMessage(throwable, activity);
+                hideProgressIndicators();
+            });
+    }
+
+    /**
+     * Save all rider information to the local variables
+     * and update rider info in UI thread
+     *
+     * @param vehicleDeliveryAreaRiderBundle bundle with rider info
+     */
+    void updateRiderInfo(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+        this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
+        if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
+            activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
+        }
+    }
+
+    /**
+     * Save rider schedule to the local variables
+     * and update title for tha app in UI thread
+     *
+     * @param scheduleWrappers bundle with rider schedule
+     */
+    void updateScheduleInfo(ScheduleCollectionWrapper scheduleWrappers) {
+        // Remove action title for cases when user is not clocked-in
+        activity.writeCodeAsTitle(null);
+        setScheduleWrappers(scheduleWrappers);
+        // Here we get all future and current working schedule
+        // However we need only first one as current
+        if (scheduleWrappers.size() > 0) {
+            scheduleWrapper = scheduleWrappers.get(0);
+        }
+        launchServiceOrAskForPermissions();
+    }
+
+    /**
+     * Store rider route stop list to the #storageManager
+     * and open current fragment depend on current state
+     *
+     * @param routeWrapper bundle with rider route stops
+     */
+    void updateRouteStopInfo(RouteWrapper routeWrapper) {
+        storageManager.storeStopList((routeWrapper).getStops());
+        openCurrentFragment();
+        hideProgressIndicators();
+    }
+
+    /**
+     * Generate route stop observable
+     * based on rider vehicle id
+     *
+     * @return RouteWrapper Observable to retrieve rider info
+     */
+    private Observable<RouteWrapper> getRouteStopObservable() {
+        return ApiUtils.wrapObservable(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
+    }
+
+    /**
+     * Concat rider schedule Observable and Route stop plan observable
+     * that should be executed in a sequence
+     *
+     * @param observable Observable to retrieve rider schedule
+     * @return Observable to retrieve route stop plan
+     */
+    private Observable<RouteWrapper> getScheduleObservable(Observable<ScheduleCollectionWrapper> observable) {
+        observable.doOnNext(this::updateScheduleInfo);
+
+        return observable.concatMap(
+            scheduleWrappers1 -> {
+                updateScheduleInfo(scheduleWrappers1);
+
+                return apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId());
+            });
+    }
+
+    /**
      * Open clock-in screen if rider is not clocked-in
      * Open clock-in for the next schedule if current one is over
      * Open empty clock-in screen if riders doesn't have schedule
@@ -178,30 +233,24 @@ public class ApiExecutor {
         return false;
     }
 
-    private void getCurrentRider() {
-        apiManager.getCurrentRider(
-            new BaseApiCallback<VehicleDeliveryAreaRiderBundle>() {
-                @Override
-                public void onSuccess(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                    ApiExecutor.this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
-                    if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
-                        activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
-                    }
-                    getRidersSchedule();
+    /**
+     * Single API call to get rider route stop plan
+     * and after open correct fragment
+     *
+     * @param observable Observable that would be executed
+     */
+    void updateRoute(Observable<RouteWrapper> observable) {
+        ApiUtils.wrapObservable(observable)
+            .subscribe(
+                this::updateRouteStopInfo,
+                throwable -> {
+                    ApiUtils.showErrorMessage(throwable, activity);
                     hideProgressIndicators();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    hideProgressIndicators();
-                }
-            });
+                });
     }
 
     private void launchServiceOrAskForPermissions() {
         if (!activity.isPermissionGranted()) {
-
             ActivityCompat.requestPermissions(activity,
                 PERMISSIONS_ARRAY,
                 MainActivity.PERMISSIONS_REQUEST_LOCATION);
@@ -211,35 +260,20 @@ public class ApiExecutor {
     }
 
     /**
-     * Set up {@link AlarmManager} to trigger {@link ScheduleFinishedReceiver} when the
-     * working day of current rider would be finished
-     * by setting PendingIntent with endTime of current schedule
-     * <p/>
-     * Right now we don't need to stop sending location to always have up-to-date location
-     */
-    private void setScheduleFinishedAlarm() {
-        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(activity, ScheduleFinishedReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, scheduleWrapper.getTimeWindow().getEndAt().getMillis(), pendingIntent);
-    }
-
-    /**
      * Open proper screen depend on rider current state
-     * <p/>
+     * <p>
      * in case when rider has route the route
      * #nestedFragmentCallback.openRoute()should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route and clocked-in
      * #nestedFragmentCallback.openEmptyListFragment should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is not empty
      * #nestedFragmentCallback.openReadyToWork should be called
-     * <p/>
+     * <p>
      * in case when rider doesn't have route stop and not clock-in and schedule is empty
      * #nestedFragmentCallback.openReadyToWork with empty data should be called
-     * <p/>
+     * <p>
      */
     void openCurrentFragment() {
         if (storageManager.getStopList().isEmpty()) {

@@ -6,6 +6,7 @@ public class Constants {
     public static final String PUSH_NOTIFICATION_RECEIVED = "pushNotificationReceived";
     public static final String PUSH_NOTIFICATION_TYPE = "type";
     public static final int SNACKBAR_DURATION_IN_MILLISECONDS = 1000 * 60;
+    public static final int API_CALL_TIMEOUT_SECONDS = 120;
 
     public static class Preferences {
         public static final String TOKEN = "Token";

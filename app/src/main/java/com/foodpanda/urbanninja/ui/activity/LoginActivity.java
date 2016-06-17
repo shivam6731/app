@@ -74,7 +74,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         fragmentManager.popBackStack();
         this.country = country;
         storageManager.storeCountry(country);
-        App.API_MANAGER.init(this);
         if (countrySelectedCallback != null) {
             countrySelectedCallback.onCountrySelected(country);
         }
