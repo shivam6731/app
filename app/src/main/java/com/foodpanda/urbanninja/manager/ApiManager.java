@@ -29,6 +29,7 @@ import com.foodpanda.urbanninja.api.rx.action.RetryWithDelay;
 import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
+import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
@@ -42,21 +43,16 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-
 
 public class ApiManager implements Managable {
     private LogisticsService service;
@@ -74,28 +70,11 @@ public class ApiManager implements Managable {
     }
 
     private void initService() {
-        OkHttpClient httpClient = new OkHttpClient.Builder().
-            addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
-                    Token token = storageManager.getToken();
-                    if (token != null) {
-                        build.addHeader("Authorization", token.getTokenType() +
-                            " " +
-                            token.getAccessToken())
-                            .build();
-                    }
-
-                    return chain.proceed(build.build());
-                }
-            }).build();
-
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(createGson()))
-            .client(httpClient)
+            .client(createOkHttpClient())
             .build();
 
         service = retrofit.create(LogisticsService.class);
@@ -108,6 +87,30 @@ public class ApiManager implements Managable {
         countryService = retrofit.create(CountryService.class);
 
         sendAllFailedRequests();
+    }
+
+    /**
+     * Create Api client where timeout and API calls header will be set
+     *
+     * @return okhttp3 client with all settings
+     */
+    private OkHttpClient createOkHttpClient() {
+        return new OkHttpClient.Builder().
+            connectTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            writeTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            readTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            addInterceptor(chain -> {
+                Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
+                Token token = storageManager.getToken();
+                if (token != null) {
+                    build.addHeader("Authorization", token.getTokenType() +
+                        " " +
+                        token.getAccessToken())
+                        .build();
+                }
+
+                return chain.proceed(build.build());
+            }).build();
     }
 
     private Gson createGson() {
@@ -141,55 +144,10 @@ public class ApiManager implements Managable {
         };
 
         compositeSubscription.add(
-            wrapObservable(
+            ApiUtils.wrapObservable(
                 service.auth(authRequest)).
                 subscribe(baseSubscriber));
 
-    }
-
-    public void getCurrentRider(@NonNull final BaseApiCallback<VehicleDeliveryAreaRiderBundle> baseApiCallback) {
-
-        TokenData tokenData = storageManager.getTokenData();
-        if (tokenData != null) {
-            BaseSubscriber<VehicleDeliveryAreaRiderBundle> baseSubscriber = new BaseSubscriber<VehicleDeliveryAreaRiderBundle>(baseApiCallback) {
-                @Override
-                public void onNext(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
-                    baseApiCallback.onSuccess(vehicleDeliveryAreaRiderBundle);
-                }
-            };
-
-            compositeSubscription.add(
-                wrapRetryObservable(
-                    service.getRider(tokenData.getUserId())).
-                    subscribe(baseSubscriber));
-        }
-    }
-
-    public void getRoute(
-        int vehicleId,
-        @NonNull final BaseApiCallback<RouteWrapper> baseApiCallback
-    ) {
-        BaseSubscriber<RouteWrapper> baseSubscriber = new BaseSubscriber<RouteWrapper>(baseApiCallback) {
-            @Override
-            public void onNext(RouteWrapper routeWrapper) {
-                storageManager.storeStopList(routeWrapper.getStops());
-                baseApiCallback.onSuccess(routeWrapper);
-            }
-        };
-
-        compositeSubscription.add(
-            wrapRetryObservable(
-                service.getRoute(vehicleId)).
-                subscribe(baseSubscriber));
-    }
-
-    public void getCurrentSchedule(
-        BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
-    ) {
-        DateTime dateTimeNow = DateTime.now();
-        DateTime datePlusOneDay = DateTime.now().plusDays(1);
-
-        getScheduleList(dateTimeNow, datePlusOneDay, baseApiCallback);
     }
 
     public void getScheduleList(BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
@@ -345,6 +303,22 @@ public class ApiManager implements Managable {
             countryService.getCountries()).subscribe(baseSubscriber);
     }
 
+    public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
+        DateTime dateTimeNow = DateTime.now();
+        DateTime datePlusOneDay = DateTime.now().plusDays(1);
+        TokenData tokenData = storageManager.getTokenData();
+
+        return service.getRiderSchedule(tokenData.getUserId(), dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
+    }
+
+    public Observable<RouteWrapper> getRouteObservable(int vehicleId) {
+        return service.getRoute(vehicleId);
+    }
+
+    public Observable<VehicleDeliveryAreaRiderBundle> getRiderObservable() {
+        return service.getRider(storageManager.getTokenData().getUserId());
+    }
+
     /**
      * logout from rider from api side
      * cancel all API requests that are in flight right now
@@ -353,19 +327,6 @@ public class ApiManager implements Managable {
     public void logout() {
         compositeSubscription.unsubscribe();
         compositeSubscription = new CompositeSubscription();
-    }
-
-    /**
-     * Wrap rx Observable to be executed in background thread
-     * and result would come to android main thread
-     *
-     * @param observable that would be executed
-     * @param <T>        type of expected result
-     * @return Observable with thread options
-     */
-    private <T> Observable<T> wrapObservable(Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.newThread()).
-            observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
@@ -392,6 +353,6 @@ public class ApiManager implements Managable {
      * @return Observable with injected retry logic
      */
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
-        return wrapObservable(observable).retryWhen(retryWithDelay);
+        return ApiUtils.wrapObservable(observable).retryWhen(retryWithDelay);
     }
 }

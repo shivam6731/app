@@ -50,4 +50,13 @@ public class VehicleDeliveryAreaRiderBundle implements ParcelableModel {
     public Rider getRider() {
         return rider;
     }
+
+    /**
+     * Needs only for tests
+     *
+     * @param rider fake rider
+     */
+    public void setRider(Rider rider) {
+        this.rider = rider;
+    }
 }

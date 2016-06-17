@@ -3,10 +3,13 @@ package com.foodpanda.urbanninja.manager;
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
+import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
+import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
@@ -25,11 +28,14 @@ import org.robolectric.annotation.Config;
 import java.util.LinkedList;
 import java.util.List;
 
+import rx.Observable;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -43,6 +49,9 @@ import static org.mockito.Mockito.when;
 public class ApiExecutorTest {
 
     private ApiExecutor apiExecutor;
+
+    @Mock
+    private MainActivity activity;
 
     @Mock
     private ApiManager apiManager;
@@ -59,7 +68,12 @@ public class ApiExecutorTest {
         Application app = RuntimeEnvironment.application;
         app.onCreate();
 
-        MainActivity activity = mock(MainActivity.class);
+        activity = mock(MainActivity.class);
+
+        apiManager.init(app);
+        when(apiManager.getRiderObservable()).thenReturn(Observable.empty());
+        when(apiManager.getCurrentScheduleObservable()).thenReturn(Observable.empty());
+        when(apiManager.getRouteObservable(anyInt())).thenReturn(Observable.empty());
 
         apiExecutor = new ApiExecutor(activity, nestedFragmentCallback, apiManager, storageManager);
 
@@ -258,5 +272,26 @@ public class ApiExecutorTest {
         scheduleWrapper.setTimeWindow(new TimeWindow(DateTime.now().minusMinutes(10), DateTime.now().plusMinutes(12)));
 
         return scheduleWrapper;
+    }
+
+    @Test
+    public void testUpdateRiderInfo() {
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        apiExecutor.updateRiderInfo(vehicleDeliveryAreaRiderBundle);
+        verify((activity), never()).setRiderContent(any(Rider.class));
+
+        Rider rider = new Rider();
+        vehicleDeliveryAreaRiderBundle.setRider(rider);
+        apiExecutor.updateRiderInfo(vehicleDeliveryAreaRiderBundle);
+        verify(activity).setRiderContent(rider);
+    }
+
+    @Test
+    public void testUpdateRouteStopInfo() {
+        RouteWrapper routeWrapper = new RouteWrapper();
+
+        apiExecutor.updateRouteStopInfo(routeWrapper);
+
+        verify(storageManager).storeStopList(routeWrapper.getStops());
     }
 }

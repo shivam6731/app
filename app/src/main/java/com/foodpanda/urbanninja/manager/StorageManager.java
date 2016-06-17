@@ -74,7 +74,7 @@ public class StorageManager implements Managable {
             return gson.fromJson(new String(valueDecoded), TokenData.class);
         } else {
 
-            return null;
+            return new TokenData();
         }
     }
 
