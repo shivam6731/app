@@ -1,8 +1,11 @@
 package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 
-public class Country implements ParcelableModel {
+import java.util.Locale;
+
+public class Country implements ParcelableModel, Comparable<Country> {
     private String code;
     private long id;
     private String environment;
@@ -80,5 +83,13 @@ public class Country implements ParcelableModel {
 
     public String getComponent() {
         return component;
+    }
+
+    @Override
+    public int compareTo(@NonNull Country another) {
+        String titleFirst = new Locale("", this.getCode()).getDisplayCountry();
+        String titleSecond = new Locale("", another.getCode()).getDisplayCountry();
+
+        return titleFirst.compareTo(titleSecond);
     }
 }

@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -150,42 +149,28 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         hidePaddingAndElevationIfNeeds();
 
         checkBoxDone = (CheckBox) view.findViewById(R.id.checkbox_done);
-        checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mapAddressDetailsCallback != null) {
-                    mapAddressDetailsCallback.setActionButtonVisible(isChecked);
-                }
+        checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (mapAddressDetailsCallback != null) {
+                mapAddressDetailsCallback.setActionButtonVisible(isChecked);
             }
         });
         setActionDoneCheckboxVisibility(mapDetailsProvider.isDoneButtonVisible());
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.floating_button_map);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mapAddressDetailsCallback != null) {
-                    mapAddressDetailsCallback.onSeeMapClicked(mapDetailsProvider.getCoordinate(), mapDetailsProvider.getName());
-                }
+        floatingActionButton.setOnClickListener(view1 -> {
+            if (mapAddressDetailsCallback != null) {
+                mapAddressDetailsCallback.onSeeMapClicked(mapDetailsProvider.getCoordinate(), mapDetailsProvider.getName());
             }
         });
-        view.findViewById(R.id.txt_call).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mapAddressDetailsCallback != null) {
-                    mapAddressDetailsCallback.onPhoneNumberClicked(mapDetailsProvider.getPhoneNumber());
-                }
+        view.findViewById(R.id.txt_call).setOnClickListener(view1 -> {
+            if (mapAddressDetailsCallback != null) {
+                mapAddressDetailsCallback.onPhoneNumberClicked(mapDetailsProvider.getPhoneNumber());
             }
         });
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                setGoogleMapData(googleMap);
-            }
-        });
+        mapView.getMapAsync(googleMap1 -> setGoogleMapData(googleMap1));
         setData();
     }
 

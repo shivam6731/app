@@ -2,7 +2,6 @@ package com.foodpanda.urbanninja.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -56,12 +55,9 @@ public class PhoneNumberSingleChoiceDialog extends DialogFragment {
             dismiss();
         }
 
-        dialog.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mainActivityCallback.onPhoneSelected(phoneNameMap.get(values[which]));
-                dialog.dismiss();
-            }
+        dialog.setSingleChoiceItems(values, -1, (dialog1, which) -> {
+            mainActivityCallback.onPhoneSelected(phoneNameMap.get(values[which]));
+            dialog1.dismiss();
         });
 
         return dialog.create();

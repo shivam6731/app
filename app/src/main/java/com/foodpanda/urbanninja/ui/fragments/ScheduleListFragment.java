@@ -9,7 +9,6 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
-import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.ui.adapter.ScheduleAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -50,7 +49,7 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
 
     @Override
     protected ScheduleAdapter provideListAdapter() {
-        return new ScheduleAdapter(new ArrayList<ScheduleWrapper>(), activity);
+        return new ScheduleAdapter(new ArrayList<>(), activity);
     }
 
     @Override

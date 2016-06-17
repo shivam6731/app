@@ -167,44 +167,38 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         setSelectedNavigationItem();
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                drawerLayout.closeDrawers();
-                if (currentItemId == item.getItemId()) {
-                    return true;
-                }
-                currentItemId = item.getItemId();
-
-                switch (item.getItemId()) {
-                    case R.id.orders:
-                        onOrdersClicked();
-                        break;
-                    case R.id.shift:
-                        onScheduleClicked();
-                        break;
-                    case R.id.cash_report:
-                        onCashReportClicked();
-                        break;
-                }
-
+        navigationView.setNavigationItemSelectedListener(item -> {
+            drawerLayout.closeDrawers();
+            if (currentItemId == item.getItemId()) {
                 return true;
             }
+            currentItemId = item.getItemId();
+
+            switch (item.getItemId()) {
+                case R.id.orders:
+                    onOrdersClicked();
+                    break;
+                case R.id.shift:
+                    onScheduleClicked();
+                    break;
+                case R.id.cash_report:
+                    onCashReportClicked();
+                    break;
+            }
+
+            return true;
         });
 
         NavigationView navigationBottomView = (NavigationView) findViewById(R.id.navigation_drawer_bottom);
         if (navigationBottomView != null) {
-            navigationBottomView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.logout:
-                            onLogoutClicked();
-                            break;
-                    }
-
-                    return true;
+            navigationBottomView.setNavigationItemSelectedListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.logout:
+                        onLogoutClicked();
+                        break;
                 }
+
+                return true;
             });
         }
 

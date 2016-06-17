@@ -20,6 +20,8 @@ import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
 import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
+import java.util.Collections;
+
 public class CashReportListFragment extends BaseFragment implements BaseApiCallback<OrdersReportCollection> {
     private MainActivityCallback mainActivityCallback;
     private ApiManager apiManager;
@@ -70,6 +72,7 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        recyclerView.setAdapter(new CashReportAdapter(Collections.emptyList(), activity));
         activity.showProgress();
         apiManager.getWorkingDayReport(this);
         mainActivityCallback.writeFragmentTitle(getResources().getString(R.string.side_menu_cash_report));
