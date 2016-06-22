@@ -13,15 +13,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
-import com.foodpanda.urbanninja.api.StorableApiCallback;
-import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
-import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,7 +39,7 @@ import java.util.TimerTask;
  * send it to the server side every minute and if this sending failed
  * store this location List to the {@link com.foodpanda.urbanninja.manager.ApiQueue}
  * to send it to the server side as soon as connection would be available
- * <p/>
+ * <p>
  * This service launched as soon as rider's schedule was received
  * and shut down with the end of current schedule
  */
@@ -245,29 +242,21 @@ public class LocationService extends Service implements
         }
     }
 
+    /**
+     * send rider location list
+     * and clean-up locations list
+     * to get rid of copies that can be created during api call executing
+     */
     private void sendRiderLocation() {
         if (vehicleId == 0 || locationList.isEmpty()) {
             return;
         }
+        List<RiderLocation> sendingLocationList = new LinkedList<>(locationList);
+        this.locationList.clear();
+
         apiManager.sendLocation(
             vehicleId,
-            locationList,
-            new StorableApiCallback<RiderLocationCollectionWrapper>() {
-                @Override
-                public void onItemStored() {
-                    locationList.clear();
-                }
-
-                @Override
-                public void onSuccess(RiderLocationCollectionWrapper location) {
-                    locationList.clear();
-                }
-
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    Log.e(LocationService.class.getSimpleName(), errorMessage.getStatus() + errorMessage.getMessage());
-                }
-            });
+            sendingLocationList);
     }
 
     /**

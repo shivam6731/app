@@ -18,9 +18,7 @@ import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryListWrapper> {
     private ApiManager apiManager;
@@ -112,15 +110,8 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     }
 
     private List<Country> sortCountries(List<Country> list) {
-        Collections.sort(list, new Comparator<Country>() {
-            @Override
-            public int compare(Country lhs, Country rhs) {
-                String titleFirst = new Locale("", lhs.getCode()).getDisplayCountry();
-                String titleSecond = new Locale("", rhs.getCode()).getDisplayCountry();
+        Collections.sort(list);
 
-                return titleFirst.compareTo(titleSecond);
-            }
-        });
         return list;
     }
 }

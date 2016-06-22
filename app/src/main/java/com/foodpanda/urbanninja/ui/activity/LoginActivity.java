@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.ui.fragments.CountryListFragment;
@@ -17,6 +18,8 @@ import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
 public class LoginActivity extends BaseActivity implements LoginActivityCallback {
     private StorageManager storageManager;
+    private ApiManager apiManager;
+
     private Country country;
     private CountrySelectedCallback countrySelectedCallback;
 
@@ -25,6 +28,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         storageManager = App.STORAGE_MANAGER;
+        apiManager = App.API_MANAGER;
         if (isLogged()) {
             openMainActivity();
 
@@ -74,6 +78,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         fragmentManager.popBackStack();
         this.country = country;
         storageManager.storeCountry(country);
+        apiManager.init(this);
         if (countrySelectedCallback != null) {
             countrySelectedCallback.onCountrySelected(country);
         }

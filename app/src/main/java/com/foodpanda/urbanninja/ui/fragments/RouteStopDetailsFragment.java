@@ -87,15 +87,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
 
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                // this fragment in a child view for some main container with
-                // swipe to refresh logic inside, however here we have own scroll and to get rid of scroll conflict
-                // we make main swipe view disable until we reach the top of the view here
-                if (nestedFragmentCallback != null) {
-                    nestedFragmentCallback.setSwipeToRefreshEnable(scrollView.getScrollY() == 0);
-                }
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            // this fragment in a child view for some main container with
+            // swipe to refresh logic inside, however here we have own scroll and to get rid of scroll conflict
+            // we make main swipe view disable until we reach the top of the view here
+            if (nestedFragmentCallback != null) {
+                nestedFragmentCallback.setSwipeToRefreshEnable(scrollView.getScrollY() == 0);
             }
         });
 

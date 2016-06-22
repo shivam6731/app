@@ -9,7 +9,6 @@ import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.StorableApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
@@ -220,27 +219,18 @@ public class ApiManager implements Managable {
 
     public void sendLocation(
         int vehicleId,
-        List<RiderLocation> riderLocationList,
-        final StorableApiCallback<RiderLocationCollectionWrapper> baseApiCallback) {
+        List<RiderLocation> riderLocationList) {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
 
-        BaseSubscriber<RiderLocationCollectionWrapper> baseSubscriber = new BaseSubscriber<RiderLocationCollectionWrapper>(baseApiCallback) {
-            @Override
-            public void onNext(RiderLocationCollectionWrapper riderLocations) {
-                if (baseApiCallback != null) {
-                    baseApiCallback.onSuccess(riderLocations);
-                }
-            }
-        };
 
         compositeSubscription.add(
             wrapRetryObservable(
                 service.sendLocation(
                     vehicleId, riderLocationCollectionWrapper),
-                new RetryLocation(baseApiCallback, vehicleId, riderLocationCollectionWrapper)).
-                subscribe(baseSubscriber));
+                new RetryLocation(vehicleId, riderLocationCollectionWrapper)).
+                subscribe(new BackgroundSubscriber<>()));
     }
 
     public void sendAllFailedRequests() {

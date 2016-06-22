@@ -81,7 +81,7 @@ public class ApiQueue {
         if (!requestsLocationQueue.isEmpty()) {
             RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
             riderLocations.addAll(requestsLocationQueue);
-            apiManager.sendLocation(vehicleId, riderLocations, null);
+            apiManager.sendLocation(vehicleId, riderLocations);
 
             requestsLocationQueue.clear();
             storageManager.storeLocationApiRequests(requestsLocationQueue);

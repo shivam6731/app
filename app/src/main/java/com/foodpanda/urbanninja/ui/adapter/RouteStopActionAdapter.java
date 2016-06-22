@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -87,15 +86,12 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
             final RouteStopActivity routeStopActivity = getItem(holder.getAdapterPosition());
-            viewHolder.checkBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //Check if all task are done and if it's true enable bottom main action button
-                    checkedActionsHashMap.put(routeStopActivity, isChecked);
-                    if (stop != null) {
-                        nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
-                            stop.getTask() == RouteStopTask.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
-                    }
+            viewHolder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                //Check if all task are done and if it's true enable bottom main action button
+                checkedActionsHashMap.put(routeStopActivity, isChecked);
+                if (stop != null) {
+                    nestedFragmentCallback.setActionButtonVisible(isAllChecked(),
+                        stop.getTask() == RouteStopTask.PICKUP ? R.string.action_at_picked_up : R.string.action_at_delivered);
                 }
             });
             if (TextUtils.isEmpty(routeStopActivity.getDescription())) {
@@ -156,12 +152,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             int stringRes = holder.getAdapterPosition() == 0 ? R.string.route_action_last_step : R.string.route_action_up_step;
             viewHolder.txtType.setText(stringRes);
 
-            viewHolder.expandableLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    expandLayout(viewHolder.expandableLayout, viewHolder.imageView);
-                }
-            });
+            viewHolder.expandableLayout.setOnClickListener(v -> expandLayout(viewHolder.expandableLayout, viewHolder.imageView));
             showMapAddressCallback.showNextPreviousStep(stop, R.id.step_layout);
         }
     }

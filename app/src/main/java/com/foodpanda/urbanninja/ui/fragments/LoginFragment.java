@@ -95,22 +95,14 @@ public class LoginFragment extends BaseFragment implements
         editEmail = (EditText) view.findViewById(R.id.edit_username);
         editPassword = (EditText) view.findViewById(R.id.edit_password);
         txtCountry = (TextView) view.findViewById(R.id.edit_country);
-        view.findViewById(R.id.edit_country).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editPassword.setError(null);
-                editEmail.setError(null);
-                loginActivityCallback.onSelectCountryClicked(LoginFragment.this);
-            }
+        view.findViewById(R.id.edit_country).setOnClickListener(v -> {
+            editPassword.setError(null);
+            editEmail.setError(null);
+            loginActivityCallback.onSelectCountryClicked(LoginFragment.this);
         });
 
         Button emailSignInButton = (Button) view.findViewById(R.id.email_sign_in_button);
-        emailSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        emailSignInButton.setOnClickListener(view1 -> attemptLogin());
     }
 
     @Override

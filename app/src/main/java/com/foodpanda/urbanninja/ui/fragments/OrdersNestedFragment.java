@@ -148,24 +148,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         actionLayoutHelper.setLayoutAction(layoutAction);
         actionLayoutHelper.setBtnAction(btnAction);
 
-        layoutAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeStatus();
-            }
-        });
+        layoutAction.setOnClickListener(v -> changeStatus());
         actionLayoutHelper.setActionButtonState();
     }
 
     private void setSwipeRefreshLayout(View view) {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh);
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(activity, R.color.colorPrimary));
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                updateApiRequest();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::updateApiRequest);
     }
 
     private void updateApiRequest() {
@@ -237,12 +227,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     private void setButtonVisibility(final boolean isVisible, final int textResourceLink) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                actionLayoutHelper.updateActionButton(isVisible, textResourceLink);
-            }
-        });
+        activity.runOnUiThread(() -> actionLayoutHelper.updateActionButton(isVisible, textResourceLink));
     }
 
     @Override
@@ -275,17 +260,14 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void openEmptyListFragment() {
         userStatus = UserStatus.EMPTY_LIST;
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                //Do not allow retrieve the data if empty list is already launched
-                //in case when the fragment stack is empty the data should be retrieved
-                if (fragmentManager.getFragments() != null &&
-                    !fragmentManager.getFragments().isEmpty() &&
-                    !(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
-                    swipeRefreshLayout.setRefreshing(true);
-                    getRoute();
-                }
+        swipeRefreshLayout.post(() -> {
+            //Do not allow retrieve the data if empty list is already launched
+            //in case when the fragment stack is empty the data should be retrieved
+            if (fragmentManager.getFragments() != null &&
+                !fragmentManager.getFragments().isEmpty() &&
+                !(fragmentManager.getFragments().get(0) instanceof EmptyTaskListFragment)) {
+                swipeRefreshLayout.setRefreshing(true);
+                getRoute();
             }
         });
         replaceFragment(EmptyTaskListFragment.newInstance());
