@@ -7,5 +7,6 @@ public enum RouteStopActivityType {
     COLLECT,
     DELIVER,
     HALAL,
-    NON_HALAL
+    NON_HALAL,
+    PREORDER
 }

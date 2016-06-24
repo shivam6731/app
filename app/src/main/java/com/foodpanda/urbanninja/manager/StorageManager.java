@@ -69,6 +69,18 @@ public class StorageManager implements Managable {
         return token;
     }
 
+    /**
+     * check if we have any stored user token
+     * if true for us it means that we logged-in
+     * otherwise it means that this is a first launch
+     * or rider was logout
+     *
+     * @return Returns true if we have any stored user token
+     */
+    public boolean isLogged() {
+        return getToken() != null;
+    }
+
     public TokenData getTokenData() {
         if (getToken() != null && !TextUtils.isEmpty(getToken().getAccessToken())) {
             byte[] bytes = getToken().getAccessToken().split("\\.")[1].getBytes();

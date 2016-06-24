@@ -33,7 +33,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         setContentView(R.layout.login_activity);
         storageManager = App.STORAGE_MANAGER;
         apiManager = App.API_MANAGER;
-        if (isLogged()) {
+        if (storageManager.isLogged()) {
             openMainActivity();
 
             return;
@@ -141,10 +141,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         if (loginFragment != null) {
             loginFragment.setCountryNameWithLanguage(country);
         }
-    }
-
-    private boolean isLogged() {
-        return storageManager.getToken() != null;
     }
 
     private void openMainActivity() {

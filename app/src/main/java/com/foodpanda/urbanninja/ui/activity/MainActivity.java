@@ -96,6 +96,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+
         //Subscribe for all push updates
         registerReceiver(notificationReceiver, new IntentFilter(Constants.PUSH_NOTIFICATION_RECEIVED));
     }

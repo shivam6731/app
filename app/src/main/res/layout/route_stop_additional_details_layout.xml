@@ -10,13 +10,13 @@
     app:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:id="@+id/layout_halal_content"
+        android:id="@+id/layout_additional_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <View
-            android:id="@+id/layout_halal_header"
+            android:id="@+id/layout_additional_header"
             style="@style/DividerView"
             android:background="@color/green_text_color"/>
 
@@ -27,21 +27,21 @@
             android:paddingRight="@dimen/padding_default">
 
             <ImageView
-                android:id="@+id/image_halal_icon"
+                android:id="@+id/image_additional_icon"
                 style="@style/ImageView"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/content_description_list_item_action_stop"
                 android:src="@drawable/icon_pay_restaurant"/>
 
             <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                android:id="@+id/txt_halal_title"
+                android:id="@+id/txt_additional_title"
                 style="@style/TextView.Title.WithoutPaddingMargin"
                 android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
-            android:id="@+id/txt_halal_description"
+            android:id="@+id/txt_additional_description"
             style="@style/TextView.SmallSize"
             android:layout_margin="@dimen/margin_default"
             android:text="@string/task_details_halal"/>
