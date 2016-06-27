@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.api.utils;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
@@ -28,7 +30,7 @@ public class ApiUtils {
      * @param <T>        type of expected result
      * @return Observable with thread options
      */
-    public static <T> Observable<T> wrapObservable(Observable<T> observable) {
+    public static <T> Observable<T> wrapObservable(@NonNull Observable<T> observable) {
         return observable.subscribeOn(Schedulers.newThread()).
             observeOn(AndroidSchedulers.mainThread());
     }
@@ -40,8 +42,8 @@ public class ApiUtils {
      * @param throwable error from the server side
      * @return error message that should be shown to the user
      */
-    public static ErrorMessage handleError(Throwable throwable) {
-        ErrorMessage errorMessage = new ErrorMessage();
+    public static ErrorMessage handleError(@NonNull Throwable throwable) {
+        ErrorMessage errorMessage;
         try {
             if (throwable instanceof HttpException) {
                 HttpException httpException = (HttpException) throwable;
@@ -52,9 +54,20 @@ public class ApiUtils {
             Log.e(TAG, throwable.getMessage());
         } catch (IOException | JsonSyntaxException e) {
             Log.e(TAG, e.getMessage());
+            errorMessage = parseError(throwable);
         }
 
         return errorMessage;
+    }
+
+    /**
+     * Parse internal errors in server issue
+     *
+     * @param throwable server problem
+     * @return parsed error with message from the Throwable object
+     */
+    private static ErrorMessage parseError(Throwable throwable) {
+        return new ErrorMessage(500, TextUtils.isEmpty(throwable.getMessage()) ? "Unknown error" : throwable.getMessage());
     }
 
     /**

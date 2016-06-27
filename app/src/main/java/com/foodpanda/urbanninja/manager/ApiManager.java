@@ -29,8 +29,6 @@ import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.utils.ApiUtils;
-import com.foodpanda.urbanninja.model.Rider;
-import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
@@ -204,7 +202,7 @@ public class ApiManager implements Managable {
             wrapRetryObservable(
                 service.notifyActionPerformed(routeId, performActionWrapper),
                 new RetryAction(routeId, performActionWrapper)).
-                subscribe(new BackgroundSubscriber<Stop>()));
+                subscribe(new BackgroundSubscriber<>()));
     }
 
     public void notifyStoredAction(StorableStatus storableStatus) {
@@ -214,7 +212,7 @@ public class ApiManager implements Managable {
                     storableStatus.getRouteId(),
                     storableStatus.getPerformActionWrapper()),
                 new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).
-                subscribe(new BackgroundSubscriber<Stop>()));
+                subscribe(new BackgroundSubscriber<>()));
     }
 
     public void sendLocation(
@@ -243,7 +241,7 @@ public class ApiManager implements Managable {
             wrapRetryObservable(
                 service.registerDeviceId(tokenData.getUserId(),
                     new PushNotificationRegistrationWrapper(token)))
-                .subscribe(new BackgroundSubscriber<Rider>());
+                .subscribe(new BackgroundSubscriber<>());
         }
     }
 

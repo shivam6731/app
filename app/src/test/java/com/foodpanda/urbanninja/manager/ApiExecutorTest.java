@@ -9,6 +9,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
+import com.foodpanda.urbanninja.model.Vehicle;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
@@ -25,10 +26,12 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import rx.Observable;
+import rx.observers.TestSubscriber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -218,7 +221,7 @@ public class ApiExecutorTest {
     @Test
     public void testOpenCurrentFragmentWithoutRouteAndSchedule() {
 
-        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+        when(storageManager.getStopList()).thenReturn(new LinkedList<>());
 
         apiExecutor.openCurrentFragment();
 
@@ -238,7 +241,7 @@ public class ApiExecutorTest {
         apiExecutor.setScheduleWrapper(scheduleWrapper);
         apiExecutor.setScheduleWrappers(scheduleWrappers);
 
-        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+        when(storageManager.getStopList()).thenReturn(new LinkedList<>());
 
         apiExecutor.openCurrentFragment();
 
@@ -258,7 +261,7 @@ public class ApiExecutorTest {
         apiExecutor.setScheduleWrapper(scheduleWrapper);
         apiExecutor.setScheduleWrappers(scheduleWrappers);
 
-        when(storageManager.getStopList()).thenReturn(new LinkedList<Stop>());
+        when(storageManager.getStopList()).thenReturn(new LinkedList<>());
 
         apiExecutor.openCurrentFragment();
 
@@ -293,5 +296,33 @@ public class ApiExecutorTest {
         apiExecutor.updateRouteStopInfo(routeWrapper);
 
         verify(storageManager).storeStopList(routeWrapper.getStops());
+    }
+
+    @Test
+    public void testGetScheduleObservable() {
+        TestSubscriber<ScheduleCollectionWrapper> subscriber = new TestSubscriber<>();
+
+        Observable<ScheduleCollectionWrapper> observable = apiExecutor.getScheduleObservable();
+        observable.subscribe(subscriber);
+        subscriber.onCompleted();
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertReceivedOnNext(Collections.emptyList());
+    }
+
+    @Test
+    public void testGetRouteStopObservable() {
+        TestSubscriber<RouteWrapper> subscriber = new TestSubscriber<>();
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
+        apiExecutor.setVehicleDeliveryAreaRiderBundle(vehicleDeliveryAreaRiderBundle);
+
+        Observable<RouteWrapper> observable = apiExecutor.getRouteStopObservable();
+        observable.subscribe(subscriber);
+        subscriber.onCompleted();
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertReceivedOnNext(Collections.emptyList());
     }
 }

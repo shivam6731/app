@@ -55,7 +55,7 @@ public class ApiExecutor {
      * order even if schedule is over
      */
     public void updateScheduleAndRouteStop() {
-        updateRoute(getScheduleObservable(apiManager.getCurrentScheduleObservable()));
+        updateRoute(getRouteStopObservableFromSchedule());
     }
 
     /**
@@ -63,7 +63,7 @@ public class ApiExecutor {
      * push notification about route plan updates or some route canceled
      */
     public void updateRoute() {
-        updateRoute(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
+        updateRoute(getRouteStopObservable());
     }
 
     public void clockIn() {
@@ -182,31 +182,38 @@ public class ApiExecutor {
     }
 
     /**
+     * Rider schedule Observable that would update
+     * UI when schedule would be received
+     * that should be executed in a sequence
+     *
+     * @return Observable to retrieve schedule plan
+     */
+    Observable<ScheduleCollectionWrapper> getScheduleObservable() {
+        Observable<ScheduleCollectionWrapper> observable = ApiUtils.wrapObservable(apiManager.getCurrentScheduleObservable());
+        observable.doOnNext(this::updateScheduleInfo);
+        observable.doOnError(throwable -> ApiUtils.showErrorMessage(throwable, activity));
+
+        return observable;
+    }
+
+    /**
      * Generate route stop observable
      * based on rider vehicle id
      *
      * @return RouteWrapper Observable to retrieve rider info
      */
-    private Observable<RouteWrapper> getRouteStopObservable() {
+    Observable<RouteWrapper> getRouteStopObservable() {
         return ApiUtils.wrapObservable(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
     }
 
     /**
-     * Concat rider schedule Observable and Route stop plan observable
-     * that should be executed in a sequence
+     * Concat schedule Observable and route stop Observable
+     * to execute both APi call in the same time
      *
-     * @param observable Observable to retrieve rider schedule
-     * @return Observable to retrieve route stop plan
+     * @return RouteWrapper Observable
      */
-    private Observable<RouteWrapper> getScheduleObservable(Observable<ScheduleCollectionWrapper> observable) {
-        observable.doOnNext(this::updateScheduleInfo);
-
-        return observable.concatMap(
-            scheduleWrappers1 -> {
-                updateScheduleInfo(scheduleWrappers1);
-
-                return apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId());
-            });
+    private Observable<RouteWrapper> getRouteStopObservableFromSchedule() {
+        return getScheduleObservable().concatMap(scheduleWrappers1 -> getRouteStopObservable());
     }
 
     /**
@@ -239,7 +246,7 @@ public class ApiExecutor {
      *
      * @param observable Observable that would be executed
      */
-    void updateRoute(Observable<RouteWrapper> observable) {
+    private void updateRoute(Observable<RouteWrapper> observable) {
         ApiUtils.wrapObservable(observable)
             .subscribe(
                 this::updateRouteStopInfo,
@@ -354,5 +361,14 @@ public class ApiExecutor {
      */
     ScheduleWrapper getScheduleWrapper() {
         return scheduleWrapper;
+    }
+
+    /**
+     * This method is used only for tests
+     * here we set rider information
+     * {@link #setScheduleWrappers(ScheduleCollectionWrapper)}
+     */
+    void setVehicleDeliveryAreaRiderBundle(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
+        this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
     }
 }

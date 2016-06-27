@@ -59,4 +59,13 @@ public class VehicleDeliveryAreaRiderBundle implements ParcelableModel {
     public void setRider(Rider rider) {
         this.rider = rider;
     }
+
+    /**
+     * Needs only for tests
+     *
+     * @param vehicle fake vehicle
+     */
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
 }
