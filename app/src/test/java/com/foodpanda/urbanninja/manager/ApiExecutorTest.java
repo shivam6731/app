@@ -303,11 +303,20 @@ public class ApiExecutorTest {
         TestSubscriber<ScheduleCollectionWrapper> subscriber = new TestSubscriber<>();
 
         Observable<ScheduleCollectionWrapper> observable = apiExecutor.getScheduleObservable();
-        observable.subscribe(subscriber);
+
+        ScheduleCollectionWrapper scheduleWrappers = new ScheduleCollectionWrapper();
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        scheduleWrappers.add(scheduleWrapper);
+
         subscriber.onCompleted();
+        subscriber.onNext(scheduleWrappers);
+        subscriber.getOnNextEvents();
+        observable.subscribe(subscriber);
+
         subscriber.assertCompleted();
         subscriber.assertNoErrors();
-        subscriber.assertReceivedOnNext(Collections.emptyList());
+        subscriber.assertValue(scheduleWrappers);
+        subscriber.assertReceivedOnNext(Collections.singletonList(scheduleWrappers));
     }
 
     @Test
@@ -319,10 +328,17 @@ public class ApiExecutorTest {
         apiExecutor.setVehicleDeliveryAreaRiderBundle(vehicleDeliveryAreaRiderBundle);
 
         Observable<RouteWrapper> observable = apiExecutor.getRouteStopObservable();
-        observable.subscribe(subscriber);
+        RouteWrapper routeWrapper = new RouteWrapper();
+
         subscriber.onCompleted();
+        subscriber.onNext(routeWrapper);
+        subscriber.getOnNextEvents();
+        observable.subscribe(subscriber);
+
+
         subscriber.assertCompleted();
         subscriber.assertNoErrors();
-        subscriber.assertReceivedOnNext(Collections.emptyList());
+        subscriber.assertValue(routeWrapper);
+        subscriber.assertReceivedOnNext(Collections.singletonList(routeWrapper));
     }
 }
