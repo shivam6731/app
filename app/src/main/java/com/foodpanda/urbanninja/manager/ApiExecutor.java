@@ -50,7 +50,8 @@ public class ApiExecutor {
 
     /**
      * Based on the requirements when we receive push notification
-     * with schedule changes type we need to update schedule list
+     * with schedule changes or user triggers pull-down to refresh view
+     * in the main screen type we need to update schedule list
      * and after route stop list, to allow rider to finish all assigned
      * order even if schedule is over
      */
@@ -61,6 +62,7 @@ public class ApiExecutor {
     /**
      * Update route stop list when rider receives
      * push notification about route plan updates or some route canceled
+     * or user triggers pull-down to refresh view
      */
     public void updateRoute() {
         updateRoute(getRouteStopObservable());
@@ -122,6 +124,8 @@ public class ApiExecutor {
     /**
      * Retrieve  all rider information in a sequence
      * with only one error handler and result callback
+     * each change return new Observable object so we need to save sequence
+     * and wrap all call properly
      * <p>
      * This method should be executed only when app is just launched
      */
@@ -185,15 +189,15 @@ public class ApiExecutor {
      * Rider schedule Observable that would update
      * UI when schedule would be received
      * that should be executed in a sequence
+     * each change return new Observable object so we need to save sequence
+     * and wrap all call properly
      *
      * @return Observable to retrieve schedule plan
      */
     Observable<ScheduleCollectionWrapper> getScheduleObservable() {
-        Observable<ScheduleCollectionWrapper> observable = ApiUtils.wrapObservable(apiManager.getCurrentScheduleObservable());
-        observable.doOnNext(this::updateScheduleInfo);
-        observable.doOnError(throwable -> ApiUtils.showErrorMessage(throwable, activity));
-
-        return observable;
+        return ApiUtils.wrapObservable(apiManager.getCurrentScheduleObservable()).
+            doOnNext(this::updateScheduleInfo).
+            doOnError(throwable -> ApiUtils.showErrorMessage(throwable, activity));
     }
 
     /**
@@ -247,7 +251,7 @@ public class ApiExecutor {
      * @param observable Observable that would be executed
      */
     private void updateRoute(Observable<RouteWrapper> observable) {
-        ApiUtils.wrapObservable(observable)
+        observable
             .subscribe(
                 this::updateRouteStopInfo,
                 throwable -> {
