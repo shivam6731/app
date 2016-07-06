@@ -4,16 +4,13 @@ package com.foodpanda.urbanninja.ui.activity;
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
-import com.google.android.gms.common.ConnectionResult;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.gms.ShadowGooglePlayServicesUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,9 +24,6 @@ public class MainActivityTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        ShadowGooglePlayServicesUtil.setIsGooglePlayServicesAvailable(ConnectionResult.SUCCESS);
-
         app = RuntimeEnvironment.application;
         app.onCreate();
 

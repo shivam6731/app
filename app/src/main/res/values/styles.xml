@@ -168,6 +168,7 @@
     <style name="TextView.Italic">
         <item name="android:textStyle">italic</item>
     </style>
+
     <style name="TextView.SmallSize">
         <item name="android:textSize">@dimen/description_text_size</item>
     </style>
@@ -235,8 +236,6 @@
     <style name="CardView">
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:background">@android:color/white</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="DividerView">

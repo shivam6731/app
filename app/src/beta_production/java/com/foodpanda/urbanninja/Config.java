@@ -26,7 +26,7 @@ public class Config {
         private static final String PLATFORM_VALUE = "foodpanda";
 
         public static final String PARAMS =
-            "endpoints?"+
+            "endpoints?" +
                 "environment=" +
                 ENVIRONMENT_VALUE +
                 "&component=" +

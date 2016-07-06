@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
         android:angle="270"
-        android:endColor="@android:color/transparent"
-        android:startColor="@color/main_button_disable">
+        android:endColor="@android:color/white"
+        android:startColor="@color/shadow_top_panel">
     </gradient>
 </shape>
