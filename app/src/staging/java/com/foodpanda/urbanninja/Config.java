@@ -20,7 +20,21 @@ public class Config {
     }
 
     public class ApiUrbanNinjaTag {
-        public static final String PARAMS = "endpoints?environment=staging&component=fleet&version=1&platform=foodpanda";
+        private static final String ENVIRONMENT_VALUE = "staging";
+        private static final String COMPONENT_VALUE = "fleet";
+        private static final String VERSION_VALUE = "1";
+        private static final String PLATFORM_VALUE = "foodpanda";
+
+        public static final String PARAMS =
+            "endpoints?" +
+                "environment=" +
+                ENVIRONMENT_VALUE +
+                "&component=" +
+                COMPONENT_VALUE +
+                "&version=" +
+                VERSION_VALUE +
+                "&platform=" +
+                PLATFORM_VALUE;
     }
 
     public class ApiUrbanNinjaUrl {
