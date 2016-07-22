@@ -6,9 +6,9 @@
               android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-        style="@style/CardView"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/margin_tiny"
@@ -26,12 +26,9 @@
                 android:background="@android:color/white"
                 android:orientation="horizontal">
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
-                    android:id="@+id/txt_type"
-                    style="@style/TextView.Title.Green.TaskType"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/icon_restaurant_green"
-                    android:textColor="@color/colorAccent"/>
+                <include
+                    android:id="@+id/layout_type_payment"
+                    layout="@layout/order_type_payment_method_layout"/>
 
                 <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     android:id="@+id/txt_timer"

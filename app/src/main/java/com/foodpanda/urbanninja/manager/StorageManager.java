@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -14,6 +15,7 @@ import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -129,7 +131,30 @@ public class StorageManager implements Managable {
     }
 
     public List<Stop> getStopList() {
-        return stopList == null ? new LinkedList<Stop>() : stopList;
+        return stopList == null ? new LinkedList<>() : stopList;
+    }
+
+    /**
+     * get delivery part of each route stop
+     * no matter if it's pick-up or delivery type the arrival time would be
+     * for delivery part of current order
+     *
+     * @param currentStop by order code of this stop we would search for delivery part
+     * @return delivery part of any order
+     */
+    public Stop getDeliveryPartOfEachRouteStop(@NonNull Stop currentStop) {
+        if (currentStop.getTask() == RouteStopTask.DELIVER) {
+            return currentStop;
+        }
+
+        for (Stop stop : getStopList()) {
+            if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode())
+                && stop.getTask() == RouteStopTask.DELIVER) {
+                return stop;
+            }
+        }
+
+        return null;
     }
 
     public boolean storeStatus(long routeId, Status status) {

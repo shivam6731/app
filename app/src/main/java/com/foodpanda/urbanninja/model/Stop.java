@@ -215,4 +215,13 @@ public class Stop implements MapDetailsProvider {
     public boolean isDoneButtonVisible() {
         return status == Status.ON_THE_WAY;
     }
+
+    /**
+     * Needs only for tests
+     *
+     * @param orderCode order identity code
+     */
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
 }

@@ -112,4 +112,9 @@
     <string name="content_description_route_option_expand">Expand layout icon</string>
     <string name="content_description_navigation_rider_icon">Rider profile photo</string>
     <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
+
+    <!-- Payment Method-->
+    <string name="payment_method_online">Paid Online</string>
+    <string name="payment_method_cod">COD: %1$s</string>
+
 </resources>

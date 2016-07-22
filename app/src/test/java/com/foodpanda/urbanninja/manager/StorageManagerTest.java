@@ -5,6 +5,7 @@ import android.app.Application;
 import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -86,5 +87,48 @@ public class StorageManagerTest {
 
         storageManager.storeStopList(stops);
         assertEquals(storageManager.removeCurrentStop(), stop);
+    }
+
+    @Test
+    public void testGetDeliveryPartOfEachRouteStopEmpty() {
+        assertNull(storageManager.getDeliveryPartOfEachRouteStop(new Stop()));
+    }
+
+    @Test
+    public void testGetDeliveryPartOfEachRouteStopPickUp() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop stopPickUp = new Stop();
+        stopPickUp.setTask(RouteStopTask.PICKUP);
+        stopPickUp.setOrderCode("testCode");
+
+        Stop stopDelivery = new Stop();
+        stopDelivery.setTask(RouteStopTask.DELIVER);
+        stopDelivery.setOrderCode("testCode");
+
+        stops.add(stopPickUp);
+        stops.add(stopDelivery);
+
+        storageManager.storeStopList(stops);
+        assertEquals(storageManager.getDeliveryPartOfEachRouteStop(stopPickUp), stopDelivery);
+    }
+
+    @Test
+    public void testGetDeliveryPartOfEachRouteStopDeliveryPickUp() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop stopPickUp = new Stop();
+        stopPickUp.setTask(RouteStopTask.PICKUP);
+        stopPickUp.setOrderCode("testCode");
+
+        Stop stopDelivery = new Stop();
+        stopDelivery.setTask(RouteStopTask.DELIVER);
+        stopDelivery.setOrderCode("testCode");
+
+        stops.add(stopPickUp);
+        stops.add(stopDelivery);
+
+        storageManager.storeStopList(stops);
+        assertEquals(storageManager.getDeliveryPartOfEachRouteStop(stopDelivery), stopDelivery);
     }
 }

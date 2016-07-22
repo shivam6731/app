@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +35,6 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
-import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
@@ -513,23 +511,17 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
      * @return formatted arrival time for delivery part of route stop
      */
     private String getDeliveryArrivalTimeForAllTaskTypes(Stop currentStop) {
-        for (Stop stop : storageManager.getStopList()) {
-            if (currentStop.getOrderCode().equalsIgnoreCase(stop.getOrderCode()) &&
-                stop.getTask() == RouteStopTask.DELIVER) {
+        Stop deliveryStop = storageManager.getDeliveryPartOfEachRouteStop(currentStop);
 
-                return getString(R.string.main_activity_deliver_before,
-                    DateUtil.formatTimeHoursMinutes(stop.getArrivalTime()));
-            }
-        }
-
-        return "";
+        return deliveryStop == null ? "" : getString(R.string.main_activity_deliver_before,
+            DateUtil.formatTimeHoursMinutes(deliveryStop.getArrivalTime()));
     }
 
     @Override
     public void onBackPressed() {
         //if drawer in opened it should be closed by back button press
         //otherwise we have to redirect to the OrdersNestedFragment
-        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers();
         } else {
             int count = fragmentManager.getBackStackEntryCount();
