@@ -48,12 +48,12 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
 
     @Override
     protected CountryAdapter provideListAdapter() {
-        return new CountryAdapter(new ArrayList<Country>(), activity);
+        return new CountryAdapter(new ArrayList<>(), activity);
     }
 
     @Override
     protected int provideListLayout() {
-        return R.layout.select_country_fragment;
+        return R.layout.select_country_language_fragment;
     }
 
     @Override
@@ -72,12 +72,9 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn_select).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedCountry != null) {
-                    loginActivityCallback.onCountrySelected(selectedCountry);
-                }
+        view.findViewById(R.id.btn_select).setOnClickListener(v -> {
+            if (selectedCountry != null) {
+                loginActivityCallback.onCountrySelected(selectedCountry);
             }
         });
         activity.showProgress();

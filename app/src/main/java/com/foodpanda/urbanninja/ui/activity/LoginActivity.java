@@ -3,17 +3,20 @@ package com.foodpanda.urbanninja.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.LanguageManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Country;
+import com.foodpanda.urbanninja.model.Language;
 import com.foodpanda.urbanninja.ui.fragments.CountryListFragment;
+import com.foodpanda.urbanninja.ui.fragments.LanguageListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoginFragment;
-import com.foodpanda.urbanninja.ui.interfaces.CountrySelectedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
 public class LoginActivity extends BaseActivity implements LoginActivityCallback {
@@ -21,7 +24,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     private ApiManager apiManager;
 
     private Country country;
-    private CountrySelectedCallback countrySelectedCallback;
+
+    private LoginFragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +40,34 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         }
         this.country = storageManager.getCountry();
         if (savedInstanceState == null) {
+            loginFragment = LoginFragment.newInstance();
             fragmentManager.
                 beginTransaction().
-                add(R.id.container, LoginFragment.newInstance()).
+                add(R.id.container, loginFragment).
                 commit();
         }
         initToolbar();
+        changeActivityTitleOnBackPress();
+    }
+
+    /**
+     * When user press back button in the device or at the action bar
+     * title should be changed according to the next fragment in the stack
+     */
+    private void changeActivityTitleOnBackPress() {
+        fragmentManager.addOnBackStackChangedListener(() -> {
+            Fragment fragment = fragmentManager.findFragmentById(R.id.container);
+            if (fragment instanceof LoginFragment) {
+                setTitle(getResources().getString(R.string.logic_title), false);
+            }
+            if (fragment instanceof CountryListFragment) {
+                setTitle(getResources().getString(R.string.country_select_title), true);
+            }
+            if (fragment instanceof LanguageListFragment) {
+                setTitle(getResources().getString(R.string.language_select_title), true);
+            }
+
+        });
     }
 
     @Override
@@ -63,8 +89,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     }
 
     @Override
-    public void onSelectCountryClicked(CountrySelectedCallback countrySelectedCallback) {
-        this.countrySelectedCallback = countrySelectedCallback;
+    public void onSelectCountryClicked() {
         fragmentManager.
             beginTransaction().
             add(R.id.container, CountryListFragment.newInstance(country)).
@@ -75,12 +100,46 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
 
     @Override
     public void onCountrySelected(Country country) {
-        fragmentManager.popBackStack();
         this.country = country;
         storageManager.storeCountry(country);
         apiManager.init(this);
-        if (countrySelectedCallback != null) {
-            countrySelectedCallback.onCountrySelected(country);
+
+        fragmentManager.
+            beginTransaction().
+            add(R.id.container, LanguageListFragment.newInstance(storageManager.getLanguage())).
+            addToBackStack(LanguageListFragment.class.getSimpleName()).
+            commit();
+    }
+
+    /**
+     * Update Ui for LoginFragment according to selected language
+     *
+     * @param language selected language
+     */
+    @Override
+    public void onLanguageSelected(Language language) {
+        // clean back stack
+        // we need to do it two times because in stack we have two fragments
+        // CountryListFragment and LanguageListFragment
+        fragmentManager.popBackStack();
+        fragmentManager.popBackStack();
+
+        // store selected language
+        storageManager.storeLanguage(language);
+
+        // update all resources according to selected language
+        new LanguageManager(storageManager).setLanguage(this);
+
+        // update UI for LoginFragment
+        getSupportFragmentManager()
+            .beginTransaction()
+            .detach(loginFragment)
+            .attach(loginFragment)
+            .commit();
+        // update selected country textView in LoginFragment
+        // and put it in selected language
+        if (loginFragment != null) {
+            loginFragment.setCountryNameWithLanguage(country);
         }
     }
 
@@ -100,23 +159,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             getCurrentFocus().clearFocus();
-        }
-    }
-
-    /**
-     * we Override this method only because
-     * needs to change title for activity when we have only {@link LoginFragment} in the stack
-     */
-    @Override
-    public void onBackPressed() {
-        int count = fragmentManager.getBackStackEntryCount();
-        if (count <= 0) {
-            super.onBackPressed();
-        } else {
-            //in a stack in fragment in this activity we have only two fragments
-            //and when we came back from select country fragment we should change the title
-            fragmentManager.popBackStack();
-            setTitle(getResources().getString(R.string.logic_title), false);
         }
     }
 }

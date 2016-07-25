@@ -13,6 +13,7 @@ public class Constants {
         public static final String USERNAME = "Username";
         public static final String PASSWORD = "Password";
         public static final String COUNTRY = "Country";
+        public static final String LANGUAGE = "Language";
         public static final String STATUS_LIST = "StatusList";
         public static final String STATUS_REQUEST_LIST = "StatusRequestList";
         public static final String LOCATION_REQUEST_LIST = "LocationRequestList";
@@ -23,6 +24,7 @@ public class Constants {
 
     public static class BundleKeys {
         public static final String COUNTRY = "country";
+        public static final String LANGUAGE = "language";
         public static final String VEHICLE_ID = "VehicleId";
         public static final String MAP_ADDRESS_DETAILS = "mapAddressDetails";
         public static final String IS_ROUTE_DETAILS_SHOWN = "isRouteDetailsShown";

@@ -1,0 +1,126 @@
+<resources>
+    <!-- Strings related to login -->
+    <string name="error_field_required">需要輸入地區</string>
+
+    <!-- Login -->
+    <string name="logic_title">登入</string>
+    <string name="logic_action">登入</string>
+    <string name="login_password_hint">密碼</string>
+    <string name="login_username_hint">用戶名稱</string>
+    <string name="login_country_hint">國家</string>
+    <string name="login_country_error">選擇國家</string>
+
+    <!-- Side Menu -->
+    <string name="side_menu_orders">訂單</string>
+    <string name="side_menu_schedule">工作時間表</string>
+    <string name="side_menu_cash_report">訂單資料</string>
+    <string name="side_menu_logout">登出</string>
+    <string name="side_menu_open">開啟</string>
+    <string name="side_menu_close">關閉</string>
+    <string name="side_menu_version">版本 %1$s</string>
+    <string name="side_menu_rider_name">%1$s %2$s</string>
+
+    <!-- Main Activity -->
+    <string name="main_activity_deliver_before">完成時間: %1$s</string>
+
+    <!-- Ready to work -->
+    <string name="ready_to_work_clock_in">我準備工作了</string>
+
+    <!-- Empty list -->
+    <string name="empty_list_header">檢查您的保溫袋，戴好您的頭盔和深呼吸</string>
+    <string name="empty_list_text">新訂單即將來臨!</string>
+    <string name="empty_list_pull_description">拉下刷新</string>
+    <string name="base_empty_list">暫無資料</string>
+    <string name="empty_list_country"><b>下載國家列表</b>等待幾秒鐘，或檢查連接.</string>
+    <string name="empty_list_schedule"><b>今天沒有日程</b>如有問題，請聯繫您的經理尋求協助</string>
+    <string name="empty_list_cash_report">在過去的15天內沒有訂單</string>
+
+    <!-- Task details -->
+    <string name="task_details_canceled">訂單已被取消了</string>
+    <string name="task_details_canceled_dismiss">我知道了</string>
+    <string name="task_details_address">地址:</string>
+    <string name="task_details_comment">通知:</string>
+    <string name="task_details_vendor_name">餐廳名稱:</string>
+    <string name="task_details_vendor_name_at_customer">餐廳名稱:</string>
+    <string name="task_details_go_to">去 %1$s</string>
+    <string name="task_details_call">聯絡</string>
+    <string name="task_details_pick_up">收取</string>
+    <string name="task_details_delivery">送遞食物</string>
+    <string name="task_details_halal">確保你把食物放入綠色盒中</string>
+    <string name="task_details_not_halal">確保你把食物放入橙色盒中</string>
+
+    <!-- Errors -->
+    <string name="dialog_please_wait">請等待…</string>
+    <string name="error_start_point_not_found">找不到起點</string>
+
+    <!-- Dialog -->
+    <string name="dialog_phone_title">選擇電話號碼</string>
+    <string name="dialog_phone_customer">客人電話號碼</string>
+    <string name="dialog_phone_restaurant">餐廳電話號碼</string>
+    <string name="dialog_phone_not_data">客人及餐廳的電話號碼, 會在你接受訂單後顯示</string>
+    <string name="dialog_phone_not_numbers">此訂單沒有任何號碼顯示</string>
+
+    <!-- Country -->
+    <string name="country_select_title">選擇你的國家</string>
+    <string name="country_select">選擇</string>
+
+    <!-- Language -->
+    <string name="language_select_title">選擇語言</string>
+
+    <!-- Ready to work -->
+    <string name="action_ready_to_work">我準備工作</string>
+    <string name="action_driving">我在駕駛中</string>
+    <string name="action_at_pick_up">我在取貨點</string>
+    <string name="action_at_delivery">我在送貨點</string>
+    <string name="action_at_picked_up">我已取食物</string>
+    <string name="action_at_delivered">我已完成送單</string>
+    <string name="route_stop_details_my_location">我的位置</string>
+    <string name="route_error">此操作不支援</string>
+
+    <!-- Stop list -->
+    <string name="stop_list_done">完成</string>
+
+    <!-- Schedule list-->
+    <string name="schedule_list_working_hours">%1$s 至 %2$s</string>
+    <string name="schedule_list_today">今天</string>
+    <string name="schedule_list_tomorrow">明天</string>
+
+    <!-- GCM -->
+    <string name="gcm_defaultSenderId">975393205483</string>
+
+    <!-- Route Actions  -->
+    <string name="route_action_pay">付款 %1$s</string>
+    <string name="route_action_pick_up">取 %1$s 項目</string>
+    <string name="route_action_change">準備 %1$s 找贖</string>
+    <string name="route_action_deliver">送 %1$s 項目</string>
+    <string name="route_action_collect">收取 %1$s</string>
+    <string name="route_action_details">資料:</string>
+    <string name="route_action_restaurant">餐廳:</string>
+    <string name="route_action_last_step">最後步驟</string>
+    <string name="route_action_up_step">下一步驟</string>
+    <string name="route_action_halal">清真訂單</string>
+    <string name="route_action_not_halal">非清真訂單</string>
+    <string name="route_action_halal_description">把食物放入綠色盒中!</string>
+    <string name="route_action_not_halal_description">把食物放入橙色盒中!</string>
+    <string name="route_action_pre_order_title">預購訂單 %1$s</string>
+    <string name="route_action_pre_order_description">請準時到達。不能早，不能遲</string>
+    <string name="route_action_pre_order_adapter_description">請盡量準時送到客人手上</string>
+
+    <!-- Cash Report-->
+    <string name="cash_report_total">總金額 %1$s</string>
+    <string name="cash_report_cancelled">取消</string>
+
+    <!-- Content Description -->
+    <string name="content_description_empty_list">Urban Ninja logo</string>
+    <string name="content_description_list_item_action_stop">Action icon</string>
+    <string name="content_description_login_fragment">Urban Ninja logo</string>
+    <string name="content_description_route_option_go_to">Go to icon</string>
+    <string name="content_description_route_option_expand">Expand layout icon</string>
+    <string name="content_description_navigation_rider_icon">Rider profile photo</string>
+    <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
+
+    <!-- Payment Method-->
+    <string name="payment_method_online">網上付款</string>
+    <string name="payment_method_cod">現金: %1$s</string>
+
+</resources>
