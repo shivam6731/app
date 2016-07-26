@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
@@ -15,6 +17,7 @@ import com.foodpanda.urbanninja.ui.adapter.RouteStopActionAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.ShowMapAddressCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
+import com.foodpanda.urbanninja.ui.util.OrderTypeAndPaymentHelper;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
@@ -70,8 +73,9 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
 
-        TextView txtType = (TextView) view.findViewById(R.id.txt_type);
-        setType(currentStop.getTask(), txtType);
+        //Set payment details and type of the task
+        RelativeLayout layoutTypeAndPayment = (RelativeLayout) view.findViewById(R.id.layout_type_payment);
+        new OrderTypeAndPaymentHelper(activity, currentStop, App.STORAGE_MANAGER).setType(layoutTypeAndPayment);
     }
 
     @Override
@@ -88,18 +92,6 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
         return R.layout.route_stop_action_list_fragment;
     }
 
-    /**
-     * Put the icon and description for type textView
-     *
-     * @param task type of order
-     */
-    private void setType(RouteStopTask task, TextView txtType) {
-        int textResource = task == RouteStopTask.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
-        txtType.setText(activity.getResources().getText(textResource));
-
-        int iconResource = task == RouteStopTask.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
-        txtType.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
-    }
 
     @Override
     protected CharSequence provideEmptyListDescription() {

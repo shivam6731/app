@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
@@ -26,6 +28,7 @@ import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
+import com.foodpanda.urbanninja.ui.util.OrderTypeAndPaymentHelper;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
@@ -40,10 +43,10 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     private TimerHelper timerHelper;
 
     private LinearLayout layoutContent;
-    private TextView txtType;
+    private RelativeLayout layoutTypeAndPayment;
     private TextView txtTimer;
 
-    private Stop stop;
+    private Stop currentStop;
 
     private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
 
@@ -65,7 +68,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        stop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+        currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
         timerHelper = new TimerHelper(activity, this, this);
     }
 
@@ -83,7 +86,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         layoutContent = (LinearLayout) view.findViewById(R.id.layout_content);
-        txtType = (TextView) view.findViewById(R.id.txt_type);
+        layoutTypeAndPayment = (RelativeLayout) view.findViewById(R.id.layout_type_payment);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
 
         final ScrollView scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
@@ -118,35 +121,24 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     }
 
     /**
-     * Here we set all information about the current route stop for the text field
+     * Here we set all information about the current route currentStop for the text field
      * we have the same text view for the address and comment so we need to check if this data
      * present before set it
      */
     private void setData() {
-        setType(stop.getTask());
+        //Set payment details and type of the task
+        new OrderTypeAndPaymentHelper(activity, currentStop, App.STORAGE_MANAGER).setType(layoutTypeAndPayment);
+
         //Launch the map details fragment
         MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
-            stop,
-            stop.getTask() == RouteStopTask.DELIVER ? MapPointType.DELIVERY : MapPointType.PICK_UP,
+            currentStop,
+            currentStop.getTask() == RouteStopTask.DELIVER ? MapPointType.DELIVERY : MapPointType.PICK_UP,
             true);
 
         mapAddressDetailsChangeListener = mapAddressDetailsFragment;
 
         addFragment(R.id.map_details_container, mapAddressDetailsFragment);
         setHalalLayoutIfNeeds();
-    }
-
-    /**
-     * Put the icon and description for type textView
-     *
-     * @param task type of order
-     */
-    private void setType(RouteStopTask task) {
-        int textResource = task == RouteStopTask.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
-        txtType.setText(getResources().getText(textResource));
-
-        int iconResource = task == RouteStopTask.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
-        txtType.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
     }
 
     /**
@@ -167,8 +159,8 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      * we need to add this layout
      */
     private void setHalalLayoutIfNeeds() {
-        if (stop.getActivities() != null) {
-            for (RouteStopActivity routeStopActivity : stop.getActivities()) {
+        if (currentStop.getActivities() != null) {
+            for (RouteStopActivity routeStopActivity : currentStop.getActivities()) {
                 if (routeStopActivity.getType() == RouteStopActivityType.HALAL ||
                     routeStopActivity.getType() == RouteStopActivityType.NON_HALAL) {
                     addHalalLayout(putContentForHalalLayout(routeStopActivity.getType()));
@@ -233,12 +225,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
 
     @Override
     public DateTime provideScheduleDate() {
-        return stop.getArrivalTime();
+        return currentStop.getArrivalTime();
     }
 
     @Override
     public DateTime provideScheduleEndDate() {
-        return stop.getArrivalTime().plusDays(1);
+        return currentStop.getArrivalTime().plusDays(1);
     }
 
     @Override

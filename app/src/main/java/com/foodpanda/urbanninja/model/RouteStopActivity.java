@@ -27,6 +27,17 @@ public class RouteStopActivity implements Parcelable {
     public RouteStopActivity() {
     }
 
+    /**
+     * Needs only for test
+     *
+     * @param type  type of order activity
+     * @param value value for activity
+     */
+    public RouteStopActivity(RouteStopActivityType type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
     protected RouteStopActivity(Parcel in) {
         this.id = in.readInt();
         int tmpType = in.readInt();

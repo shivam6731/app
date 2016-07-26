@@ -38,8 +38,7 @@
                             android:id="@+id/txt_type"
                             style="@style/TextView.Title.Green.TaskType"
                             android:layout_weight="1"
-                            android:drawableLeft="@drawable/icon_restaurant_green"
-                            android:textColor="@color/colorAccent"/>
+                            android:drawableLeft="@drawable/icon_restaurant_green"/>
 
                         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                             android:id="@+id/txt_timer"

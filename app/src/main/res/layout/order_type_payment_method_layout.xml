@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+
+    <ImageView
+        android:id="@+id/image_type"
+        style="@style/ImageView"
+        android:layout_centerVertical="true"
+        android:src="@drawable/icon_restaurant_green"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_type"
+        style="@style/TextView.Title.Green.TaskType.WithPayment"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/image_type"
+        android:layout_toRightOf="@+id/image_type"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        android:id="@+id/txt_payment"
+        style="@style/TextView.WithoutMargin"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/txt_type"
+        android:layout_margin="0dp"
+        android:layout_toRightOf="@+id/image_type"/>
+</RelativeLayout>

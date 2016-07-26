@@ -147,6 +147,11 @@
 
     <style name="TextView.Title.Green.TaskType">
         <item name="android:textSize">@dimen/default_title_size</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="TextView.Title.Green.TaskType.WithPayment">
+        <item name="android:padding">0dp</item>
     </style>
 
     <style name="TextView.Title.NotBold.White">
