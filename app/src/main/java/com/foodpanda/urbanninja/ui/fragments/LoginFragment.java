@@ -19,7 +19,6 @@ import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Token;
-import com.foodpanda.urbanninja.ui.interfaces.CountrySelectedCallback;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -31,8 +30,7 @@ import java.util.Locale;
 
 public class LoginFragment extends BaseFragment implements
     Validator.ValidationListener,
-    BaseApiCallback<Token>,
-    CountrySelectedCallback {
+    BaseApiCallback<Token> {
 
     private ApiManager apiManager;
     private StorageManager storageManager;
@@ -98,7 +96,7 @@ public class LoginFragment extends BaseFragment implements
         view.findViewById(R.id.edit_country).setOnClickListener(v -> {
             editPassword.setError(null);
             editEmail.setError(null);
-            loginActivityCallback.onSelectCountryClicked(LoginFragment.this);
+            loginActivityCallback.onSelectCountryClicked();
         });
 
         Button emailSignInButton = (Button) view.findViewById(R.id.email_sign_in_button);
@@ -117,8 +115,7 @@ public class LoginFragment extends BaseFragment implements
         editEmail.setText(storageManager.getUsername());
         editPassword.setText(storageManager.getPassword());
         if (storageManager.getCountry() != null) {
-            String title = new Locale("", storageManager.getCountry().getCode()).getDisplayCountry();
-            txtCountry.setText(title);
+            setCountryNameWithLanguage(storageManager.getCountry());
         }
     }
 
@@ -171,10 +168,26 @@ public class LoginFragment extends BaseFragment implements
         activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
     }
 
-    @Override
-    public void onCountrySelected(Country country) {
-        String title = new Locale("", country.getCode()).getDisplayCountry();
+    /**
+     * Set selected country name to the TextView
+     * with selected language to the country field
+     *
+     * @param country selected country
+     */
+    public void setCountryNameWithLanguage(Country country) {
+        String title = new Locale(getLanguageCode(), country.getCode()).getDisplayCountry();
         txtCountry.setText(title);
-        activity.setTitle(getResources().getString(R.string.logic_title), false);
     }
+
+    /**
+     * get selected language code
+     * in case when language is not selected yet return empty string
+     *
+     * @return language code to translate country name
+     */
+    private String getLanguageCode() {
+        return storageManager.getLanguage() != null ? storageManager.getLanguage().getCode() : "";
+    }
+
+
 }

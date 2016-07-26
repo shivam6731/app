@@ -64,6 +64,9 @@
     <string name="country_select_title">Select your country</string>
     <string name="country_select">Select</string>
 
+    <!-- Language -->
+    <string name="language_select_title">Select your language</string>
+
     <!-- Ready to work -->
     <string name="action_ready_to_work">I\'m ready to work</string>
     <string name="action_driving">I\'m driving there</string>
@@ -117,4 +120,13 @@
     <string name="payment_method_online">Paid Online</string>
     <string name="payment_method_cod">COD: %1$s</string>
 
+    <!-- Localization-->
+    <string-array name="language_names">
+        <item name="english">English</item>
+        <item name="chinese">中文</item>
+    </string-array>
+    <string-array name="language_codes">
+        <item name="english">en</item>
+        <item name="chinese">zh</item>
+    </string-array>
 </resources>

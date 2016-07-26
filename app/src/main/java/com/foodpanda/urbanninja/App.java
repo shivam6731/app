@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.LanguageManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 
@@ -20,6 +21,15 @@ public class App extends Application implements Application.ActivityLifecycleCal
         STORAGE_MANAGER.init(getApplicationContext());
         API_MANAGER.init(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
+        setLanguage();
+    }
+
+    /**
+     * Before each launch of the app we should force
+     * to switch to the rider selected language
+     */
+    private void setLanguage() {
+        new LanguageManager(STORAGE_MANAGER).setLanguage(this);
     }
 
     @Override

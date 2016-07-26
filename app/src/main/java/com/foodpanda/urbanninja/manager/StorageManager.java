@@ -12,6 +12,7 @@ import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Country;
+import com.foodpanda.urbanninja.model.Language;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
@@ -110,6 +111,26 @@ public class StorageManager implements Managable {
         return editor.commit();
     }
 
+    public Country getCountry() {
+        String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
+
+        return gson.fromJson(json, Country.class);
+    }
+
+    public boolean storeLanguage(Language language) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = gson.toJson(language);
+        editor.putString(Constants.Preferences.LANGUAGE, json);
+
+        return editor.commit();
+    }
+
+    public Language getLanguage() {
+        String json = sharedPreferences.getString(Constants.Preferences.LANGUAGE, "");
+
+        return gson.fromJson(json, Language.class);
+    }
+
     /**
      * Clean all stored data
      */
@@ -119,11 +140,6 @@ public class StorageManager implements Managable {
         stopList.clear();
     }
 
-    public Country getCountry() {
-        String json = sharedPreferences.getString(Constants.Preferences.COUNTRY, "");
-
-        return gson.fromJson(json, Country.class);
-    }
 
     public void storeStopList(List<Stop> stopList) {
         this.stopList = getUpToDateList(stopList);
