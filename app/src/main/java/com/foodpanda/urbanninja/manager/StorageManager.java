@@ -174,6 +174,18 @@ public class StorageManager implements Managable {
         }
     }
 
+    public boolean hasNextStop() {
+        return stopList != null && stopList.size() > 1;
+    }
+
+    public Stop getNextStop() {
+        if (hasNextStop()) {
+            return stopList.get(1);
+        } else {
+            return null;
+        }
+    }
+
     public Stop removeCurrentStop() {
         if (stopList.isEmpty()) {
             return null;

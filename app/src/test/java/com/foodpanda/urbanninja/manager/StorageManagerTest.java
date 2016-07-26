@@ -17,6 +17,7 @@ import org.robolectric.annotation.Config;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -58,6 +59,29 @@ public class StorageManagerTest {
     }
 
     @Test
+    public void testGetNextStopEmpty() {
+        storageManager.storeStopList(new LinkedList<Stop>());
+
+        assertNull(storageManager.getNextStop());
+    }
+
+    @Test
+    public void testGetNextStopFirst() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop firstStop = new Stop();
+        Stop secondStop = new Stop();
+        stops.add(firstStop);
+
+        storageManager.storeStopList(stops);
+        assertNull(storageManager.getNextStop());
+
+        stops.add(secondStop);
+        storageManager.storeStopList(stops);
+        assertEquals(storageManager.getNextStop(), secondStop);
+    }
+
+    @Test
     public void testGetCurrentStopFirst() {
         LinkedList<Stop> stops = new LinkedList<>();
 
@@ -67,6 +91,20 @@ public class StorageManagerTest {
 
         storageManager.storeStopList(stops);
         assertEquals(storageManager.getCurrentStop(), stop);
+    }
+
+    @Test
+    public void testHasNextStep() {
+        assertFalse(storageManager.hasNextStop());
+
+        LinkedList<Stop> stops = new LinkedList<>();
+        stops.add(new Stop());
+        storageManager.storeStopList(stops);
+        assertFalse(storageManager.hasNextStop());
+
+        stops.add(new Stop());
+        storageManager.storeStopList(stops);
+        assertTrue(storageManager.hasNextStop());
     }
 
     @Test

@@ -170,7 +170,7 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(googleMap1 -> setGoogleMapData(googleMap1));
+        mapView.getMapAsync(this::setGoogleMapData);
         setData();
     }
 
@@ -203,18 +203,16 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     private void setGoogleMapData(GoogleMap googleMap) {
         MapAddressDetailsFragment.this.googleMap = googleMap;
+
         //this change is not regarding to the user permission and map should be not clickable even if
         //user denied permissions
         MapAddressDetailsFragment.this.googleMap.getUiSettings().setAllGesturesEnabled(false);
         if (checkPermission()) {
             MapAddressDetailsFragment.this.googleMap.setMyLocationEnabled(false);
             MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-            MapAddressDetailsFragment.this.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    //to disable all marker default actions we should return true here
-                    return true;
-                }
+            MapAddressDetailsFragment.this.googleMap.setOnMarkerClickListener(marker -> {
+                //to disable all marker default actions we should return true here
+                return true;
             });
             MapAddressDetailsFragment.this.location = null;
             getLastKnownLocation();
@@ -229,6 +227,22 @@ public class MapAddressDetailsFragment extends BaseFragment implements
             mapView.onResume();
         }
         super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
     }
 
     @Override
@@ -411,13 +425,12 @@ public class MapAddressDetailsFragment extends BaseFragment implements
      * @return marker with rider for rider location
      */
     private Marker createRiderLocationMarker(LatLng riderLocationLatLng) {
-        Marker marker = googleMap.addMarker(new MarkerOptions().
+
+        return googleMap.addMarker(new MarkerOptions().
             position(riderLocationLatLng).
             anchor(MARKER_ANCHOR, MARKER_ANCHOR).
             icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_rider_location)).
             title(getResources().getString(R.string.route_stop_details_my_location)));
-
-        return marker;
     }
 
     /**
