@@ -117,8 +117,7 @@
     <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
 
     <!-- Payment Method-->
-    <string name="payment_method_online">Paid Online</string>
-    <string name="payment_method_cod">COD: %1$s</string>
+    <string name="payment_method_online">Already Online</string>
 
     <!-- Localization-->
     <string-array name="language_names">
