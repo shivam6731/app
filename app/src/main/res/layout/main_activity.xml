@@ -1,7 +1,7 @@
 <android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_background_color">
@@ -12,8 +12,8 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -39,8 +39,8 @@
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
-        style="@style/NavigationView"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/NavigationView">
 
         <android.support.design.widget.NavigationView
             android:id="@+id/navigation_view"

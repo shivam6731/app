@@ -120,6 +120,27 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         sendApiRequestAfterPush(intent);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkIfOrderFragmentVisible();
+    }
+
+    /**
+     * In case of low memory android system can destroy
+     * fragment and after that we getting blank screen,
+     * to get rid of this bug we need to recreate
+     * and launch OrdersNestedFragment.
+     * All data will be retrieved again
+     */
+    private void checkIfOrderFragmentVisible() {
+        if (ordersNestedFragment == null ||
+            ordersNestedFragment.isRemoving() ||
+            !ordersNestedFragment.isAdded()) {
+            startOrderFragment();
+        }
+    }
+
     /**
      * send API request to be up-to-date for all notification types
      *
