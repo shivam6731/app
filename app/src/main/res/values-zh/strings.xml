@@ -121,6 +121,5 @@
 
     <!-- Payment Method-->
     <string name="payment_method_online">網上付款</string>
-    <string name="payment_method_cod">現金: %1$s</string>
 
 </resources>

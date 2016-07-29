@@ -98,7 +98,7 @@ public class OrderTypeAndPaymentHelperTest {
         orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
-        assertEquals(txtOrderPaymenMethod.getText().toString(), "COD: HKD40.00");
+        assertEquals(txtOrderPaymenMethod.getText().toString(), "HKD40.00");
     }
 
     @Test
@@ -117,7 +117,7 @@ public class OrderTypeAndPaymentHelperTest {
         orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
-        assertEquals(txtOrderPaymenMethod.getText().toString(), "Paid Online");
+        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Online");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class OrderTypeAndPaymentHelperTest {
         orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
-        assertEquals(txtOrderPaymenMethod.getText().toString(), "Paid Online");
+        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Online");
     }
 
     private Country getCountryForCode(String code) {

@@ -63,8 +63,8 @@ public class OrderTypeAndPaymentHelper {
         }
         for (RouteStopActivity routeStopActivity : deliveryStop.getActivities()) {
             if (isOrderPaidByCash(routeStopActivity)) {
-                txtPaymentMethod.setText(activity.getResources().getString(R.string.payment_method_cod,
-                    FormatUtil.getValueWithCurrencySymbol(storageManager.getCountry(), routeStopActivity.getValue())));
+                txtPaymentMethod.setText(
+                    FormatUtil.getValueWithCurrencySymbol(storageManager.getCountry(), routeStopActivity.getValue()));
 
                 return;
             }
