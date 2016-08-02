@@ -91,7 +91,8 @@
     <!-- Route Actions  -->
     <string name="route_action_pay">付款 %1$s</string>
     <string name="route_action_pick_up">取 %1$s 項目</string>
-    <string name="route_action_change">準備 %1$s 找贖</string>
+    <string name="route_action_change">準備 找贖</string>
+    <string name="route_action_change_description">顧客將會給你 %1$s, 請確保你有足夠零錢找續</string>
     <string name="route_action_deliver">送 %1$s 項目</string>
     <string name="route_action_collect">收取 %1$s</string>
     <string name="route_action_details">資料:</string>

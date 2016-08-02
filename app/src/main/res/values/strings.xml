@@ -91,7 +91,8 @@
     <!-- Route Actions  -->
     <string name="route_action_pay">Pay %1$s</string>
     <string name="route_action_pick_up">Pick up %1$s Item(s)</string>
-    <string name="route_action_change">Prepare Change %1$s</string>
+    <string name="route_action_change">Prepare Change</string>
+    <string name="route_action_change_description">Customer informed us he will pay with a banknote worth %1$s …make sure you have enough change</string>
     <string name="route_action_deliver">Deliver %1$s Item(s)</string>
     <string name="route_action_collect">Collect %1$s</string>
     <string name="route_action_details">Details:</string>

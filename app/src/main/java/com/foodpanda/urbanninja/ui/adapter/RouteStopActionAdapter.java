@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -146,7 +147,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                     break;
                 case PREPARE_CHANGE:
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
-                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change, getFormattedPrice(routeStopActivity)));
+                    viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change));
+                    setPrepareChangeDescription(viewHolder, routeStopActivity);
                     setNotRelatedToHalalActionLayout(viewHolder);
                     break;
                 case COLLECT:
@@ -170,6 +172,23 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         } else {
             viewHolder.txtVendorName.setText(stop.getVendorName());
             viewHolder.layoutVendorName.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * For the PREPARE_CHANGE type of activity we need to add custom description
+     * with details about money
+     *
+     * @param viewHolder        holder for the change value
+     * @param routeStopActivity PREPARE_CHANGE activity to get value of
+     */
+    private void setPrepareChangeDescription(ViewHolder viewHolder, @NonNull RouteStopActivity routeStopActivity) {
+        if (!TextUtils.isEmpty(routeStopActivity.getValue())) {
+            viewHolder.layoutDetails.setVisibility(View.VISIBLE);
+            viewHolder.txtDescription.setText(
+                context.getResources().getString(
+                    R.string.route_action_change_description,
+                    getFormattedPrice(routeStopActivity)));
         }
     }
 
