@@ -53,19 +53,33 @@ public class ApiExecutor {
      * with schedule changes or user triggers pull-down to refresh view
      * in the main screen type we need to update schedule list
      * and after route stop list, to allow rider to finish all assigned
-     * order even if schedule is over
+     * order even if schedule is over.
+     * <p>
+     * In case when we don't have a rider information
+     * we need to retrieve all data again
      */
     public void updateScheduleAndRouteStop() {
-        updateRoute(getRouteStopObservableFromSchedule());
+        if (isVehicleInfoNotEmpty()) {
+            updateRoute(getRouteStopObservableFromSchedule());
+        } else {
+            getAllData();
+        }
     }
 
     /**
      * Update route stop list when rider receives
      * push notification about route plan updates or some route canceled
-     * or user triggers pull-down to refresh view
+     * or user triggers pull-down to refresh view.
+     * <p>
+     * In case when we don't have a rider information
+     * we need to retrieve all data again
      */
     public void updateRoute() {
-        updateRoute(getRouteStopObservable());
+        if (isVehicleInfoNotEmpty()) {
+            updateRoute(getRouteStopObservable());
+        } else {
+            getAllData();
+        }
     }
 
     public void clockIn() {
@@ -110,8 +124,7 @@ public class ApiExecutor {
     }
 
     public void startLocationService() {
-        if (vehicleDeliveryAreaRiderBundle != null &&
-            vehicleDeliveryAreaRiderBundle.getVehicle() != null) {
+        if (isVehicleInfoNotEmpty()) {
             Intent intent = new Intent(activity, LocationService.class);
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.BundleKeys.VEHICLE_ID, vehicleDeliveryAreaRiderBundle.getVehicle().getId());
@@ -129,7 +142,7 @@ public class ApiExecutor {
      * <p>
      * This method should be executed only when app is just launched
      */
-    private void getAllData() {
+    void getAllData() {
         ApiUtils.wrapObservable(
             apiManager.getRiderObservable())
             .doOnNext(this::updateRiderInfo)
@@ -202,12 +215,18 @@ public class ApiExecutor {
 
     /**
      * Generate route stop observable
-     * based on rider vehicle id
+     * based on rider vehicle id.
+     * In case when we don't have rider specific id
+     * we need to retrieve all data from server side
      *
      * @return RouteWrapper Observable to retrieve rider info
      */
     Observable<RouteWrapper> getRouteStopObservable() {
-        return ApiUtils.wrapObservable(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
+        if (isVehicleInfoNotEmpty()) {
+            return ApiUtils.wrapObservable(apiManager.getRouteObservable(vehicleDeliveryAreaRiderBundle.getVehicle().getId()));
+        } else {
+            return Observable.empty();
+        }
     }
 
     /**
@@ -250,7 +269,7 @@ public class ApiExecutor {
      *
      * @param observable Observable that would be executed
      */
-    private void updateRoute(Observable<RouteWrapper> observable) {
+    private void updateRoute(@NonNull Observable<RouteWrapper> observable) {
         observable
             .subscribe(
                 this::updateRouteStopInfo,
@@ -335,6 +354,17 @@ public class ApiExecutor {
     private void hideProgressIndicators() {
         activity.hideProgress();
         nestedFragmentCallback.hideProgressIndicator();
+    }
+
+    /**
+     * check if rider bundle is not null
+     * or vehicle info is not null
+     *
+     * @return true if vehicleDeliveryAreaRiderBundle and vehicle is not null
+     */
+    private boolean isVehicleInfoNotEmpty() {
+        return vehicleDeliveryAreaRiderBundle != null &&
+            vehicleDeliveryAreaRiderBundle.getVehicle() != null;
     }
 
     /**
