@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -35,6 +36,7 @@ import rx.observers.TestSubscriber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -281,7 +283,7 @@ public class ApiExecutorTest {
     public void testUpdateRiderInfo() {
         VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
         apiExecutor.updateRiderInfo(vehicleDeliveryAreaRiderBundle);
-        verify((activity), never()).setRiderContent(any(Rider.class));
+        verify(activity, never()).setRiderContent(any(Rider.class));
 
         Rider rider = new Rider();
         vehicleDeliveryAreaRiderBundle.setRider(rider);
@@ -340,5 +342,55 @@ public class ApiExecutorTest {
         subscriber.assertNoErrors();
         subscriber.assertValue(routeWrapper);
         subscriber.assertReceivedOnNext(Collections.singletonList(routeWrapper));
+    }
+
+    @Test
+    public void testNullVehicleRouteStopObservable() {
+        assertEquals(Observable.empty(), apiExecutor.getRouteStopObservable());
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
+        apiExecutor.setVehicleDeliveryAreaRiderBundle(vehicleDeliveryAreaRiderBundle);
+
+        assertNotEquals(Observable.empty(), apiExecutor.getRouteStopObservable());
+    }
+
+    @Test
+    public void testNullVehicleUpdateRoute() {
+        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+        apiExecutor.updateRoute();
+
+        verify(apiExecutor).getAllData();
+    }
+
+    @Test
+    public void testNotNullVehicleUpdateRoute() {
+        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
+        apiExecutor.setVehicleDeliveryAreaRiderBundle(vehicleDeliveryAreaRiderBundle);
+        apiExecutor.updateRoute();
+        verify(apiExecutor, never()).getAllData();
+    }
+
+    @Test
+    public void testNullVehicleUpdateScheduleRoute() {
+        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+
+        apiExecutor.updateScheduleAndRouteStop();
+        verify(apiExecutor).getAllData();
+    }
+
+    @Test
+    public void testNotNullVehicleUpdateScheduleRoute() {
+        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
+        apiExecutor.setVehicleDeliveryAreaRiderBundle(vehicleDeliveryAreaRiderBundle);
+        apiExecutor.updateScheduleAndRouteStop();
+
+        verify(apiExecutor, never()).getAllData();
     }
 }
