@@ -43,6 +43,23 @@ public class StorageManagerTest {
     }
 
     @Test
+    public void testStoreTokenNull() {
+        assertNull(storageManager.getToken());
+    }
+
+    @Test
+    public void testIsLogged() {
+        Token token = new Token("", "", 0, "");
+        assertTrue(storageManager.storeToken(token));
+        assertTrue(storageManager.isLogged());
+    }
+
+    @Test
+    public void testIsLoggedEmptyData() {
+        assertFalse(storageManager.isLogged());
+    }
+
+    @Test
     public void testClearToken() {
         Token token = new Token("", "", 0, "");
         assertTrue(storageManager.storeToken(token));

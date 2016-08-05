@@ -111,6 +111,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      */
     private void setRouteStopActionView(ViewHolder viewHolder) {
         final RouteStopActivity routeStopActivity = getItem(viewHolder.getAdapterPosition());
+
         viewHolder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
             //Check if all task are done and if it's true enable bottom main action button
             checkedActionsHashMap.put(routeStopActivity, isChecked);
@@ -122,45 +123,47 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             }
         });
 
+
         if (TextUtils.isEmpty(routeStopActivity.getDescription())) {
             viewHolder.layoutDetails.setVisibility(View.GONE);
         } else {
             viewHolder.txtDescription.setText(routeStopActivity.getDescription());
             viewHolder.layoutDetails.setVisibility(View.VISIBLE);
         }
+
         if (routeStopActivity.getType() != null) {
             switch (routeStopActivity.getType()) {
                 case PICKUP:
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pick_up, routeStopActivity.getValue()));
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_order_dark);
-                    setNotRelatedToHalalActionLayout(viewHolder);
+                    setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case DELIVER:
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_deliver, routeStopActivity.getValue()));
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_deliver_order_dark);
-                    setNotRelatedToHalalActionLayout(viewHolder);
+                    setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case PAY_RESTAURANT:
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pay, getFormattedPrice(routeStopActivity)));
-                    setNotRelatedToHalalActionLayout(viewHolder);
+                    setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case PREPARE_CHANGE:
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_pay_restaurant);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_change));
                     setPrepareChangeDescription(viewHolder, routeStopActivity);
-                    setNotRelatedToHalalActionLayout(viewHolder);
+                    setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case COLLECT:
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
-                    setNotRelatedToHalalActionLayout(viewHolder);
+                    setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case HALAL:
                 case NON_HALAL:
-                    setRelatedToHalalActionLayout(viewHolder, routeStopActivity);
+                case PREORDER:
+                    setAdditionalInfoActionLayout(viewHolder, routeStopActivity);
                     break;
-
             }
         }
 
@@ -231,23 +234,25 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     }
 
     /**
-     * set default layout background color and header view state for all task not related to halal
+     * set default layout background color and header view state for all task
+     * not related to halal preOrder or big order
      *
      * @param viewHolder container for action
      */
-    private void setNotRelatedToHalalActionLayout(ViewHolder viewHolder) {
+    private void setNotAdditionalInfoActionLayout(ViewHolder viewHolder) {
         viewHolder.halalHeaderView.setVisibility(View.GONE);
         viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.main_background_color));
     }
 
     /**
-     * set layout background color and header view state for halal and not-halal tasks
+     * set layout background color and header view state for halal and not-halal,
+     * preOrder RouteStopActivityType tasks
      * moreover set name for action section
      *
      * @param viewHolder        container for action
-     * @param routeStopActivity route stop action related to halal
+     * @param routeStopActivity route stop action related to additional info
      */
-    private void setRelatedToHalalActionLayout(ViewHolder viewHolder, RouteStopActivity routeStopActivity) {
+    private void setAdditionalInfoActionLayout(ViewHolder viewHolder, RouteStopActivity routeStopActivity) {
         viewHolder.halalHeaderView.setVisibility(View.VISIBLE);
         viewHolder.layoutDetails.setVisibility(View.VISIBLE);
 
@@ -265,6 +270,13 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_red);
                 viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_not_halal));
                 viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_not_halal_description));
+                break;
+            case PREORDER:
+                viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.not_halal_background_color));
+                viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.toolbar_color));
+                viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_red);
+                viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pre_order_title, routeStopActivity.getValue()));
+                viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_pre_order_adapter_description));
                 break;
         }
     }

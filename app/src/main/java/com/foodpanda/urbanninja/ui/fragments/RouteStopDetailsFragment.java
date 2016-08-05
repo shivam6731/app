@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.ui.fragments;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -37,7 +38,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     TimerDataProvider,
     MapAddressDetailsChangeListener,
     MapAddressDetailsCallback {
-    private static final int POSITION_FOR_HALAL_LAYOUT = 1;
+    private static final int POSITION_FOR_ADDITIONAL_CONTENT_LAYOUT = 1;
 
     private NestedFragmentCallback nestedFragmentCallback;
     private TimerHelper timerHelper;
@@ -138,7 +139,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
         mapAddressDetailsChangeListener = mapAddressDetailsFragment;
 
         addFragment(R.id.map_details_container, mapAddressDetailsFragment);
-        setHalalLayoutIfNeeds();
+        setAdditionalInfoLayoutIfNeeds();
     }
 
     /**
@@ -156,57 +157,79 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     /**
      * In some countries we support halal orders
      * and to let rider know to what bag he should put order
+     * <p>
+     * We support preOrder for the rider, it means that this order
+     * should be delivered in time not early not late
+     * <p>
      * we need to add this layout
      */
-    private void setHalalLayoutIfNeeds() {
+    private void setAdditionalInfoLayoutIfNeeds() {
         if (currentStop.getActivities() != null) {
             for (RouteStopActivity routeStopActivity : currentStop.getActivities()) {
                 if (routeStopActivity.getType() == RouteStopActivityType.HALAL ||
-                    routeStopActivity.getType() == RouteStopActivityType.NON_HALAL) {
-                    addHalalLayout(putContentForHalalLayout(routeStopActivity.getType()));
+                    routeStopActivity.getType() == RouteStopActivityType.NON_HALAL ||
+                    routeStopActivity.getType() == RouteStopActivityType.PREORDER) {
+                    addAdditionalInfoLayout(putAdditionalContentLayout(routeStopActivity.getType(), routeStopActivity.getValue()));
                 }
             }
         }
     }
 
     /**
-     * set background for the whole halal layout
+     * set background for the whole additional content layout
      * set background for header layout
-     * set title and description for halal order
+     * set title and description for additional content order
      *
-     * @param routeStopActivityType type of halal order
-     * @return halalLayout
+     * @param routeStopActivityType type of order activity
+     * @param value                 value for additional info
+     * @return additionalContentLayout
      */
-    private View putContentForHalalLayout(RouteStopActivityType routeStopActivityType) {
-        View view = View.inflate(activity, R.layout.route_stop_details_halal_layout, null);
+    private View putAdditionalContentLayout(@NonNull RouteStopActivityType routeStopActivityType, String value) {
+        View view = View.inflate(activity, R.layout.route_stop_additional_details_layout, null);
 
-        View layoutHalal = view.findViewById(R.id.layout_halal_content);
-        View layoutHeaderHalal = view.findViewById(R.id.layout_halal_header);
-        ImageView imageHalalAlert = (ImageView) view.findViewById(R.id.image_halal_icon);
-        TextView txtHalalName = (TextView) view.findViewById(R.id.txt_halal_title);
-        TextView txtHalalDescription = (TextView) view.findViewById(R.id.txt_halal_description);
+        View layoutAdditional = view.findViewById(R.id.layout_additional_content);
+        View layoutHeaderAdditional = view.findViewById(R.id.layout_additional_header);
+        ImageView imageAdditionalAlert = (ImageView) view.findViewById(R.id.image_additional_icon);
+        TextView txtAdditionalName = (TextView) view.findViewById(R.id.txt_additional_title);
+        TextView txtAdditionalDescription = (TextView) view.findViewById(R.id.txt_additional_description);
 
-        boolean isHalal = routeStopActivityType == RouteStopActivityType.HALAL;
+        switch (routeStopActivityType) {
+            case HALAL:
+                layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.halal_background_color));
+                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.green_text_color));
+                imageAdditionalAlert.setImageResource(R.drawable.icon_alert_green);
+                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.green_text_color));
+                txtAdditionalName.setText(R.string.route_action_halal);
+                txtAdditionalDescription.setText(R.string.task_details_halal);
+                break;
 
-        layoutHalal.setBackgroundColor(ContextCompat.getColor(
-            activity, isHalal ? R.color.halal_background_color : R.color.not_halal_background_color));
+            case NON_HALAL:
+                layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.not_halal_background_color));
+                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
+                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                txtAdditionalName.setText(R.string.route_action_not_halal);
+                txtAdditionalDescription.setText(R.string.task_details_not_halal);
+                break;
 
-        layoutHeaderHalal.setBackgroundColor(ContextCompat.getColor(
-            activity, isHalal ? R.color.green_text_color : R.color.toolbar_color));
-
-        imageHalalAlert.setImageResource(isHalal ? R.drawable.icon_alert_green : R.drawable.icon_alert_red);
-        txtHalalName.setText(isHalal ? R.string.route_action_halal : R.string.route_action_not_halal);
-        txtHalalDescription.setText(isHalal ? R.string.task_details_halal : R.string.task_details_not_halal);
+            case PREORDER:
+                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
+                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                txtAdditionalName.setText(getResources().getString(R.string.route_action_pre_order_title, value));
+                txtAdditionalDescription.setText(R.string.route_action_pre_order_description);
+                break;
+        }
 
         return view;
     }
 
     /**
-     * add layout with information about halal order
+     * add layout with additional information about order
      *
-     * @param view halal layout
+     * @param view additional content layout
      */
-    private void addHalalLayout(View view) {
+    private void addAdditionalInfoLayout(View view) {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(
@@ -215,7 +238,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
             getResources().getDimensionPixelSize(R.dimen.margin_card),
             getResources().getDimensionPixelSize(R.dimen.margin_card));
 
-        layoutContent.addView(view, POSITION_FOR_HALAL_LAYOUT, layoutParams);
+        layoutContent.addView(view, POSITION_FOR_ADDITIONAL_CONTENT_LAYOUT, layoutParams);
     }
 
     @Override

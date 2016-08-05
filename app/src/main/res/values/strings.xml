@@ -103,6 +103,9 @@
     <string name="route_action_not_halal">Non-Halal order</string>
     <string name="route_action_halal_description">Put the food in the green box!</string>
     <string name="route_action_not_halal_description">Put the food in the orange box!</string>
+    <string name="route_action_pre_order_title">Preorder for %1$s</string>
+    <string name="route_action_pre_order_description">Please arrive just in time. Not early, not late</string>
+    <string name="route_action_pre_order_adapter_description">Please try to arrive to customer just in time</string>
 
     <!-- Cash Report-->
     <string name="cash_report_total">Total %1$s</string>
