@@ -82,4 +82,11 @@ public interface NestedFragmentCallback {
      * @param enable set enable to the swipe view
      */
     void setSwipeToRefreshEnable(boolean enable);
+
+    /**
+     * In case when gps in turned on in the device
+     * and we have all permissions for the user
+     * we need to launch the location service
+     */
+    void startLocationService();
 }

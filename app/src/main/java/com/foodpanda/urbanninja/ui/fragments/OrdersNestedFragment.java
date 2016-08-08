@@ -129,12 +129,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         }
     }
 
-    public void startLocationService() {
-        if (apiExecutor != null) {
-            apiExecutor.startLocationService();
-        }
-    }
-
     private void notifyActionPerformed(Status status) {
         if (apiExecutor != null && status != null) {
             apiExecutor.notifyActionPerformed(status);
@@ -313,6 +307,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void setSwipeToRefreshEnable(boolean enable) {
         swipeRefreshLayout.setEnabled(enable);
+    }
+
+    @Override
+    public void startLocationService() {
+        if (apiExecutor != null) {
+            apiExecutor.startLocationService();
+        }
     }
 
     private void replaceFragment(BaseFragment baseFragment) {

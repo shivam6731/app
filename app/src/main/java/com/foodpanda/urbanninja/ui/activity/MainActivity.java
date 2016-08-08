@@ -1,5 +1,6 @@
 package com.foodpanda.urbanninja.ui.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.LocationSettingCheckManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
@@ -344,15 +346,23 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         actionBarDrawerToggle.syncState();
     }
 
+    /**
+     * In android 6+ user has to allow the app use some permission
+     * and here we receive result of permission request
+     *
+     * @param requestCode  request code with permission type
+     * @param permissions  array of requested permissions
+     * @param grantResults array of granted permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length && ordersNestedFragment != null) {
-                    ordersNestedFragment.startLocationService();
+                    new LocationSettingCheckManager(this, ordersNestedFragment).checkGpsEnabled();
                 } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -577,5 +587,30 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private void setTitleNotForOrderPage(int stringResource) {
         toolbar.setTitle(getResources().getString(stringResource));
         toolbar.setSubtitle("");
+    }
+
+    /**
+     * Used to check the result of the check of the user location settings
+     *
+     * @param requestCode code of the request made
+     * @param resultCode  code of the result of that request
+     * @param intent      intent with further information
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == LocationSettingCheckManager.GPS_SETTINGS_CHECK_REQUEST) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    // All required changes were successfully made
+                    ordersNestedFragment.startLocationService();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    //In case when location is disabled we need to request it again
+                    new LocationSettingCheckManager(this, ordersNestedFragment).checkGpsEnabled();
+                    //Toast to show error message
+                    Toast.makeText(this, R.string.error_gps_disabled, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
     }
 }
