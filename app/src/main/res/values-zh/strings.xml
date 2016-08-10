@@ -104,6 +104,7 @@
     <string name="route_action_halal_description">把食物放入綠色盒中!</string>
     <string name="route_action_not_halal_description">把食物放入橙色盒中!</string>
     <string name="route_action_pre_order_title">預購訂單 %1$s</string>
+    <string name="route_action_pre_order_empty_title">預購訂單</string>
     <string name="route_action_pre_order_description">請準時到達。不能早，不能遲</string>
     <string name="route_action_pre_order_adapter_description">請盡量準時送到客人手上</string>
 

@@ -275,7 +275,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.not_halal_background_color));
                 viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.toolbar_color));
                 viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_red);
-                viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_pre_order_title, routeStopActivity.getValue()));
+                viewHolder.txtName.setText(FormatUtil.getPreOrderValue(routeStopActivity.getValue(), context));
                 viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_pre_order_adapter_description));
                 break;
         }

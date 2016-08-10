@@ -31,6 +31,7 @@ import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
 import com.foodpanda.urbanninja.ui.util.OrderTypeAndPaymentHelper;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
+import com.foodpanda.urbanninja.utils.FormatUtil;
 
 import org.joda.time.DateTime;
 
@@ -217,7 +218,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
                 layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
                 imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
                 txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
-                txtAdditionalName.setText(getResources().getString(R.string.route_action_pre_order_title, value));
+                txtAdditionalName.setText(FormatUtil.getPreOrderValue(value, activity));
                 txtAdditionalDescription.setText(R.string.route_action_pre_order_description);
                 break;
         }
