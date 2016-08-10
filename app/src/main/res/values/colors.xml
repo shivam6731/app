@@ -27,6 +27,7 @@
     <color name="schedule_text_color">#8E969D</color>
     <color name="halal_background_color">#E3F1EC</color>
     <color name="not_halal_background_color">#F7E9E5</color>
+    <color name="preorder_background_color">#F7E9E5</color>
     <color name="list_divider_color">#33686868</color>
     <color name="shadow_top_panel">#80e5e5e5</color>
 

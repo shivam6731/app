@@ -213,6 +213,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
                 break;
 
             case PREORDER:
+                layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.preorder_background_color));
                 layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
                 imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
                 txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
