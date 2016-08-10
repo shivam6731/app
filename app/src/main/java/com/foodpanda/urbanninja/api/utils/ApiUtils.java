@@ -48,6 +48,9 @@ public class ApiUtils {
             if (throwable instanceof HttpException) {
                 HttpException httpException = (HttpException) throwable;
                 errorMessage = new GsonBuilder().create().fromJson(httpException.response().errorBody().string(), ErrorMessage.class);
+                if (errorMessage == null) {
+                    errorMessage = new ErrorMessage(500, throwable.getMessage());
+                }
             } else {
                 errorMessage = new ErrorMessage(500, throwable.getMessage());
             }
