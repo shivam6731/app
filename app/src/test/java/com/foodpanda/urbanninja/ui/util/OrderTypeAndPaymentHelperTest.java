@@ -117,7 +117,7 @@ public class OrderTypeAndPaymentHelperTest {
         orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
-        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Online");
+        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Paid");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class OrderTypeAndPaymentHelperTest {
         orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
-        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Online");
+        assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Paid");
     }
 
     private Country getCountryForCode(String code) {

@@ -121,7 +121,7 @@
     <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
 
     <!-- Payment Method-->
-    <string name="payment_method_online">Already Online</string>
+    <string name="payment_method_already_paid">Already Paid</string>
 
     <!-- Localization-->
     <string-array name="language_names">
