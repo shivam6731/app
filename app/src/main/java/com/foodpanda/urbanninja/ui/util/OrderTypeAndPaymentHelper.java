@@ -70,7 +70,7 @@ public class OrderTypeAndPaymentHelper {
             }
         }
 
-        txtPaymentMethod.setText(activity.getResources().getString(R.string.payment_method_online));
+        txtPaymentMethod.setText(activity.getResources().getString(R.string.payment_method_already_paid));
     }
 
     /**
