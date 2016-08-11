@@ -1,11 +1,15 @@
 package com.foodpanda.urbanninja.utils;
 
+import android.app.Application;
+
 import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.model.Country;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
@@ -46,5 +50,30 @@ public class FormatUtilTest {
         country.setCode(code);
 
         return country;
+    }
+
+    @Test
+    public void getPreOrderValueNullValue() throws Exception {
+        Application application = RuntimeEnvironment.application;
+        assertEquals("Preorder", FormatUtil.getPreOrderValue(null, application));
+    }
+
+    @Test
+    public void getPreOrderValueWrongFormatValue() throws Exception {
+        Application application = RuntimeEnvironment.application;
+        assertEquals("Preorder", FormatUtil.getPreOrderValue("12qwe3123", application));
+    }
+
+    @Test
+    public void getPreOrderValueWrongNormalValue() throws Exception {
+        Application application = RuntimeEnvironment.application;
+        assertEquals("Preorder for 15:53",
+            FormatUtil.getPreOrderValue(
+                DateTime.now().
+                    withTime(0, 0, 0, 0).
+                    plusHours(15).
+                    plusMinutes(53).
+                    toString(),
+                application));
     }
 }
