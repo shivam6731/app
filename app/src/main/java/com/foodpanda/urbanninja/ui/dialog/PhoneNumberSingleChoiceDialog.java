@@ -1,7 +1,7 @@
 package com.foodpanda.urbanninja.ui.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -38,9 +38,9 @@ public class PhoneNumberSingleChoiceDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mainActivityCallback = (MainActivityCallback) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivityCallback = (MainActivityCallback) context;
     }
 
     @NonNull

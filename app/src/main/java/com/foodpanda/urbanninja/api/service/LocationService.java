@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
@@ -62,7 +63,7 @@ public class LocationService extends Service implements
     private static final int DISTANCE_RANGE = 0;
     //Location update interval for not requested location it means we will receive this location
     //in case when some other app needs location and we just subscribe to this updates
-    private static final int FASTEST_UPDATE_PERIOD = 30000;
+    private static final int FASTEST_UPDATE_PERIOD = 10000;
     //The shortest location update interval for the full battery level
     private static final int SMALL_UPDATE_PERIOD = 30000;
     //Middle location update interval for the not full battery level
@@ -145,7 +146,7 @@ public class LocationService extends Service implements
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
@@ -179,7 +180,7 @@ public class LocationService extends Service implements
                 .build();
 
             locationRequest = new LocationRequest();
-            locationRequest.setInterval(BIG_UPDATE_PERIOD);
+            locationRequest.setInterval(SMALL_UPDATE_PERIOD);
             locationRequest.setFastestInterval(FASTEST_UPDATE_PERIOD);
             locationRequest.setSmallestDisplacement(DISTANCE_RANGE);
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

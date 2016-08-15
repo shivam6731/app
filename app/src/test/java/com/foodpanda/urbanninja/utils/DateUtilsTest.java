@@ -24,9 +24,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class DateUtilsTest {
+
     @Before
     public void setUp() {
-
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
 
@@ -126,4 +126,5 @@ public class DateUtilsTest {
         assertEquals("1m", txtMinutes.getText().toString());
         assertEquals(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, txtHours.getGravity());
     }
+
 }

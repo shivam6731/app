@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.util;
 
 import android.content.Context;
+import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -51,6 +52,7 @@ public class ActionLayoutHelper {
     }
 
     public void setRouteStopActionListButton(Stop stop) {
+        @StringRes
         int titleResourcesLink = stop.getTask() == RouteStopTask.DELIVER ?
             R.string.action_at_delivered : R.string.action_at_picked_up;
         updateActionButton(stop.getActivities().isEmpty(), titleResourcesLink);
@@ -61,6 +63,7 @@ public class ActionLayoutHelper {
     }
 
     public void setViewedStatusActionButton(Stop stop) {
+        @StringRes
         int title = stop.getTask() == RouteStopTask.DELIVER ?
             R.string.action_at_delivery : R.string.action_at_pick_up;
         updateActionButton(false, title);

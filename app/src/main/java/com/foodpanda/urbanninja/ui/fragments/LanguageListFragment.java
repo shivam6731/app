@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.AnyRes;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -29,7 +30,7 @@ public class LanguageListFragment extends BaseListFragment<LanguageAdapter> {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.BundleKeys.LANGUAGE, language);
         fragment.setArguments(bundle);
-        
+
         return fragment;
     }
 
@@ -93,7 +94,9 @@ public class LanguageListFragment extends BaseListFragment<LanguageAdapter> {
     private List<Language> createLanguageList() {
         List<Language> languages = new ArrayList<>();
 
+        @AnyRes
         String[] languageCodes = getResources().getStringArray(R.array.language_codes);
+        @AnyRes
         String[] languageNames = getResources().getStringArray(R.array.language_names);
 
         for (int i = 0; i < languageCodes.length; i++) {

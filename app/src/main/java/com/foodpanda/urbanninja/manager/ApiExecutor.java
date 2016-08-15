@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
@@ -15,9 +16,11 @@ import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
+import com.foodpanda.urbanninja.ui.util.DialogInfoHelper;
 
 import rx.Observable;
 
@@ -82,22 +85,31 @@ public class ApiExecutor {
         }
     }
 
-    public void clockIn() {
-        if (scheduleWrapper != null)
-            apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
-                @Override
-                public void onSuccess(ScheduleWrapper scheduleWrapper) {
-                    ApiExecutor.this.scheduleWrapper = scheduleWrapper;
-                    updateRoute();
-                    hideProgressIndicators();
-                }
+    /**
+     * Before clock-in rider should be inside delivery zone
+     * if only he is inside polygon we call API clock-in method
+     * otherwise we show error message
+     */
+    public void tryToClockInInsideDeliveryZone() {
+        if (scheduleWrapper == null || scheduleWrapper.getDeliveryZone() == null) {
+            return;
+        }
 
-                @Override
-                public void onError(ErrorMessage errorMessage) {
-                    activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
-                    hideProgressIndicators();
-                }
-            });
+        CheckPolygonManager checkPolygonManager = new CheckPolygonManager(activity);
+        PolygonStatusType polygonStatusType = checkPolygonManager.checkIfLocationInPolygon(scheduleWrapper.getDeliveryZone());
+        switch (polygonStatusType) {
+            case INSIDE:
+                clockIn();
+                break;
+            case OUTSIDE:
+            case NO_DATA:
+                DialogInfoHelper.showInformationDialog(
+                    activity,
+                    polygonStatusType,
+                    scheduleWrapper.getDeliveryZone().getName(),
+                    nestedFragmentCallback);
+                break;
+        }
     }
 
     /**
@@ -134,6 +146,42 @@ public class ApiExecutor {
         }
     }
 
+    /**
+     * Api call to clock-in
+     * Only after clock-in riders would receive new orders
+     */
+    private void clockIn() {
+        if (scheduleWrapper == null) {
+            Log.e(ApiExecutor.class.getSimpleName(), "Schedule is empty");
+
+            return;
+        }
+        apiManager.scheduleClockIn(scheduleWrapper.getId(), new BaseApiCallback<ScheduleWrapper>() {
+            @Override
+            public void onSuccess(ScheduleWrapper scheduleWrapper) {
+                DialogInfoHelper.showInformationDialog(
+                    activity,
+                    PolygonStatusType.INSIDE,
+                    scheduleWrapper.getDeliveryZone().getName(),
+                    nestedFragmentCallback);
+
+                ApiExecutor.this.scheduleWrapper = scheduleWrapper;
+                updateRoute();
+                hideProgressIndicators();
+            }
+
+            @Override
+            public void onError(ErrorMessage errorMessage) {
+                activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+                hideProgressIndicators();
+            }
+        });
+    }
+
+    /**
+     * Check android LocationSettingsRequest if rider location check
+     * is enabled.
+     */
     private void checkGpsEnabled() {
         new LocationSettingCheckManager(activity, nestedFragmentCallback).checkGpsEnabled();
     }

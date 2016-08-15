@@ -75,14 +75,11 @@ public class TimerHelper {
      * for TextView and disable it if it's necessary
      */
     private void drawTime() {
-        baseActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (baseFragment.isAdded()) {
-                    timerDataProvider.provideTimerTextView().setText(setTimerValue());
-                    if (nestedFragmentCallback != null) {
-                        setActionButtonVisibility();
-                    }
+        baseActivity.runOnUiThread(() -> {
+            if (baseFragment.isAdded()) {
+                timerDataProvider.provideTimerTextView().setText(setTimerValue());
+                if (nestedFragmentCallback != null) {
+                    setActionButtonVisibility();
                 }
             }
         });

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -37,8 +38,8 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
+import com.foodpanda.urbanninja.ui.dialog.InformationDialogFragment;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
-import com.foodpanda.urbanninja.ui.dialog.ProgressDialogFragment;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
@@ -522,6 +523,22 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     }
 
+    @Override
+    public void onGPSSettingClicked() {
+        Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(viewIntent);
+    }
+
+    @Override
+    public void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting) {
+        InformationDialogFragment informationDialogFragment = InformationDialogFragment.newInstance(
+            title,
+            message,
+            buttonLabel,
+            redirectToGPSSetting);
+        informationDialogFragment.show(fragmentManager, InformationDialogFragment.class.getSimpleName());
+    }
+
     /**
      * Get sub title for action bar with information about delivery time
      *
@@ -573,7 +590,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private void showPhoneDialog() {
         if (storageManager.getCurrentStop() != null) {
             PhoneNumberSingleChoiceDialog phoneNumberSingleChoiceDialog = PhoneNumberSingleChoiceDialog.newInstance(storageManager.getCurrentStop());
-            phoneNumberSingleChoiceDialog.show(fragmentManager, ProgressDialogFragment.class.getSimpleName());
+            phoneNumberSingleChoiceDialog.show(fragmentManager, PhoneNumberSingleChoiceDialog.class.getSimpleName());
         } else {
             Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
         }

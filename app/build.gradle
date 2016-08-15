@@ -78,6 +78,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.4.0'
     compile 'com.google.android.gms:play-services-location:9.4.0'
     compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    //Polygon util to check if rider location inside delivery zone
+    compile 'com.google.maps.android:android-maps-utils:0.4.3'
 
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'

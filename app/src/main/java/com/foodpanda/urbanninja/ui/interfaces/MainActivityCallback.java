@@ -37,4 +37,20 @@ public interface MainActivityCallback {
      * @param title for the action bar with information about current selected fragment
      */
     void writeFragmentTitle(String title);
+
+    /**
+     * In case when we can't retrieve user location
+     * or GPS in disabled we need to redirect to the location settings
+     */
+    void onGPSSettingClicked();
+
+    /**
+     * Open dialog fragment with any type of information
+     *
+     * @param title                title of the dialog
+     * @param message              message with details
+     * @param buttonLabel          label for button
+     * @param redirectToGPSSetting param to open GPS settings
+     */
+    void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting);
 }

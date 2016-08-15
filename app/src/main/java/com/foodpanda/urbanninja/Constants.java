@@ -34,5 +34,9 @@ public class Constants {
         public static final String LOCATION = "Location";
         public static final String STOP = "Stop";
         public static final String PUSH_NOTIFICATION_TYPE = "PushNotificationType";
+        public static final String TITLE = "Title";
+        public static final String MESSAGE = "Message";
+        public static final String LABEL = "Label";
+        public static final String SETTING_OPTION = "RedirectSettings";
     }
 }

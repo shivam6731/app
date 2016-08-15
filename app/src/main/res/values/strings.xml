@@ -135,4 +135,22 @@
         <item name="english">en</item>
         <item name="chinese">zh</item>
     </string-array>
+
+    <!-- Delivery Zone-->
+    <string name="delivery_zone_outside_title">Go to %1$s</string>
+    <string name="delivery_zone_outside"><![CDATA[You seem to be outside your delivery zone (%1$s).<br />
+        Please get closer to it and it and try clock in again <br />
+        <b>Note:</b> it\'s not possible to start your shift outside of your delivery zone]]></string>
+
+    <string name="delivery_zone_no_location_title">Activate GPS</string>
+    <string name="delivery_zone_no_location">It looks like your GPS settings are not properly setup.\n
+        Please click on the link below and make sure you allow Urban Ninja to locate you while your\'re working\n
+        <b>Note:</b> it\'s not possible to work without GPS anabled</string>
+
+    <string name="delivery_zone_successful_title">You successfully Clocked in!</string>
+    <string name="delivery_zone_successful">You just successfully started you shift.You will now be able to receive new orders.</string>
+    <string name="delivery_zone_outside_label">OK, I\'ll get closer</string>
+    <string name="delivery_zone_no_location_label">go to gps setting</string>
+    <string name="delivery_zone_successful_label">OK, let\'s start to work</string>
+
 </resources>
