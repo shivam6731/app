@@ -134,6 +134,10 @@ public class ApiExecutor {
         }
     }
 
+    private void checkGpsEnabled() {
+        new LocationSettingCheckManager(activity, nestedFragmentCallback).checkGpsEnabled();
+    }
+
     /**
      * Retrieve  all rider information in a sequence
      * with only one error handler and result callback
@@ -174,7 +178,7 @@ public class ApiExecutor {
      *
      * @param scheduleWrappers bundle with rider schedule
      */
-    void updateScheduleInfo(ScheduleCollectionWrapper scheduleWrappers) {
+    private void updateScheduleInfo(ScheduleCollectionWrapper scheduleWrappers) {
         // Remove action title for cases when user is not clocked-in
         activity.writeCodeAsTitle(null);
         setScheduleWrappers(scheduleWrappers);
@@ -279,13 +283,18 @@ public class ApiExecutor {
                 });
     }
 
+    /***
+     * In android 6+ user can not allow app to use some permissions
+     * and to ask for we access to location we need to show native android dialog
+     * for asking location permission
+     */
     private void launchServiceOrAskForPermissions() {
         if (!activity.isPermissionGranted()) {
             ActivityCompat.requestPermissions(activity,
                 PERMISSIONS_ARRAY,
                 MainActivity.PERMISSIONS_REQUEST_LOCATION);
         } else {
-            startLocationService();
+            checkGpsEnabled();
         }
     }
 

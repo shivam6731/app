@@ -52,6 +52,8 @@
     <!-- Errors -->
     <string name="dialog_please_wait">請等待…</string>
     <string name="error_start_point_not_found">找不到起點</string>
+    <string name="error_gps_disabled">GPS是禁用</string>
+    <string name="error_gps_permission_disabled">GPS权限被拒绝</string>
 
     <!-- Dialog -->
     <string name="dialog_phone_title">選擇電話號碼</string>

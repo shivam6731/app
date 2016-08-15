@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -23,10 +22,8 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.model.MapDetailsProvider;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
-import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -67,8 +64,6 @@ public class MapAddressDetailsFragment extends BaseFragment implements
 
     private GoogleMap googleMap;
     private MapView mapView;
-
-    private Location location;
 
     private MapAddressDetailsCallback mapAddressDetailsCallback;
 
@@ -207,18 +202,13 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         //this change is not regarding to the user permission and map should be not clickable even if
         //user denied permissions
         MapAddressDetailsFragment.this.googleMap.getUiSettings().setAllGesturesEnabled(false);
-        if (checkPermission()) {
-            MapAddressDetailsFragment.this.googleMap.setMyLocationEnabled(false);
-            MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-            MapAddressDetailsFragment.this.googleMap.setOnMarkerClickListener(marker -> {
-                //to disable all marker default actions we should return true here
-                return true;
-            });
-            MapAddressDetailsFragment.this.location = null;
-            getLastKnownLocation();
-        } else {
-            requestPermission();
-        }
+        MapAddressDetailsFragment.this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        MapAddressDetailsFragment.this.googleMap.setOnMarkerClickListener(marker -> {
+            //to disable all marker default actions we should return true here
+            return true;
+        });
+
+        getLastKnownLocation();
     }
 
     @Override
@@ -341,16 +331,21 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         drawMarkers(location);
     }
 
+    /**
+     * Get last known location of the use just to show
+     * to up to date information before receive the data from GPS
+     */
     private void getLastKnownLocation() {
         if (checkPermission()) {
+            //we need to set this value to false only with location permission
+            googleMap.setMyLocationEnabled(false);
+
             LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
             Location lastLocation = locationManager.getLastKnownLocation
                 (LocationManager.PASSIVE_PROVIDER);
             if (lastLocation != null) {
                 drawMarkers(lastLocation);
             }
-        } else {
-            requestPermission();
         }
     }
 
@@ -369,15 +364,11 @@ public class MapAddressDetailsFragment extends BaseFragment implements
     }
 
     /**
-     * if permissions are not access ask to them
-     * it would be standard android dialog with a list or permissions
+     * Draw current user marker and destination point marker
+     * Moreover set a bound to fix this two points in a best way
+     *
+     * @param location user location
      */
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(activity,
-            ApiExecutor.PERMISSIONS_ARRAY,
-            MainActivity.PERMISSIONS_REQUEST_LOCATION);
-    }
-
     private void drawMarkers(Location location) {
         if (googleMap == null || !isAdded()) {
             return;
@@ -397,8 +388,6 @@ public class MapAddressDetailsFragment extends BaseFragment implements
         }
 
         setBoundsForLocationAndDestinationPoints(markers);
-
-        this.location = location;
     }
 
     /**
@@ -457,21 +446,20 @@ public class MapAddressDetailsFragment extends BaseFragment implements
      * @param markers list of markers that should be filled in the map
      */
     private void setBoundsForLocationAndDestinationPoints(List<Marker> markers) {
-        if (this.location == null) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Marker m : markers) {
-                builder.include(m.getPosition());
-            }
-            LatLngBounds bounds = builder.build();
-            int padding = ContextCompat.getDrawable(activity, R.drawable.icon_pickup_circle).getIntrinsicHeight();
-
-            googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngBounds(
-                    bounds,
-                    this.getResources().getDisplayMetrics().widthPixels,
-                    this.getResources().getDimensionPixelOffset(R.dimen.map_height),
-                    padding));
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker m : markers) {
+            builder.include(m.getPosition());
         }
+        LatLngBounds bounds = builder.build();
+        int padding = ContextCompat.getDrawable(activity, R.drawable.icon_pickup_circle).getIntrinsicHeight();
+
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds,
+                this.getResources().getDisplayMetrics().widthPixels,
+                this.getResources().getDimensionPixelOffset(R.dimen.map_height),
+                padding)
+        );
     }
 
     /**

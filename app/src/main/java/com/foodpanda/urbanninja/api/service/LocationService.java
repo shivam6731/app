@@ -153,7 +153,7 @@ public class LocationService extends Service implements
         if (batteryLevelReceiver != null) {
             unregisterReceiver(batteryLevelReceiver);
         }
-        
+
         if (timer != null) {
             timer.cancel();
         }
@@ -296,5 +296,4 @@ public class LocationService extends Service implements
 
         locationList.add(riderLocation);
     }
-
 }
