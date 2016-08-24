@@ -89,4 +89,16 @@ public interface NestedFragmentCallback {
      * we need to launch the location service
      */
     void startLocationService();
+
+    /**
+     * In any case when we try to clock-in
+     * we need to let rider know about current status of clock-in process
+     * TO do so we show information dialog
+     *
+     * @param title                title of the dialog
+     * @param message              information
+     * @param buttonLabel          label for button
+     * @param redirectToGPSSetting if true redirect to GPS settings
+     */
+    void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting);
 }

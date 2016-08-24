@@ -178,7 +178,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private void changeStatus() {
         switch (userStatus) {
             case CLOCK_IN:
-                apiExecutor.clockIn();
+                apiExecutor.tryToClockInInsideDeliveryZone();
                 break;
             case EMPTY_LIST:
                 break;
@@ -314,6 +314,16 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         if (apiExecutor != null) {
             apiExecutor.startLocationService();
         }
+    }
+
+    @Override
+    public void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting) {
+        mainActivityCallback.showInformationDialog(
+            title,
+            message,
+            buttonLabel,
+            redirectToGPSSetting
+        );
     }
 
     private void replaceFragment(BaseFragment baseFragment) {

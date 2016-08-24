@@ -2,13 +2,15 @@ package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
 
+import java.util.List;
+
 public class DeliveryZone implements ParcelableModel {
     private int id;
     private String name;
     private StartingPoint startingPoint;
-
-    public DeliveryZone() {
-    }
+    private City city;
+    private List<GeoCoordinate> polygon;
+    private String timezone;
 
     @Override
     public int describeContents() {
@@ -20,12 +22,21 @@ public class DeliveryZone implements ParcelableModel {
         dest.writeInt(this.id);
         dest.writeString(this.name);
         dest.writeParcelable(this.startingPoint, flags);
+        dest.writeParcelable(this.city, flags);
+        dest.writeTypedList(this.polygon);
+        dest.writeString(this.timezone);
+    }
+
+    public DeliveryZone() {
     }
 
     protected DeliveryZone(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();
         this.startingPoint = in.readParcelable(StartingPoint.class.getClassLoader());
+        this.city = in.readParcelable(City.class.getClassLoader());
+        this.polygon = in.createTypedArrayList(GeoCoordinate.CREATOR);
+        this.timezone = in.readString();
     }
 
     public static final Creator<DeliveryZone> CREATOR = new Creator<DeliveryZone>() {
@@ -50,5 +61,9 @@ public class DeliveryZone implements ParcelableModel {
 
     public StartingPoint getStartingPoint() {
         return startingPoint;
+    }
+
+    public List<GeoCoordinate> getPolygon() {
+        return polygon;
     }
 }

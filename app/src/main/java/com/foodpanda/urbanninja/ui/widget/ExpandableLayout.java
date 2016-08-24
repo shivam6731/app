@@ -3,8 +3,6 @@ package com.foodpanda.urbanninja.ui.widget;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -199,12 +197,9 @@ public class ExpandableLayout extends LinearLayout {
                 android.R.integer.config_shortAnimTime
             )
         );
-        expandAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                dispatchOffset(child);
-                child.requestLayout();
-            }
+        expandAnimator.addUpdateListener(animation -> {
+            dispatchOffset(child);
+            child.requestLayout();
         });
         expandAnimator.addListener(new AnimatorListener() {
 
@@ -272,12 +267,9 @@ public class ExpandableLayout extends LinearLayout {
                 android.R.integer.config_shortAnimTime
             )
         );
-        expandAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                dispatchOffset(child);
-                child.requestLayout();
-            }
+        expandAnimator.addUpdateListener(animation -> {
+            dispatchOffset(child);
+            child.requestLayout();
         });
         expandAnimator.addListener(new AnimatorListener() {
 

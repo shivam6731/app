@@ -126,4 +126,25 @@
     <!-- Payment Method-->
     <string name="payment_method_already_paid">已付款</string>
 
+    <!-- Delivery Zone-->
+    <string name="delivery_zone_outside_title">去 %1$s</string>
+
+    <string name="delivery_zone_outside"><![CDATA[你似乎在送遞區之外（%1$s).<br />
+        請返回所屬送遞區，並再次打卡 <br />
+        你不能在送遞區外開始你的工作]]></string>
+
+    <string name="delivery_zone_no_location_title">啟動GPS</string>
+
+
+
+    <string name="delivery_zone_no_location">似乎你GPS的設定不正確。\n
+        請點擊下面的連結，並確保你容許都市忍者在你工作找到你的位置，\n
+        <b>注：</b> 如你沒有開啟 GPS你將不能開始工作</string>
+
+    <string name="delivery_zone_successful_title">  你已成功登入！</string>
+    <string name="delivery_zone_successful"> 請開始工作，現在你將能夠收到新的訂單。</string>
+    <string name="delivery_zone_outside_label">OK, 我將會到達起點</string>
+    <string name="delivery_zone_no_location_label">OK, 請去設定GPS</string>
+    <string name="delivery_zone_successful_label">OK, 開始工作</string>
+
 </resources>
