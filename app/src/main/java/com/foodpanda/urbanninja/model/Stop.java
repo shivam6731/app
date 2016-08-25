@@ -2,8 +2,8 @@ package com.foodpanda.urbanninja.model;
 
 import android.os.Parcel;
 
-import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
+import com.foodpanda.urbanninja.model.enums.Status;
 
 import org.joda.time.DateTime;
 
@@ -223,5 +223,14 @@ public class Stop implements MapDetailsProvider {
      */
     public void setOrderCode(String orderCode) {
         this.orderCode = orderCode;
+    }
+
+    /**
+     * Needs onlt for tests
+     *
+     * @param gps destination point coordinates
+     */
+    public void setGps(GeoCoordinate gps) {
+        this.gps = gps;
     }
 }

@@ -153,4 +153,8 @@
     <string name="delivery_zone_no_location_label">go to gps setting</string>
     <string name="delivery_zone_successful_label">OK, let\'s start to work</string>
 
+    <!-- Multi Pickup-->
+    <string name="multi_pickup">Multi Pickup</string>
+    <string name="multi_pickup_alert_title">Multiple Pickup!</string>
+    <string name="multi_pickup_alert_details"><![CDATA[Orders <b>%1$s </b>will need to be picked up from the same restaurant.<br />]]></string>
 </resources>

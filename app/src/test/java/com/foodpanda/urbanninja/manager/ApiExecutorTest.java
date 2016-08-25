@@ -11,6 +11,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
 import com.foodpanda.urbanninja.model.Vehicle;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
@@ -65,6 +66,9 @@ public class ApiExecutorTest {
     private StorageManager storageManager;
 
     @Mock
+    MultiPickupManager multiPickupManager;
+
+    @Mock
     private NestedFragmentCallback nestedFragmentCallback;
 
     @Before
@@ -80,7 +84,7 @@ public class ApiExecutorTest {
         when(apiManager.getCurrentScheduleObservable()).thenReturn(Observable.empty());
         when(apiManager.getRouteObservable(anyInt())).thenReturn(Observable.empty());
 
-        apiExecutor = new ApiExecutor(activity, nestedFragmentCallback, apiManager, storageManager);
+        apiExecutor = new ApiExecutor(activity, nestedFragmentCallback, apiManager, storageManager, multiPickupManager);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }
@@ -168,8 +172,10 @@ public class ApiExecutorTest {
     public void testNotifyActionPerformed() {
         Stop routeStop = new Stop();
         routeStop.setId(1L);
+        routeStop.setTask(RouteStopTask.PICKUP);
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
+        when(multiPickupManager.getSamePlaceStops()).thenReturn(Collections.singletonList(routeStop));
 
         Status status = Status.ON_THE_WAY;
         apiExecutor.notifyActionPerformed(status);
@@ -190,6 +196,7 @@ public class ApiExecutorTest {
         Stop routeStop = new Stop();
         routeStop.setId(1L);
 
+        when(storageManager.getCurrentStop()).thenReturn(routeStop);
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
         Status status = Status.COMPLETED;

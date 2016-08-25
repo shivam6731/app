@@ -54,7 +54,7 @@ public class DialogInfoHelper {
      * @param text with Html
      * @return formatted text with applied html tags
      */
-    private static CharSequence getFormattedHtml(String text) {
+    public static CharSequence getFormattedHtml(String text) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
         } else {

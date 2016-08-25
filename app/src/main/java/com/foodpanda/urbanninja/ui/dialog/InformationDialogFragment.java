@@ -56,7 +56,7 @@ public class InformationDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-            .setIcon(R.drawable.icon_alert_red)
+            .setIcon(R.drawable.icon_alert_orange)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(buttonLabel,
