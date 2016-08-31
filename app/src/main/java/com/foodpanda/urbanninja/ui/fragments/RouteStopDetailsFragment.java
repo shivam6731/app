@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
@@ -174,6 +175,27 @@ public class RouteStopDetailsFragment extends BaseFragment implements
                 }
             }
         }
+
+        setMultiPickUpLayoutIfNeeds();
+    }
+
+    /**
+     * Set warning message for multiPickup orders
+     * with list of order codes that should be picked-up from the same place
+     */
+    private void setMultiPickUpLayoutIfNeeds() {
+        MultiPickupManager multiPickupManager = new MultiPickupManager(App.STORAGE_MANAGER);
+        if (multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop)) {
+            View view = View.inflate(activity, R.layout.route_stop_additional_details_layout, null);
+
+            TextView txtAdditionalName = (TextView) view.findViewById(R.id.txt_additional_title);
+            TextView txtAdditionalDescription = (TextView) view.findViewById(R.id.txt_additional_description);
+
+            txtAdditionalName.setText(R.string.multi_pickup_alert_title);
+            txtAdditionalDescription.setText(multiPickupManager.getMultiPickUpDetailsSting(activity, currentStop));
+
+            addAdditionalInfoLayout(view);
+        }
     }
 
     /**
@@ -207,7 +229,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
             case NON_HALAL:
                 layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.not_halal_background_color));
                 layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
-                imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
+                imageAdditionalAlert.setImageResource(R.drawable.icon_alert_orange);
                 txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
                 txtAdditionalName.setText(R.string.route_action_not_halal);
                 txtAdditionalDescription.setText(R.string.task_details_not_halal);
@@ -215,9 +237,9 @@ public class RouteStopDetailsFragment extends BaseFragment implements
 
             case PREORDER:
                 layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.preorder_background_color));
-                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.warnining_text_color));
                 imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
-                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.toolbar_color));
+                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.warnining_text_color));
                 txtAdditionalName.setText(FormatUtil.getPreOrderValue(value, activity));
                 txtAdditionalDescription.setText(R.string.route_action_pre_order_description);
                 break;

@@ -15,6 +15,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.utils.ApiUtils;
+import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.model.enums.Status;
@@ -32,6 +33,7 @@ public class ApiExecutor {
     private final MainActivity activity;
     private final ApiManager apiManager;
     private final StorageManager storageManager;
+    private final MultiPickupManager multiPickupManager;
     private final NestedFragmentCallback nestedFragmentCallback;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
@@ -42,12 +44,14 @@ public class ApiExecutor {
         MainActivity mainActivity,
         NestedFragmentCallback nestedFragmentCallback,
         ApiManager apiManager,
-        StorageManager storageManager
+        StorageManager storageManager,
+        MultiPickupManager multiPickupManager
     ) {
         this.activity = mainActivity;
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
+        this.multiPickupManager = multiPickupManager;
         getAllData();
     }
 
@@ -124,16 +128,30 @@ public class ApiExecutor {
      * @param status that should be sent to the server side
      */
     public void notifyActionPerformed(@NonNull final Status status) {
-        if (storageManager.getCurrentStop() != null) {
-            long routeId = storageManager.getCurrentStop().getId();
+        //In case of multi pickup we need to finish each order one by one
+        //and to do so we need to check COMPLETED status and not allow to finish
+        //order from the same place together
+        if (status == Status.COMPLETED && storageManager.getCurrentStop() != null) {
+            sendAndStoreAction(storageManager.getCurrentStop().getId(), status);
+            finishWithCurrentRoute();
 
-            storageManager.storeStatus(routeId, status);
-            apiManager.notifyActionPerformed(routeId, status);
-
-            if (status == Status.COMPLETED) {
-                finishWithCurrentRoute();
-            }
+            return;
         }
+        for (Stop stop : multiPickupManager.getSamePlaceStops()) {
+            sendAndStoreAction(stop.getId(), status);
+        }
+    }
+
+    /**
+     * Send and store rider action to the queue in case of fail api call
+     *
+     * @param routeId id  of current route stop
+     * @param status  rider action that should be send to the server
+     */
+    private void sendAndStoreAction(long routeId, Status status) {
+        storageManager.storeStatus(routeId, status);
+        apiManager.notifyActionPerformed(routeId, status);
+
     }
 
     public void startLocationService() {

@@ -1,8 +1,6 @@
 package com.foodpanda.urbanninja.manager;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
@@ -17,6 +15,10 @@ import com.google.maps.android.PolyUtil;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class CheckPolygonManager {
     private BaseActivity baseActivity;
@@ -69,8 +71,8 @@ public class CheckPolygonManager {
      */
     private Location getLastRiderLocation() {
         //When I try to split this check in a different way android studio put warning message about permission check here
-        if (ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(baseActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(baseActivity, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(baseActivity, ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED) {
             LocationManager locationManager = (LocationManager) baseActivity.getSystemService(Context.LOCATION_SERVICE);
 
             return locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);

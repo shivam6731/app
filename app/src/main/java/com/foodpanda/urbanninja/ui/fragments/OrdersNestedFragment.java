@@ -20,6 +20,7 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
+import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
@@ -45,7 +46,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private ApiExecutor apiExecutor;
 
     private ActionLayoutHelper actionLayoutHelper;
-
     private StorageManager storageManager;
 
     public static OrdersNestedFragment newInstance() {
@@ -74,7 +74,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         storageManager = App.STORAGE_MANAGER;
-        apiExecutor = new ApiExecutor((MainActivity) getActivity(), this, App.API_MANAGER, storageManager);
+
+        apiExecutor = new ApiExecutor(
+            (MainActivity) getActivity(),
+            this,
+            App.API_MANAGER,
+            storageManager, new MultiPickupManager(storageManager));
+
         actionLayoutHelper = new ActionLayoutHelper(activity);
         openLoadFragment();
     }
@@ -213,10 +219,11 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         userStatus = UserStatus.ACTION_LIST;
         replaceFragment(RouteStopActionListFragment.newInstance(stop));
 
-        actionLayoutHelper.setRouteStopActionListButton(storageManager.getCurrentStop());
+        actionLayoutHelper.setRouteStopActionListButton(stop);
     }
 
     private void openRouteStopDetails(Stop stop) {
+        //TODO add list for stops
         RouteStopDetailsFragment fragment = RouteStopDetailsFragment.newInstance(stop);
         replaceFragment(fragment);
     }
@@ -289,7 +296,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case ON_THE_WAY:
                 userStatus = UserStatus.ARRIVING;
                 openRouteStopDetails(stop);
-                actionLayoutHelper.setViewedStatusActionButton(storageManager.getCurrentStop());
+                actionLayoutHelper.setViewedStatusActionButton(stop);
                 break;
             case ARRIVED:
                 openRouteStopActionList(stop);

@@ -178,6 +178,10 @@
         <item name="android:textSize">@dimen/description_text_size</item>
     </style>
 
+    <style name="TextView.SmallSize.Multiline">
+        <item name="android:singleLine">false</item>
+    </style>
+
     <style name="TextView.CardDescription">
         <item name="android:layout_marginLeft">@dimen/margin_default</item>
         <item name="android:layout_marginRight">@dimen/margin_default</item>
