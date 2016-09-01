@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.Constants;
+import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
@@ -17,6 +20,7 @@ import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
@@ -87,6 +91,39 @@ public class ApiExecutor {
         } else {
             getAllData();
         }
+    }
+
+    /**
+     * Call ApiManager to report collection issue
+     *
+     * @param collectionAmount amount of money that had been collected
+     * @param reason           reason of an issue
+     */
+    public void reportCollectionIssue(double collectionAmount, CollectionIssueReason reason) {
+        if (storageManager.getCurrentStop() == null) {
+            return;
+        }
+        BaseApiCallback<CashCollectionIssueList> baseApiCallback = new BaseApiCallback<CashCollectionIssueList>() {
+            @Override
+            public void onSuccess(CashCollectionIssueList cashCollectionIssueList) {
+                activity.hideProgress();
+                Toast.makeText(activity, R.string.issue_collection_report_sent, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(ErrorMessage errorMessage) {
+                activity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+            }
+        };
+
+        apiManager.reportCollectionIssue(
+            storageManager.getCurrentStop().getId(),
+            collectionAmount,
+            reason,
+            baseApiCallback
+        );
+
+        activity.showProgress();
     }
 
     /**

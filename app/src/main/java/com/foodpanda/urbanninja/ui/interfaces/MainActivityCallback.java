@@ -2,6 +2,8 @@ package com.foodpanda.urbanninja.ui.interfaces;
 
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 
 /**
  * Interface to communicate with  activities and fragment from
@@ -47,10 +49,23 @@ public interface MainActivityCallback {
     /**
      * Open dialog fragment with any type of information
      *
-     * @param title                title of the dialog
-     * @param message              message with details
-     * @param buttonLabel          label for button
-     * @param redirectToGPSSetting param to open GPS settings
+     * @param title       title of the dialog
+     * @param message     message with details
+     * @param buttonLabel label for button
+     * @param dialogType  param to redirect after click ok
      */
-    void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting);
+    void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType);
+
+    /**
+     * Open dialog fragment with amount reason of collection issue and amount of collected money
+     */
+    void showCollectionIsuueDialog();
+
+    /**
+     * Send collection issue API call to report it
+     *
+     * @param collectionAmount amount of money that had been collected
+     * @param reason           reason of an issue
+     */
+    void sendCollectionIssue(double collectionAmount, CollectionIssueReason reason);
 }

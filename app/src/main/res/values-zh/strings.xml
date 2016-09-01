@@ -147,4 +147,38 @@
     <string name="delivery_zone_no_location_label">OK, 請去設定GPS</string>
     <string name="delivery_zone_successful_label">OK, 開始工作</string>
 
+    <!-- Multi Pickup-->
+    <string name="multi_pickup">皮卡多</string>
+    <string name="multi_pickup_alert_title">皮卡多!</string>
+    <string name="multi_pickup_alert_details"><![CDATA[訂 <b>%1$s </b>單需在同一餐廳拿取<br />]]></string>
+    
+    <!-- Issue -->
+    <string name="issue_collection_report">報告問題</string>
+    <string name="issue_collection_warning_dialog_title">請注意, 我們將展開調查。</string>
+    <string name="issue_collection_warning_dialog_text"> 為避免詐騙，所有已提交的報告我們將會展開調查。
+    請確保你所提交的報告內容都是真確的。\n\n 如你沒有提交報告, 你將要負責此訂單的差價。</string>
+    <string name="issue_collection_warning_dialog_ok">我明白</string>
+    <string name="issue_collection_report_success_title">問題已成功上報</string>
+    <string name="issue_collection_report_success_text">你有關收取現金上的問題已成功上報。相關同事會作出查核。</string>
+    <string name="issue_collection_report_success_ok">知道了</string>
+
+    <string name="issue_collection_report_title">不能收取全額?</string>
+    <string name="issue_collection_report_text">請選擇你實際收取的金額</string>
+    <string name="issue_collection_report_amount_collected">已收取的現金</string>
+    <string name="issue_collection_report_reason">理由差异</string>
+    <string name="issue_collection_report_ok">報告問題</string>
+    <string name="issue_collection_empty_fields">請在提交報告前先填妥所有資料</string>
+
+    <string name="issue_collection_reason_vendor_mixed_items">餐廳攪混了食物</string>
+    <string name="issue_collection_reason_items_not_available">沒有相關食物</string>
+    <string name="issue_collection_reason_rider_damaged_item">食物遭車手損壞了</string>
+    <string name="issue_collection_reason_rider_had_no_money_change">車手沒有足夠零錢找續 </string>
+    <string name="issue_collection_reason_discount_given_for_lateness">遲到而提供優惠</string>
+    <string name="issue_collection_reason_rider_paid_more_price_mismatch">車手繳交的金額多於應付的金額</string>
+    <string name="issue_collection_reason_rider_paid_less_price_mismatch">車手繳交的金額少於應付的金額</string>
+    <string name="issue_collection_reason_order_was_partially_paid_online">訂單有部分金額已於網上付了錢</string>
+    <string name="issue_collection_reason_rider_lost_money">車手遺失了金錢</string>
+    <string name="issue_collection_reason_other">其他</string>
+
+    <string name="issue_collection_report_sent">我們已收到你提交的報告</string>
 </resources>

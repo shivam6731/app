@@ -3,6 +3,8 @@ package com.foodpanda.urbanninja.manager;
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
+import com.foodpanda.urbanninja.api.BaseApiCallback;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
@@ -11,6 +13,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
 import com.foodpanda.urbanninja.model.Vehicle;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
@@ -21,6 +24,7 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -41,11 +45,11 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -76,8 +80,6 @@ public class ApiExecutorTest {
         MockitoAnnotations.initMocks(this);
         Application app = RuntimeEnvironment.application;
         app.onCreate();
-
-        activity = mock(MainActivity.class);
 
         apiManager.init(app);
         when(apiManager.getRiderObservable()).thenReturn(Observable.empty());
@@ -399,5 +401,37 @@ public class ApiExecutorTest {
         apiExecutor.updateScheduleAndRouteStop();
 
         verify(apiExecutor, never()).getAllData();
+    }
+
+
+    @Test
+    public void testReportCollectIssue() {
+        Stop routeStop = new Stop();
+        routeStop.setId(1L);
+
+        when(storageManager.getCurrentStop()).thenReturn(routeStop);
+
+        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS);
+
+        verify(apiManager).reportCollectionIssue(
+            eq(routeStop.getId()),
+            anyDouble(),
+            eq(CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS),
+            Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
+        );
+        verify(activity).showProgress();
+    }
+
+    @Test
+    public void testReportCollectIssueNullCurrentStop() {
+        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS);
+
+        verify(apiManager, never()).reportCollectionIssue(
+            anyLong(),
+            anyDouble(),
+            eq(CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS),
+            Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
+        );
+        verify(activity, never()).showProgress();
     }
 }

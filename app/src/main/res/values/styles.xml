@@ -205,6 +205,13 @@
         <item name="android:textColor">@color/action_header_border</item>
     </style>
 
+    <style name="TextView.Issue">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="ButtonMainAction">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -264,5 +271,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColorHint">@drawable/login_hint_color</item>
     </style>
+
+    <style name="popup_theme" parent="Theme.AppCompat.Light.Dialog.Alert"/>
 
 </resources>

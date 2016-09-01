@@ -37,8 +37,11 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.dialog.InformationDialogFragment;
+import com.foodpanda.urbanninja.ui.dialog.IssueCollectedDialog;
 import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
@@ -530,13 +533,27 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting) {
+    public void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType) {
         InformationDialogFragment informationDialogFragment = InformationDialogFragment.newInstance(
             title,
             message,
             buttonLabel,
-            redirectToGPSSetting);
+            dialogType);
+
         informationDialogFragment.show(fragmentManager, InformationDialogFragment.class.getSimpleName());
+    }
+
+    @Override
+    public void showCollectionIsuueDialog() {
+        IssueCollectedDialog issueCollectedDialog = IssueCollectedDialog.newInstance();
+        issueCollectedDialog.show(fragmentManager, IssueCollectedDialog.class.getSimpleName());
+    }
+
+    @Override
+    public void sendCollectionIssue(double collectionAmount, CollectionIssueReason reason) {
+        if (ordersNestedFragment != null) {
+            ordersNestedFragment.reportCollectionIssue(collectionAmount, reason);
+        }
     }
 
     /**

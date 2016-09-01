@@ -237,9 +237,9 @@ public class RouteStopDetailsFragment extends BaseFragment implements
 
             case PREORDER:
                 layoutAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.preorder_background_color));
-                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.warnining_text_color));
+                layoutHeaderAdditional.setBackgroundColor(ContextCompat.getColor(activity, R.color.warning_text_color));
                 imageAdditionalAlert.setImageResource(R.drawable.icon_alert_red);
-                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.warnining_text_color));
+                txtAdditionalName.setTextColor(ContextCompat.getColor(activity, R.color.warning_text_color));
                 txtAdditionalName.setText(FormatUtil.getPreOrderValue(value, activity));
                 txtAdditionalDescription.setText(R.string.route_action_pre_order_description);
                 break;

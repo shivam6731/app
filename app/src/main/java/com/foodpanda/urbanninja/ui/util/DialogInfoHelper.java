@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Html;
 
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
@@ -26,6 +27,7 @@ public class DialogInfoHelper {
         CharSequence title = "";
         CharSequence message = "";
         CharSequence buttonLabel = "";
+        DialogType dialogType = DialogType.INFORMATION;
 
         switch (statusType) {
             case INSIDE:
@@ -42,10 +44,11 @@ public class DialogInfoHelper {
                 title = context.getResources().getText(R.string.delivery_zone_no_location_title);
                 message = context.getResources().getText(R.string.delivery_zone_no_location);
                 buttonLabel = context.getResources().getText(R.string.delivery_zone_no_location_label);
+                dialogType = DialogType.GPS;
                 break;
         }
 
-        nestedFragmentCallback.openInformationDialog(title, message, buttonLabel, statusType == PolygonStatusType.NO_DATA);
+        nestedFragmentCallback.openInformationDialog(title, message, buttonLabel, dialogType);
     }
 
     /**

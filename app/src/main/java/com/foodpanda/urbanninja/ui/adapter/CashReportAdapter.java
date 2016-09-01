@@ -61,7 +61,7 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
             FormatUtil.getValueWithCurrencySymbolFromNumber(
                 storageManager.getCountry(), workingDay.getTotal())));
         parentViewHolder.txtTotal.setTextColor(
-            ContextCompat.getColor(context, workingDay.getTotal() >= 0 ? R.color.green_text_color : R.color.warnining_text_color))
+            ContextCompat.getColor(context, workingDay.getTotal() >= 0 ? R.color.green_text_color : R.color.warning_text_color))
         ;
     }
 
@@ -99,7 +99,7 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
 
         if (orderStop.getStatus() == Status.CANCELED) {
             txtName.setText(context.getString(R.string.cash_report_cancelled));
-            txtName.setTextColor(ContextCompat.getColor(context, R.color.warnining_text_color));
+            txtName.setTextColor(ContextCompat.getColor(context, R.color.warning_text_color));
         }
 
         setImageForOrderType(orderStop, txtName);

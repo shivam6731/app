@@ -24,6 +24,8 @@ import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.enums.UserStatus;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
@@ -132,6 +134,12 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     public void getRoute() {
         if (apiExecutor != null) {
             apiExecutor.updateRoute();
+        }
+    }
+
+    public void reportCollectionIssue(double collectionAmount, CollectionIssueReason reason) {
+        if (apiExecutor != null) {
+            apiExecutor.reportCollectionIssue(collectionAmount, reason);
         }
     }
 
@@ -325,12 +333,12 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     }
 
     @Override
-    public void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting) {
+    public void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType) {
         mainActivityCallback.showInformationDialog(
             title,
             message,
             buttonLabel,
-            redirectToGPSSetting
+            dialogType
         );
     }
 

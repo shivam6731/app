@@ -76,4 +76,10 @@ public class FormatUtilTest {
                     toString(),
                 application));
     }
+
+    @Test
+    public void testCurrencySymbolWithNumeric() throws Exception {
+        assertEquals("HKD", FormatUtil.getCurrencySymbol(getCountryForCode("hk")));
+    }
+
 }

@@ -37,6 +37,6 @@ public class Constants {
         public static final String TITLE = "Title";
         public static final String MESSAGE = "Message";
         public static final String LABEL = "Label";
-        public static final String SETTING_OPTION = "RedirectSettings";
+        public static final String DIALOG_TYPE = "DialogType";
     }
 }
