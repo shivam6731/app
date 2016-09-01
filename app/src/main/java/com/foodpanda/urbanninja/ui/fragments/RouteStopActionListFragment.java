@@ -79,6 +79,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
         //Set payment details and type of the task
         RelativeLayout layoutTypeAndPayment = (RelativeLayout) view.findViewById(R.id.layout_type_payment);
         new OrderTypeAndPaymentHelper(activity, currentStop, App.STORAGE_MANAGER).setType(layoutTypeAndPayment);
+        recyclerView.removeItemDecoration(dividerItemDecoration);
     }
 
     @Override

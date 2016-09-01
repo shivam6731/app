@@ -18,6 +18,7 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     implements SimpleBaseAdapter.OnItemClickListener {
 
     protected RecyclerViewEmpty recyclerView;
+    protected DividerItemDecoration dividerItemDecoration;
 
     protected U adapter;
 
@@ -35,7 +36,7 @@ public abstract class BaseListFragment<U extends SimpleBaseAdapter> extends Base
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+        dividerItemDecoration = new DividerItemDecoration(
             getActivity(),
             DividerItemDecoration.VERTICAL_LIST,
             R.drawable.divider);
