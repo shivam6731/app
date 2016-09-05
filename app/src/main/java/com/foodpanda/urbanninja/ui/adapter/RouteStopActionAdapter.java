@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
@@ -220,6 +221,48 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
         //add fragment with pre-view content
         showMapAddressCallback.showNextPreviousStep(stop, viewHolder.stepFrameLayout.getId());
+        //add warning message for multi-pickup
+        addMultiPickupWarningLayout(viewHolder);
+    }
+
+    /**
+     * add layout below header to add warning message with information
+     * about multi pickup and order codes
+     *
+     * @param viewHolder container for warning layout
+     */
+    private void addMultiPickupWarningLayout(ViewHolderHeaderFooter viewHolder) {
+        MultiPickupManager multiPickupManager = new MultiPickupManager(storageManager);
+        if (isHeaderView(viewHolder) && multiPickupManager.isNotEmptySamePlacePickUpStops(stop)) {
+            View view = View.inflate(context, R.layout.route_stop_additional_details_layout, null);
+
+            TextView txtAdditionalName = (TextView) view.findViewById(R.id.txt_additional_title);
+            TextView txtAdditionalDescription = (TextView) view.findViewById(R.id.txt_additional_description);
+
+            txtAdditionalName.setText(R.string.multi_pickup_alert_title);
+            txtAdditionalDescription.setText(multiPickupManager.getMultiPickUpDetailsSting(context, stop));
+
+            viewHolder.warningLayout.addView(view, setLayoutParams());
+        }
+    }
+
+    /**
+     * Set margin for warning card
+     * We are using the same layout for warning messages here and in MapAddressDetailsFragment
+     * and we need margin only here.
+     *
+     * @return layout param with margin
+     */
+    private FrameLayout.LayoutParams setLayoutParams() {
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(
+            context.getResources().getDimensionPixelSize(R.dimen.margin_small),
+            context.getResources().getDimensionPixelSize(R.dimen.margin_small),
+            context.getResources().getDimensionPixelSize(R.dimen.margin_small),
+            context.getResources().getDimensionPixelSize(R.dimen.margin_small));
+
+        return layoutParams;
     }
 
     /**
@@ -362,6 +405,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public ExpandableLayout expandableLayout;
         public ImageView imageView;
         public FrameLayout stepFrameLayout;
+        public FrameLayout warningLayout;
 
         public ViewHolderHeaderFooter(View view) {
             super(view);
@@ -370,6 +414,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             expandableLayout = (ExpandableLayout) view.findViewById(R.id.expand_layout);
             imageView = (ImageView) view.findViewById(R.id.image_arrow);
             stepFrameLayout = (FrameLayout) view.findViewById(R.id.step_layout);
+            warningLayout = (FrameLayout) view.findViewById(R.id.warning_layout);
         }
     }
 
