@@ -7,10 +7,12 @@ import org.joda.time.DateTime;
 public class PerformActionWrapper {
     private Status action;
     private String actionPerformedAt;
+    private RiderLocation riderLocation;
 
-    public PerformActionWrapper(Status action, DateTime actionPerformedAt) {
+    public PerformActionWrapper(Status action, DateTime actionPerformedAt, RiderLocation riderLocation) {
         this.action = action;
         this.actionPerformedAt = convertDateToString(actionPerformedAt);
+        this.riderLocation = riderLocation;
     }
 
     /**

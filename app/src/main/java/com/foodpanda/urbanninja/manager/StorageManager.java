@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Queue;
 
 
-public class StorageManager implements Managable {
+public class StorageManager implements Manageable {
     private SharedPreferences sharedPreferences;
     private SharedPreferences cachedRequestPreferences;
     private Gson gson;
@@ -40,6 +40,7 @@ public class StorageManager implements Managable {
     private Token token;
     private List<Stop> stopList = new LinkedList<>();
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
+    private RiderLocation riderLocation;
 
     @Override
     public void init(Context context) {
@@ -305,5 +306,21 @@ public class StorageManager implements Managable {
         }
 
         return stopList;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public RiderLocation getRiderLocation() {
+        return riderLocation;
+    }
+
+    /**
+     *
+     * @param riderLocation
+     */
+    public void setRiderLocation(RiderLocation riderLocation) {
+        this.riderLocation = riderLocation;
     }
 }

@@ -20,6 +20,7 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -75,6 +76,7 @@ public class LocationService extends Service implements
     private static final int SEND_DATA_INTERVAL = 30000;
 
     private ApiManager apiManager;
+    private StorageManager storageManager;
     private Timer timer;
 
     private GoogleApiClient googleApiClient;
@@ -97,6 +99,7 @@ public class LocationService extends Service implements
     public void onCreate() {
         super.onCreate();
         apiManager = App.API_MANAGER;
+        storageManager = App.STORAGE_MANAGER;
     }
 
     /**
@@ -296,5 +299,8 @@ public class LocationService extends Service implements
         riderLocation.setDateTime(DateTime.now());
 
         locationList.add(riderLocation);
+
+        //store last known rider location with all additional data such as battery level or speed
+        storageManager.setRiderLocation(riderLocation);
     }
 }

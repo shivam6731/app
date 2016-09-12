@@ -55,7 +55,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 
-public class ApiManager implements Managable {
+public class ApiManager implements Manageable {
     private LogisticsService service;
     private CountryService countryService;
     private StorageManager storageManager;
@@ -65,7 +65,7 @@ public class ApiManager implements Managable {
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
-    public void init(Context context) {
+    public void init(Context context,So) {
         storageManager = App.STORAGE_MANAGER;
         initService();
     }
@@ -200,7 +200,7 @@ public class ApiManager implements Managable {
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
-        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
+        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime(), storageManager.getRiderLocation());
 
         compositeSubscription.add(
             wrapRetryObservable(

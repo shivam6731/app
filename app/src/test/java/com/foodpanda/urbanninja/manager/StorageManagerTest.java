@@ -3,10 +3,13 @@ package com.foodpanda.urbanninja.manager;
 import android.app.Application;
 
 import com.foodpanda.urbanninja.BuildConfig;
+import com.foodpanda.urbanninja.api.model.RiderLocation;
+import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -185,5 +188,18 @@ public class StorageManagerTest {
 
         storageManager.storeStopList(stops);
         assertEquals(storageManager.getDeliveryPartOfEachRouteStop(stopDelivery), stopDelivery);
+    }
+
+    @Test
+    public void testLastRiderLocation() {
+        RiderLocation riderLocation = new RiderLocation();
+        riderLocation.setAzimuth(1);
+        riderLocation.setAccuracyInMeters(1);
+        riderLocation.setBatteryLevel(1);
+        riderLocation.setDateTime(DateTime.now());
+        riderLocation.setGeoCoordinate(new GeoCoordinate((double) 1, (double) 1));
+
+        storageManager.setRiderLocation(riderLocation);
+        assertEquals(storageManager.getRiderLocation(), riderLocation);
     }
 }
