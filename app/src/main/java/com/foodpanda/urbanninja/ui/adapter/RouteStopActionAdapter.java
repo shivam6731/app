@@ -19,6 +19,7 @@ import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
@@ -131,6 +132,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             viewHolder.txtDescription.setText(routeStopActivity.getDescription());
             viewHolder.layoutDetails.setVisibility(View.VISIBLE);
         }
+        viewHolder.reportIssueView.setVisibility(View.GONE);
 
         if (routeStopActivity.getType() != null) {
             switch (routeStopActivity.getType()) {
@@ -158,6 +160,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 case COLLECT:
                     viewHolder.imageSelected.setImageResource(R.drawable.icon_collect_money_dark);
                     viewHolder.txtName.setText(context.getResources().getString(R.string.route_action_collect, getFormattedPrice(routeStopActivity)));
+                    viewHolder.reportIssueView.setVisibility(View.VISIBLE);
+                    viewHolder.reportIssueView.setOnClickListener(view -> showCollectionIssueWarningDialog());
                     setNotAdditionalInfoActionLayout(viewHolder);
                     break;
                 case HALAL:
@@ -177,6 +181,17 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
             viewHolder.txtVendorName.setText(stop.getVendorName());
             viewHolder.layoutVendorName.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * show dialog to let rider know that this issue will initiate investigation
+     * if he agrees we show collection issue dialog
+     */
+    private void showCollectionIssueWarningDialog() {
+        nestedFragmentCallback.openInformationDialog(
+            context.getString(R.string.issue_collection_warning_dialog_title),
+            context.getString(R.string.issue_collection_warning_dialog_text),
+            context.getString(R.string.issue_collection_warning_dialog_ok), DialogType.ISSUE_COLLECTION_WARNING);
     }
 
     /**
@@ -316,8 +331,8 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
                 break;
             case PREORDER:
                 viewHolder.contentLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.not_halal_background_color));
-                viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.toolbar_color));
-                viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_orange);
+                viewHolder.halalHeaderView.setBackgroundColor(ContextCompat.getColor(context, R.color.warning_text_color));
+                viewHolder.imageSelected.setImageResource(R.drawable.icon_alert_red);
                 viewHolder.txtName.setText(FormatUtil.getPreOrderValue(routeStopActivity.getValue(), context));
                 viewHolder.txtDescription.setText(context.getResources().getString(R.string.route_action_pre_order_adapter_description));
                 break;
@@ -426,6 +441,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         public LinearLayout layoutDetails;
         public View halalHeaderView;
         public LinearLayout contentLayout;
+        public View reportIssueView;
 
         public TextView txtVendorName;
         public LinearLayout layoutVendorName;
@@ -443,6 +459,7 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
 
             halalHeaderView = view.findViewById(R.id.halal_header_layout);
             contentLayout = (LinearLayout) view.findViewById(R.id.main_content_layout);
+            reportIssueView = view.findViewById(R.id.txt_issue);
         }
 
     }

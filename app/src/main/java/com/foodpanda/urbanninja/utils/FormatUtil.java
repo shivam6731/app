@@ -10,6 +10,7 @@ import com.foodpanda.urbanninja.model.Country;
 import org.joda.time.DateTime;
 
 import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.Locale;
 
 public class FormatUtil {
@@ -68,6 +69,19 @@ public class FormatUtil {
 
             return context.getResources().getString(R.string.route_action_pre_order_empty_title);
         }
+    }
+
+
+    /**
+     * Get currency symbol for rider country
+     *
+     * @return empty string if cannot get currency
+     * otherwise it would be currency symbol
+     */
+    public static String getCurrencySymbol(Country country) {
+        Locale locale = new Locale("en", country.getCode());
+
+        return Currency.getInstance(locale).getSymbol();
     }
 
 }

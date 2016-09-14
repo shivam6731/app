@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+              android:orientation="vertical"
+              android:padding="@dimen/padding_large">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        style="@style/TextView.Dark.Multiline"
+        android:gravity="left"
+        android:text="@string/issue_collection_report_text"/>
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansEditText
+        android:id="@+id/edit_collect_amount"
+        style="@style/TextView.Dark.Multiline"
+        android:layout_width="match_parent"
+        android:hint="@string/issue_collection_report_amount_collected"
+        android:inputType="number"
+        android:textColorHint="@color/description_text_color"/>
+
+    <Spinner
+        android:id="@+id/spinner_collect_reason"
+        style="@style/TextView.Dark.Multiline"
+        android:layout_width="match_parent"
+        android:prompt="@string/issue_collection_report_reason"
+        android:textColorHint="@color/description_text_color"/>
+</LinearLayout>

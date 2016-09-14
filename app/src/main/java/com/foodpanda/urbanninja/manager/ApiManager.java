@@ -10,6 +10,8 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueWrapper;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
@@ -32,6 +34,7 @@ import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
+import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.gson.FieldNamingPolicy;
@@ -40,6 +43,7 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -233,6 +237,34 @@ public class ApiManager implements Managable {
 
     public void sendAllFailedRequests() {
         ApiQueue.getInstance().resendRequests();
+    }
+
+
+    /**
+     * Call ApiManager to report collection issue
+     *
+     * @param collectionAmount amount of money collected
+     * @param reason           reason of an issue
+     */
+    public void reportCollectionIssue(
+        long routeStopId,
+        double collectionAmount,
+        @NonNull CollectionIssueReason reason,
+        @NonNull final BaseApiCallback<CashCollectionIssueList> baseApiCallback) {
+
+        BaseSubscriber<CashCollectionIssueList> baseSubscriber = new BaseSubscriber<CashCollectionIssueList>(baseApiCallback) {
+            @Override
+            public void onNext(CashCollectionIssueList cashCollectionIssueList) {
+                baseApiCallback.onSuccess(cashCollectionIssueList);
+            }
+        };
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.reportCollectionIssue(
+                    Collections.singletonList(new CashCollectionIssueWrapper(routeStopId, collectionAmount, reason))
+                )
+            ).subscribe(baseSubscriber)
+        );
     }
 
     public void registerDeviceId(String token) {

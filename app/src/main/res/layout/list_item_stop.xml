@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-    style="@style/CardView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/margin_small"
@@ -88,13 +88,27 @@
                 style="@style/DividerView"/>
         </LinearLayout>
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansCheckBox
-            android:id="@+id/checkbox_done"
-            style="@style/TextView.Dark.AllCaps"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/check_box_done_height"
-            android:text="@string/stop_list_done"
-            android:textStyle="bold"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansCheckBox
+                android:id="@+id/checkbox_done"
+                style="@style/TextView.Dark.AllCaps"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/check_box_done_height"
+                android:layout_centerVertical="true"
+                android:text="@string/stop_list_done"
+                android:textStyle="bold"/>
+
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+                android:id="@+id/txt_issue"
+                style="@style/TextView.Issue"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/checkbox_done"
+                android:text="@string/issue_collection_report"/>
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
 

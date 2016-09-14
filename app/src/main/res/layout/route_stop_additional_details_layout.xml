@@ -20,7 +20,7 @@
         <View
             android:id="@+id/layout_additional_header"
             style="@style/DividerView"
-            android:background="@color/warnining_text_color"/>
+            android:background="@color/warning_text_color"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 android:id="@+id/txt_additional_title"
                 style="@style/TextView.Title.WithoutPaddingMargin"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/warnining_text_color"/>
+                android:textColor="@color/warning_text_color"/>
 
         </LinearLayout>
 

@@ -128,7 +128,7 @@ public class TimerHelper {
             timerDataProvider.provideTimerTextView().setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.icon_time_red, 0, 0, 0);
             timerDataProvider.provideTimerTextView().setTextColor(
-                ContextCompat.getColor(baseActivity, R.color.warnining_text_color));
+                ContextCompat.getColor(baseActivity, R.color.warning_text_color));
 
             if (endDate.getMillis() > now.getMillis()) {
                 return DateUtil.formatTimeHoursMinutesSeconds(date);

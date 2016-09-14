@@ -10,6 +10,7 @@ public class ApiTag {
     public static final String REGISTRY_PUSH_NOTIFICATION = "v1/riders/{rider_id}/device";
     public static final String POST_LOCATION = "v1/vehicles/{vehicle_id}/locations";
     public static final String ORDERS_REPORT = "v1/riders/{rider_id}/report";
+    public static final String REPORT_COLLECTION_ISSUE = "v1/cash-collection";
 
     public static final String USER_TAG = "rider_id";
     public static final String VEHICLE_TAG = "vehicle_id";
@@ -20,6 +21,5 @@ public class ApiTag {
     public static final String SORT_VALUE = "+startAt";
     public static final String SCHEDULE_ID_TAG = "schedule_id";
     public static final String ROUTE_STOP_ID_TAG = "route_stop_id";
-    public static final String ORER_REPORT_TIME_ZONE = "timezone";
-
+    public static final String ORDER_REPORT_TIME_ZONE = "timezone";
 }

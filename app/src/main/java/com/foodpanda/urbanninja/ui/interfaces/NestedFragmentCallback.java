@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.ui.interfaces;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 
 /**
  * Interface describe all possible state for rider working work flow
@@ -95,10 +96,10 @@ public interface NestedFragmentCallback {
      * we need to let rider know about current status of clock-in process
      * TO do so we show information dialog
      *
-     * @param title                title of the dialog
-     * @param message              information
-     * @param buttonLabel          label for button
-     * @param redirectToGPSSetting if true redirect to GPS settings
+     * @param title       title of the dialog
+     * @param message     information
+     * @param buttonLabel label for button
+     * @param dialogType  param to redirect after click ok
      */
-    void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, boolean redirectToGPSSetting);
+    void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType);
 }

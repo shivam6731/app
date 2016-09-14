@@ -2,6 +2,8 @@ package com.foodpanda.urbanninja.api.request;
 
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
+import com.foodpanda.urbanninja.api.model.CashCollectionIssueWrapper;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
@@ -16,6 +18,8 @@ import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -27,8 +31,7 @@ import rx.Observable;
 
 public interface LogisticsService {
     @POST(ApiTag.AUTH_URL)
-    Observable<Token> auth(
-        @Body AuthRequest authRequest);
+    Observable<Token> auth(@Body AuthRequest authRequest);
 
     @GET(ApiTag.GET_RIDER_URL)
     Observable<VehicleDeliveryAreaRiderBundle> getRider(@Path(ApiTag.USER_TAG) int riderId);
@@ -41,7 +44,8 @@ public interface LogisticsService {
         @Query(ApiTag.SCHEDULE_RIDER_TAG) int riderId,
         @Query(ApiTag.START_TIME_TAG) DateTime startAt,
         @Query(ApiTag.END_TIME_TAG) DateTime endAt,
-        @Query(ApiTag.SORT) String sort);
+        @Query(ApiTag.SORT) String sort
+    );
 
     @POST(ApiTag.POST_SCHEDULE_CLOCK_IN_URL)
     Observable<ScheduleWrapper> clockInSchedule(@Path(ApiTag.SCHEDULE_ID_TAG) int scheduleId);
@@ -49,22 +53,29 @@ public interface LogisticsService {
     @PUT(ApiTag.NOTIFY_ACTION_PERFORMED)
     Observable<Stop> notifyActionPerformed(
         @Path(ApiTag.ROUTE_STOP_ID_TAG) long routeId,
-        @Body PerformActionWrapper performActionWrapper);
+        @Body PerformActionWrapper performActionWrapper
+    );
 
     @PUT(ApiTag.REGISTRY_PUSH_NOTIFICATION)
     Observable<Rider> registerDeviceId(
         @Path(ApiTag.USER_TAG) int riderId,
-        @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper);
+        @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper
+    );
 
     @POST(ApiTag.POST_LOCATION)
     Observable<RiderLocationCollectionWrapper> sendLocation(
         @Path(ApiTag.VEHICLE_TAG) int vehicleId,
-        @Body RiderLocationCollectionWrapper riderLocation);
+        @Body RiderLocationCollectionWrapper riderLocation
+    );
 
     @GET(ApiTag.ORDERS_REPORT)
     Observable<OrdersReportCollection> getOrdersReport(
         @Path(ApiTag.USER_TAG) int riderId,
         @Query(ApiTag.START_TIME_TAG) DateTime startAt,
         @Query(ApiTag.END_TIME_TAG) DateTime endAt,
-        @Query(ApiTag.ORER_REPORT_TIME_ZONE) String timezone);
+        @Query(ApiTag.ORDER_REPORT_TIME_ZONE) String timezone
+    );
+
+    @PUT(ApiTag.REPORT_COLLECTION_ISSUE)
+    Observable<CashCollectionIssueList> reportCollectionIssue(@Body List<CashCollectionIssueWrapper> cashCollectionIssueWrappers);
 }
