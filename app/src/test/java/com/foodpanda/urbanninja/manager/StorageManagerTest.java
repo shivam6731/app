@@ -73,14 +73,14 @@ public class StorageManagerTest {
 
     @Test
     public void testGetCurrentStopEmpty() {
-        storageManager.storeStopList(new LinkedList<Stop>());
+        storageManager.storeStopList(new LinkedList<>());
 
         assertNull(storageManager.getCurrentStop());
     }
 
     @Test
     public void testGetNextStopEmpty() {
-        storageManager.storeStopList(new LinkedList<Stop>());
+        storageManager.storeStopList(new LinkedList<>());
 
         assertNull(storageManager.getNextStop());
     }
@@ -89,8 +89,8 @@ public class StorageManagerTest {
     public void testGetNextStopFirst() {
         LinkedList<Stop> stops = new LinkedList<>();
 
-        Stop firstStop = new Stop();
-        Stop secondStop = new Stop();
+        Stop firstStop = new Stop(1, "xxxx-yyyy");
+        Stop secondStop = new Stop(2, "xxxx-yyy1");
         stops.add(firstStop);
 
         storageManager.storeStopList(stops);
@@ -105,9 +105,9 @@ public class StorageManagerTest {
     public void testGetCurrentStopFirst() {
         LinkedList<Stop> stops = new LinkedList<>();
 
-        Stop stop = new Stop();
+        Stop stop = new Stop(1, "xxxx-yyy1");
         stops.add(stop);
-        stops.add(new Stop());
+        stops.add(new Stop(2, "xxxx-yyyy"));
 
         storageManager.storeStopList(stops);
         assertEquals(storageManager.getCurrentStop(), stop);
@@ -118,11 +118,11 @@ public class StorageManagerTest {
         assertFalse(storageManager.hasNextStop());
 
         LinkedList<Stop> stops = new LinkedList<>();
-        stops.add(new Stop());
+        stops.add(new Stop(1, "xxxx-yyyy"));
         storageManager.storeStopList(stops);
         assertFalse(storageManager.hasNextStop());
 
-        stops.add(new Stop());
+        stops.add(new Stop(2, "xxxx-yyy1"));
         storageManager.storeStopList(stops);
         assertTrue(storageManager.hasNextStop());
     }
@@ -139,9 +139,9 @@ public class StorageManagerTest {
     public void testRemoveCurrentStopFirst() {
         LinkedList<Stop> stops = new LinkedList<>();
 
-        Stop stop = new Stop();
+        Stop stop = new Stop(1, "xxxx-yyyy");
         stops.add(stop);
-        stops.add(new Stop());
+        stops.add(new Stop(2, "xxxx-yyy1"));
 
         storageManager.storeStopList(stops);
         assertEquals(storageManager.removeCurrentStop(), stop);
@@ -149,20 +149,18 @@ public class StorageManagerTest {
 
     @Test
     public void testGetDeliveryPartOfEachRouteStopEmpty() {
-        assertNull(storageManager.getDeliveryPartOfEachRouteStop(new Stop()));
+        assertNull(storageManager.getDeliveryPartOfEachRouteStop(new Stop(1, "xxxx-yyy1")));
     }
 
     @Test
     public void testGetDeliveryPartOfEachRouteStopPickUp() {
         LinkedList<Stop> stops = new LinkedList<>();
 
-        Stop stopPickUp = new Stop();
+        Stop stopPickUp = new Stop(1, "xxxx-yyyy");
         stopPickUp.setTask(RouteStopTask.PICKUP);
-        stopPickUp.setOrderCode("testCode");
 
-        Stop stopDelivery = new Stop();
+        Stop stopDelivery = new Stop(2, "xxxx-yyyy");
         stopDelivery.setTask(RouteStopTask.DELIVER);
-        stopDelivery.setOrderCode("testCode");
 
         stops.add(stopPickUp);
         stops.add(stopDelivery);
@@ -175,13 +173,11 @@ public class StorageManagerTest {
     public void testGetDeliveryPartOfEachRouteStopDeliveryPickUp() {
         LinkedList<Stop> stops = new LinkedList<>();
 
-        Stop stopPickUp = new Stop();
+        Stop stopPickUp = new Stop(1, "xxxx-yyyy");
         stopPickUp.setTask(RouteStopTask.PICKUP);
-        stopPickUp.setOrderCode("testCode");
 
-        Stop stopDelivery = new Stop();
+        Stop stopDelivery = new Stop(2, "xxxx-yyyy");
         stopDelivery.setTask(RouteStopTask.DELIVER);
-        stopDelivery.setOrderCode("testCode");
 
         stops.add(stopPickUp);
         stops.add(stopDelivery);
@@ -201,5 +197,60 @@ public class StorageManagerTest {
 
         storageManager.setRiderLocation(riderLocation);
         assertEquals(storageManager.getRiderLocation(), riderLocation);
+    }
+
+    public void testStoreStopListValidData() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop stopPickUp = new Stop(1, "xxxx-yyyy");
+        stopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop stopDelivery = new Stop(2, "xxxx-yyyy");
+        stopDelivery.setTask(RouteStopTask.DELIVER);
+
+        stops.add(stopPickUp);
+        stops.add(stopDelivery);
+
+        storageManager.storeStopList(stops);
+        assertEquals(storageManager.getCurrentStop(), stopPickUp);
+        assertEquals(storageManager.getStopList(), stops);
+    }
+
+    @Test
+    public void testStoreStopListNullOrderCodeData() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop stopPickUp = new Stop(1, null);
+        stopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop stopDelivery = new Stop(2, null);
+        stopDelivery.setTask(RouteStopTask.DELIVER);
+
+        stops.add(stopPickUp);
+        stops.add(stopDelivery);
+
+        storageManager.storeStopList(stops);
+
+        assertNull(storageManager.getCurrentStop());
+        assertTrue(storageManager.getStopList().isEmpty());
+    }
+
+    @Test
+    public void testStoreStopListInvalidOrderCodeData() {
+        LinkedList<Stop> stops = new LinkedList<>();
+
+        Stop stopPickUp = new Stop(1, "xxxxyyyy");
+        stopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop stopDelivery = new Stop(2, "xxxxyyyy");
+        stopDelivery.setTask(RouteStopTask.DELIVER);
+
+        stops.add(stopPickUp);
+        stops.add(stopDelivery);
+
+        storageManager.storeStopList(stops);
+
+        assertNull(storageManager.getCurrentStop());
+        assertTrue(storageManager.getStopList().isEmpty());
     }
 }

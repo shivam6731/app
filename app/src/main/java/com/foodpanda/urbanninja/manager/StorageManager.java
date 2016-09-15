@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.regex.Pattern;
 
 
 public class StorageManager implements Manageable {
@@ -278,7 +279,8 @@ public class StorageManager implements Manageable {
             }
         }
 
-        return removeCompletedStops(stopList);
+        //There should be any neither route stop with invalid order codes nor deprecated
+        return removeInvalidOrderCodeStops(removeCompletedStops(stopList));
     }
 
     private boolean cleanStatusMap() {
@@ -297,6 +299,14 @@ public class StorageManager implements Manageable {
         }
     }
 
+    /**
+     * In case when server can have not up to date information
+     * For instance when rider finished some order offline
+     * and server hasn't received this data jet we need to exclude this orders from list
+     *
+     * @param stopList row data from server side, can contains already offline finished orders
+     * @return filtered data without depricated orders
+     */
     private List<Stop> removeCompletedStops(List<Stop> stopList) {
         for (Iterator<Stop> iterator = stopList.iterator(); iterator.hasNext(); ) {
             Stop stop = iterator.next();
@@ -330,4 +340,32 @@ public class StorageManager implements Manageable {
     public void setRiderLocation(@Nullable RiderLocation riderLocation) {
         this.riderLocation = riderLocation;
     }
+
+    /**
+     * Check if order code is valid for all route stop
+     * And remove it from list if invalid.
+     * </p>
+     * Each route stop order code should fit requirements
+     * 1) not empty
+     * 2) length() == 9 including hyphen (this check is inside regexp)
+     * 3) should follow pattern xxxx-yyyy, where xxxx - vendor code
+     * and yyyy - customer code
+     * <p>
+     *
+     * @param stopList list of up to date stop
+     * @return list of up to date stops without stops with invalid order code
+     */
+    private List<Stop> removeInvalidOrderCodeStops(List<Stop> stopList) {
+        for (Iterator<Stop> iterator = stopList.iterator(); iterator.hasNext(); ) {
+            Stop stop = iterator.next();
+            //check if order code fit our requirements
+            if (TextUtils.isEmpty(stop.getOrderCode()) ||
+                !Pattern.matches("^[a-zA-Z\\d]{4}-[a-zA-Z\\d]{4}$", stop.getOrderCode())) {
+                iterator.remove();
+            }
+        }
+
+        return stopList;
+    }
+
 }

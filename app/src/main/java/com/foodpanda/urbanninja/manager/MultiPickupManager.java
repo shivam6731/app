@@ -5,18 +5,14 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.ui.util.DialogInfoHelper;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
 public class MultiPickupManager {
-
-    private static final BigDecimal SAME_PLACE_ACCURACY = BigDecimal.valueOf(0.00003);
     private StorageManager storageManager;
 
     public MultiPickupManager(StorageManager storageManager) {
@@ -107,12 +103,15 @@ public class MultiPickupManager {
      */
     private List<Stop> getSamePlacePickupStops() {
         List<Stop> samePlacesStopList = new LinkedList<>();
+        List<Stop> routeStopPlan = storageManager.getStopList();
         Stop currentStop = storageManager.getCurrentStop();
         if (currentStop != null) {
-            for (Stop stop : storageManager.getStopList()) {
-
-                if (isPickupFromSamePlace(stop, currentStop)) {
-                    samePlacesStopList.add(stop);
+            samePlacesStopList.add(currentStop);
+            //we skip the first stop because
+            //first one is our currentStop
+            for (int i = 1; i < routeStopPlan.size(); i++) {
+                if (isPickupFromSamePlace(routeStopPlan.get(i), currentStop)) {
+                    samePlacesStopList.add(routeStopPlan.get(i));
                 }
             }
         }
@@ -127,21 +126,24 @@ public class MultiPickupManager {
      * @param currentStop current PICKUP stop to compare with all others
      * @return true if both stops are in the same place and selected is PICKUP
      */
-    private boolean isPickupFromSamePlace(Stop stop, Stop currentStop) {
-        return stop.getTask() == RouteStopTask.PICKUP && isLocationNear(currentStop.getCoordinate(), stop.getCoordinate());
+    private boolean isPickupFromSamePlace(@NonNull Stop stop, @NonNull Stop currentStop) {
+        return stop.getTask() == RouteStopTask.PICKUP &&
+            isTheSameVendorCodes(currentStop, stop);
     }
 
     /**
-     * Check if places nearby to each other or in the same place
-     * </p>
-     * We have two cases for multi pick-up and for
+     * Instead of checking place location we decided to check order code where we can find restaurant id
+     * <p>
+     * Check if we have the same pick-up part of order codes for both routeStops
+     * the pattern is xxxx-yyyy
+     * where xxxx we check only place code
      *
-     * @param currentStopCoordinate current rider route stop coordinates
-     * @param nextStopCoordinate    next step coordinates to compare
-     * @return true if stops in the same place or nearby
+     * @param stop        next stop from the route stop plan with valid order code
+     * @param currentStop current stop with valid order code
+     * @return true if vendor part of order code is the same
      */
-    private boolean isLocationNear(GeoCoordinate currentStopCoordinate, GeoCoordinate nextStopCoordinate) {
-        return BigDecimal.valueOf(currentStopCoordinate.getLat()).subtract(BigDecimal.valueOf(nextStopCoordinate.getLat())).abs().compareTo(SAME_PLACE_ACCURACY) == -1 &&
-            BigDecimal.valueOf(currentStopCoordinate.getLon()).subtract(BigDecimal.valueOf(nextStopCoordinate.getLon())).abs().compareTo(SAME_PLACE_ACCURACY) == -1;
+    private boolean isTheSameVendorCodes(@NonNull Stop stop, @NonNull Stop currentStop) {
+        return stop.getOrderCode().substring(0, 4).
+            equalsIgnoreCase(currentStop.getOrderCode().substring(0, 4));
     }
 }
