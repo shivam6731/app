@@ -65,7 +65,7 @@ public class ApiManager implements Manageable {
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
-    public void init(Context context,So) {
+    public void init(Context context) {
         storageManager = App.STORAGE_MANAGER;
         initService();
     }
@@ -200,7 +200,7 @@ public class ApiManager implements Manageable {
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
-        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime(), storageManager.getRiderLocation());
+        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
 
         compositeSubscription.add(
             wrapRetryObservable(

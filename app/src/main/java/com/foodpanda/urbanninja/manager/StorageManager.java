@@ -40,7 +40,6 @@ public class StorageManager implements Manageable {
     private Token token;
     private List<Stop> stopList = new LinkedList<>();
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
-    private RiderLocation riderLocation;
 
     @Override
     public void init(Context context) {
@@ -306,21 +305,5 @@ public class StorageManager implements Manageable {
         }
 
         return stopList;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public RiderLocation getRiderLocation() {
-        return riderLocation;
-    }
-
-    /**
-     *
-     * @param riderLocation
-     */
-    public void setRiderLocation(RiderLocation riderLocation) {
-        this.riderLocation = riderLocation;
     }
 }
