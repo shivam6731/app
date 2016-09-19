@@ -172,8 +172,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNotifyActionPerformed() {
-        Stop routeStop = new Stop();
-        routeStop.setId(1L);
+        Stop routeStop = new Stop(1, "xxxx-yyyy");
         routeStop.setTask(RouteStopTask.PICKUP);
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
@@ -195,8 +194,7 @@ public class ApiExecutorTest {
         apiExecutor.setScheduleWrapper(scheduleWrapper);
         apiExecutor.setScheduleWrappers(scheduleWrappers);
 
-        Stop routeStop = new Stop();
-        routeStop.setId(1L);
+        Stop routeStop = new Stop(1, "xxxx-yyyy");
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
@@ -213,7 +211,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testOpenCurrentFragmentWithRoute() {
-        Stop routeStop = new Stop();
+        Stop routeStop = new Stop(1, "xxxx-yyyy");
 
         List<Stop> stopList = new LinkedList<>();
         stopList.add(routeStop);
@@ -406,8 +404,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testReportCollectIssue() {
-        Stop routeStop = new Stop();
-        routeStop.setId(1L);
+        Stop routeStop = new Stop(1,"xxxx-yyyy");
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
