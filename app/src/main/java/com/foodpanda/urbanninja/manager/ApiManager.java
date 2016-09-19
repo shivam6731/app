@@ -200,7 +200,7 @@ public class ApiManager implements Manageable {
     }
 
     public void notifyActionPerformed(long routeId, Status status) {
-        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime());
+        PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime(), storageManager.getRiderLocation());
 
         compositeSubscription.add(
             wrapRetryObservable(

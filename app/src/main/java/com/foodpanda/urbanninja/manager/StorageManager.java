@@ -3,6 +3,7 @@ package com.foodpanda.urbanninja.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -40,6 +41,7 @@ public class StorageManager implements Manageable {
     private Token token;
     private List<Stop> stopList = new LinkedList<>();
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
+    private RiderLocation riderLocation;
 
     @Override
     public void init(Context context) {
@@ -305,5 +307,27 @@ public class StorageManager implements Manageable {
         }
 
         return stopList;
+    }
+
+    /**
+     * get rider location to be send with rider action
+     * BI need this data for details about rider's actions
+     *
+     * @return location wrapped with additional info
+     */
+    @Nullable
+    public RiderLocation getRiderLocation() {
+        return riderLocation;
+    }
+
+    /**
+     * Every time when rider has new location we add more information with
+     * accuracy battery level and store.
+     * This data would be send with next rider action notifier
+     *
+     * @param riderLocation location wrapped with additional info
+     */
+    public void setRiderLocation(@Nullable RiderLocation riderLocation) {
+        this.riderLocation = riderLocation;
     }
 }
