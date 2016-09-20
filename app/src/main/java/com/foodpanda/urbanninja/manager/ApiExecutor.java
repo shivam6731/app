@@ -130,7 +130,6 @@ public class ApiExecutor {
      * Before clock-in rider should be inside delivery zone
      * if only he is inside polygon we call API clock-in method
      * otherwise we show error message
-     * TODO turn this feature back based on TM's feedback
      */
     public void tryToClockInInsideDeliveryZone() {
         if (scheduleWrapper == null || scheduleWrapper.getDeliveryZone() == null) {
@@ -138,7 +137,8 @@ public class ApiExecutor {
         }
 
         CheckPolygonManager checkPolygonManager = new CheckPolygonManager(activity);
-        PolygonStatusType polygonStatusType = checkPolygonManager.checkIfLocationInPolygon(scheduleWrapper.getDeliveryZone());
+        PolygonStatusType polygonStatusType = checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(
+            scheduleWrapper.getDeliveryZone());
         switch (polygonStatusType) {
             case INSIDE:
                 clockIn();
@@ -206,7 +206,7 @@ public class ApiExecutor {
      * Api call to clock-in
      * Only after clock-in riders would receive new orders
      */
-    public void clockIn() {
+    private void clockIn() {
         if (scheduleWrapper == null) {
             Log.e(ApiExecutor.class.getSimpleName(), "Schedule is empty");
 

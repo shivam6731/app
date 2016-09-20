@@ -138,9 +138,11 @@
 
     <!-- Delivery Zone-->
     <string name="delivery_zone_outside_title">Go to %1$s</string>
-    <string name="delivery_zone_outside"><![CDATA[You seem to be outside your delivery zone (%1$s).<br />
-        Please get closer to it and it and try clock in again <br />
-        <b>Note:</b> it\'s not possible to start your shift outside of your delivery zone]]></string>
+    <string name="delivery_zone_outside"><b>Clock in is allowed only:</b>\n
+        - within your delivery zone\n
+        - 100m around your starting point\n
+        You seem not to be in any of the places above.\n
+        <b>Please change your position and try to clock in again</b></string>
 
     <string name="delivery_zone_no_location_title">Activate GPS</string>
     <string name="delivery_zone_no_location">It looks like your GPS settings are not properly setup.\n

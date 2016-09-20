@@ -66,4 +66,22 @@ public class DeliveryZone implements ParcelableModel {
     public List<GeoCoordinate> getPolygon() {
         return polygon;
     }
+
+    /**
+     * Needed only for tests
+     *
+     * @param startingPoint set mock starting point for test
+     */
+    public void setStartingPoint(StartingPoint startingPoint) {
+        this.startingPoint = startingPoint;
+    }
+
+    /**
+     * Needed onlt for tests
+     *
+     * @param polygon set mock polygon for test
+     */
+    public void setPolygon(List<GeoCoordinate> polygon) {
+        this.polygon = polygon;
+    }
 }

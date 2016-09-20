@@ -81,4 +81,12 @@ public class StartingPoint implements MapDetailsProvider {
         return false;
     }
 
+    /**
+     * Needs only for tests
+     *
+     * @param geoCoordinate coordinates of starting point
+     */
+    public void setGeoCoordinate(GeoCoordinate geoCoordinate) {
+        this.geoCoordinate = geoCoordinate;
+    }
 }

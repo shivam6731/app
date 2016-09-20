@@ -193,7 +193,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         switch (userStatus) {
             case CLOCK_IN:
                 //we need to turn off check if rider inside delivery zone for now
-                apiExecutor.clockIn();
+                apiExecutor.tryToClockInInsideDeliveryZone();
                 break;
             case EMPTY_LIST:
                 break;

@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
@@ -62,7 +63,7 @@ public class InformationDialogFragment extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.popup_theme))
             .setIcon(R.drawable.icon_alert_orange)
             .setTitle(FontCacheUtil.typeface(getContext(), title, true))
-            .setMessage(FontCacheUtil.typeface(getContext(), message, false))
+            .setMessage(message)
             .setPositiveButton(FontCacheUtil.typeface(getContext(), buttonLabel, false),
                 (dialog, whichButton) -> {
                     onPositiveButtonClicked();
@@ -70,26 +71,38 @@ public class InformationDialogFragment extends DialogFragment {
                 }
             );
 
+        AlertDialog alertDialog;
+
         //set information details depends on type
         switch (dialogType) {
             case ISSUE_COLLECTION_WARNING:
-                return alertDialogBuilder
+                alertDialogBuilder
                     .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {
                         dismiss();
-                    })
-                    .create();
+                    });
+                alertDialog = alertDialogBuilder.create();
+                break;
             case INFORMATION:
-                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog = alertDialogBuilder.create();
                 //Add primary text color for alert dialog
                 alertDialog.setOnShowListener(
                     arg0 ->
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).
                             setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimary)));
 
-                return alertDialog;
+                break;
             default:
-                return alertDialogBuilder.create();
+                alertDialog = alertDialogBuilder.create();
+                break;
+
         }
+        
+        //set custom fonts for view in alert dialog
+        alertDialog.setOnShowListener(dialogInterface -> {
+            FontCacheUtil.setOpenSansTypeFaceFamilyForDialog((TextView) alertDialog.findViewById(android.R.id.message), getContext());
+        });
+
+        return alertDialog;
     }
 
     /**
