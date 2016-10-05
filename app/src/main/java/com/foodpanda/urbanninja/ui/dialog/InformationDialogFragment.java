@@ -61,7 +61,7 @@ public class InformationDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.popup_theme))
-            .setIcon(R.drawable.icon_alert_orange)
+            .setIcon(R.drawable.icon_alert_red)
             .setTitle(FontCacheUtil.typeface(getContext(), title, true))
             .setMessage(message)
             .setPositiveButton(FontCacheUtil.typeface(getContext(), buttonLabel, false),

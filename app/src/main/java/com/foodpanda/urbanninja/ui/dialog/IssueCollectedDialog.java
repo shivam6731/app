@@ -30,7 +30,6 @@ import com.foodpanda.urbanninja.utils.FormatUtil;
 public class IssueCollectedDialog extends DialogFragment {
     private MainActivityCallback mainActivityCallback;
     private EditText editTextAmount;
-
     private StorageManager storageManager;
 
     public static IssueCollectedDialog newInstance() {
@@ -144,9 +143,9 @@ public class IssueCollectedDialog extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
-                    TagDrawable img = new TagDrawable(editTextAmount);
-                    img.setText(FormatUtil.getCurrencySymbol(App.STORAGE_MANAGER.getCountry()));
-                    editTextAmount.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+                    TagDrawable currencyDrawable = new TagDrawable(editTextAmount);
+                    currencyDrawable.setText(FormatUtil.getCurrencySymbol(storageManager.getCountry()));
+                    editTextAmount.setCompoundDrawablesWithIntrinsicBounds(currencyDrawable, null, null, null);
                     editTextAmount.invalidate();
                 } else {
                     editTextAmount.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -159,4 +158,5 @@ public class IssueCollectedDialog extends DialogFragment {
             }
         });
     }
+
 }
