@@ -1,7 +1,6 @@
 package com.foodpanda.urbanninja.ui.util;
 
 import android.content.Context;
-import android.text.Html;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.enums.DialogType;
@@ -37,7 +36,7 @@ public class DialogInfoHelper {
                 break;
             case OUTSIDE:
                 title = context.getResources().getString(R.string.delivery_zone_outside_title, deliveryZoneName);
-                message = getFormattedHtml(context.getString(R.string.delivery_zone_outside, deliveryZoneName));
+                message = context.getResources().getText(R.string.delivery_zone_outside);
                 buttonLabel = context.getResources().getText(R.string.delivery_zone_outside_label);
                 break;
             case NO_DATA:
@@ -51,17 +50,4 @@ public class DialogInfoHelper {
         nestedFragmentCallback.openInformationDialog(title, message, buttonLabel, dialogType);
     }
 
-    /**
-     * Because Html.fromHtml is deprecated we need to check android device version
-     *
-     * @param text with Html
-     * @return formatted text with applied html tags
-     */
-    public static CharSequence getFormattedHtml(String text) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            return Html.fromHtml(text);
-        }
-    }
 }

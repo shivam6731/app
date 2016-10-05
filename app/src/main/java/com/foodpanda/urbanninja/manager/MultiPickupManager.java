@@ -2,12 +2,12 @@ package com.foodpanda.urbanninja.manager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.text.TextUtils;
 
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
-import com.foodpanda.urbanninja.ui.util.DialogInfoHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,10 +45,9 @@ public class MultiPickupManager {
      * @return formatted String with orders list and details about what to do
      */
     public CharSequence getMultiPickUpDetailsSting(Context context, Stop currentStop) {
-        return DialogInfoHelper.getFormattedHtml(
-            context.getResources().getString(
-                R.string.multi_pickup_alert_details,
-                getOrderCodeString(currentStop)));
+        return getFormattedHtml(context.getResources().getString(
+            R.string.multi_pickup_alert_details,
+            getOrderCodeString(currentStop)));
     }
 
     /**
@@ -145,5 +144,19 @@ public class MultiPickupManager {
     private boolean isTheSameVendorCodes(@NonNull Stop stop, @NonNull Stop currentStop) {
         return stop.getOrderCode().substring(0, 4).
             equalsIgnoreCase(currentStop.getOrderCode().substring(0, 4));
+    }
+
+    /**
+     * Because Html.fromHtml is deprecated we need to check android device version
+     *
+     * @param text with Html
+     * @return formatted text with applied html tags
+     */
+    private CharSequence getFormattedHtml(String text) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(text);
+        }
     }
 }

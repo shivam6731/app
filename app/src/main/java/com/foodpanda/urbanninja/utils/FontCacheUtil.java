@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.foodpanda.urbanninja.ui.util.TypefaceSpan;
 
@@ -53,6 +54,18 @@ public class FontCacheUtil {
         spannableString.setSpan(new TypefaceSpan(typeface), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return spannableString;
+    }
+
+    /**
+     * Set font family for alert dialogs messages.
+     * To make part of text bold, part normal form information dialogs
+     *
+     * @param textView text field where we need set type family
+     * @param context  Context to have access to the font files from assets
+     */
+    public static void setOpenSansTypeFaceFamilyForDialog(TextView textView, Context context) {
+        textView.setTypeface(getTypeface("OpenSans-Semibold.ttf", context), Typeface.BOLD);
+        textView.setTypeface(getTypeface("OpenSans-Light.ttf", context));
     }
 
 }
