@@ -16,7 +16,7 @@
         style="@style/TextView.Dark.Multiline"
         android:layout_width="match_parent"
         android:hint="@string/issue_collection_report_amount_collected"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:textColorHint="@color/description_text_color"/>
 
     <Spinner
