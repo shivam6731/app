@@ -23,7 +23,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 class CheckPolygonManager {
-    private static final int RADIUS_TO_STARTING_POINT_IN_METERS = 100;
+    private static final int RADIUS_TO_STARTING_POINT_IN_METERS = 300;
     //We need activity to try to retrieve last rider location
     private BaseActivity baseActivity;
 

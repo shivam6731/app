@@ -96,8 +96,8 @@ public class CheckPolygonManagerTest {
     @Test
     public void testCheckIfLocationInPolygonOrNearStartingPointNotNearStartingPoint() throws Exception {
         Location location = new Location("");
-        location.setLatitude(55.7812914212101);
-        location.setLongitude(-111.0240877);
+        location.setLatitude(63.66504166152633);
+        location.setLongitude(-113.72000813484192);
 
         CheckPolygonManager checkPolygonManager = Mockito.spy(this.checkPolygonManager);
         when(checkPolygonManager.getLastRiderLocation()).thenReturn(location);
@@ -105,18 +105,18 @@ public class CheckPolygonManagerTest {
         DeliveryZone deliveryZone = new DeliveryZone();
         StartingPoint startingPoint = new StartingPoint();
 
-        startingPoint.setGeoCoordinate(new GeoCoordinate(55.7820516, -111.0253537));
+        startingPoint.setGeoCoordinate(new GeoCoordinate(63.66322823186246, -113.715341091156));
         deliveryZone.setStartingPoint(startingPoint);
 
-        //Distance is 116 meters
+        //Distance is 306 meters
         assertEquals(PolygonStatusType.OUTSIDE, checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(deliveryZone));
     }
 
     @Test
     public void testCheckIfLocationInPolygonOrNearStartingPointNearStartingPoint() throws Exception {
         Location location = new Location("");
-        location.setLatitude(55.78225976948563);
-        location.setLongitude(-111.02602690458298);
+        location.setLatitude(63.6660458994591);
+        location.setLongitude(-113.7204909324646);
 
         CheckPolygonManager checkPolygonManager = Mockito.spy(this.checkPolygonManager);
         when(checkPolygonManager.getLastRiderLocation()).thenReturn(location);
@@ -124,10 +124,10 @@ public class CheckPolygonManagerTest {
         DeliveryZone deliveryZone = new DeliveryZone();
         StartingPoint startingPoint = new StartingPoint();
 
-        startingPoint.setGeoCoordinate(new GeoCoordinate(55.781737890071604, -111.02476090192795));
+        startingPoint.setGeoCoordinate(new GeoCoordinate(63.66398027188404, -113.71671438217163));
         deliveryZone.setStartingPoint(startingPoint);
 
-        //Distance is 98 meters
+        //Distance is 296 meters
         assertEquals(PolygonStatusType.INSIDE, checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(deliveryZone));
     }
 
