@@ -54,6 +54,7 @@
     <string name="error_start_point_not_found">Starting Point not found</string>
     <string name="error_gps_disabled">Gps is disabled</string>
     <string name="error_gps_permission_disabled">GPS Permission denied</string>
+    <string name="error_no_map_application">There is no map application in your device.</string>
 
     <!-- Dialog -->
     <string name="dialog_phone_title">Select Phone Number</string>

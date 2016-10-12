@@ -54,6 +54,7 @@
     <string name="error_start_point_not_found">找不到起點</string>
     <string name="error_gps_disabled">GPS是禁用</string>
     <string name="error_gps_permission_disabled">GPS权限被拒绝</string>
+    <string name="error_no_map_application">您的设备中没有地图</string>
 
     <!-- Dialog -->
     <string name="dialog_phone_title">選擇電話號碼</string>

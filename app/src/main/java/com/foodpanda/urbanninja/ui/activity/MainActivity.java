@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.activity;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -496,8 +497,16 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                 geoCoordinate.getLat(),
                 geoCoordinate.getLon()
             );
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-            startActivity(intent);
+
+            try {
+                // not all our devices have android maps so we should catch this case and show error message
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Log.e(TAG, e.getMessage());
+                Toast.makeText(this, getResources().getString(R.string.error_no_map_application), Toast.LENGTH_SHORT).show();
+            }
+
         } else {
             Toast.makeText(this, getResources().getString(R.string.error_start_point_not_found), Toast.LENGTH_SHORT).show();
         }
