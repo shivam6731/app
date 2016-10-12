@@ -404,16 +404,16 @@ public class ApiExecutorTest {
 
     @Test
     public void testReportCollectIssue() {
-        Stop routeStop = new Stop(1,"xxxx-yyyy");
+        Stop routeStop = new Stop(1, "xxxx-yyyy");
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
-        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS);
+        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.WRONG_ITEMS);
 
         verify(apiManager).reportCollectionIssue(
             eq(routeStop.getId()),
             anyDouble(),
-            eq(CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS),
+            eq(CollectionIssueReason.WRONG_ITEMS),
             Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
         );
         verify(activity).showProgress();
@@ -421,12 +421,12 @@ public class ApiExecutorTest {
 
     @Test
     public void testReportCollectIssueNullCurrentStop() {
-        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS);
+        apiExecutor.reportCollectionIssue(1, CollectionIssueReason.WRONG_ITEMS);
 
         verify(apiManager, never()).reportCollectionIssue(
             anyLong(),
             anyDouble(),
-            eq(CollectionIssueReason.DISCOUNT_GIVEN_FOR_LATENESS),
+            eq(CollectionIssueReason.WRONG_ITEMS),
             Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
         );
         verify(activity, never()).showProgress();

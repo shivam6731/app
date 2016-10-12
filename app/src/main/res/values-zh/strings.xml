@@ -169,15 +169,9 @@
     <string name="issue_collection_report_ok">報告問題</string>
     <string name="issue_collection_empty_fields">請在提交報告前先填妥所有資料</string>
 
-    <string name="issue_collection_reason_vendor_mixed_items">餐廳攪混了食物</string>
-    <string name="issue_collection_reason_items_not_available">沒有相關食物</string>
-    <string name="issue_collection_reason_rider_damaged_item">食物遭車手損壞了</string>
-    <string name="issue_collection_reason_rider_had_no_money_change">車手沒有足夠零錢找續 </string>
-    <string name="issue_collection_reason_discount_given_for_lateness">遲到而提供優惠</string>
-    <string name="issue_collection_reason_rider_paid_more_price_mismatch">車手繳交的金額多於應付的金額</string>
-    <string name="issue_collection_reason_rider_paid_less_price_mismatch">車手繳交的金額少於應付的金額</string>
-    <string name="issue_collection_reason_order_was_partially_paid_online">訂單有部分金額已於網上付了錢</string>
-    <string name="issue_collection_reason_rider_lost_money">車手遺失了金錢</string>
+    <string name="issue_collection_reason_wrong_items">食物與客人所訂的不相符 (食物調換了)</string>
+    <string name="issue_collection_reason_missing_items">食物與客人所訂的不相符 (有缺漏)</string>
+    <string name="issue_collection_reason_damaged_items">食物在運送途中損毀</string>
     <string name="issue_collection_reason_other">其他</string>
 
     <string name="issue_collection_report_sent">我們已收到你提交的報告</string>

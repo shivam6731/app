@@ -326,7 +326,7 @@ public class StorageManager implements Manageable {
      * @return location wrapped with additional info
      */
     @Nullable
-    public RiderLocation getRiderLocation() {
+    RiderLocation getRiderLocation() {
         return riderLocation;
     }
 

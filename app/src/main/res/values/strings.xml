@@ -179,15 +179,9 @@
     <string name="issue_collection_report_ok">Report issue</string>
     <string name="issue_collection_empty_fields">Please fill all field before sending collection issue report</string>
 
-    <string name="issue_collection_reason_vendor_mixed_items">Vendor mixed items</string>
-    <string name="issue_collection_reason_items_not_available">Items not available</string>
-    <string name="issue_collection_reason_rider_damaged_item">Rider damaged item</string>
-    <string name="issue_collection_reason_rider_had_no_money_change">Rider had no money change</string>
-    <string name="issue_collection_reason_discount_given_for_lateness">Discount given for lateness</string>
-    <string name="issue_collection_reason_rider_paid_more_price_mismatch">Rider paid more price mismatch</string>
-    <string name="issue_collection_reason_rider_paid_less_price_mismatch">Rider paid less price mismatch</string>
-    <string name="issue_collection_reason_order_was_partially_paid_online">Order was partially paid online</string>
-    <string name="issue_collection_reason_rider_lost_money">Rider lost money</string>
+    <string name="issue_collection_reason_wrong_items">Wrong item(s)</string>
+    <string name="issue_collection_reason_missing_items">Missing item(s)</string>
+    <string name="issue_collection_reason_damaged_items">Damaged item(s)</string>
     <string name="issue_collection_reason_other">Other</string>
 
     <string name="issue_collection_report_sent">You report has been collected.</string>
