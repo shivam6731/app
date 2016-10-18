@@ -186,5 +186,26 @@
     <string name="issue_collection_reason_other">Other</string>
 
     <string name="issue_collection_report_sent">You report has been collected.</string>
+
+    <!--Vendor or Customer Issue -->
+    <string name="issue_vendor_customer_selection_title">What kind of issue do you have?</string>
+    <string name="issue_vendor_customer_selection_description">Please select one of the following options.</string>
+    <string name="issue_vendor_customer_selection_first_action_title">With Vendor</string>
+    <string name="issue_vendor_customer_selection_first_action_description">Food is not ready; Address in not clear; etc</string>
+    <string name="issue_vendor_customer_selection_second_action_title">With Customer</string>
+    <string name="issue_vendor_customer_selection_second_action_description">Unreachable; Does not want to pay; etc</string>
+
+    <string name="issue_vendor_title">Issue related to the vendor?</string>
+    <string name="issue_vendor_first_action_title">Call vendor</string>
+    <string name="issue_vendor_first_action_description">Always remember to be polite and not intrusive</string>
+    <string name="issue_vendor_second_action_title">Report issue</string>
+    <string name="issue_vendor_second_action_description">You will be redirected to an easy to use google form</string>
+
+    <string name="issue_customer_title">Issue related to the customer?</string>
+    <string name="issue_customer_first_action_title">Call Customer</string>
+    <string name="issue_customer_first_action_description">Always remember to be polite and not intrusive</string>
+    <string name="issue_customer_second_action_title">Report issue</string>
+    <string name="issue_customer_second_action_description">You will be redirected to an easy to use google form</string>
+
 </resources>
 

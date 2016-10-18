@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:padding="@dimen/padding_default">
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 style="@style/TextView"
                 android:layout_gravity="center_horizontal"
                 android:drawableLeft="@drawable/icon_refresh"

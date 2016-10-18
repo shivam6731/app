@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+              android:orientation="vertical">
+
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+        style="@style/TextView.Dark.Multiline"
+        android:padding="@dimen/padding_default"
+        android:text="@string/issue_vendor_customer_selection_description"/>
+
+    <View
+        style="@style/DividerView"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_first_action"
+        style="@style/RippleLayout">
+
+        <ImageView
+            android:id="@+id/image_first_action"
+            style="@style/ImageView"
+            android:layout_centerVertical="true"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_first_action_title"
+            style="@style/TextView.CardDescription"
+            android:layout_toRightOf="@+id/image_first_action"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_first_action_description"
+            style="@style/TextView.Title.Multiline.NotBold.Address"
+            android:layout_below="@+id/txt_first_action_title"
+            android:layout_toRightOf="@+id/image_first_action"
+            android:gravity="left"/>
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerView"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_second_action"
+        style="@style/RippleLayout">
+
+        <ImageView
+            android:id="@+id/image_second_action"
+            style="@style/ImageView"
+            android:layout_centerVertical="true"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_second_action_title"
+            style="@style/TextView.CardDescription"
+            android:layout_toRightOf="@+id/image_second_action"/>
+
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
+            android:id="@+id/txt_second_action_description"
+            style="@style/TextView.Title.Multiline.NotBold.Address"
+            android:layout_below="@+id/txt_second_action_title"
+            android:layout_toRightOf="@+id/image_second_action"
+            android:gravity="left"/>
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerView"/>
+
+</LinearLayout>

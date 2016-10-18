@@ -63,9 +63,9 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_empty_schedule"
-        style="@style/TextView.Title.Multiline"
+        style="@style/TextView.Title.Multiline.NotBold"
         android:layout_centerInParent="true"
         android:text="@string/empty_list_schedule"/>
 

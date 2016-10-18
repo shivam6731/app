@@ -43,7 +43,7 @@
 
         </LinearLayout>
 
-        <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+        <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_additional_description"
             style="@style/TextView.Multiline"
             android:layout_margin="@dimen/margin_default"/>

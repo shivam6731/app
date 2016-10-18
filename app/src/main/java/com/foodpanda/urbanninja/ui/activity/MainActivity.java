@@ -43,7 +43,7 @@ import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.dialog.InformationDialogFragment;
 import com.foodpanda.urbanninja.ui.dialog.IssueCollectedDialog;
-import com.foodpanda.urbanninja.ui.dialog.PhoneNumberSingleChoiceDialog;
+import com.foodpanda.urbanninja.ui.dialog.IssueVendorCustomerDialog;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.OrdersNestedFragment;
 import com.foodpanda.urbanninja.ui.fragments.ScheduleListFragment;
@@ -385,7 +385,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_call:
-                showPhoneDialog();
+                showIssueDialog(DialogType.ISSUE_VENDOR_CUSTOMER_SELECTION);
                 return true;
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
@@ -565,6 +565,26 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
     }
 
+    @Override
+    public void openWebPage(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
+    }
+
+    @Override
+    public void showIssueDialog(DialogType dialogType) {
+        if (storageManager.getCurrentStop() != null) {
+            IssueVendorCustomerDialog issueVendorCustomerDialog = IssueVendorCustomerDialog.newInstance(
+                dialogType,
+                storageManager.getCurrentStop());
+
+            issueVendorCustomerDialog.show(fragmentManager, IssueVendorCustomerDialog.class.getSimpleName());
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Get sub title for action bar with information about delivery time
      *
@@ -610,15 +630,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                 }
                 setSelectedNavigationItem();
             }
-        }
-    }
-
-    private void showPhoneDialog() {
-        if (storageManager.getCurrentStop() != null) {
-            PhoneNumberSingleChoiceDialog phoneNumberSingleChoiceDialog = PhoneNumberSingleChoiceDialog.newInstance(storageManager.getCurrentStop());
-            phoneNumberSingleChoiceDialog.show(fragmentManager, PhoneNumberSingleChoiceDialog.class.getSimpleName());
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
         }
     }
 

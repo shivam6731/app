@@ -7,12 +7,12 @@
     android:orientation="vertical"
     android:padding="@dimen/padding_default">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_vendor_name_title"
         style="@style/TextView.CardDescription"
         android:text="@string/task_details_vendor_name"/>
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_vendor_name"
         style="@style/TextView.Title.Multiline.NotBold.Address"/>
 

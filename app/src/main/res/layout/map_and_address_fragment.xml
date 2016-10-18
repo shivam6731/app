@@ -37,11 +37,11 @@
                 android:orientation="vertical"
                 android:padding="@dimen/padding_default">
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     style="@style/TextView.CardDescription"
                     android:text="@string/task_details_address"/>
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     android:id="@+id/txt_address"
                     style="@style/TextView.Title.Multiline.NotBold.Address"/>
 
@@ -57,11 +57,11 @@
                 android:orientation="vertical"
                 android:padding="@dimen/padding_default">
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     style="@style/TextView.CardDescription"
                     android:text="@string/task_details_comment"/>
 
-                <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+                <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                     android:id="@+id/txt_comment"
                     style="@style/TextView.Title.Multiline.NotBold.Address"/>
 

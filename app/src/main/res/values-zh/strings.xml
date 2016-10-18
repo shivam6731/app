@@ -176,4 +176,24 @@
     <string name="issue_collection_reason_other">其他</string>
 
     <string name="issue_collection_report_sent">我們已收到你提交的報告</string>
+
+    <!--Vendor or Customer Issue -->
+    <string name="issue_vendor_customer_selection_title">你遇到什麼問題?</string>
+    <string name="issue_vendor_customer_selection_description">請選擇下列選項</string>
+    <string name="issue_vendor_customer_selection_first_action_title">與餐廳有關</string>
+    <string name="issue_vendor_customer_selection_first_action_description">食物未準備好, 地址不清晰等等</string>
+    <string name="issue_vendor_customer_selection_second_action_title">與顧客有關</string>
+    <string name="issue_vendor_customer_selection_second_action_description">找不到顧客, 顧客不願意付款等等</string>
+
+    <string name="issue_vendor_title">事件與餐廳有關?</string>
+    <string name="issue_vendor_first_action_title">致電餐廳</string>
+    <string name="issue_vendor_first_action_description">請時刻記住要保持禮貌，不要滋擾別人</string>
+    <string name="issue_vendor_second_action_title">報告問題</string>
+    <string name="issue_vendor_second_action_description">您將被轉址到一個易於使用的Google表格</string>
+
+    <string name="issue_customer_title">事件與顧客有關?</string>
+    <string name="issue_customer_first_action_title">致電顧客</string>
+    <string name="issue_customer_first_action_description">請時刻記住要保持禮貌，不要滋擾別人</string>
+    <string name="issue_customer_second_action_title">報告問題</string>
+    <string name="issue_customer_second_action_description">您將被轉址到一個易於使用的Google表格</string>
 </resources>

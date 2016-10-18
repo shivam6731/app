@@ -3,13 +3,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_cash_report_step_name"
         style="@style/TextView"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/txt_cash_report_step_value"/>
 
-    <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+    <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
         android:id="@+id/txt_cash_report_step_value"
         style="@style/TextView"
         android:layout_alignParentRight="true"/>

@@ -64,9 +64,7 @@ public class IssueCollectedDialog extends DialogFragment {
             .setView(view)
             .setTitle(FontCacheUtil.typeface(getContext(), getResources().getText(R.string.issue_collection_report_title), true))
             .setPositiveButton(getResources().getText(R.string.issue_collection_report_ok),
-                (dialog, whichButton) -> {
-                    sendCollectionIssue();
-                }
+                (dialog, whichButton) -> sendCollectionIssue()
             )
             .create();
     }

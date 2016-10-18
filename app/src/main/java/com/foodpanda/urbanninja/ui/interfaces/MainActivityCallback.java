@@ -68,4 +68,19 @@ public interface MainActivityCallback {
      * @param reason           reason of an issue
      */
     void sendCollectionIssue(double collectionAmount, CollectionIssueReason reason);
+
+    /**
+     * Open web page with intent.It means that third part browser app would open this web page
+     *
+     * @param url String with url to be converted to Uri
+     *            and after this Uri would be passed to
+     */
+    void openWebPage(String url);
+
+    /**
+     * show dialog to launch or continue vendor or customer issue collection activity
+     *
+     * @param dialogType to identify with what kind of issue you we are working
+     */
+    void showIssueDialog(DialogType dialogType);
 }

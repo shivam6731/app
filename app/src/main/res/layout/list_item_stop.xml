@@ -55,11 +55,11 @@
             android:orientation="vertical">
 
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 style="@style/TextView.CardDescription"
                 android:text="@string/route_action_restaurant"/>
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 android:id="@+id/txt_stop_vendor_name"
                 style="@style/TextView.Dark.Multiline"/>
 
@@ -76,11 +76,11 @@
             android:orientation="vertical">
 
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 style="@style/TextView.CardDescription"
                 android:text="@string/route_action_details"/>
 
-            <com.foodpanda.urbanninja.ui.widget.OpenSansRegularTextView
+            <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 android:id="@+id/txt_stop_description"
                 style="@style/TextView.Dark.Multiline"/>
 
