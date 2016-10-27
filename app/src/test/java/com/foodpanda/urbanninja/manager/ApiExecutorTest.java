@@ -1,7 +1,5 @@
 package com.foodpanda.urbanninja.manager;
 
-import android.app.Application;
-
 import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
@@ -29,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.Collections;
@@ -73,20 +70,29 @@ public class ApiExecutorTest {
     MultiPickupManager multiPickupManager;
 
     @Mock
+    CheckPolygonManager checkPolygonManager;
+
+    @Mock
     private NestedFragmentCallback nestedFragmentCallback;
+    @Mock
+    private LocationSettingCheckManager locationSettingCheckManager;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        Application app = RuntimeEnvironment.application;
-        app.onCreate();
 
-        apiManager.init(app);
         when(apiManager.getRiderObservable()).thenReturn(Observable.empty());
         when(apiManager.getCurrentScheduleObservable()).thenReturn(Observable.empty());
         when(apiManager.getRouteObservable(anyInt())).thenReturn(Observable.empty());
 
-        apiExecutor = new ApiExecutor(activity, nestedFragmentCallback, apiManager, storageManager, multiPickupManager);
+        ///https://google.github.io/dagger/testing.html we don't need to inject for tests
+        apiExecutor = new ApiExecutor(activity,
+            nestedFragmentCallback,
+            apiManager,
+            storageManager,
+            multiPickupManager,
+            checkPolygonManager,
+            locationSettingCheckManager);
 
         DateTimeUtils.setCurrentMillisFixed(DateTime.now().getMillis());
     }

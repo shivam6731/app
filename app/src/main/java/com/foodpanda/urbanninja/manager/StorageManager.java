@@ -33,8 +33,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class StorageManager implements Manageable {
+@Singleton
+public class StorageManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences cachedRequestPreferences;
     private Gson gson;
@@ -44,8 +47,12 @@ public class StorageManager implements Manageable {
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
     private RiderLocation riderLocation;
 
-    @Override
-    public void init(Context context) {
+    @Inject
+    public StorageManager(Context context) {
+        init(context);
+    }
+
+    private void init(Context context) {
         sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         cachedRequestPreferences = context.getSharedPreferences(Constants.Preferences.CACHED_REQUESTS_PREFERENCES_NAME, Context.MODE_PRIVATE);
         gson = new GsonBuilder().

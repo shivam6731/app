@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.di.module.TimerHelperAndOrderTypePaymentHelperModule;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
 import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsCallback;
@@ -21,6 +23,8 @@ import com.foodpanda.urbanninja.ui.interfaces.TimerDataProvider;
 import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
+
+import javax.inject.Inject;
 
 public class ReadyToWorkFragment extends BaseFragment implements
     TimerDataProvider,
@@ -34,7 +38,9 @@ public class ReadyToWorkFragment extends BaseFragment implements
 
     private NestedFragmentCallback nestedFragmentCallback;
     private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
-    private TimerHelper timerHelper;
+
+    @Inject
+    TimerHelper timerHelper;
 
     public static ReadyToWorkFragment newInstance(ScheduleWrapper scheduleWrapper) {
         ReadyToWorkFragment readyToWorkFragment = new ReadyToWorkFragment();
@@ -59,8 +65,14 @@ public class ReadyToWorkFragment extends BaseFragment implements
         if (scheduleWrapper == null) {
             scheduleWrapper = new ScheduleWrapper();
         }
-        timerHelper = new TimerHelper(activity, this, this, nestedFragmentCallback);
     }
+
+    @Override
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().plus(new TimerHelperAndOrderTypePaymentHelperModule(activity, this, this, nestedFragmentCallback)).inject(this);
+    }
+
 
     @Nullable
     @Override

@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.inject.Inject;
+
 /**
  * This Service provides background collecting rider location
  * send it to the server side every minute and if this sending failed
@@ -75,8 +77,11 @@ public class LocationService extends Service implements
     //the data would be send if only location bundle is not empty
     private static final int SEND_DATA_INTERVAL = 30000;
 
-    private ApiManager apiManager;
-    private StorageManager storageManager;
+    @Inject
+    ApiManager apiManager;
+    @Inject
+    StorageManager storageManager;
+
     private Timer timer;
 
     private GoogleApiClient googleApiClient;
@@ -98,8 +103,7 @@ public class LocationService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
-        apiManager = App.API_MANAGER;
-        storageManager = App.STORAGE_MANAGER;
+        App.get(this).getMainComponent().inject(this);
     }
 
     /**

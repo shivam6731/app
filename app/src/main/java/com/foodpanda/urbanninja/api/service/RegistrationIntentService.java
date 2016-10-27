@@ -10,17 +10,23 @@ import com.foodpanda.urbanninja.manager.ApiManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
+import javax.inject.Inject;
+
 public class RegistrationIntentService extends IntentService {
-    private ApiManager apiManager;
+    @Inject
+    ApiManager apiManager;
+
     private static final String TAG = RegistrationIntentService.class.getSimpleName();
 
     public RegistrationIntentService() {
         super(TAG);
-        apiManager = App.API_MANAGER;
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        //injection
+        App.get(getApplicationContext()).getMainComponent().inject(this);
+
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
             String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),

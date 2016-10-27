@@ -16,9 +16,12 @@ import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> implements BaseApiCallback<ScheduleCollectionWrapper> {
     private MainActivityCallback mainActivityCallback;
-    private ApiManager apiManager;
+    @Inject
+    ApiManager apiManager;
 
     public static ScheduleListFragment newInstance() {
         ScheduleListFragment fragment = new ScheduleListFragment();
@@ -33,9 +36,9 @@ public class ScheduleListFragment extends BaseListFragment<ScheduleAdapter> impl
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        apiManager = App.API_MANAGER;
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().inject(this);
     }
 
     @Override

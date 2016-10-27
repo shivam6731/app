@@ -9,16 +9,16 @@ import android.net.NetworkInfo;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.manager.ApiManager;
 
-public class ConnectionStatusReceiver extends BroadcastReceiver {
-    private ApiManager apiManager;
+import javax.inject.Inject;
 
-    public ConnectionStatusReceiver() {
-        super();
-        apiManager = App.API_MANAGER;
-    }
+public class ConnectionStatusReceiver extends BroadcastReceiver {
+    @Inject
+    ApiManager apiManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        App.get(context).getMainComponent().inject(this);
+
         if (ConnectivityManager.CONNECTIVITY_ACTION.equalsIgnoreCase(intent.getAction()) &&
             isInternetConnectionAvailable(context)) {
             apiManager.sendAllFailedRequests();

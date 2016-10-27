@@ -34,8 +34,7 @@ public class StorageManagerTest {
         Application app = RuntimeEnvironment.application;
         app.onCreate();
 
-        storageManager = new StorageManager();
-        storageManager.init(app);
+        storageManager = new StorageManager(app);
     }
 
     @Test

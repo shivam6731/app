@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.di.module.TimerHelperAndOrderTypePaymentHelperModule;
 import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.RouteStopActivity;
@@ -36,6 +37,8 @@ import com.foodpanda.urbanninja.utils.FormatUtil;
 
 import org.joda.time.DateTime;
 
+import javax.inject.Inject;
+
 public class RouteStopDetailsFragment extends BaseFragment implements
     TimerDataProvider,
     MapAddressDetailsChangeListener,
@@ -43,7 +46,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     private static final int POSITION_FOR_ADDITIONAL_CONTENT_LAYOUT = 1;
 
     private NestedFragmentCallback nestedFragmentCallback;
-    private TimerHelper timerHelper;
 
     private LinearLayout layoutContent;
     private RelativeLayout layoutTypeAndPayment;
@@ -52,6 +54,15 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     private Stop currentStop;
 
     private MapAddressDetailsChangeListener mapAddressDetailsChangeListener;
+
+    @Inject
+    MultiPickupManager multiPickupManager;
+
+    @Inject
+    TimerHelper timerHelper;
+
+    @Inject
+    OrderTypeAndPaymentHelper orderTypeAndPaymentHelper;
 
     public static RouteStopDetailsFragment newInstance(Stop stop) {
         RouteStopDetailsFragment routeStopDetailsFragment = new RouteStopDetailsFragment();
@@ -72,7 +83,12 @@ public class RouteStopDetailsFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
-        timerHelper = new TimerHelper(activity, this, this);
+    }
+
+    @Override
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().plus(new TimerHelperAndOrderTypePaymentHelperModule(activity, this, this)).inject(this);
     }
 
     @Nullable
@@ -130,7 +146,7 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      */
     private void setData() {
         //Set payment details and type of the task
-        new OrderTypeAndPaymentHelper(activity, currentStop, App.STORAGE_MANAGER).setType(layoutTypeAndPayment);
+        orderTypeAndPaymentHelper.setType(layoutTypeAndPayment);
 
         //Launch the map details fragment
         MapAddressDetailsFragment mapAddressDetailsFragment = MapAddressDetailsFragment.newInstance(
@@ -184,7 +200,6 @@ public class RouteStopDetailsFragment extends BaseFragment implements
      * with list of order codes that should be picked-up from the same place
      */
     private void setMultiPickUpLayoutIfNeeds() {
-        MultiPickupManager multiPickupManager = new MultiPickupManager(App.STORAGE_MANAGER);
         if (multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop)) {
             View view = View.inflate(activity, R.layout.route_stop_additional_details_layout, null);
 

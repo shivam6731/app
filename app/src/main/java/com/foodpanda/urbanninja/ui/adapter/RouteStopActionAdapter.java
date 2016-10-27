@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
@@ -44,13 +43,16 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
     private Stop stop;
 
     private RecyclerViewEmpty recyclerView;
+    private MultiPickupManager multiPickupManager;
 
     public RouteStopActionAdapter(
         Stop stop,
         Context context,
         NestedFragmentCallback nestedFragmentCallback,
         ShowMapAddressCallback showMapAddressCallback,
-        RecyclerViewEmpty recyclerView) {
+        RecyclerViewEmpty recyclerView,
+        StorageManager storageManager,
+        MultiPickupManager multiPickupManager) {
 
         super(stop.getActivities(), context);
         setSelectable(false);
@@ -61,10 +63,11 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
         this.showMapAddressCallback = showMapAddressCallback;
         this.stop = stop;
         this.recyclerView = recyclerView;
+        this.storageManager = storageManager;
+        this.multiPickupManager = multiPickupManager;
         for (RouteStopActivity routeStopActivity : stop.getActivities()) {
             checkedActionsHashMap.put(routeStopActivity, false);
         }
-        storageManager = App.STORAGE_MANAGER;
     }
 
     // All both of this ViewHolders extend BaseView Holder
@@ -247,7 +250,6 @@ public class RouteStopActionAdapter extends SimpleBaseAdapter<RouteStopActivity,
      * @param viewHolder container for warning layout
      */
     private void addMultiPickupWarningLayout(ViewHolderHeaderFooter viewHolder) {
-        MultiPickupManager multiPickupManager = new MultiPickupManager(storageManager);
         if (isHeaderView(viewHolder) && multiPickupManager.isNotEmptySamePlacePickUpStops(stop)) {
             View view = View.inflate(context, R.layout.route_stop_additional_details_layout, null);
 

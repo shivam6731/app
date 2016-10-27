@@ -31,6 +31,7 @@ import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
+import com.foodpanda.urbanninja.di.module.MainActivityModule;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.LocationSettingCheckManager;
@@ -57,6 +58,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class MainActivity extends BaseActivity implements MainActivityCallback {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PERMISSIONS_REQUEST_LOCATION = 100;
@@ -66,8 +69,12 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
-    private StorageManager storageManager;
-    private ApiManager apiManager;
+    @Inject
+    StorageManager storageManager;
+    @Inject
+    ApiManager apiManager;
+    @Inject
+    LocationSettingCheckManager locationSettingCheckManager;
 
     private int currentItemId;
 
@@ -86,9 +93,6 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        storageManager = App.STORAGE_MANAGER;
-        apiManager = App.API_MANAGER;
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         setActionBarDrawerToggle(initToolbar());
@@ -106,6 +110,11 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
         //Subscribe for all push updates
         registerReceiver(notificationReceiver, new IntentFilter(Constants.PUSH_NOTIFICATION_RECEIVED));
+    }
+
+    @Override
+    protected void setupActivityComponent() {
+        getComponent().plus(new MainActivityModule(this, ordersNestedFragment)).inject(this);
     }
 
     @Override
@@ -365,7 +374,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length && ordersNestedFragment != null) {
-                    new LocationSettingCheckManager(this, ordersNestedFragment).checkGpsEnabled();
+                    locationSettingCheckManager.checkGpsEnabled();
                 } else {
                     Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_SHORT).show();
                 }
@@ -486,6 +495,8 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
             beginTransaction().
             replace(R.id.container, ordersNestedFragment).
             commit();
+
+        locationSettingCheckManager.setNestedFragmentCallback(ordersNestedFragment);
     }
 
     @Override
@@ -554,7 +565,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     @Override
     public void showCollectionIsuueDialog() {
-        IssueCollectedDialog issueCollectedDialog = IssueCollectedDialog.newInstance();
+        IssueCollectedDialog issueCollectedDialog = IssueCollectedDialog.newInstance(storageManager.getCountry());
         issueCollectedDialog.show(fragmentManager, IssueCollectedDialog.class.getSimpleName());
     }
 
@@ -660,7 +671,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
                 case Activity.RESULT_CANCELED:
                     //In case when location is disabled we need to request it again
-                    new LocationSettingCheckManager(this, ordersNestedFragment).checkGpsEnabled();
+                    locationSettingCheckManager.checkGpsEnabled();
                     //Toast to show error message
                     Toast.makeText(this, R.string.error_gps_disabled, Toast.LENGTH_SHORT).show();
                     break;

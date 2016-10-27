@@ -21,6 +21,8 @@ import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.activity.LoginActivity;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 
+import javax.inject.Inject;
+
 public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
     //Set interval update for LED light when notification received
     //See documentation link
@@ -31,14 +33,15 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     //http://developer.android.com/reference/android/app/Notification.Builder.html#setVibrate(long[])
     private static final long[] VIBRATION_PATTERN = {1000, 200, 800, 200, 600, 200, 400, 200, 200, 1000, 100, 200, 50, 200, 50, 200, 50,
         200, 500, 1000, 200, 800, 200, 600, 200, 400, 200, 200, 1000};
-    private StorageManager storageManager;
+    @Inject
+    StorageManager storageManager;
 
     private static final String TAG = GcmListenerService.class.getSimpleName();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        storageManager = App.STORAGE_MANAGER;
+        App.get(this).getMainComponent().inject(this);
     }
 
     /**

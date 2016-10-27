@@ -6,6 +6,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -20,7 +21,8 @@ public class BaseApplicationTest {
         // then
 
         assertNotNull(testBaseApplication);
-        assertNotNull(App.API_MANAGER);
-        assertNotNull(App.STORAGE_MANAGER);
+        assertNotNull(App.get(testBaseApplication));
+        assertNotNull(App.get(testBaseApplication).getMainComponent());
+        assertFalse(App.isInterestingActivityVisible());
     }
 }

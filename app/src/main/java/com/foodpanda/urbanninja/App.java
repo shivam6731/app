@@ -2,25 +2,32 @@ package com.foodpanda.urbanninja;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 
-import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.di.component.DaggerMainComponent;
+import com.foodpanda.urbanninja.di.component.MainComponent;
+import com.foodpanda.urbanninja.di.module.AppModule;
 import com.foodpanda.urbanninja.manager.LanguageManager;
-import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 
-public class App extends Application implements Application.ActivityLifecycleCallbacks {
-    public static final ApiManager API_MANAGER = new ApiManager();
-    public static final StorageManager STORAGE_MANAGER = new StorageManager();
+import javax.inject.Inject;
 
+public class App extends Application implements Application.ActivityLifecycleCallbacks {
     private static boolean isInterestingActivityVisible;
+
+    private MainComponent mainComponent;
+
+    @Inject
+    LanguageManager languageManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        STORAGE_MANAGER.init(getApplicationContext());
-        API_MANAGER.init(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
+
+        mainComponent = DaggerMainComponent.builder().appModule(new AppModule(this)).build();
+        mainComponent.inject(this);
         setLanguage();
     }
 
@@ -29,7 +36,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
      * to switch to the rider selected language
      */
     private void setLanguage() {
-        new LanguageManager(STORAGE_MANAGER).setLanguage(this);
+        languageManager.setLanguage(this);
     }
 
     @Override
@@ -73,5 +80,26 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static boolean isInterestingActivityVisible() {
         return isInterestingActivityVisible;
+    }
+
+    /**
+     * to make you injection easy we need to get application context from each class related to android life cycle.
+     * after from this instance component would be taken {@link #getMainComponent()}
+     *
+     * @param context to get application context from and cast to our custom implementation
+     * @return casted to the {@link App} instance of application context
+     */
+    public static App get(Context context) {
+        return (App) context.getApplicationContext();
+    }
+
+    /**
+     * in this component we store all dependency to out {@link AppModule}.
+     * Dagger would generate code that implement {@link MainComponent} and provides all dependency
+     *
+     * @return dagger injection interface
+     */
+    public MainComponent getMainComponent() {
+        return mainComponent;
     }
 }

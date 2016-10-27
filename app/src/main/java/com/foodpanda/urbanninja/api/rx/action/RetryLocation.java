@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 public class RetryLocation extends RetryWithDelay {
     private int vehicleId;
     private RiderLocationCollectionWrapper locationCollectionWrapper;
+    private ApiQueue apiQueue;
 
     /**
      * Api call with retry logic inside
@@ -18,18 +19,21 @@ public class RetryLocation extends RetryWithDelay {
      * @param vehicleId                 id of rider vehicle that should be saved and sent
      * @param locationCollectionWrapper wrapper with a list of all information about rider status such as
      *                                  {@link DateTime} and {@link GeoCoordinate}
+     * @param apiQueue                  api queue where failed object would be stored
      */
     public RetryLocation(
         int vehicleId,
-        RiderLocationCollectionWrapper locationCollectionWrapper
+        RiderLocationCollectionWrapper locationCollectionWrapper,
+        ApiQueue apiQueue
     ) {
         this.vehicleId = vehicleId;
         this.locationCollectionWrapper = locationCollectionWrapper;
+        this.apiQueue = apiQueue;
     }
 
     @Override
     protected void storeAction() {
         super.storeAction();
-        ApiQueue.getInstance().enqueueLocation(locationCollectionWrapper, vehicleId);
+        apiQueue.enqueueLocation(locationCollectionWrapper, vehicleId);
     }
 }

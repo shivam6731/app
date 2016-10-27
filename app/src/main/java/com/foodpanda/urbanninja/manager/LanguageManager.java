@@ -6,10 +6,13 @@ import android.os.Build;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class LanguageManager {
     private StorageManager storageManager;
 
-    public LanguageManager(StorageManager storageManager) {
+    @Inject
+    LanguageManager(StorageManager storageManager) {
         this.storageManager = storageManager;
     }
 

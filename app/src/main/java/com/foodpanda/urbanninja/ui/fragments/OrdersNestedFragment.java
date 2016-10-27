@@ -19,8 +19,8 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.di.module.OrderNestedFragmentModule;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
-import com.foodpanda.urbanninja.manager.MultiPickupManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
@@ -34,6 +34,8 @@ import com.foodpanda.urbanninja.ui.interfaces.MapAddressDetailsChangeListener;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
+import javax.inject.Inject;
+
 /**
  * To encapsulate all logic according to current rider's orders in one separate navigation menu item
  * this order wrapper fragment was created.
@@ -45,10 +47,15 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private UserStatus userStatus = UserStatus.LOADING;
-    private ApiExecutor apiExecutor;
 
-    private ActionLayoutHelper actionLayoutHelper;
-    private StorageManager storageManager;
+    @Inject
+    ActionLayoutHelper actionLayoutHelper;
+
+    @Inject
+    ApiExecutor apiExecutor;
+
+    @Inject
+    StorageManager storageManager;
 
     public static OrdersNestedFragment newInstance() {
         return new OrdersNestedFragment();
@@ -75,16 +82,13 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storageManager = App.STORAGE_MANAGER;
-
-        apiExecutor = new ApiExecutor(
-            (MainActivity) getActivity(),
-            this,
-            App.API_MANAGER,
-            storageManager, new MultiPickupManager(storageManager));
-
-        actionLayoutHelper = new ActionLayoutHelper(activity);
         openLoadFragment();
+    }
+
+    @Override
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().plus(new OrderNestedFragmentModule((MainActivity) activity, this)).inject(this);
     }
 
     @Override

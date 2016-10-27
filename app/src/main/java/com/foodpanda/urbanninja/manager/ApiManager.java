@@ -1,10 +1,8 @@
 package com.foodpanda.urbanninja.manager;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
@@ -45,7 +43,11 @@ import org.joda.time.DateTime;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -55,22 +57,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 
-public class ApiManager implements Manageable {
+@Singleton
+public class ApiManager {
+
     private LogisticsService service;
     private CountryService countryService;
-    private StorageManager storageManager;
+
+    private final StorageManager storageManager;
+
+    private final ApiQueue apiQueue;
 
     //Will store all requests that are executing right now
     //and after logout will un-subscribe from all of them
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-    @Override
-    public void init(Context context) {
-        storageManager = App.STORAGE_MANAGER;
+    @Inject
+    public ApiManager(StorageManager storageManager, ApiQueue apiQueue) {
+        this.storageManager = storageManager;
+        this.apiQueue = apiQueue;
         initService();
     }
 
-    private void initService() {
+    /**
+     * When we launch the app or country selected we need to set new base url for the whole system.
+     * TODO add DI scope for the manager
+     */
+    public void initService() {
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -205,7 +217,7 @@ public class ApiManager implements Manageable {
         compositeSubscription.add(
             wrapRetryObservable(
                 service.notifyActionPerformed(routeId, performActionWrapper),
-                new RetryAction(routeId, performActionWrapper)).
+                new RetryAction(routeId, performActionWrapper, apiQueue)).
                 subscribe(new BackgroundSubscriber<>()));
     }
 
@@ -215,7 +227,7 @@ public class ApiManager implements Manageable {
                 service.notifyActionPerformed(
                     storableStatus.getRouteId(),
                     storableStatus.getPerformActionWrapper()),
-                new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper())).
+                new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper(), apiQueue)).
                 subscribe(new BackgroundSubscriber<>()));
     }
 
@@ -231,14 +243,40 @@ public class ApiManager implements Manageable {
             wrapRetryObservable(
                 service.sendLocation(
                     vehicleId, riderLocationCollectionWrapper),
-                new RetryLocation(vehicleId, riderLocationCollectionWrapper)).
+                new RetryLocation(vehicleId, riderLocationCollectionWrapper, apiQueue)).
                 subscribe(new BackgroundSubscriber<>()));
     }
 
     public void sendAllFailedRequests() {
-        ApiQueue.getInstance().resendRequests();
+        resendAction(apiQueue.getRequestsQueue());
+        resendLocation(apiQueue.getRequestsLocationQueue());
     }
 
+    /**
+     * Try to execute all users action api calls
+     */
+    private void resendAction(Queue<StorableStatus> requestsQueue) {
+        if (!requestsQueue.isEmpty()) {
+            StorableStatus storableStatus = requestsQueue.remove();
+            notifyStoredAction(storableStatus);
+            resendAction(requestsQueue);
+        }
+        storageManager.storeStatusApiRequests(requestsQueue);
+    }
+
+    /**
+     * Try to execute all users location api calls
+     */
+    private void resendLocation(Queue<RiderLocation> requestsLocationQueue) {
+        if (!requestsLocationQueue.isEmpty()) {
+            RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
+            riderLocations.addAll(requestsLocationQueue);
+            sendLocation(storageManager.getVehicleId(), riderLocations);
+
+            requestsLocationQueue.clear();
+            storageManager.storeLocationApiRequests(requestsLocationQueue);
+        }
+    }
 
     /**
      * Call ApiManager to report collection issue

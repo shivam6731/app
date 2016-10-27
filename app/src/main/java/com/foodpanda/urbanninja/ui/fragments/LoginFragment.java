@@ -28,12 +28,16 @@ import com.mobsandgeeks.saripaar.annotation.Password;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class LoginFragment extends BaseFragment implements
     Validator.ValidationListener,
     BaseApiCallback<Token> {
 
-    private ApiManager apiManager;
-    private StorageManager storageManager;
+    @Inject
+    ApiManager apiManager;
+    @Inject
+    StorageManager storageManager;
 
     @NotEmpty
     private EditText editEmail;
@@ -68,10 +72,13 @@ public class LoginFragment extends BaseFragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        apiManager = App.API_MANAGER;
-        storageManager = App.STORAGE_MANAGER;
         validator = new Validator(this);
         validator.setValidationListener(this);
+    }
+
+    @Override
+    protected void setupComponent() {
+        App.get(getContext()).getMainComponent().inject(this);
     }
 
     @Nullable

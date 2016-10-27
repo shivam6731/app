@@ -12,9 +12,12 @@ import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class MultiPickupManager {
     private StorageManager storageManager;
 
+    @Inject
     public MultiPickupManager(StorageManager storageManager) {
         this.storageManager = storageManager;
     }

@@ -15,9 +15,8 @@ import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.OrderReport;
 import com.foodpanda.urbanninja.model.OrderStop;
 import com.foodpanda.urbanninja.model.WorkingDay;
@@ -29,14 +28,14 @@ import java.util.List;
 
 public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapter.ViewHolderHeader, CashReportAdapter.ViewHolderItem> {
 
-    private final StorageManager storageManager;
+    private final Country country;
     private Context context;
 
 
-    public CashReportAdapter(List<WorkingDay> items, Context context) {
+    public CashReportAdapter(List<WorkingDay> items, Context context, Country country) {
         super(items);
         this.context = context;
-        storageManager = App.STORAGE_MANAGER;
+        this.country = country;
     }
 
     @Override
@@ -59,10 +58,9 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
         parentViewHolder.txtDate.setText(DateUtil.formatTimeDayMonthYear(workingDay.getDate()));
         parentViewHolder.txtTotal.setText(context.getString(R.string.cash_report_total,
             FormatUtil.getValueWithCurrencySymbolFromNumber(
-                storageManager.getCountry(), workingDay.getTotal())));
+                country, workingDay.getTotal())));
         parentViewHolder.txtTotal.setTextColor(
-            ContextCompat.getColor(context, workingDay.getTotal() >= 0 ? R.color.green_text_color : R.color.warning_text_color))
-        ;
+            ContextCompat.getColor(context, workingDay.getTotal() >= 0 ? R.color.green_text_color : R.color.warning_text_color));
     }
 
     @Override
@@ -140,7 +138,7 @@ public class CashReportAdapter extends ExpandableRecyclerAdapter<CashReportAdapt
      */
     private void setValueForOrderStep(double orderReportStepValue, TextView txtValue) {
         String valueWithCurrencySymbol = FormatUtil.getValueWithCurrencySymbolFromNumber(
-            storageManager.getCountry(), orderReportStepValue);
+            country, orderReportStepValue);
 
         txtValue.setText(valueWithCurrencySymbol);
     }

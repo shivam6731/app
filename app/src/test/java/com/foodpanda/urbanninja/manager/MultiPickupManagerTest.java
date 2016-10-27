@@ -16,18 +16,19 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class MultiPickupManagerTest {
-    private StorageManager storageManager = new StorageManager();
+    @Mock
+    private StorageManager storageManager;
 
     private MultiPickupManager multiPickupManager;
 
@@ -39,8 +40,6 @@ public class MultiPickupManagerTest {
         MockitoAnnotations.initMocks(this);
         Application app = RuntimeEnvironment.application;
         app.onCreate();
-
-        storageManager.init(app);
 
         multiPickupManager = new MultiPickupManager(storageManager);
     }
@@ -61,60 +60,12 @@ public class MultiPickupManagerTest {
         stopList.add(currentStop);
         stopList.add(samePlaceStop);
 
-        storageManager.storeStopList(stopList);
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
         assertEquals(stopList, multiPickupManager.getSamePlaceStops());
 
         assertTrue(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
-    }
-
-    /**
-     * Test bad conditions when both orders are invalid null orders codes
-     * and both are PICKUP task
-     */
-    @Test
-    public void getSamePlacePickUpAndCheckIsEmptyNullOrderCode() {
-        Stop currentStop = new Stop(1, null);
-        currentStop.setTask(RouteStopTask.PICKUP);
-
-        Stop samePlaceStop = new Stop(1, null);
-        samePlaceStop.setOrderCode(null);
-        samePlaceStop.setTask(RouteStopTask.PICKUP);
-
-
-        List<Stop> stopList = new LinkedList<>();
-        stopList.add(currentStop);
-        stopList.add(samePlaceStop);
-
-        storageManager.storeStopList(stopList);
-
-        assertEquals(Collections.EMPTY_LIST, multiPickupManager.getSamePlaceStops());
-
-        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
-    }
-
-    /**
-     * Test bad conditions when both orders are invalid orders codes
-     * and both are PICKUP task
-     */
-    @Test
-    public void getSamePlacePickUpAndCheckIsEmptyNotValidOrderCode() {
-        Stop currentStop = new Stop(1, "qwerqwer");
-        currentStop.setTask(RouteStopTask.PICKUP);
-
-        Stop samePlaceStop = new Stop(2, "qwerqwer");
-        samePlaceStop.setTask(RouteStopTask.PICKUP);
-
-
-        List<Stop> stopList = new LinkedList<>();
-        stopList.add(currentStop);
-        stopList.add(samePlaceStop);
-
-        storageManager.storeStopList(stopList);
-
-        assertEquals(Collections.EMPTY_LIST, multiPickupManager.getSamePlaceStops());
-
-        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
     }
 
     /**
@@ -133,7 +84,8 @@ public class MultiPickupManagerTest {
         stopList.add(currentStop);
         stopList.add(samePlaceStop);
 
-        storageManager.storeStopList(stopList);
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
         assertEquals(currentStop, multiPickupManager.getSamePlaceStops().get(0));
         assertEquals(1, multiPickupManager.getSamePlaceStops().size());
@@ -156,7 +108,8 @@ public class MultiPickupManagerTest {
         stopList.add(currentStop);
         stopList.add(samePlaceStop);
 
-        storageManager.storeStopList(stopList);
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
         assertEquals(multiPickupManager.getSamePlaceStops().get(0), currentStop);
         assertEquals(multiPickupManager.getSamePlaceStops().size(), 1);
@@ -173,6 +126,9 @@ public class MultiPickupManagerTest {
 
         List<Stop> stopList = new LinkedList<>();
         stopList.add(currentStop);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
         storageManager.storeStopList(stopList);
 

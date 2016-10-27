@@ -15,6 +15,7 @@ import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.manager.ApiManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.ui.adapter.CashReportAdapter;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.util.DividerItemDecoration;
@@ -22,9 +23,14 @@ import com.foodpanda.urbanninja.ui.widget.RecyclerViewEmpty;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 public class CashReportListFragment extends BaseFragment implements BaseApiCallback<OrdersReportCollection> {
     private MainActivityCallback mainActivityCallback;
-    private ApiManager apiManager;
+    @Inject
+    ApiManager apiManager;
+    @Inject
+    StorageManager storageManager;
 
     private RecyclerViewEmpty recyclerView;
 
@@ -41,9 +47,9 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        apiManager = App.API_MANAGER;
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(activity).getMainComponent().inject(this);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView.setAdapter(new CashReportAdapter(Collections.emptyList(), activity));
+        recyclerView.setAdapter(new CashReportAdapter(Collections.emptyList(), activity, storageManager.getCountry()));
         activity.showProgress();
         apiManager.getWorkingDayReport(this);
         mainActivityCallback.writeFragmentTitle(getResources().getString(R.string.side_menu_cash_report));
@@ -80,7 +86,7 @@ public class CashReportListFragment extends BaseFragment implements BaseApiCallb
 
     @Override
     public void onSuccess(OrdersReportCollection workingDays) {
-        CashReportAdapter adapter = new CashReportAdapter(workingDays, activity);
+        CashReportAdapter adapter = new CashReportAdapter(workingDays, activity, storageManager.getCountry());
         recyclerView.setAdapter(adapter);
         activity.hideProgress();
     }

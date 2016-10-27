@@ -1,6 +1,5 @@
 package com.foodpanda.urbanninja.manager;
 
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.api.model.RiderLocationCollectionWrapper;
@@ -10,32 +9,26 @@ import com.foodpanda.urbanninja.model.enums.Status;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 
 /**
  * This class store all API requests that should be resended as soon as connection
  * would work again
  */
+@Singleton
 public class ApiQueue {
-    private static ApiQueue instance = new ApiQueue();
     private StorageManager storageManager;
-    private ApiManager apiManager;
 
     private Queue<StorableStatus> requestsQueue = new LinkedList<>();
     private Queue<RiderLocation> requestsLocationQueue = new LinkedList<>();
-    private int vehicleId;
 
-    private ApiQueue() {
-        storageManager = App.STORAGE_MANAGER;
-        apiManager = App.API_MANAGER;
-
+    @Inject
+    public ApiQueue(StorageManager storageManager) {
+        this.storageManager = storageManager;
         requestsQueue = storageManager.getStatusApiRequestList();
         requestsLocationQueue = storageManager.getLocationApiRequestList();
-        vehicleId = storageManager.getVehicleId();
-    }
-
-
-    public static ApiQueue getInstance() {
-        return instance;
     }
 
     /**
@@ -58,39 +51,25 @@ public class ApiQueue {
 
         storageManager.storeLocationApiRequests(requestsLocationQueue);
 
-        this.vehicleId = vehicleId;
         storageManager.storeVehicleId(vehicleId);
     }
 
     /**
-     * Try to execute all users action api calls
+     * Provides not send riders locations to be sent by the {@link ApiManager}
+     *
+     * @return queue of failed locations
      */
-    private void resendAction() {
-        if (!requestsQueue.isEmpty()) {
-            StorableStatus storableStatus = requestsQueue.remove();
-            apiManager.notifyStoredAction(storableStatus);
-            resendAction();
-        }
-        storageManager.storeStatusApiRequests(requestsQueue);
+    Queue<RiderLocation> getRequestsLocationQueue() {
+        return requestsLocationQueue;
     }
 
     /**
-     * Try to execute all users location api calls
+     * Provides not send riders action  to be sent by the {@link ApiManager}
+     *
+     * @return queue of failed rider actions
      */
-    private void resendLocation() {
-        if (!requestsLocationQueue.isEmpty()) {
-            RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
-            riderLocations.addAll(requestsLocationQueue);
-            apiManager.sendLocation(vehicleId, riderLocations);
-
-            requestsLocationQueue.clear();
-            storageManager.storeLocationApiRequests(requestsLocationQueue);
-        }
-    }
-
-    public void resendRequests() {
-        resendAction();
-        resendLocation();
+    Queue<StorableStatus> getRequestsQueue() {
+        return requestsQueue;
     }
 
 }

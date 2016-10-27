@@ -62,8 +62,9 @@ public class OrderTypeAndPaymentHelperTest {
         stop.setTask(RouteStopTask.DELIVER);
         stop.setActivities(Collections.emptyList());
         when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
+        when(storageManager.getCurrentStop()).thenReturn(stop);
 
-        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
+        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
         assertEquals(txtOrderType.getText().toString(), "Delivery");
@@ -74,9 +75,11 @@ public class OrderTypeAndPaymentHelperTest {
         Stop stop = new Stop();
         stop.setTask(RouteStopTask.PICKUP);
         stop.setActivities(Collections.emptyList());
-        when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
 
-        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
+        when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
+        when(storageManager.getCurrentStop()).thenReturn(stop);
+
+        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
         assertEquals(txtOrderType.getText().toString(), "Pick up");
@@ -92,10 +95,10 @@ public class OrderTypeAndPaymentHelperTest {
         stop.setActivities(routeStopActivities);
 
         when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
-
         when(storageManager.getCountry()).thenReturn(getCountryForCode("hk"));
+        when(storageManager.getCurrentStop()).thenReturn(stop);
 
-        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
+        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
         assertEquals(txtOrderPaymenMethod.getText().toString(), "HKD40.00");
@@ -111,10 +114,10 @@ public class OrderTypeAndPaymentHelperTest {
         stop.setActivities(routeStopActivities);
 
         when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
-
         when(storageManager.getCountry()).thenReturn(getCountryForCode("hk"));
+        when(storageManager.getCurrentStop()).thenReturn(stop);
 
-        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
+        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
         assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Paid");
@@ -128,10 +131,10 @@ public class OrderTypeAndPaymentHelperTest {
         stop.setActivities(Collections.emptyList());
 
         when(storageManager.getDeliveryPartOfEachRouteStop(stop)).thenReturn(stop);
-
         when(storageManager.getCountry()).thenReturn(getCountryForCode("hk"));
+        when(storageManager.getCurrentStop()).thenReturn(stop);
 
-        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, stop, storageManager);
+        orderTypeAndPaymentHelper = new OrderTypeAndPaymentHelper(mainActivity, storageManager);
         orderTypeAndPaymentHelper.setType(relativeLayout);
 
         assertEquals(txtOrderPaymenMethod.getText().toString(), "Already Paid");

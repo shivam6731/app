@@ -1,6 +1,5 @@
 package com.foodpanda.urbanninja.ui.util;
 
-import android.app.Activity;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,16 +11,20 @@ import com.foodpanda.urbanninja.model.RouteStopActivity;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopActivityType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
+import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.utils.FormatUtil;
 
+import javax.inject.Inject;
+
 public class OrderTypeAndPaymentHelper {
-    private Activity activity;
+    private BaseActivity baseActivity;
     private Stop currentStop;
     private StorageManager storageManager;
 
-    public OrderTypeAndPaymentHelper(Activity activity, Stop currentStop, StorageManager storageManager) {
-        this.activity = activity;
-        this.currentStop = currentStop;
+    @Inject
+    public OrderTypeAndPaymentHelper(BaseActivity baseActivity, StorageManager storageManager) {
+        this.baseActivity = baseActivity;
+        this.currentStop = storageManager.getCurrentStop();
         this.storageManager = storageManager;
     }
 
@@ -39,7 +42,7 @@ public class OrderTypeAndPaymentHelper {
         ImageView imageType = (ImageView) layoutTypeAndPayment.findViewById(R.id.image_type);
 
         int textResource = task == RouteStopTask.PICKUP ? R.string.task_details_pick_up : R.string.task_details_delivery;
-        txtType.setText(activity.getResources().getText(textResource));
+        txtType.setText(baseActivity.getResources().getText(textResource));
 
         int iconResource = task == RouteStopTask.PICKUP ? R.drawable.icon_restaurant_green : R.drawable.icon_deliver_green;
         imageType.setImageResource(iconResource);
@@ -70,7 +73,7 @@ public class OrderTypeAndPaymentHelper {
             }
         }
 
-        txtPaymentMethod.setText(activity.getResources().getString(R.string.payment_method_already_paid));
+        txtPaymentMethod.setText(baseActivity.getResources().getString(R.string.payment_method_already_paid));
     }
 
     /**

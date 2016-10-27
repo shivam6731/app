@@ -16,6 +16,8 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+import javax.inject.Inject;
+
 public class LocationSettingCheckManager {
     private static final String TAG = LocationSettingCheckManager.class.getSimpleName();
     /**
@@ -71,6 +73,7 @@ public class LocationSettingCheckManager {
      * @param activity               need to get context and show enable gps dialog
      * @param nestedFragmentCallback callback to start LocationService to send rider location
      */
+    @Inject
     public LocationSettingCheckManager(@NonNull Activity activity, @NonNull NestedFragmentCallback nestedFragmentCallback) {
         this.activity = activity;
         this.nestedFragmentCallback = nestedFragmentCallback;
@@ -106,5 +109,9 @@ public class LocationSettingCheckManager {
         googleApiClient.connect();
 
         locationRequest = new LocationRequest();
+    }
+
+    public void setNestedFragmentCallback(@NonNull NestedFragmentCallback nestedFragmentCallback) {
+        this.nestedFragmentCallback = nestedFragmentCallback;
     }
 }

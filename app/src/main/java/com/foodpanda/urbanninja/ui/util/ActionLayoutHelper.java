@@ -11,6 +11,8 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 
+import javax.inject.Inject;
+
 public class ActionLayoutHelper {
     private Context context;
     private Button btnAction;
@@ -25,7 +27,8 @@ public class ActionLayoutHelper {
     private CharSequence textActionButton;
     // icon left from the the text in the action button
 
-    public ActionLayoutHelper(Context context) {
+    @Inject
+    ActionLayoutHelper(Context context) {
         this.context = context;
     }
 

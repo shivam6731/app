@@ -10,6 +10,9 @@ import android.widget.TextView;
 import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.di.module.TimerHelperAndOrderTypePaymentHelperModule;
+import com.foodpanda.urbanninja.manager.MultiPickupManager;
+import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.MapPointType;
@@ -24,12 +27,25 @@ import com.foodpanda.urbanninja.ui.util.TimerHelper;
 
 import org.joda.time.DateTime;
 
+import javax.inject.Inject;
+
 public class RouteStopActionListFragment extends BaseListFragment<RouteStopActionAdapter>
     implements TimerDataProvider,
     ShowMapAddressCallback,
     MapAddressDetailsCallback {
     private NestedFragmentCallback nestedFragmentCallback;
-    private TimerHelper timerHelper;
+
+    @Inject
+    TimerHelper timerHelper;
+
+    @Inject
+    StorageManager storageManager;
+
+    @Inject
+    MultiPickupManager multiPickupManager;
+
+    @Inject
+    OrderTypeAndPaymentHelper orderTypeAndPaymentHelper;
 
     private TextView txtTimer;
 
@@ -54,7 +70,12 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentStop = getArguments().getParcelable(Constants.BundleKeys.STOP);
-        timerHelper = new TimerHelper(activity, this, this);
+    }
+
+    @Override
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().plus(new TimerHelperAndOrderTypePaymentHelperModule(activity, this, this)).inject(this);
     }
 
     @Override
@@ -78,7 +99,7 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
 
         //Set payment details and type of the task
         RelativeLayout layoutTypeAndPayment = (RelativeLayout) view.findViewById(R.id.layout_type_payment);
-        new OrderTypeAndPaymentHelper(activity, currentStop, App.STORAGE_MANAGER).setType(layoutTypeAndPayment);
+        orderTypeAndPaymentHelper.setType(layoutTypeAndPayment);
         recyclerView.removeItemDecoration(dividerItemDecoration);
     }
 
@@ -89,7 +110,8 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
             activity,
             nestedFragmentCallback,
             this,
-            recyclerView);
+            recyclerView, storageManager,
+            multiPickupManager);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
-import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.manager.ApiManager;
 import com.foodpanda.urbanninja.manager.LanguageManager;
@@ -19,9 +18,15 @@ import com.foodpanda.urbanninja.ui.fragments.LanguageListFragment;
 import com.foodpanda.urbanninja.ui.fragments.LoginFragment;
 import com.foodpanda.urbanninja.ui.interfaces.LoginActivityCallback;
 
+import javax.inject.Inject;
+
 public class LoginActivity extends BaseActivity implements LoginActivityCallback {
-    private StorageManager storageManager;
-    private ApiManager apiManager;
+    @Inject
+    StorageManager storageManager;
+    @Inject
+    ApiManager apiManager;
+    @Inject
+    LanguageManager languageManager;
 
     private Country country;
 
@@ -31,11 +36,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-        storageManager = App.STORAGE_MANAGER;
-        apiManager = App.API_MANAGER;
         if (storageManager.isLogged()) {
             openMainActivity();
-
             return;
         }
         this.country = storageManager.getCountry();
@@ -48,6 +50,11 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         }
         initToolbar();
         changeActivityTitleOnBackPress();
+    }
+
+    @Override
+    protected void setupActivityComponent() {
+        getComponent().inject(this);
     }
 
     /**
@@ -102,7 +109,8 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
     public void onCountrySelected(Country country) {
         this.country = country;
         storageManager.storeCountry(country);
-        apiManager.init(this);
+        //after selecting country we need to set new baseUrl for the whole http client
+        apiManager.initService();
 
         fragmentManager.
             beginTransaction().
@@ -128,7 +136,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         storageManager.storeLanguage(language);
 
         // update all resources according to selected language
-        new LanguageManager(storageManager).setLanguage(this);
+        languageManager.setLanguage(this);
 
         // update UI for LoginFragment
         getSupportFragmentManager()

@@ -25,6 +25,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupComponent();
         fragmentManager = getChildFragmentManager();
     }
 
@@ -70,5 +71,14 @@ public abstract class BaseFragment extends Fragment {
             add(viewContainerId,
                 baseFragment).
             commitAllowingStateLoss();
+    }
+
+    /**
+     * In classes where we need to inject something
+     * this method should be @Override and an instance of fragment should be passed as a param to the class.
+     * we need such approach to let dagger know what code should be generated with direct passing an instance as a param.
+     * you can check {@link dagger.Component} or quick tutorial https://github.com/codepath/android_guides/wiki/Dependency-Injection-with-Dagger-2
+     */
+    protected void setupComponent() {
     }
 }

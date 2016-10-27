@@ -10,7 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.di.component.MainComponent;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.Tracking;
@@ -26,6 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupActivityComponent();
         fragmentManager = getSupportFragmentManager();
         checkForCrashes();
         checkForUpdates();
@@ -130,4 +133,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void unregisterManagers() {
         UpdateManager.unregister();
     }
+
+    protected abstract void setupActivityComponent();
+
+    /**
+     * get main singleton component for injection
+     *
+     * @return dagger main component
+     */
+    protected MainComponent getComponent() {
+        return App.get(this).getMainComponent();
+    }
+
 }

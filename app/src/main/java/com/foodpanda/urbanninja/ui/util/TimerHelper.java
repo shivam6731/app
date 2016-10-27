@@ -14,6 +14,8 @@ import org.joda.time.DateTime;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.inject.Inject;
+
 /**
  * Writes remaining time and description to the TextView
  * in all screens with Timer inside
@@ -29,20 +31,23 @@ public class TimerHelper {
 
     private Timer timer;
 
-    public TimerHelper(
+    TimerHelper(
         BaseActivity baseActivity,
         BaseFragment baseFragment,
-        TimerDataProvider timerDataProvider) {
+        TimerDataProvider timerDataProvider
+    ) {
         this.baseActivity = baseActivity;
         this.baseFragment = baseFragment;
         this.timerDataProvider = timerDataProvider;
     }
 
+    @Inject
     public TimerHelper(
         BaseActivity baseActivity,
         BaseFragment baseFragment,
         TimerDataProvider timerDataProvider,
-        NestedFragmentCallback nestedFragmentCallback) {
+        NestedFragmentCallback nestedFragmentCallback
+    ) {
         this(baseActivity, baseFragment, timerDataProvider);
         this.nestedFragmentCallback = nestedFragmentCallback;
     }

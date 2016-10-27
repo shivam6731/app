@@ -27,6 +27,8 @@ import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.util.DialogInfoHelper;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class ApiExecutor {
@@ -39,23 +41,30 @@ public class ApiExecutor {
     private final StorageManager storageManager;
     private final MultiPickupManager multiPickupManager;
     private final NestedFragmentCallback nestedFragmentCallback;
+    private final CheckPolygonManager checkPolygonManager;
+    private final LocationSettingCheckManager locationSettingCheckManager;
 
     private VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle;
     private ScheduleWrapper scheduleWrapper;
     private ScheduleCollectionWrapper scheduleWrappers;
 
-    public ApiExecutor(
+    @Inject
+    ApiExecutor(
         MainActivity mainActivity,
         NestedFragmentCallback nestedFragmentCallback,
         ApiManager apiManager,
         StorageManager storageManager,
-        MultiPickupManager multiPickupManager
+        MultiPickupManager multiPickupManager,
+        CheckPolygonManager checkPolygonManager,
+        LocationSettingCheckManager locationSettingCheckManager
     ) {
         this.activity = mainActivity;
         this.nestedFragmentCallback = nestedFragmentCallback;
         this.apiManager = apiManager;
         this.storageManager = storageManager;
         this.multiPickupManager = multiPickupManager;
+        this.checkPolygonManager = checkPolygonManager;
+        this.locationSettingCheckManager = locationSettingCheckManager;
         getAllData();
     }
 
@@ -136,7 +145,6 @@ public class ApiExecutor {
             return;
         }
 
-        CheckPolygonManager checkPolygonManager = new CheckPolygonManager(activity);
         PolygonStatusType polygonStatusType = checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(
             scheduleWrapper.getDeliveryZone());
         switch (polygonStatusType) {
@@ -239,7 +247,7 @@ public class ApiExecutor {
      * is enabled.
      */
     private void checkGpsEnabled() {
-        new LocationSettingCheckManager(activity, nestedFragmentCallback).checkGpsEnabled();
+        locationSettingCheckManager.checkGpsEnabled();
     }
 
     /**

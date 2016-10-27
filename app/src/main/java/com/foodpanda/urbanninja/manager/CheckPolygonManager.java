@@ -18,16 +18,19 @@ import com.google.maps.android.PolyUtil;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
-class CheckPolygonManager {
+public class CheckPolygonManager {
     private static final int RADIUS_TO_STARTING_POINT_IN_METERS = 300;
     //We need activity to try to retrieve last rider location
     private BaseActivity baseActivity;
 
-    CheckPolygonManager(BaseActivity baseActivity) {
+    @Inject
+    public CheckPolygonManager(BaseActivity baseActivity) {
         this.baseActivity = baseActivity;
     }
 

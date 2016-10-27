@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
@@ -18,9 +19,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
-import com.foodpanda.urbanninja.manager.StorageManager;
+import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
 import com.foodpanda.urbanninja.ui.util.TagDrawable;
@@ -30,17 +31,27 @@ import com.foodpanda.urbanninja.utils.FormatUtil;
 public class IssueCollectedDialog extends DialogFragment {
     private MainActivityCallback mainActivityCallback;
     private EditText editTextAmount;
-    private StorageManager storageManager;
+    private Country country;
 
-    public static IssueCollectedDialog newInstance() {
-        return new IssueCollectedDialog();
+    public static IssueCollectedDialog newInstance(Country country) {
+        IssueCollectedDialog issueCollectedDialog = new IssueCollectedDialog();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.BundleKeys.COUNTRY, country);
+        issueCollectedDialog.setArguments(bundle);
+
+        return issueCollectedDialog;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mainActivityCallback = (MainActivityCallback) context;
-        storageManager = App.STORAGE_MANAGER;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        country = getArguments().getParcelable(Constants.BundleKeys.COUNTRY);
     }
 
     @NonNull
@@ -142,7 +153,7 @@ public class IssueCollectedDialog extends DialogFragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
                     TagDrawable currencyDrawable = new TagDrawable(editTextAmount);
-                    currencyDrawable.setText(FormatUtil.getCurrencySymbol(storageManager.getCountry()));
+                    currencyDrawable.setText(FormatUtil.getCurrencySymbol(country));
                     editTextAmount.setCompoundDrawablesWithIntrinsicBounds(currencyDrawable, null, null, null);
                     editTextAmount.invalidate();
                 } else {

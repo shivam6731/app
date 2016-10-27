@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class CountryListFragment extends BaseListFragment<CountryAdapter> implements BaseApiCallback<CountryListWrapper> {
-    private ApiManager apiManager;
     private Country selectedCountry;
     private LoginActivityCallback loginActivityCallback;
+    @Inject
+    ApiManager apiManager;
 
     @Override
     public void onAttach(Context context) {
@@ -42,8 +45,13 @@ public class CountryListFragment extends BaseListFragment<CountryAdapter> implem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        apiManager = App.API_MANAGER;
         selectedCountry = getArguments().getParcelable(Constants.BundleKeys.COUNTRY);
+    }
+
+    @Override
+    protected void setupComponent() {
+        super.setupComponent();
+        App.get(getContext()).getMainComponent().inject(this);
     }
 
     @Override
