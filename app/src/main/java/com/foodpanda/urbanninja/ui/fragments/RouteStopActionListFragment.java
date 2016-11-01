@@ -110,7 +110,8 @@ public class RouteStopActionListFragment extends BaseListFragment<RouteStopActio
             activity,
             nestedFragmentCallback,
             this,
-            recyclerView, storageManager,
+            recyclerView,
+            storageManager,
             multiPickupManager);
     }
 

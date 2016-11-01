@@ -72,6 +72,7 @@ public class InformationDialogFragment extends DialogFragment {
             );
 
         AlertDialog alertDialog;
+        setCancelable(dialogType != DialogType.FAKE_LOCATION_SETTING);
 
         //set information details depends on type
         switch (dialogType) {
@@ -96,7 +97,7 @@ public class InformationDialogFragment extends DialogFragment {
                 break;
 
         }
-        
+
         //set custom fonts for view in alert dialog
         alertDialog.setOnShowListener(dialogInterface -> {
             FontCacheUtil.setOpenSansTypeFaceFamilyForDialog((TextView) alertDialog.findViewById(android.R.id.message), getContext());
@@ -115,6 +116,9 @@ public class InformationDialogFragment extends DialogFragment {
                 break;
             case ISSUE_COLLECTION_WARNING:
                 mainActivityCallback.showCollectionIsuueDialog();
+                break;
+            case FAKE_LOCATION_SETTING:
+                mainActivityCallback.showDevSetting();
                 break;
         }
 

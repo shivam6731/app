@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -554,13 +555,15 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     @Override
     public void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType) {
-        InformationDialogFragment informationDialogFragment = InformationDialogFragment.newInstance(
-            title,
-            message,
-            buttonLabel,
-            dialogType);
+        if (!isInfoDialogShown()) {
+            InformationDialogFragment informationDialogFragment = InformationDialogFragment.newInstance(
+                title,
+                message,
+                buttonLabel,
+                dialogType);
 
-        informationDialogFragment.show(fragmentManager, InformationDialogFragment.class.getSimpleName());
+            informationDialogFragment.show(fragmentManager, InformationDialogFragment.class.getSimpleName());
+        }
     }
 
     @Override
@@ -594,6 +597,11 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         } else {
             Toast.makeText(this, getResources().getString(R.string.dialog_phone_not_data), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void showDevSetting() {
+        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
     }
 
     /**
@@ -677,5 +685,18 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     break;
             }
         }
+    }
+
+    /**
+     * To prevent showing a lot of the same dialogs
+     * we need to check if dialog is shown to not to show the new one.
+     * to do so we get dialog fragment from fragmentManager to check the status
+     *
+     * @return true if we have some dialog shown in screen right now
+     */
+    private boolean isInfoDialogShown() {
+        Fragment fragment = fragmentManager.findFragmentByTag(InformationDialogFragment.class.getSimpleName());
+
+        return fragment != null && (fragment instanceof DialogFragment);
     }
 }

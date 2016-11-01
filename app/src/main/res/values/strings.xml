@@ -207,5 +207,11 @@
     <string name="issue_customer_second_action_title">Report issue</string>
     <string name="issue_customer_second_action_description">You will be redirected to an easy to use google form</string>
 
+    <!-- Fake Location-->
+    <string name="fake_location_dialog_title">Are you faking your gps position?</string>
+    <string name="fake_location_dialog_text">Your device seems to be sending a fake location.This is usually done through the use of third party applications that allow you to do so.\n
+       Please make sure that you have disabled under \"Settings -> Developer options -> Allow mock locations.\"\n
+       NOTE: you cannot work if you keep on sending us mock locations</string>
+    <string name="fake_location_dialog_button_label">OK, DISABLE MOCK LOCATIONS</string>
 </resources>
 

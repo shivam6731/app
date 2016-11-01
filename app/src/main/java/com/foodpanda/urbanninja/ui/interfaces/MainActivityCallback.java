@@ -83,4 +83,11 @@ public interface MainActivityCallback {
      * @param dialogType to identify with what kind of issue you we are working
      */
     void showIssueDialog(DialogType dialogType);
+
+    /**
+     * In case when rider use fake location.
+     * we need to force them to disable mock location
+     * and to do so we redirect to the dev settings
+     */
+    void showDevSetting();
 }

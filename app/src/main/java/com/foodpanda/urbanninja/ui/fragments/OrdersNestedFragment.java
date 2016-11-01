@@ -21,6 +21,7 @@ import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.di.module.OrderNestedFragmentModule;
 import com.foodpanda.urbanninja.manager.ApiExecutor;
+import com.foodpanda.urbanninja.manager.LocationSettingCheckManager;
 import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
@@ -57,6 +58,9 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     @Inject
     StorageManager storageManager;
 
+    @Inject
+    LocationSettingCheckManager locationSettingCheckManager;
+
     public static OrdersNestedFragment newInstance() {
         return new OrdersNestedFragment();
     }
@@ -66,8 +70,10 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     private BroadcastReceiver locationChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
+            checkMockLocationDialog(location);
+
             if (mapAddressDetailsChangeListener != null) {
-                Location location = intent.getExtras().getParcelable(Constants.BundleKeys.LOCATION);
                 mapAddressDetailsChangeListener.onLocationChanged(location);
             }
         }
@@ -356,6 +362,30 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
                 replace(R.id.container,
                     baseFragment).
                 commitAllowingStateLoss();
+        }
+    }
+
+    /**
+     * Show information dialog with description how to turn off
+     * mock location in dev settings.
+     */
+    private void showFakeGpsDialog() {
+        openInformationDialog(
+            getResources().getText(R.string.fake_location_dialog_title),
+            getResources().getText(R.string.fake_location_dialog_text),
+            getResources().getText(R.string.fake_location_dialog_button_label),
+            DialogType.FAKE_LOCATION_SETTING);
+    }
+
+    /**
+     * We check if rider use fake gps to handle {@link #showFakeGpsDialog()}
+     * in case when he does.
+     *
+     * @param location last known rider location
+     */
+    private void checkMockLocationDialog(Location location) {
+        if (locationSettingCheckManager.isLocationMocked(location)) {
+            showFakeGpsDialog();
         }
     }
 

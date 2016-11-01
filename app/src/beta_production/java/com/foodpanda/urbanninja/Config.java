@@ -42,4 +42,10 @@ public class Config {
         private static final String CONFIG = "configuration/urban-ninja-v2/";
         public static final String BASE_URL = URL + CONFIG;
     }
+
+    /**
+     * For production and beta production we don't allow to use mock location,
+     * however we allow it for dev and staging environments.
+     */
+    public static final boolean IS_FAKE_LOCATION_ALLOWED = false;
 }

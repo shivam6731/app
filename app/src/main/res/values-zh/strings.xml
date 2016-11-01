@@ -152,7 +152,7 @@
     <string name="multi_pickup">皮卡多</string>
     <string name="multi_pickup_alert_title">皮卡多!</string>
     <string name="multi_pickup_alert_details"><![CDATA[訂 <b>%1$s </b>單需在同一餐廳拿取<br />]]></string>
-    
+
     <!-- Issue -->
     <string name="issue_collection_report">報告問題</string>
     <string name="issue_collection_warning_dialog_title">請注意, 我們將展開調查。</string>
@@ -196,4 +196,11 @@
     <string name="issue_customer_first_action_description">請時刻記住要保持禮貌，不要滋擾別人</string>
     <string name="issue_customer_second_action_title">報告問題</string>
     <string name="issue_customer_second_action_description">您將被轉址到一個易於使用的Google表格</string>
+
+    <!-- Fake Location-->
+    <string name="fake_location_dialog_title">你是否在虛報你的GPS位置？</string>
+    <string name="fake_location_dialog_text">你的設備似乎在發送假位置。這通常由透過允許第三方應用程序來完成。\n
+        請確保你已在“設定 - >開發人員選項 - >允許模擬位置”禁用此功能。\n
+        注意：如果你繼續發送虛假位置，你將不能工作</string>
+    <string name="fake_location_dialog_button_label">清楚，停用模擬位置</string>
 </resources>

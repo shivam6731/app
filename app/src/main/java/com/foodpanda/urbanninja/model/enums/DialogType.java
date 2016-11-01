@@ -12,5 +12,7 @@ public enum DialogType {
     //open web view to fill out vendor issue form
     ISSUE_VENDOR_SENDING,
     //open web view to fill out customer issue form
-    ISSUE_CUSTOMER_SENDING
+    ISSUE_CUSTOMER_SENDING,
+    //open developer options disable sending fake location
+    FAKE_LOCATION_SETTING
 }

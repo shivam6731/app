@@ -1,10 +1,13 @@
 package com.foodpanda.urbanninja.manager;
 
-import android.app.Activity;
 import android.content.IntentSender;
+import android.location.Location;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.foodpanda.urbanninja.Config;
+import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -21,11 +24,11 @@ import javax.inject.Inject;
 public class LocationSettingCheckManager {
     private static final String TAG = LocationSettingCheckManager.class.getSimpleName();
     /**
-     * Request code that would be returned in activity method onActivityResult
+     * Request code that would be returned in baseActivity method onActivityResult
      * with result of enabling gps
      */
     public static final int GPS_SETTINGS_CHECK_REQUEST = 200;
-    private Activity activity;
+    private final BaseActivity baseActivity;
     private NestedFragmentCallback nestedFragmentCallback;
 
     private GoogleApiClient googleApiClient;
@@ -42,9 +45,7 @@ public class LocationSettingCheckManager {
                 case LocationSettingsStatusCodes.SUCCESS:
                     // All location settings are satisfied. The client can initialize location
                     // requests here.
-                    if (nestedFragmentCallback != null) {
-                        nestedFragmentCallback.startLocationService();
-                    }
+                    nestedFragmentCallback.startLocationService();
                     Log.e(TAG, "GPS Turned on");
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -54,7 +55,7 @@ public class LocationSettingCheckManager {
                     try {
                         // Show the dialog by calling startResolutionForResult(),
                         // and check the result in onActivityResult().
-                        status.startResolutionForResult(activity, GPS_SETTINGS_CHECK_REQUEST);
+                        status.startResolutionForResult(baseActivity, GPS_SETTINGS_CHECK_REQUEST);
                     } catch (IntentSender.SendIntentException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -70,12 +71,14 @@ public class LocationSettingCheckManager {
      * Manager to check if gps enabled
      * and if not show dialog to force to turn it on
      *
-     * @param activity               need to get context and show enable gps dialog
+     * @param baseActivity           need to get context and show enable gps dialog
      * @param nestedFragmentCallback callback to start LocationService to send rider location
      */
     @Inject
-    public LocationSettingCheckManager(@NonNull Activity activity, @NonNull NestedFragmentCallback nestedFragmentCallback) {
-        this.activity = activity;
+    public LocationSettingCheckManager(
+        @NonNull BaseActivity baseActivity,
+        @NonNull NestedFragmentCallback nestedFragmentCallback) {
+        this.baseActivity = baseActivity;
         this.nestedFragmentCallback = nestedFragmentCallback;
     }
 
@@ -90,12 +93,35 @@ public class LocationSettingCheckManager {
         // Check the location settings of the user and create the callback to react to the different possibilities
         LocationSettingsRequest.Builder locationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest);
-
         PendingResult<LocationSettingsResult> result =
             LocationServices.SettingsApi.checkLocationSettings(googleApiClient, locationSettingsRequestBuilder.build());
 
         result.setResultCallback(resultCallbackFromSettings);
+    }
 
+    /**
+     * Because some of our riders try to cheat with fake location
+     * we need to check device dev param or location object.
+     * In case when rider use fake data we show un cancelable dialog to redirect to dev setting
+     * to turn off fake GPS provider.
+     *
+     * @param location last known rider location
+     * @return true in case when rider use fake location coordinate.
+     */
+    public boolean isLocationMocked(Location location) {
+        //for dev and staging we allow to use fake location
+        if (Config.IS_FAKE_LOCATION_ALLOWED) {
+            return false;
+        }
+
+        // Starting with API level >= 18 we can (partially) rely on .isFromMockProvider()
+        // (http://developer.android.com/reference/android/location/Location.html#isFromMockProvider%28%29)
+        // For API level < 18 we have to check the Settings.Secure flag
+        if (android.os.Build.VERSION.SDK_INT >= 18) {
+            return location.isFromMockProvider();
+        } else {
+            return !Settings.Secure.getString(baseActivity.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION).equals("0");
+        }
     }
 
     /**
@@ -103,7 +129,7 @@ public class LocationSettingCheckManager {
      * as soon as we successfully connected to the ApiClient
      */
     private void setApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(this.activity)
+        googleApiClient = new GoogleApiClient.Builder(this.baseActivity)
             .addApi(LocationServices.API)
             .build();
         googleApiClient.connect();
