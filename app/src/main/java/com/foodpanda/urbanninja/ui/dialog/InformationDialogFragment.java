@@ -115,7 +115,7 @@ public class InformationDialogFragment extends DialogFragment {
                 mainActivityCallback.onGPSSettingClicked();
                 break;
             case ISSUE_COLLECTION_WARNING:
-                mainActivityCallback.showCollectionIsuueDialog();
+                mainActivityCallback.showCollectionIssueDialog();
                 break;
             case FAKE_LOCATION_SETTING:
                 mainActivityCallback.showDevSetting();

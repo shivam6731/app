@@ -38,16 +38,17 @@ public class Constants {
         public static final String MESSAGE = "Message";
         public static final String LABEL = "Label";
         public static final String DIALOG_TYPE = "DialogType";
+        public static final String RIDER = "Rider";
     }
 
     public static class Urls {
         // this link to the vendor issue google doc with possible reasons of rider's problems
         // in a while this link would be replaced with API calls, however for now we collect riders issue directly to the google doc
         public static final String VENDOR_ISSUE_URL =
-            "https://docs.google.com/a/foodpanda.sg/forms/d/1Mor2m96ogYXg4BuzV61FYbkN1WggkXwWpOXpcAk9-JU/edit";
+            "https://docs.google.com/a/foodpanda.sg/forms/d/1Mor2m96ogYXg4BuzV61FYbkN1WggkXwWpOXpcAk9-JU/viewform?entry.2127942506=%s&entry.85145661=%s";
         // this link to the customer issue google doc with possible reasons of rider's problems
         // in a while this link would be replaced with API calls, however for now we collect riders issue directly to the google doc
         public static final String CUSTOMER_ISSUE_URL =
-            "https://docs.google.com/a/foodpanda.sg/forms/d/1N89YZnSy20qhrpKwfIJGRNF92fSfSjUZSZ-0lmrXHyk/edit";
+            "https://docs.google.com/a/foodpanda.sg/forms/d/1N89YZnSy20qhrpKwfIJGRNF92fSfSjUZSZ-0lmrXHyk/viewform?entry.2127942506=%s&entry.85145661=%s";
     }
 }

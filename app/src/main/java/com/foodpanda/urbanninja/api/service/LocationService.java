@@ -305,6 +305,6 @@ public class LocationService extends Service implements
         locationList.add(riderLocation);
 
         //store last known rider location with all additional data such as battery level or speed
-        storageManager.setRiderLocation(riderLocation);
+        storageManager.storeRiderLocation(riderLocation);
     }
 }

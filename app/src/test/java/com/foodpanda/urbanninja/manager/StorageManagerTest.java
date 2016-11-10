@@ -5,6 +5,7 @@ import android.app.Application;
 import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.api.model.RiderLocation;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
@@ -194,7 +195,7 @@ public class StorageManagerTest {
         riderLocation.setDateTime(DateTime.now());
         riderLocation.setGeoCoordinate(new GeoCoordinate((double) 1, (double) 1));
 
-        storageManager.setRiderLocation(riderLocation);
+        storageManager.storeRiderLocation(riderLocation);
         assertEquals(storageManager.getRiderLocation(), riderLocation);
     }
 
@@ -251,5 +252,13 @@ public class StorageManagerTest {
 
         assertNull(storageManager.getCurrentStop());
         assertTrue(storageManager.getStopList().isEmpty());
+    }
+
+    @Test
+    public void testStoreRider() {
+        Rider rider = new Rider();
+        storageManager.storeRider(rider);
+
+        assertEquals(rider, storageManager.getRider());
     }
 }

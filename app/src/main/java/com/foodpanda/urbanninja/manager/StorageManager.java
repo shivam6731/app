@@ -14,6 +14,7 @@ import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.model.Country;
 import com.foodpanda.urbanninja.model.Language;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
@@ -46,6 +47,7 @@ public class StorageManager {
     private List<Stop> stopList = new LinkedList<>();
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
     private RiderLocation riderLocation;
+    private Rider rider;
 
     @Inject
     public StorageManager(Context context) {
@@ -279,6 +281,49 @@ public class StorageManager {
         return cachedRequestPreferences.getInt(Constants.Preferences.VEHICLE_ID, 0);
     }
 
+    /**
+     * When app is launching we retrieve rider information
+     * and we need this information for rider details in sliding menu
+     * and for issue reporting
+     *
+     * @return current rider information
+     */
+    @Nullable
+    public Rider getRider() {
+        return rider;
+    }
+
+    /**
+     * Store rider information.
+     *
+     * @param rider current rider
+     */
+    void storeRider(Rider rider) {
+        this.rider = rider;
+    }
+
+    /**
+     * get rider location to be send with rider action
+     * BI need this data for details about rider's actions
+     *
+     * @return location wrapped with additional info
+     */
+    @Nullable
+    RiderLocation getRiderLocation() {
+        return riderLocation;
+    }
+
+    /**
+     * Every time when rider has new location we add more information with
+     * accuracy battery level and store.
+     * This data would be send with next rider action notifier
+     *
+     * @param riderLocation location wrapped with additional info
+     */
+    public void storeRiderLocation(@Nullable RiderLocation riderLocation) {
+        this.riderLocation = riderLocation;
+    }
+
     private List<Stop> getUpToDateList(List<Stop> stopList) {
         for (Stop stop : stopList) {
             if (stopStatusMap.get(stop.getId()) != null) {
@@ -327,28 +372,6 @@ public class StorageManager {
     }
 
     /**
-     * get rider location to be send with rider action
-     * BI need this data for details about rider's actions
-     *
-     * @return location wrapped with additional info
-     */
-    @Nullable
-    RiderLocation getRiderLocation() {
-        return riderLocation;
-    }
-
-    /**
-     * Every time when rider has new location we add more information with
-     * accuracy battery level and store.
-     * This data would be send with next rider action notifier
-     *
-     * @param riderLocation location wrapped with additional info
-     */
-    public void setRiderLocation(@Nullable RiderLocation riderLocation) {
-        this.riderLocation = riderLocation;
-    }
-
-    /**
      * Check if order code is valid for all route stop
      * And remove it from list if invalid.
      * </p>
@@ -374,5 +397,4 @@ public class StorageManager {
 
         return stopList;
     }
-
 }

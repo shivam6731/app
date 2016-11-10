@@ -296,12 +296,14 @@ public class ApiExecutorTest {
     public void testUpdateRiderInfo() {
         VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
         apiExecutor.updateRiderInfo(vehicleDeliveryAreaRiderBundle);
-        verify(activity, never()).setRiderContent(any(Rider.class));
+        verify(storageManager, never()).storeRider(any(Rider.class));
+        verify(activity, never()).setRiderContent();
 
         Rider rider = new Rider();
         vehicleDeliveryAreaRiderBundle.setRider(rider);
         apiExecutor.updateRiderInfo(vehicleDeliveryAreaRiderBundle);
-        verify(activity).setRiderContent(rider);
+        verify(storageManager).storeRider(rider);
+        verify(activity).setRiderContent();
     }
 
     @Test

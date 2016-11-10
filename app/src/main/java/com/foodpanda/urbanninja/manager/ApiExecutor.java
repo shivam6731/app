@@ -280,7 +280,8 @@ public class ApiExecutor {
     void updateRiderInfo(VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle) {
         this.vehicleDeliveryAreaRiderBundle = vehicleDeliveryAreaRiderBundle;
         if (vehicleDeliveryAreaRiderBundle.getRider() != null) {
-            activity.setRiderContent(vehicleDeliveryAreaRiderBundle.getRider());
+            storageManager.storeRider(vehicleDeliveryAreaRiderBundle.getRider());
+            activity.setRiderContent();
         }
     }
 

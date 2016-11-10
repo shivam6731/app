@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
+import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.ui.interfaces.MainActivityCallback;
@@ -27,6 +28,7 @@ public class IssueVendorCustomerDialog extends DialogFragment {
 
     private DialogType dialogType;
     private Stop stop;
+    private Rider rider;
 
     private TextView txtFirstActionTitle;
     private TextView txtFirstActionDescription;
@@ -36,12 +38,13 @@ public class IssueVendorCustomerDialog extends DialogFragment {
     private TextView txtSecondActionDescription;
     private ImageView imageSecondAction;
 
-    public static IssueVendorCustomerDialog newInstance(DialogType dialogType, Stop stop) {
+    public static IssueVendorCustomerDialog newInstance(DialogType dialogType, Stop stop, Rider rider) {
         IssueVendorCustomerDialog issueVendorCustomerDialog = new IssueVendorCustomerDialog();
 
         Bundle bundle = new Bundle();
         bundle.putString(Constants.BundleKeys.DIALOG_TYPE, dialogType.name());
         bundle.putParcelable(Constants.BundleKeys.STOP, stop);
+        bundle.putParcelable(Constants.BundleKeys.RIDER, rider);
         issueVendorCustomerDialog.setArguments(bundle);
 
         return issueVendorCustomerDialog;
@@ -52,6 +55,7 @@ public class IssueVendorCustomerDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         dialogType = DialogType.valueOf(getArguments().getString(Constants.BundleKeys.DIALOG_TYPE));
         stop = getArguments().getParcelable(Constants.BundleKeys.STOP);
+        rider = getArguments().getParcelable(Constants.BundleKeys.RIDER);
     }
 
 
@@ -98,7 +102,7 @@ public class IssueVendorCustomerDialog extends DialogFragment {
     private void catchFirstButtonClick() {
         switch (dialogType) {
             case ISSUE_VENDOR_CUSTOMER_SELECTION:
-                mainActivityCallback.showIssueDialog(DialogType.ISSUE_CUSTOMER_SENDING);
+                mainActivityCallback.showIssueDialog(DialogType.ISSUE_VENDOR_SENDING);
                 break;
 
             case ISSUE_CUSTOMER_SENDING:
@@ -120,15 +124,12 @@ public class IssueVendorCustomerDialog extends DialogFragment {
     private void catchSecondButtonClick() {
         switch (dialogType) {
             case ISSUE_VENDOR_CUSTOMER_SELECTION:
-                mainActivityCallback.showIssueDialog(DialogType.ISSUE_VENDOR_SENDING);
+                mainActivityCallback.showIssueDialog(DialogType.ISSUE_CUSTOMER_SENDING);
                 break;
 
             case ISSUE_CUSTOMER_SENDING:
-                openIssueSection(Constants.Urls.CUSTOMER_ISSUE_URL);
-                break;
-
             case ISSUE_VENDOR_SENDING:
-                openIssueSection(Constants.Urls.VENDOR_ISSUE_URL);
+                openIssueSection(getGoogleFormUrl());
                 break;
         }
 
@@ -215,6 +216,25 @@ public class IssueVendorCustomerDialog extends DialogFragment {
                 return R.string.issue_customer_title;
             default:
                 return R.string.issue_vendor_customer_selection_title;
+        }
+    }
+
+    /**
+     * Pre-fill order code and rider personal information
+     * for the google docs.
+     * <p/>
+     * we need this feature to get rid of two steps for riders
+     *
+     * @return google form url with pre-filled rides and order info
+     */
+    private String getGoogleFormUrl() {
+        switch (dialogType) {
+            case ISSUE_VENDOR_SENDING:
+                return String.format(Constants.Urls.VENDOR_ISSUE_URL, rider.getFirstName(), stop.getOrderCode());
+            case ISSUE_CUSTOMER_SENDING:
+                return String.format(Constants.Urls.CUSTOMER_ISSUE_URL, rider.getFirstName(), stop.getOrderCode());
+            default:
+                return "";
         }
     }
 

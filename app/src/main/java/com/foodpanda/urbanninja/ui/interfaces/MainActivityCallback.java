@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.ui.interfaces;
 
+import android.support.annotation.NonNull;
+
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
@@ -24,21 +26,21 @@ public interface MainActivityCallback {
      *
      * @param phoneNumber phone number that will be send to the call app
      */
-    void onPhoneSelected(String phoneNumber);
+    void onPhoneSelected(@NonNull String phoneNumber);
 
     /**
      * Write the stop code as title for the main activity
      *
      * @param stop current stop
      */
-    void writeCodeAsTitle(Stop stop);
+    void writeCodeAsTitle(@NonNull Stop stop);
 
     /**
      * Write the title for the main activity
      *
      * @param title for the action bar with information about current selected fragment
      */
-    void writeFragmentTitle(String title);
+    void writeFragmentTitle(@NonNull String title);
 
     /**
      * In case when we can't retrieve user location
@@ -59,7 +61,7 @@ public interface MainActivityCallback {
     /**
      * Open dialog fragment with amount reason of collection issue and amount of collected money
      */
-    void showCollectionIsuueDialog();
+    void showCollectionIssueDialog();
 
     /**
      * Send collection issue API call to report it
@@ -75,7 +77,7 @@ public interface MainActivityCallback {
      * @param url String with url to be converted to Uri
      *            and after this Uri would be passed to
      */
-    void openWebPage(String url);
+    void openWebPage(@NonNull String url);
 
     /**
      * show dialog to launch or continue vendor or customer issue collection activity

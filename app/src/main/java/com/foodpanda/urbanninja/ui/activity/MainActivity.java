@@ -244,10 +244,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     /**
      * set rider name and rider picture to the header view
-     *
-     * @param rider current rider
      */
-    public void setRiderContent(Rider rider) {
+    public void setRiderContent() {
+        Rider rider = storageManager.getRider();
         if (rider != null) {
             TextView txtRiderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.txt_rider_name);
             txtRiderName.setText(getResources().getString(R.string.side_menu_rider_name, rider.getFirstName(), rider.getSurname()));
@@ -525,14 +524,14 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void onPhoneSelected(String phoneNumber) {
+    public void onPhoneSelected(@NonNull String phoneNumber) {
         Intent callIntent = new Intent(Intent.ACTION_DIAL);
         callIntent.setData(Uri.parse("tel:" + phoneNumber));
         startActivity(callIntent);
     }
 
     @Override
-    public void writeCodeAsTitle(Stop stop) {
+    public void writeCodeAsTitle(@NonNull Stop stop) {
         if (toolbar != null) {
             toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
             toolbar.setSubtitle(formatDeliverBefore(stop));
@@ -540,7 +539,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void writeFragmentTitle(String title) {
+    public void writeFragmentTitle(@NonNull String title) {
         if (toolbar != null) {
             toolbar.setTitle(title);
             toolbar.setSubtitle("");
@@ -567,7 +566,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void showCollectionIsuueDialog() {
+    public void showCollectionIssueDialog() {
         IssueCollectedDialog issueCollectedDialog = IssueCollectedDialog.newInstance(storageManager.getCountry());
         issueCollectedDialog.show(fragmentManager, IssueCollectedDialog.class.getSimpleName());
     }
@@ -580,7 +579,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void openWebPage(String url) {
+    public void openWebPage(@NonNull String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);
@@ -591,7 +590,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         if (storageManager.getCurrentStop() != null) {
             IssueVendorCustomerDialog issueVendorCustomerDialog = IssueVendorCustomerDialog.newInstance(
                 dialogType,
-                storageManager.getCurrentStop());
+                storageManager.getCurrentStop(),
+                storageManager.getRider()
+            );
 
             issueVendorCustomerDialog.show(fragmentManager, IssueVendorCustomerDialog.class.getSimpleName());
         } else {
