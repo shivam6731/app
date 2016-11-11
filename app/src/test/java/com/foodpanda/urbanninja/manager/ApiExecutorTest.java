@@ -1,8 +1,7 @@
 package com.foodpanda.urbanninja.manager;
 
 import com.foodpanda.urbanninja.BuildConfig;
-import com.foodpanda.urbanninja.api.BaseApiCallback;
-import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
+import com.foodpanda.urbanninja.api.model.HockeyAppVersionList;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
@@ -12,8 +11,10 @@ import com.foodpanda.urbanninja.model.TimeWindow;
 import com.foodpanda.urbanninja.model.Vehicle;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.model.hockeyapp.AppVersion;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 
@@ -26,6 +27,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -45,6 +47,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.never;
@@ -82,6 +85,7 @@ public class ApiExecutorTest {
         MockitoAnnotations.initMocks(this);
 
         when(apiManager.getRiderObservable()).thenReturn(Observable.empty());
+        when(apiManager.getAppVersionsObservable(anyString())).thenReturn(Observable.empty());
         when(apiManager.getCurrentScheduleObservable()).thenReturn(Observable.empty());
         when(apiManager.getRouteObservable(anyInt())).thenReturn(Observable.empty());
 
@@ -422,7 +426,7 @@ public class ApiExecutorTest {
             eq(routeStop.getId()),
             anyDouble(),
             eq(CollectionIssueReason.WRONG_ITEMS),
-            Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
+            Matchers.any()
         );
         verify(activity).showProgress();
     }
@@ -435,8 +439,102 @@ public class ApiExecutorTest {
             anyLong(),
             anyDouble(),
             eq(CollectionIssueReason.WRONG_ITEMS),
-            Matchers.<BaseApiCallback<CashCollectionIssueList>>any()
+            Matchers.any()
         );
         verify(activity, never()).showProgress();
+    }
+
+    @Test
+    public void testCheckAppVersionObservableNoData() {
+        TestSubscriber<VehicleDeliveryAreaRiderBundle> subscriber = new TestSubscriber<>();
+
+        Observable<VehicleDeliveryAreaRiderBundle> observable = apiExecutor.checkAppVersion(new HockeyAppVersionList());
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        subscriber.onCompleted();
+        subscriber.onNext(vehicleDeliveryAreaRiderBundle);
+        subscriber.getOnNextEvents();
+        observable.subscribe(subscriber);
+
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertValue(vehicleDeliveryAreaRiderBundle);
+        subscriber.assertReceivedOnNext(Collections.singletonList(vehicleDeliveryAreaRiderBundle));
+
+        verify(nestedFragmentCallback, never()).openInformationDialog(
+            anyString(),
+            anyString(),
+            anyString(),
+            Matchers.eq(DialogType.NOT_UP_TO_DATE_APP_VERSION),
+            anyString());
+    }
+
+    @Test
+    public void testCheckAppVersionObservableNewVersion() {
+        TestSubscriber<VehicleDeliveryAreaRiderBundle> subscriber = new TestSubscriber<>();
+
+        HockeyAppVersionList hockeyAppVersionList = new HockeyAppVersionList();
+        AppVersion appVersion = new AppVersion(BuildConfig.VERSION_CODE, "", "");
+        hockeyAppVersionList.setAppVersions(Collections.singletonList(appVersion));
+
+        Observable<VehicleDeliveryAreaRiderBundle> observable = apiExecutor.checkAppVersion(new HockeyAppVersionList());
+
+        VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
+        subscriber.onCompleted();
+        subscriber.onNext(vehicleDeliveryAreaRiderBundle);
+        subscriber.getOnNextEvents();
+        observable.subscribe(subscriber);
+
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertValue(vehicleDeliveryAreaRiderBundle);
+        subscriber.assertReceivedOnNext(Collections.singletonList(vehicleDeliveryAreaRiderBundle));
+
+        verify(nestedFragmentCallback, never()).openInformationDialog(
+            anyString(),
+            anyString(),
+            anyString(),
+            Matchers.eq(DialogType.NOT_UP_TO_DATE_APP_VERSION),
+            anyString());
+    }
+
+    @Test
+    public void testCheckAppVersionObservableOldVersion() {
+        MainActivity activity = Robolectric.buildActivity(MainActivity.class).get();
+
+        apiExecutor = new ApiExecutor(activity,
+            nestedFragmentCallback,
+            apiManager,
+            storageManager,
+            multiPickupManager,
+            checkPolygonManager,
+            locationSettingCheckManager);
+
+        TestSubscriber<VehicleDeliveryAreaRiderBundle> subscriber = new TestSubscriber<>();
+
+        HockeyAppVersionList hockeyAppVersionList = new HockeyAppVersionList();
+        AppVersion appVersion = new AppVersion(BuildConfig.VERSION_CODE + 1, BuildConfig.VERSION_NAME, "Web");
+        hockeyAppVersionList.setAppVersions(Collections.singletonList(appVersion));
+
+        Observable<VehicleDeliveryAreaRiderBundle> observable = apiExecutor.checkAppVersion(hockeyAppVersionList);
+
+        subscriber.onCompleted();
+        observable.subscribe(subscriber);
+
+        subscriber.assertCompleted();
+        subscriber.assertNoErrors();
+        subscriber.assertNoValues();
+        subscriber.assertReceivedOnNext(Collections.emptyList());
+
+        verify(nestedFragmentCallback).openInformationDialog(
+            "Your app is not up to date",
+            String.format("You have app version %1$s installed \n" +
+                    "which is an outdated version of Urban Ninja.\n\n" +
+                    "    To proceed with your work, please download the latest %2$s\n" +
+                    "by clicking in the link below.",
+                BuildConfig.VERSION_NAME, BuildConfig.VERSION_NAME),
+            "OK, let's download it",
+            DialogType.NOT_UP_TO_DATE_APP_VERSION,
+            "Web");
     }
 }

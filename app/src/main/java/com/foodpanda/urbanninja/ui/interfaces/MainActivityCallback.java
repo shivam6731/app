@@ -33,7 +33,7 @@ public interface MainActivityCallback {
      *
      * @param stop current stop
      */
-    void writeCodeAsTitle(@NonNull Stop stop);
+    void writeCodeAsTitle(Stop stop);
 
     /**
      * Write the title for the main activity
@@ -54,9 +54,16 @@ public interface MainActivityCallback {
      * @param title       title of the dialog
      * @param message     message with details
      * @param buttonLabel label for button
+     * @param webUrl      webUrl to be redirected
      * @param dialogType  param to redirect after click ok
      */
-    void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType);
+    void showInformationDialog(
+        @NonNull CharSequence title,
+        @NonNull CharSequence message,
+        @NonNull CharSequence buttonLabel,
+        @NonNull String webUrl,
+        @NonNull DialogType dialogType
+    );
 
     /**
      * Open dialog fragment with amount reason of collection issue and amount of collected money

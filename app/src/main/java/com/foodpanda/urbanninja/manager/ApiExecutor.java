@@ -8,11 +8,13 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.foodpanda.urbanninja.BuildConfig;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
 import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
+import com.foodpanda.urbanninja.api.model.HockeyAppVersionList;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
@@ -21,8 +23,10 @@ import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
+import com.foodpanda.urbanninja.model.enums.DialogType;
 import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.model.hockeyapp.AppVersion;
 import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import com.foodpanda.urbanninja.ui.interfaces.NestedFragmentCallback;
 import com.foodpanda.urbanninja.ui.util.DialogInfoHelper;
@@ -260,7 +264,8 @@ public class ApiExecutor {
      */
     void getAllData() {
         ApiUtils.wrapObservable(
-            apiManager.getRiderObservable())
+            apiManager.getAppVersionsObservable(activity.getString(R.string.hockey_app_key)))
+            .concatMap(this::checkAppVersion)
             .doOnNext(this::updateRiderInfo)
             .concatMap(vehicleDeliveryAreaRiderBundle1 -> ApiUtils.wrapObservable(apiManager.getCurrentScheduleObservable()))
             .doOnNext(this::updateScheduleInfo)
@@ -283,6 +288,38 @@ public class ApiExecutor {
             storageManager.storeRider(vehicleDeliveryAreaRiderBundle.getRider());
             activity.setRiderContent();
         }
+    }
+
+    /**
+     * In case when rider use deprecated version of the app we show alert dialog and
+     * stop downloading rest of the data.
+     * <p/>
+     * to stop download we return {@see #Observable.never()}.this method we return without any other action.
+     * Moreover we call nestedFragmentCallback.openInformationDialog method to open dialog.
+     *
+     * @param hockeyAppVersionList list of first 500 version of the app
+     * @return Observable to continue upload all data from internal API or to stop upload data.
+     */
+    Observable<VehicleDeliveryAreaRiderBundle> checkAppVersion(HockeyAppVersionList hockeyAppVersionList) {
+        if (hockeyAppVersionList.getAppVersions() != null &&
+            hockeyAppVersionList.getAppVersions().size() > 0) {
+            AppVersion appVersion = hockeyAppVersionList.getAppVersions().get(0);
+
+            if (appVersion.getVersion() > BuildConfig.VERSION_CODE) {
+                nestedFragmentCallback.openInformationDialog(
+                    activity.getResources().getString(R.string.app_version_dialog_title),
+                    activity.getResources().getString(R.string.app_version_dialog_message, BuildConfig.VERSION_NAME, appVersion.getShortversion()),
+                    activity.getResources().getString(R.string.app_version_dialog_button_label),
+                    DialogType.NOT_UP_TO_DATE_APP_VERSION,
+                    appVersion.getDownloadUrl()
+                );
+
+                return Observable.never();
+            }
+        }
+
+        return ApiUtils.wrapObservable(
+            apiManager.getRiderObservable());
     }
 
     /**

@@ -203,4 +203,11 @@
         請確保你已在“設定 - >開發人員選項 - >允許模擬位置”禁用此功能。\n
         注意：如果你繼續發送虛假位置，你將不能工作</string>
     <string name="fake_location_dialog_button_label">清楚，停用模擬位置</string>
+
+    <!-- App Version Dialog-->
+    <string name="app_version_dialog_title">你的應用程式不是最新版本</string>
+    <string name="app_version_dialog_message">你似乎安裝了 %1$s ，這是一個過時版本的Urban Ninja車手應用程式。\n
+    要繼續你的工作，請點擊下面的鏈接下載最新的%2$s 。</string>
+    <string name="app_version_dialog_button_label">好的，下載最新版本</string>
+
 </resources>

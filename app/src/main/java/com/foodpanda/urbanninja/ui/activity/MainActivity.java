@@ -531,7 +531,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void writeCodeAsTitle(@NonNull Stop stop) {
+    public void writeCodeAsTitle(Stop stop) {
         if (toolbar != null) {
             toolbar.setTitle(stop != null && !TextUtils.isEmpty(stop.getOrderCode()) ? stop.getOrderCode() : "");
             toolbar.setSubtitle(formatDeliverBefore(stop));
@@ -553,12 +553,19 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     @Override
-    public void showInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType) {
+    public void showInformationDialog(
+        @NonNull CharSequence title,
+        @NonNull CharSequence message,
+        @NonNull CharSequence buttonLabel,
+        @NonNull String webUrl,
+        @NonNull DialogType dialogType
+    ) {
         if (!isInfoDialogShown()) {
             InformationDialogFragment informationDialogFragment = InformationDialogFragment.newInstance(
                 title,
                 message,
                 buttonLabel,
+                webUrl,
                 dialogType);
 
             informationDialogFragment.show(fragmentManager, InformationDialogFragment.class.getSimpleName());

@@ -10,5 +10,4 @@ import rx.Observable;
 public interface CountryService {
     @GET(Config.ApiUrbanNinjaTag.PARAMS)
     Observable<CountryListWrapper> getCountries();
-
 }

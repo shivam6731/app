@@ -92,9 +92,13 @@ public interface NestedFragmentCallback {
     void startLocationService();
 
     /**
-     * In any case when we try to clock-in
-     * we need to let rider know about current status of clock-in process
-     * TO do so we show information dialog
+     * Callback to open information dialog.
+     * Dialog would be the same only content would be different depends on {@link DialogType}.
+     * <p/>
+     * Depend on information {@link DialogType} different action would be triggered.
+     * For instance for DialogType.FAKE_LOCATION_SETTING rider would be redirected
+     * to the developers setting to turn off mock location option
+     * <p/>
      *
      * @param title       title of the dialog
      * @param message     information
@@ -102,4 +106,18 @@ public interface NestedFragmentCallback {
      * @param dialogType  param to redirect after click ok
      */
     void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType);
+
+    /**
+     * Callback to open information dialog.
+     * <p/>
+     * works the same as @see {@link #openInformationDialog(CharSequence, CharSequence, CharSequence, DialogType)},
+     * however in case when we need to pass url one more param would be added.
+     *
+     * @param title       title of the dialog
+     * @param message     information
+     * @param buttonLabel label for button
+     * @param dialogType  param to redirect after click ok
+     * @param webUrl      web url to open from dialog
+     */
+    void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType, String webUrl);
 }

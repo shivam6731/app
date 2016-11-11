@@ -2,7 +2,7 @@ package com.foodpanda.urbanninja;
 
 import android.text.TextUtils;
 
-import com.foodpanda.urbanninja.api.ApiUrl;
+import com.foodpanda.urbanninja.api.UrbanNinjaApiUrl;
 import com.foodpanda.urbanninja.model.Country;
 
 public class Config {
@@ -14,7 +14,7 @@ public class Config {
                 return country.getUrl();
             } else {
 
-                return ApiUrl.BASE_URL;
+                return UrbanNinjaApiUrl.BASE_URL;
             }
         }
     }
@@ -49,4 +49,12 @@ public class Config {
      */
     public static final boolean IS_FAKE_LOCATION_ALLOWED = false;
 
+    /**
+     * To force rider to use up-to-date version of the app
+     * we need to integrate last available version check
+     * <p/>
+     * to do so we need to use hockey_app API
+     * and we need this read only token
+     */
+    public static final String HOCKEY_APP_API_READ_ONLY_TOKEN = "6a80ac4f330d4dbe99f45c44849780f8";
 }

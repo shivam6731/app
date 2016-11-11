@@ -213,5 +213,12 @@
        Please make sure that you have disabled under \"Settings -> Developer options -> Allow mock locations.\"\n
        NOTE: you cannot work if you keep on sending us mock locations</string>
     <string name="fake_location_dialog_button_label">OK, DISABLE MOCK LOCATIONS</string>
+
+    <!-- App Version Dialog-->
+    <string name="app_version_dialog_title">Your app is not up to date</string>
+    <string name="app_version_dialog_message">You have app version %1$s installed \nwhich is an outdated version of Urban Ninja.\n
+    To proceed with your work, please download the latest %2$s\nby clicking in the link below.</string>
+    <string name="app_version_dialog_button_label">OK, let\'s download it</string>
+
 </resources>
 

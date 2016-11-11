@@ -7,10 +7,12 @@ import com.foodpanda.urbanninja.Config;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.api.ApiTag;
 import com.foodpanda.urbanninja.api.BaseApiCallback;
+import com.foodpanda.urbanninja.api.HockeyAppUrl;
 import com.foodpanda.urbanninja.api.model.AuthRequest;
 import com.foodpanda.urbanninja.api.model.CashCollectionIssueList;
 import com.foodpanda.urbanninja.api.model.CashCollectionIssueWrapper;
 import com.foodpanda.urbanninja.api.model.CountryListWrapper;
+import com.foodpanda.urbanninja.api.model.HockeyAppVersionList;
 import com.foodpanda.urbanninja.api.model.OrdersReportCollection;
 import com.foodpanda.urbanninja.api.model.PerformActionWrapper;
 import com.foodpanda.urbanninja.api.model.PushNotificationRegistrationWrapper;
@@ -21,6 +23,7 @@ import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
 import com.foodpanda.urbanninja.api.model.StorableStatus;
 import com.foodpanda.urbanninja.api.request.CountryService;
+import com.foodpanda.urbanninja.api.request.HockeyAppService;
 import com.foodpanda.urbanninja.api.request.LogisticsService;
 import com.foodpanda.urbanninja.api.rx.action.RetryAction;
 import com.foodpanda.urbanninja.api.rx.action.RetryLocation;
@@ -62,6 +65,7 @@ public class ApiManager {
 
     private LogisticsService service;
     private CountryService countryService;
+    private HockeyAppService hockeyAppService;
 
     private final StorageManager storageManager;
 
@@ -79,10 +83,10 @@ public class ApiManager {
     }
 
     /**
-     * When we launch the app or country selected we need to set new base url for the whole system.
-     * TODO add DI scope for the manager
+     * Create Retrofit service to communicate with our internal API
+     * When we launch the app or select country we need to set new base url for the whole UN2 APi service.
      */
-    public void initService() {
+    public void createUrbanNinjaService() {
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(Config.ApiBaseUrl.getBaseUrl(storageManager.getCountry()))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -91,53 +95,6 @@ public class ApiManager {
             .build();
 
         service = retrofit.create(LogisticsService.class);
-
-        retrofit = new Retrofit.Builder().
-            baseUrl(Config.ApiUrbanNinjaUrl.BASE_URL).
-            addCallAdapterFactory(RxJavaCallAdapterFactory.create()).
-            addConverterFactory(GsonConverterFactory.create(createCountryGson())).
-            build();
-        countryService = retrofit.create(CountryService.class);
-
-        sendAllFailedRequests();
-    }
-
-    /**
-     * Create Api client where timeout and API calls header will be set
-     *
-     * @return okhttp3 client with all settings
-     */
-    private OkHttpClient createOkHttpClient() {
-        return new OkHttpClient.Builder().
-            connectTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
-            writeTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
-            readTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
-            addInterceptor(chain -> {
-                Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
-                Token token = storageManager.getToken();
-                if (token != null) {
-                    build.addHeader("Authorization", token.getTokenType() +
-                        " " +
-                        token.getAccessToken())
-                        .build();
-                }
-
-                return chain.proceed(build.build());
-            }).build();
-    }
-
-    private Gson createGson() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
-
-        return gsonBuilder.create();
-    }
-
-    private Gson createCountryGson() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES);
-
-        return gsonBuilder.create();
     }
 
     public void login(
@@ -151,7 +108,6 @@ public class ApiManager {
             @Override
             public void onNext(Token token) {
                 storageManager.storeToken(token);
-                initService();
                 tokenBaseApiCallback.onSuccess(token);
             }
         };
@@ -171,30 +127,7 @@ public class ApiManager {
         getScheduleList(dateTimeNow, dateTimeEnd, baseApiCallback);
     }
 
-    private void getScheduleList(DateTime dateTimeStart,
-                                 DateTime dateTimeEnd,
-                                 @NonNull final BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
-    ) {
-        TokenData tokenData = storageManager.getTokenData();
-
-        BaseSubscriber<ScheduleCollectionWrapper> baseSubscriber = new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
-            @Override
-            public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
-                baseApiCallback.onSuccess(scheduleWrappers);
-            }
-        };
-
-        compositeSubscription.add(
-            wrapRetryObservable(
-                service.getRiderSchedule(
-                    tokenData.getUserId(),
-                    dateTimeStart,
-                    dateTimeEnd,
-                    ApiTag.SORT_VALUE)).
-                subscribe(baseSubscriber));
-    }
-
-    public void scheduleClockIn(
+    void scheduleClockIn(
         int scheduleId,
         @NonNull final BaseApiCallback<ScheduleWrapper> baseApiCallback
     ) {
@@ -211,24 +144,10 @@ public class ApiManager {
                 subscribe(baseSubscriber));
     }
 
-    public void notifyActionPerformed(long routeId, Status status) {
+    void notifyActionPerformed(long routeId, Status status) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime(), storageManager.getRiderLocation());
 
-        compositeSubscription.add(
-            wrapRetryObservable(
-                service.notifyActionPerformed(routeId, performActionWrapper),
-                new RetryAction(routeId, performActionWrapper, apiQueue)).
-                subscribe(new BackgroundSubscriber<>()));
-    }
-
-    public void notifyStoredAction(StorableStatus storableStatus) {
-        compositeSubscription.add(
-            wrapRetryObservable(
-                service.notifyActionPerformed(
-                    storableStatus.getRouteId(),
-                    storableStatus.getPerformActionWrapper()),
-                new RetryAction(storableStatus.getRouteId(), storableStatus.getPerformActionWrapper(), apiQueue)).
-                subscribe(new BackgroundSubscriber<>()));
+        sendRiderAction(performActionWrapper, routeId);
     }
 
     public void sendLocation(
@@ -237,7 +156,6 @@ public class ApiManager {
 
         RiderLocationCollectionWrapper riderLocationCollectionWrapper = new RiderLocationCollectionWrapper();
         riderLocationCollectionWrapper.addAll(riderLocationList);
-
 
         compositeSubscription.add(
             wrapRetryObservable(
@@ -253,38 +171,12 @@ public class ApiManager {
     }
 
     /**
-     * Try to execute all users action api calls
-     */
-    private void resendAction(Queue<StorableStatus> requestsQueue) {
-        if (!requestsQueue.isEmpty()) {
-            StorableStatus storableStatus = requestsQueue.remove();
-            notifyStoredAction(storableStatus);
-            resendAction(requestsQueue);
-        }
-        storageManager.storeStatusApiRequests(requestsQueue);
-    }
-
-    /**
-     * Try to execute all users location api calls
-     */
-    private void resendLocation(Queue<RiderLocation> requestsLocationQueue) {
-        if (!requestsLocationQueue.isEmpty()) {
-            RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
-            riderLocations.addAll(requestsLocationQueue);
-            sendLocation(storageManager.getVehicleId(), riderLocations);
-
-            requestsLocationQueue.clear();
-            storageManager.storeLocationApiRequests(requestsLocationQueue);
-        }
-    }
-
-    /**
      * Call ApiManager to report collection issue
      *
      * @param collectionAmount amount of money collected
      * @param reason           reason of an issue
      */
-    public void reportCollectionIssue(
+    void reportCollectionIssue(
         long routeStopId,
         double collectionAmount,
         @NonNull CollectionIssueReason reason,
@@ -325,6 +217,99 @@ public class ApiManager {
             baseApiCallback);
     }
 
+    //Internal foodpanda API
+    public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
+        BaseSubscriber<CountryListWrapper> baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(CountryListWrapper countryListWrapper) {
+                baseApiCallback.onSuccess(countryListWrapper);
+            }
+        };
+        wrapRetryObservable(
+            countryService.getCountries()).subscribe(baseSubscriber);
+    }
+
+    Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
+        DateTime dateTimeNow = DateTime.now();
+        DateTime datePlusOneDay = DateTime.now().plusDays(1);
+        TokenData tokenData = storageManager.getTokenData();
+
+        return service.getRiderSchedule(tokenData.getUserId(), dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
+    }
+
+    Observable<RouteWrapper> getRouteObservable(int vehicleId) {
+        return service.getRoute(vehicleId);
+    }
+
+    Observable<VehicleDeliveryAreaRiderBundle> getRiderObservable() {
+        return service.getRider(storageManager.getTokenData().getUserId());
+    }
+
+    Observable<HockeyAppVersionList> getAppVersionsObservable(String apiKey) {
+        return hockeyAppService.getAppVersions(apiKey);
+    }
+
+    /**
+     * logout from rider from api side
+     * cancel all API requests that are in flight right now
+     * TODO un-subscribe from push notification for current rider
+     */
+    public void logout() {
+        compositeSubscription.unsubscribe();
+        compositeSubscription = new CompositeSubscription();
+    }
+
+    private void getScheduleList(
+        DateTime dateTimeStart,
+        DateTime dateTimeEnd,
+        @NonNull final BaseApiCallback<ScheduleCollectionWrapper> baseApiCallback
+    ) {
+        TokenData tokenData = storageManager.getTokenData();
+
+        BaseSubscriber<ScheduleCollectionWrapper> baseSubscriber = new BaseSubscriber<ScheduleCollectionWrapper>(baseApiCallback) {
+            @Override
+            public void onNext(ScheduleCollectionWrapper scheduleWrappers) {
+                baseApiCallback.onSuccess(scheduleWrappers);
+            }
+        };
+
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.getRiderSchedule(
+                    tokenData.getUserId(),
+                    dateTimeStart,
+                    dateTimeEnd,
+                    ApiTag.SORT_VALUE)).
+                subscribe(baseSubscriber));
+    }
+
+    /**
+     * Create service objects for all types of retrofit interfaces
+     */
+    private void initService() {
+        //creating internal UN2 API service
+        createUrbanNinjaService();
+
+        //creating foodpanda country API service
+        Retrofit retrofit = new Retrofit.Builder().
+            baseUrl(Config.ApiUrbanNinjaUrl.BASE_URL).
+            addCallAdapterFactory(RxJavaCallAdapterFactory.create()).
+            addConverterFactory(GsonConverterFactory.create(createLowerCaseWithUnderscoreGson())).
+            build();
+        countryService = retrofit.create(CountryService.class);
+
+        //creating hockey app version control API service
+        retrofit = new Retrofit.Builder().
+            baseUrl(HockeyAppUrl.BASE_URL).
+            addCallAdapterFactory(RxJavaCallAdapterFactory.create()).
+            addConverterFactory(GsonConverterFactory.create(createLowerCaseWithUnderscoreGson())).
+            build();
+
+        hockeyAppService = retrofit.create(HockeyAppService.class);
+
+        sendAllFailedRequests();
+    }
+
     private void getWorkingDayReport(
         DateTime startAt,
         DateTime endAt,
@@ -347,44 +332,6 @@ public class ApiManager {
                     endAt,
                     timezone))
                 .subscribe(baseSubscriber));
-    }
-
-    //Internal foodpanda API
-    public void getCountries(final BaseApiCallback<CountryListWrapper> baseApiCallback) {
-        BaseSubscriber<CountryListWrapper> baseSubscriber = new BaseSubscriber<CountryListWrapper>(baseApiCallback) {
-            @Override
-            public void onNext(CountryListWrapper countryListWrapper) {
-                baseApiCallback.onSuccess(countryListWrapper);
-            }
-        };
-        wrapRetryObservable(
-            countryService.getCountries()).subscribe(baseSubscriber);
-    }
-
-    public Observable<ScheduleCollectionWrapper> getCurrentScheduleObservable() {
-        DateTime dateTimeNow = DateTime.now();
-        DateTime datePlusOneDay = DateTime.now().plusDays(1);
-        TokenData tokenData = storageManager.getTokenData();
-
-        return service.getRiderSchedule(tokenData.getUserId(), dateTimeNow, datePlusOneDay, ApiTag.SORT_VALUE);
-    }
-
-    public Observable<RouteWrapper> getRouteObservable(int vehicleId) {
-        return service.getRoute(vehicleId);
-    }
-
-    public Observable<VehicleDeliveryAreaRiderBundle> getRiderObservable() {
-        return service.getRider(storageManager.getTokenData().getUserId());
-    }
-
-    /**
-     * logout from rider from api side
-     * cancel all API requests that are in flight right now
-     * TODO un-subscribe from push notification for current rider
-     */
-    public void logout() {
-        compositeSubscription.unsubscribe();
-        compositeSubscription = new CompositeSubscription();
     }
 
     /**
@@ -413,4 +360,96 @@ public class ApiManager {
     private <T> Observable<T> wrapRetryObservable(Observable<T> observable, RetryWithDelay retryWithDelay) {
         return ApiUtils.wrapObservable(observable).retryWhen(retryWithDelay);
     }
+
+    /**
+     * Build {@link Gson} object with specific serializer to properly parse {@link DateTime} objects
+     *
+     * @return gson object for {@link LogisticsService} class
+     */
+    private Gson createGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+
+        return gsonBuilder.create();
+    }
+
+    /**
+     * Build {@link Gson} object with specific serializer naming policy,
+     * to properly parse lower case objects
+     *
+     * @return gson object to work with lower case with underscore naming policy
+     */
+    private Gson createLowerCaseWithUnderscoreGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+
+        return gsonBuilder.create();
+    }
+
+    /**
+     * Create Api client where timeout and API calls header will be set
+     *
+     * @return okhttp3 client with all settings
+     */
+    private OkHttpClient createOkHttpClient() {
+        return new OkHttpClient.Builder().
+            connectTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            writeTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            readTimeout(Constants.API_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS).
+            addInterceptor(chain -> {
+                Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
+                Token token = storageManager.getToken();
+                if (token != null) {
+                    build.addHeader("Authorization", token.getTokenType() + " " + token.getAccessToken()).build();
+                }
+
+                return chain.proceed(build.build());
+            }).build();
+    }
+
+    /**
+     * Try to execute all users action api calls
+     *
+     * @param requestsQueue all stored rider action that we failed during offline time of server problem
+     */
+    private void resendAction(Queue<StorableStatus> requestsQueue) {
+        if (!requestsQueue.isEmpty()) {
+            StorableStatus storableStatus = requestsQueue.remove();
+            sendRiderAction(storableStatus.getPerformActionWrapper(), storableStatus.getRouteId());
+            resendAction(requestsQueue);
+        }
+        storageManager.storeStatusApiRequests(requestsQueue);
+    }
+
+    /**
+     * Send rider action to the server.
+     * </p>
+     * in case if this API call would fail this action would be stored to #apiQueue.
+     * And as soon as connection would be back, this action would be send with {@link #sendAllFailedRequests()}
+     *
+     * @param performActionWrapper rider action that was done (included time, type of action and location)
+     * @param routeId              id of route stop
+     */
+    private void sendRiderAction(PerformActionWrapper performActionWrapper, long routeId) {
+        compositeSubscription.add(
+            wrapRetryObservable(
+                service.notifyActionPerformed(routeId, performActionWrapper),
+                new RetryAction(routeId, performActionWrapper, apiQueue)).
+                subscribe(new BackgroundSubscriber<>()));
+    }
+
+    /**
+     * Try to execute all users location api calls
+     */
+    private void resendLocation(Queue<RiderLocation> requestsLocationQueue) {
+        if (!requestsLocationQueue.isEmpty()) {
+            RiderLocationCollectionWrapper riderLocations = new RiderLocationCollectionWrapper();
+            riderLocations.addAll(requestsLocationQueue);
+            sendLocation(storageManager.getVehicleId(), riderLocations);
+
+            requestsLocationQueue.clear();
+            storageManager.storeLocationApiRequests(requestsLocationQueue);
+        }
+    }
+
 }

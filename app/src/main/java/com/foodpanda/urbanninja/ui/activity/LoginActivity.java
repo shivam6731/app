@@ -110,7 +110,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityCallback
         this.country = country;
         storageManager.storeCountry(country);
         //after selecting country we need to set new baseUrl for the whole http client
-        apiManager.initService();
+        apiManager.createUrbanNinjaService();
 
         fragmentManager.
             beginTransaction().

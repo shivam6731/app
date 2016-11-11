@@ -1,5 +1,7 @@
 package com.foodpanda.urbanninja.api;
 
+import com.foodpanda.urbanninja.Config;
+
 public class ApiTag {
     public static final String AUTH_URL = "v1/auth/oauth";
     public static final String GET_RIDER_URL = "v1/riders/{rider_id}";
@@ -22,4 +24,12 @@ public class ApiTag {
     public static final String SCHEDULE_ID_TAG = "schedule_id";
     public static final String ROUTE_STOP_ID_TAG = "route_stop_id";
     public static final String ORDER_REPORT_TIME_ZONE = "timezone";
+
+    public static final class ApiHockeyAppTag {
+        public static final String APP_VERSIONS_URL = "api/2/apps/{api_key}/app_versions";
+        public static final String API_KEY_TAG = "api_key";
+
+        public static final String APP_VERSIONS_HEADER = "X-HockeyAppToken: " + Config.HOCKEY_APP_API_READ_ONLY_TOKEN;
+    }
+
 }

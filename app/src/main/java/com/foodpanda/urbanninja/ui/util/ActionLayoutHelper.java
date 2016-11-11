@@ -33,8 +33,7 @@ public class ActionLayoutHelper {
     }
 
     public void setActionButtonState() {
-        updateActionButton(isActionButtonVisible,
-            textActionButton);
+        updateActionButton(isActionButtonVisible, textActionButton);
     }
 
     public void saveActionButtonState() {
@@ -97,7 +96,7 @@ public class ActionLayoutHelper {
      *
      * @param isVisible show is view should be shown or hidden with animation
      */
-    public void showHideActionButtonWithAnimation(final boolean isVisible) {
+    private void showHideActionButtonWithAnimation(final boolean isVisible) {
         Animation animation = AnimationUtils.loadAnimation(context, isVisible ? R.anim.bottom_up : R.anim.bottom_down);
 
         //we should disable button when animation in action to get rid of accidental clicks

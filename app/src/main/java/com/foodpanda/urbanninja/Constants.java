@@ -39,6 +39,7 @@ public class Constants {
         public static final String LABEL = "Label";
         public static final String DIALOG_TYPE = "DialogType";
         public static final String RIDER = "Rider";
+        public static final String WEB_URL = "webUrl";
     }
 
     public static class Urls {

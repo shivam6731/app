@@ -344,10 +344,16 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
 
     @Override
     public void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType) {
+        openInformationDialog(title, message, buttonLabel, dialogType, null);
+    }
+
+    @Override
+    public void openInformationDialog(CharSequence title, CharSequence message, CharSequence buttonLabel, DialogType dialogType, String webUrl) {
         mainActivityCallback.showInformationDialog(
             title,
             message,
             buttonLabel,
+            webUrl,
             dialogType
         );
     }
