@@ -57,9 +57,6 @@
     <string name="error_no_map_application">您的设备中没有地图</string>
 
     <!-- Dialog -->
-    <string name="dialog_phone_title">選擇電話號碼</string>
-    <string name="dialog_phone_customer">客人電話號碼</string>
-    <string name="dialog_phone_restaurant">餐廳電話號碼</string>
     <string name="dialog_phone_not_data">客人及餐廳的電話號碼, 會在你接受訂單後顯示</string>
     <string name="dialog_phone_not_numbers">此訂單沒有任何號碼顯示</string>
 
@@ -123,16 +120,20 @@
     <string name="content_description_route_option_expand">Expand layout icon</string>
     <string name="content_description_navigation_rider_icon">Rider profile photo</string>
     <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
-
+    <string name="content_description_order_type">Order type</string>
+    <string name="content_description_vendor_customer_issue_action_1">First option for issue section</string>
+    <string name="content_description_vendor_customer_issue_action_2">Second option for issue section</string>
+    
     <!-- Payment Method-->
     <string name="payment_method_already_paid">已付款</string>
 
     <!-- Delivery Zone-->
     <string name="delivery_zone_outside_title">去 %1$s</string>
-
-    <string name="delivery_zone_outside"><![CDATA[你似乎在送遞區之外（%1$s).<br />
-        請返回所屬送遞區，並再次打卡 <br />
-        你不能在送遞區外開始你的工作]]></string>
+    <string name="delivery_zone_outside"><b>僅允許在以下範圍之內打卡：</b>\n
+         - 在你的送遞區內\n
+         - 在起點100米範圍內\n
+        你似乎不在上述的地方\n
+        <b>請於上述位置重新嘗試</b></string>
 
     <string name="delivery_zone_no_location_title">啟動GPS</string>
 
@@ -149,7 +150,6 @@
     <string name="delivery_zone_successful_label">OK, 開始工作</string>
 
     <!-- Multi Pickup-->
-    <string name="multi_pickup">皮卡多</string>
     <string name="multi_pickup_alert_title">皮卡多!</string>
     <string name="multi_pickup_alert_details"><![CDATA[訂 <b>%1$s </b>單需在同一餐廳拿取<br />]]></string>
 
@@ -159,9 +159,6 @@
     <string name="issue_collection_warning_dialog_text"> 為避免詐騙，所有已提交的報告我們將會展開調查。
     請確保你所提交的報告內容都是真確的。\n\n 如你沒有提交報告, 你將要負責此訂單的差價。</string>
     <string name="issue_collection_warning_dialog_ok">我明白</string>
-    <string name="issue_collection_report_success_title">問題已成功上報</string>
-    <string name="issue_collection_report_success_text">你有關收取現金上的問題已成功上報。相關同事會作出查核。</string>
-    <string name="issue_collection_report_success_ok">知道了</string>
 
     <string name="issue_collection_report_title">不能收取全額?</string>
     <string name="issue_collection_report_text">請選擇你實際收取的金額</string>

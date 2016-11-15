@@ -57,9 +57,6 @@
     <string name="error_no_map_application">There is no map application in your device.</string>
 
     <!-- Dialog -->
-    <string name="dialog_phone_title">Select Phone Number</string>
-    <string name="dialog_phone_customer">Customer Phone</string>
-    <string name="dialog_phone_restaurant">Restaurant Phone</string>
     <string name="dialog_phone_not_data">Customer and vendor phone numbers will be shown when you have an order assigned</string>
     <string name="dialog_phone_not_numbers">This order doesn\'t contain any number</string>
 
@@ -123,6 +120,9 @@
     <string name="content_description_route_option_expand">Expand layout icon</string>
     <string name="content_description_navigation_rider_icon">Rider profile photo</string>
     <string name="content_description_cash_report_arrow">Cash report extent arrow</string>
+    <string name="content_description_order_type">Order type</string>
+    <string name="content_description_vendor_customer_issue_action_1">First option for issue section</string>
+    <string name="content_description_vendor_customer_issue_action_2">Second option for issue section</string>
 
     <!-- Payment Method-->
     <string name="payment_method_already_paid">Already Paid</string>
@@ -157,7 +157,6 @@
     <string name="delivery_zone_successful_label">OK, let\'s start to work</string>
 
     <!-- Multi Pickup-->
-    <string name="multi_pickup">Multi Pickup</string>
     <string name="multi_pickup_alert_title">Multiple Pickup!</string>
     <string name="multi_pickup_alert_details"><![CDATA[Orders <b>%1$s </b>will need to be picked up from the same restaurant.<br />]]></string>
 
@@ -168,10 +167,6 @@
     follows where wa make sure that what you report is the true.\n\nOn the other hand, if you don\'t report an issue you will
     be liable for any COD difference</string>
     <string name="issue_collection_warning_dialog_ok">I Understand</string>
-    <string name="issue_collection_report_success_title">Issue was successfully reported</string>
-    <string name="issue_collection_report_success_text">Your issue with cash collection was successfully reported.
-        Somebody from the delivery team with get this checked</string>
-    <string name="issue_collection_report_success_ok">OK, got it</string>
 
     <string name="issue_collection_report_title">Cannot collect full amount?</string>
     <string name="issue_collection_report_text">Please select the amount that you could actually collect</string>

@@ -9,10 +9,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
@@ -70,9 +70,8 @@ public class IssueVendorCustomerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // create ContextThemeWrapper from the original Activity Context with the custom theme
         Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.popup_theme);
-        LayoutInflater localInflater = LayoutInflater.from(getContext()).cloneInContext(contextThemeWrapper);
 
-        View view = localInflater.inflate(R.layout.vendor_customer_issue_dialog_layout, null);
+        View view = View.inflate(getContext(), R.layout.vendor_customer_issue_dialog_layout, null);
 
         view.findViewById(R.id.layout_first_action).setOnClickListener(view12 -> catchFirstButtonClick());
         txtFirstActionTitle = (TextView) view.findViewById(R.id.txt_first_action_title);
@@ -144,6 +143,8 @@ public class IssueVendorCustomerDialog extends DialogFragment {
     private void openPhoneNumber(String phoneNumber) {
         if (!TextUtils.isEmpty(phoneNumber)) {
             mainActivityCallback.onPhoneSelected(phoneNumber);
+        } else {
+            Toast.makeText(getContext(), getResources().getText(R.string.dialog_phone_not_numbers), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -94,4 +94,13 @@ public class ScheduleWrapper implements ParcelableModel {
     public void setClockedIn(boolean clockedIn) {
         this.clockedIn = clockedIn;
     }
+
+    /**
+     * needs only for unit tests
+     *
+     * @param deliveryZone fake delivery zone
+     */
+    public void setDeliveryZone(DeliveryZone deliveryZone) {
+        this.deliveryZone = deliveryZone;
+    }
 }

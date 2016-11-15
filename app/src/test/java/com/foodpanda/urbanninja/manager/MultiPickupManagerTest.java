@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class MultiPickupManagerTest {
     @Mock
@@ -49,7 +49,7 @@ public class MultiPickupManagerTest {
      * and both are PICKUP task
      */
     @Test
-    public void getSamePlacePickUpAndCheckIsEmpty() {
+    public void testGetSamePlacePickUpAndCheckIsEmpty() {
         Stop currentStop = new Stop(1, "q1fw-1234");
         currentStop.setTask(RouteStopTask.PICKUP);
 
@@ -73,7 +73,7 @@ public class MultiPickupManagerTest {
      * and both are PICKUP task
      */
     @Test
-    public void getDifferentPlacePickUpAndCheckIsEmpty() {
+    public void testGetDifferentPlacePickUpAndCheckIsEmpty() {
         Stop currentStop = new Stop(1, "q1fw-1234");
         currentStop.setTask(RouteStopTask.PICKUP);
 
@@ -97,7 +97,7 @@ public class MultiPickupManagerTest {
      * and both are DELIVER task
      */
     @Test
-    public void getSamePlaceDeliveryAndCheckIsEmpty() {
+    public void testGetSamePlaceDeliveryAndCheckIsEmpty() {
         Stop currentStop = new Stop(1, "q1fw-q7dy");
         currentStop.setTask(RouteStopTask.DELIVER);
 
@@ -120,7 +120,7 @@ public class MultiPickupManagerTest {
      * Test for one items in a route stop plan
      */
     @Test
-    public void getSamePlacePickUpSingleOrder() {
+    public void testGetSamePlacePickUpSingleOrder() {
         Stop currentStop = new Stop(1, "q1fw-q7dy");
         currentStop.setTask(RouteStopTask.PICKUP);
 
@@ -135,5 +135,21 @@ public class MultiPickupManagerTest {
         assertEquals(multiPickupManager.getSamePlaceStops().get(0), currentStop);
         assertEquals(multiPickupManager.getSamePlaceStops().size(), 1);
         assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
+    }
+
+    /**
+     * Test for one items in a route stop plan
+     */
+    @Test
+    public void testGetMultiPickUpDetailsSting() {
+        Stop currentStop = new Stop(1, "q1fw-q7dy");
+        currentStop.setTask(RouteStopTask.PICKUP);
+
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
+        Application app = RuntimeEnvironment.application;
+
+        assertEquals(
+            "Orders " + currentStop.getOrderCode() + " will need to be picked up from the same restaurant.\n",
+            multiPickupManager.getMultiPickUpDetailsSting(app, currentStop).toString());
     }
 }

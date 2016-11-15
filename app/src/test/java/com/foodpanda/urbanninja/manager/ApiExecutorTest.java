@@ -5,6 +5,7 @@ import com.foodpanda.urbanninja.api.model.HockeyAppVersionList;
 import com.foodpanda.urbanninja.api.model.RouteWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleCollectionWrapper;
 import com.foodpanda.urbanninja.api.model.ScheduleWrapper;
+import com.foodpanda.urbanninja.model.DeliveryZone;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.TimeWindow;
@@ -12,6 +13,7 @@ import com.foodpanda.urbanninja.model.Vehicle;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.DialogType;
+import com.foodpanda.urbanninja.model.enums.PolygonStatusType;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.hockeyapp.AppVersion;
@@ -25,10 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Collections;
@@ -51,10 +52,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, packageName = "com.foodpanda.urbanninja")
 public class ApiExecutorTest {
 
@@ -70,10 +72,10 @@ public class ApiExecutorTest {
     private StorageManager storageManager;
 
     @Mock
-    MultiPickupManager multiPickupManager;
+    private MultiPickupManager multiPickupManager;
 
     @Mock
-    CheckPolygonManager checkPolygonManager;
+    private CheckPolygonManager checkPolygonManager;
 
     @Mock
     private NestedFragmentCallback nestedFragmentCallback;
@@ -376,7 +378,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNullVehicleUpdateRoute() {
-        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
         apiExecutor.updateRoute();
 
         verify(apiExecutor).getAllData();
@@ -384,7 +386,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNotNullVehicleUpdateRoute() {
-        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
 
         VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
         vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
@@ -395,7 +397,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNullVehicleUpdateScheduleRoute() {
-        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
 
         apiExecutor.updateScheduleAndRouteStop();
         verify(apiExecutor).getAllData();
@@ -403,7 +405,7 @@ public class ApiExecutorTest {
 
     @Test
     public void testNotNullVehicleUpdateScheduleRoute() {
-        ApiExecutor apiExecutor = Mockito.spy(this.apiExecutor);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
 
         VehicleDeliveryAreaRiderBundle vehicleDeliveryAreaRiderBundle = new VehicleDeliveryAreaRiderBundle();
         vehicleDeliveryAreaRiderBundle.setVehicle(new Vehicle());
@@ -537,4 +539,79 @@ public class ApiExecutorTest {
             DialogType.NOT_UP_TO_DATE_APP_VERSION,
             "Web");
     }
+
+    @Test
+    public void testTryToClockInInsideDeliveryZoneNoSchedule() {
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
+
+        apiExecutor.tryToClockInInsideDeliveryZone();
+        verify(apiExecutor, never()).clockIn();
+    }
+
+    @Test
+    public void testTryToClockInInsideDeliveryZoneInside() {
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
+
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        DeliveryZone deliveryZone = new DeliveryZone();
+        scheduleWrapper.setDeliveryZone(deliveryZone);
+
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+
+        when(checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(deliveryZone)).thenReturn(PolygonStatusType.INSIDE);
+        apiExecutor.tryToClockInInsideDeliveryZone();
+
+        verify(apiExecutor).clockIn();
+    }
+
+    @Test
+    public void testTryToClockInInsideDeliveryZoneOutside() {
+        MainActivity activity = Robolectric.buildActivity(MainActivity.class).get();
+
+        apiExecutor = new ApiExecutor(activity,
+            nestedFragmentCallback,
+            apiManager,
+            storageManager,
+            multiPickupManager,
+            checkPolygonManager,
+            locationSettingCheckManager);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
+
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        DeliveryZone deliveryZone = new DeliveryZone();
+        scheduleWrapper.setDeliveryZone(deliveryZone);
+
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+
+        when(checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(deliveryZone)).thenReturn(PolygonStatusType.OUTSIDE);
+        apiExecutor.tryToClockInInsideDeliveryZone();
+
+        verify(apiExecutor, never()).clockIn();
+    }
+
+    @Test
+    public void testTryToClockInInsideDeliveryZoneNoData() {
+        MainActivity activity = Robolectric.buildActivity(MainActivity.class).get();
+
+        apiExecutor = new ApiExecutor(activity,
+            nestedFragmentCallback,
+            apiManager,
+            storageManager,
+            multiPickupManager,
+            checkPolygonManager,
+            locationSettingCheckManager);
+        ApiExecutor apiExecutor = spy(this.apiExecutor);
+
+        ScheduleWrapper scheduleWrapper = new ScheduleWrapper();
+        DeliveryZone deliveryZone = new DeliveryZone();
+        scheduleWrapper.setDeliveryZone(deliveryZone);
+
+        apiExecutor.setScheduleWrapper(scheduleWrapper);
+
+        when(checkPolygonManager.checkIfLocationInPolygonOrNearStartingPoint(deliveryZone)).thenReturn(PolygonStatusType.NO_DATA);
+        apiExecutor.tryToClockInInsideDeliveryZone();
+
+        verify(apiExecutor, never()).clockIn();
+    }
+
 }

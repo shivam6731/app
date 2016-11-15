@@ -376,7 +376,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                 if (grantResults.length == ApiExecutor.PERMISSIONS_ARRAY.length && ordersNestedFragment != null) {
                     locationSettingCheckManager.checkGpsEnabled();
                 } else {
-                    Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_gps_permission_disabled, Toast.LENGTH_SHORT).show();
                 }
             }
         }

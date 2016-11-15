@@ -218,7 +218,7 @@ public class ApiExecutor {
      * Api call to clock-in
      * Only after clock-in riders would receive new orders
      */
-    private void clockIn() {
+    void clockIn() {
         if (scheduleWrapper == null) {
             Log.e(ApiExecutor.class.getSimpleName(), "Schedule is empty");
 

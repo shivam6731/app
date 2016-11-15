@@ -11,7 +11,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -59,9 +58,8 @@ public class IssueCollectedDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // create ContextThemeWrapper from the original Activity Context with the custom theme
         Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.popup_theme);
-        LayoutInflater localInflater = LayoutInflater.from(getContext()).cloneInContext(contextThemeWrapper);
 
-        View view = localInflater.inflate(R.layout.collection_issue_dialog_layout, null);
+        View view = View.inflate(getContext(), R.layout.collection_issue_dialog_layout, null);
 
         editTextAmount = (EditText) view.findViewById(R.id.edit_collect_amount);
         setCurrencySymbol();

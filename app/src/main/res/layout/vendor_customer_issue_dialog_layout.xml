@@ -20,7 +20,8 @@
         <ImageView
             android:id="@+id/image_first_action"
             style="@style/ImageView"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/content_description_vendor_customer_issue_action_1"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_first_action_title"
@@ -45,7 +46,8 @@
         <ImageView
             android:id="@+id/image_second_action"
             style="@style/ImageView"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/content_description_vendor_customer_issue_action_2"/>
 
         <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
             android:id="@+id/txt_second_action_title"
