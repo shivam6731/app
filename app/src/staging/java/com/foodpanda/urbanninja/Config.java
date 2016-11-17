@@ -38,7 +38,7 @@ public class Config {
     }
 
     public class ApiUrbanNinjaUrl {
-        private static final String URL = "http://api.foodpanda.com/";
+        private static final String URL = "http://api-st.foodpanda.com/";
         private static final String CONFIG = "configuration/urban-ninja-v2/";
         public static final String BASE_URL = URL + CONFIG;
     }
