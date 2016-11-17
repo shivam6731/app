@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -159,9 +160,10 @@ public class StorageManager {
      * Clean all stored data
      */
     public void cleanSession() {
+        storeStopList(Collections.emptyList());
+        storeRiderLocation(null);
         storeToken(null);
-        stopStatusMap.clear();
-        stopList.clear();
+        storeRider(null);
     }
 
 

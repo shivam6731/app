@@ -406,10 +406,9 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     private void onLogoutClicked() {
+        apiManager.logout();
         storageManager.cleanSession();
         stopLocationService();
-
-        apiManager.logout();
 
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -56,7 +57,7 @@ public interface LogisticsService {
         @Body PerformActionWrapper performActionWrapper
     );
 
-    @PUT(ApiTag.REGISTRY_PUSH_NOTIFICATION)
+    @PUT(ApiTag.REGISTER_UN_REGISTER_PUSH_NOTIFICATION)
     Observable<Rider> registerDeviceId(
         @Path(ApiTag.USER_TAG) int riderId,
         @Body PushNotificationRegistrationWrapper pushNotificationRegistrationWrapper
@@ -78,4 +79,8 @@ public interface LogisticsService {
 
     @PUT(ApiTag.REPORT_COLLECTION_ISSUE)
     Observable<CashCollectionIssueList> reportCollectionIssue(@Body List<CashCollectionIssueWrapper> cashCollectionIssueWrappers);
+
+    @DELETE(ApiTag.REGISTER_UN_REGISTER_PUSH_NOTIFICATION)
+    Observable<Rider> unregisterDeviceId(@Path(ApiTag.USER_TAG) int riderId);
+
 }

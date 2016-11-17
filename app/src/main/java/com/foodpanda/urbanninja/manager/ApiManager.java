@@ -252,11 +252,22 @@ public class ApiManager {
     /**
      * logout from rider from api side
      * cancel all API requests that are in flight right now
-     * TODO un-subscribe from push notification for current rider
      */
     public void logout() {
+        unregisterDevice();
         compositeSubscription.unsubscribe();
         compositeSubscription = new CompositeSubscription();
+    }
+
+    /**
+     * in case he logouts we need to delete all data and un-subscribe from push notifications
+     */
+    private void unregisterDevice() {
+        TokenData tokenData = storageManager.getTokenData();
+        if (tokenData != null) {
+            wrapRetryObservable(service.unregisterDeviceId(tokenData.getUserId()))
+                .subscribe(new BackgroundSubscriber<>());
+        }
     }
 
     private void getScheduleList(
