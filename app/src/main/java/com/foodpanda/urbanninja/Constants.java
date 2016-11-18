@@ -5,6 +5,7 @@ public class Constants {
     public static final String LOCATION_UPDATED = "RiderLocationUpdated";
     public static final String PUSH_NOTIFICATION_RECEIVED = "pushNotificationReceived";
     public static final String PUSH_NOTIFICATION_TYPE = "type";
+    public static final String PUSH_NOTIFICATION_PRIORITY = "priority";
     public static final int SNACKBAR_DURATION_IN_MILLISECONDS = 1000 * 60;
     public static final int API_CALL_TIMEOUT_SECONDS = 120;
 

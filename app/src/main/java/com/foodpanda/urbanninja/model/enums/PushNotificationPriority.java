@@ -4,16 +4,16 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * Depend on type of push notification different action would be done and
- * different API call would be executed
+ * Depend on priority of push notification
+ * we decide should we show notification in a status bar or
+ * it's just background update of the app
  * <p/>
  * for more details you can check doc
  * https://github.com/foodpanda/logistics-core/blob/master/docs/push_notification.md
  */
-public enum PushNotificationType {
-    ROUTE_UPDATED,
-    ROUTE_CANCELED,
-    SCHEDULE_UPDATED;
+public enum PushNotificationPriority {
+    FOREGROUND_UPDATE,
+    BACKGROUND_UPDATE;
 
     /**
      * Purpose: To prevent crashes if the next version of our app has new or different enum types.
@@ -21,16 +21,16 @@ public enum PushNotificationType {
      * @param value sting key from push notification
      * @return priority type of it existing one null if not
      */
-    public static PushNotificationType getValueOf(String value) {
+    public static PushNotificationPriority getValueOf(String value) {
         if (TextUtils.isEmpty(value)) {
-            return null;
+            return PushNotificationPriority.FOREGROUND_UPDATE;
         }
         try {
             return valueOf(value);
         } catch (IllegalArgumentException e) {
-            Log.e(PushNotificationType.class.getSimpleName(), e.getMessage());
+            Log.e(PushNotificationPriority.class.getSimpleName(), e.getMessage());
 
-            return null;
+            return PushNotificationPriority.FOREGROUND_UPDATE;
         }
     }
 }
