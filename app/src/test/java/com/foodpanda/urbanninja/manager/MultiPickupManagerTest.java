@@ -16,6 +16,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,50 +47,199 @@ public class MultiPickupManagerTest {
 
     /**
      * Test good conditions when both orders are from the same place
-     * and both are PICKUP task
+     * and sequence of route stops are  P1->P2->D1->D2
      */
     @Test
     public void testGetSamePlacePickUpAndCheckIsEmpty() {
-        Stop currentStop = new Stop(1, "q1fw-1234");
-        currentStop.setTask(RouteStopTask.PICKUP);
+        Stop currentStopPickUp = new Stop(1, "q1fw-1234");
+        currentStopPickUp.setTask(RouteStopTask.PICKUP);
 
-        Stop samePlaceStop = new Stop(2, "q1fw-4321");
-        samePlaceStop.setTask(RouteStopTask.PICKUP);
+        Stop samePlaceStopPickUp = new Stop(2, "q1fw-4321");
+        samePlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop currentStopDeliveryPickUp = new Stop(1, "q1fw-1234");
+        currentStopDeliveryPickUp.setTask(RouteStopTask.DELIVER);
+
+        Stop samePlaceStopDelivery = new Stop(2, "q1fw-4321");
+        samePlaceStopDelivery.setTask(RouteStopTask.DELIVER);
 
         List<Stop> stopList = new LinkedList<>();
-        stopList.add(currentStop);
-        stopList.add(samePlaceStop);
+        List<Stop> samePlaceStopList = new LinkedList<>();
+
+        samePlaceStopList.add(currentStopPickUp);
+        samePlaceStopList.add(samePlaceStopPickUp);
+
+        stopList.addAll(samePlaceStopList);
+        stopList.add(currentStopDeliveryPickUp);
+        stopList.add(samePlaceStopDelivery);
 
         when(storageManager.getStopList()).thenReturn(stopList);
-        when(storageManager.getCurrentStop()).thenReturn(currentStop);
+        when(storageManager.getCurrentStop()).thenReturn(currentStopPickUp);
 
-        assertEquals(stopList, multiPickupManager.getSamePlaceStops());
+        assertEquals(samePlaceStopList, multiPickupManager.getSamePlaceStops());
 
-        assertTrue(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
+        assertTrue(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStopPickUp));
+    }
+
+    /**
+     * Test good conditions when both orders are from the same place
+     * however sequence of route stops are  P1->D1->P2->D2
+     */
+    @Test
+    public void testGetSamePlacePickUpAndCheckIsEmptyNotInSequence() {
+        Stop currentStopPickUp = new Stop(1, "q1fw-1234");
+        currentStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop currentStopDelivery = new Stop(1, "q1fw-1234");
+        currentStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        Stop samePlaceStopPickUp = new Stop(2, "q1fw-4321");
+        samePlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop samePlaceStopDelivery = new Stop(2, "q1fw-4321");
+        samePlaceStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        List<Stop> stopList = new LinkedList<>();
+        stopList.add(currentStopPickUp);
+        stopList.add(currentStopDelivery);
+        stopList.add(samePlaceStopPickUp);
+        stopList.add(samePlaceStopDelivery);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStopPickUp);
+
+        assertEquals(Collections.singletonList(currentStopPickUp), multiPickupManager.getSamePlaceStops());
+        assertEquals(1, multiPickupManager.getSamePlaceStops().size());
+
+        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStopPickUp));
+    }
+
+    /**
+     * Test good conditions when 3 orders are from the same place
+     * however sequence of route stops are  P1->P2->P3->D1->D2->D3
+     */
+    @Test
+    public void testGetSamePlacePickUpAndCheckIsEmptyForThreeStopsThreeInSequence() {
+        //Pick-up tasks
+
+        Stop currentStopPickUp = new Stop(1, "q1fw-1234");
+        currentStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop samePlaceStopPickUp = new Stop(2, "q1fw-4321");
+        samePlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop thirdStopPickUp = new Stop(1, "q1fw-2345");
+        thirdStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        //Delivery tasks
+        Stop currentStopDelivery = new Stop(1, "q1fw-1234");
+        currentStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        Stop samePlaceStopDelivery = new Stop(2, "q1fw-4321");
+        samePlaceStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        Stop thirdStopDelivery = new Stop(2, "q1fw-2345");
+        thirdStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        List<Stop> stopList = new LinkedList<>();
+        List<Stop> samePlaceStopList = new LinkedList<>();
+
+        samePlaceStopList.add(currentStopPickUp);
+        samePlaceStopList.add(samePlaceStopPickUp);
+        samePlaceStopList.add(thirdStopPickUp);
+
+        stopList.addAll(samePlaceStopList);
+        stopList.add(currentStopDelivery);
+        stopList.add(samePlaceStopDelivery);
+        stopList.add(thirdStopDelivery);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStopPickUp);
+
+        assertEquals(samePlaceStopList, multiPickupManager.getSamePlaceStops());
+        assertEquals(3, multiPickupManager.getSamePlaceStops().size());
+
+        assertTrue(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStopPickUp));
+    }
+
+    /**
+     * Test good conditions when 3 orders are from the same place
+     * however sequence of route stops are  P1->P2->D1->D2->P3->D3
+     */
+    @Test
+    public void testGetSamePlacePickUpAndCheckIsEmptyForThreeStopsTwoInSequence() {
+        //Pick-up tasks
+        Stop currentStopPickUp = new Stop(1, "q1fw-1234");
+        currentStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop samePlaceStopPickUp = new Stop(2, "q1fw-4321");
+        samePlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+        //Delivery tasks
+        Stop currentStopDelivery = new Stop(1, "q1fw-1234");
+        currentStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        Stop samePlaceStopDelivery = new Stop(2, "q1fw-4321");
+        samePlaceStopDelivery.setTask(RouteStopTask.DELIVER);
+        //Third order
+        Stop thirdStopDeliveryPickUp = new Stop(1, "q1fw-2345");
+        thirdStopDeliveryPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop thirdPlaceStopDelivery = new Stop(2, "q1fw-2345");
+        thirdPlaceStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        List<Stop> stopList = new LinkedList<>();
+        List<Stop> samePlaceStopList = new LinkedList<>();
+
+        samePlaceStopList.add(currentStopPickUp);
+        samePlaceStopList.add(samePlaceStopPickUp);
+
+        stopList.addAll(samePlaceStopList);
+        stopList.add(currentStopDelivery);
+        stopList.add(samePlaceStopDelivery);
+        stopList.add(thirdStopDeliveryPickUp);
+        stopList.add(thirdPlaceStopDelivery);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStopPickUp);
+
+        assertEquals(samePlaceStopList, multiPickupManager.getSamePlaceStops());
+        assertEquals(2, multiPickupManager.getSamePlaceStops().size());
+
+        assertTrue(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStopPickUp));
     }
 
     /**
      * Test bad conditions when both orders are from the different places
-     * and both are PICKUP task
+     * however pick-up tasks are in a sequence
      */
     @Test
     public void testGetDifferentPlacePickUpAndCheckIsEmpty() {
-        Stop currentStop = new Stop(1, "q1fw-1234");
-        currentStop.setTask(RouteStopTask.PICKUP);
+        Stop currentStopPickUp = new Stop(1, "q1fw-1234");
+        currentStopPickUp.setTask(RouteStopTask.PICKUP);
 
-        Stop samePlaceStop = new Stop(1, "s1fw-1234");
-        samePlaceStop.setTask(RouteStopTask.PICKUP);
+        Stop differentPlaceStopPickUp = new Stop(1, "s1fw-1234");
+        differentPlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        Stop currentStopDelivery = new Stop(1, "q1fw-1234");
+        currentStopDelivery.setTask(RouteStopTask.DELIVER);
+
+        Stop differentPlaceStopDelivery = new Stop(1, "q1fw-1234");
+        differentPlaceStopDelivery.setTask(RouteStopTask.DELIVER);
+
 
         List<Stop> stopList = new LinkedList<>();
-        stopList.add(currentStop);
-        stopList.add(samePlaceStop);
+        stopList.add(currentStopPickUp);
+        stopList.add(differentPlaceStopPickUp);
+        stopList.add(currentStopDelivery);
+        stopList.add(differentPlaceStopDelivery);
 
         when(storageManager.getStopList()).thenReturn(stopList);
-        when(storageManager.getCurrentStop()).thenReturn(currentStop);
+        when(storageManager.getCurrentStop()).thenReturn(currentStopPickUp);
 
-        assertEquals(currentStop, multiPickupManager.getSamePlaceStops().get(0));
+        assertEquals(Collections.singletonList(currentStopPickUp), multiPickupManager.getSamePlaceStops());
         assertEquals(1, multiPickupManager.getSamePlaceStops().size());
-        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
+
+        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStopPickUp));
     }
 
     /**
@@ -111,13 +261,13 @@ public class MultiPickupManagerTest {
         when(storageManager.getStopList()).thenReturn(stopList);
         when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
-        assertEquals(multiPickupManager.getSamePlaceStops().get(0), currentStop);
-        assertEquals(multiPickupManager.getSamePlaceStops().size(), 1);
+        assertEquals(Collections.singletonList(currentStop), multiPickupManager.getSamePlaceStops());
+        assertEquals(1, multiPickupManager.getSamePlaceStops().size());
         assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
     }
 
     /**
-     * Test for one items in a route stop plan
+     * Test for one pick-up item in a route stop plan
      */
     @Test
     public void testGetSamePlacePickUpSingleOrder() {
@@ -130,10 +280,27 @@ public class MultiPickupManagerTest {
         when(storageManager.getStopList()).thenReturn(stopList);
         when(storageManager.getCurrentStop()).thenReturn(currentStop);
 
-        storageManager.storeStopList(stopList);
+        assertEquals(Collections.singletonList(currentStop), multiPickupManager.getSamePlaceStops());
+        assertEquals(1, multiPickupManager.getSamePlaceStops().size());
+        assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
+    }
 
-        assertEquals(multiPickupManager.getSamePlaceStops().get(0), currentStop);
-        assertEquals(multiPickupManager.getSamePlaceStops().size(), 1);
+    /**
+     * Test for one delivery item in a route stop plan
+     */
+    @Test
+    public void testGetSamePlaceDeliverySingleOrder() {
+        Stop currentStop = new Stop(1, "q1fw-q7dy");
+        currentStop.setTask(RouteStopTask.DELIVER);
+
+        List<Stop> stopList = new LinkedList<>();
+        stopList.add(currentStop);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getCurrentStop()).thenReturn(currentStop);
+
+        assertEquals(currentStop, multiPickupManager.getSamePlaceStops().get(0));
+        assertEquals(1, multiPickupManager.getSamePlaceStops().size());
         assertFalse(multiPickupManager.isNotEmptySamePlacePickUpStops(currentStop));
     }
 
@@ -145,11 +312,23 @@ public class MultiPickupManagerTest {
         Stop currentStop = new Stop(1, "q1fw-q7dy");
         currentStop.setTask(RouteStopTask.PICKUP);
 
+        Stop samePlaceStopPickUp = new Stop(2, "q1fw-4321");
+        samePlaceStopPickUp.setTask(RouteStopTask.PICKUP);
+
+        List<Stop> stopList = new LinkedList<>();
+        stopList.add(currentStop);
+        stopList.add(samePlaceStopPickUp);
+
+        when(storageManager.getStopList()).thenReturn(stopList);
         when(storageManager.getCurrentStop()).thenReturn(currentStop);
         Application app = RuntimeEnvironment.application;
 
         assertEquals(
-            "Orders " + currentStop.getOrderCode() + " will need to be picked up from the same restaurant.\n",
+            "Orders " +
+                currentStop.getOrderCode() +
+                ", " +
+                samePlaceStopPickUp.getOrderCode() +
+                " will need to be picked up from the same restaurant.\n",
             multiPickupManager.getMultiPickUpDetailsSting(app, currentStop).toString());
     }
 }

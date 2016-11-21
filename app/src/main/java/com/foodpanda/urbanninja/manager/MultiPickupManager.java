@@ -23,16 +23,6 @@ public class MultiPickupManager {
     }
 
     /**
-     * get list of PICKUP route stop in the same place
-     *
-     * @return list of route stops in the same place,in case when there is no multi-pick-up
-     * list with only current stop would be returned
-     */
-    public List<Stop> getSamePlaceStops() {
-        return getSamePlaceStops(storageManager.getCurrentStop());
-    }
-
-    /**
      * check is some Stop have not single item list of places in the same place
      *
      * @param stop stop to check
@@ -51,6 +41,16 @@ public class MultiPickupManager {
         return getFormattedHtml(context.getResources().getString(
             R.string.multi_pickup_alert_details,
             getOrderCodeString(currentStop)));
+    }
+
+    /**
+     * get list of PICKUP route stop in the same place
+     *
+     * @return list of route stops in the same place,in case when there is no multi-pick-up
+     * list with only current stop would be returned
+     */
+    List<Stop> getSamePlaceStops() {
+        return getSamePlaceStops(storageManager.getCurrentStop());
     }
 
     /**
@@ -114,6 +114,10 @@ public class MultiPickupManager {
             for (int i = 1; i < routeStopPlan.size(); i++) {
                 if (isPickupFromSamePlace(routeStopPlan.get(i), currentStop)) {
                     samePlacesStopList.add(routeStopPlan.get(i));
+                } else {
+                    // case when we have a pick-ups from the same place but not in a sequence
+                    // it's not a multi pick-up and we have to finish searching
+                    break;
                 }
             }
         }
