@@ -5,10 +5,11 @@ import com.foodpanda.urbanninja.api.receiver.ConnectionStatusReceiver;
 import com.foodpanda.urbanninja.api.service.GcmListenerService;
 import com.foodpanda.urbanninja.api.service.LocationService;
 import com.foodpanda.urbanninja.api.service.RegistrationIntentService;
-import com.foodpanda.urbanninja.di.module.TimerHelperAndOrderTypePaymentHelperModule;
+import com.foodpanda.urbanninja.api.service.VehicleDetectedActivityService;
 import com.foodpanda.urbanninja.di.module.AppModule;
 import com.foodpanda.urbanninja.di.module.MainActivityModule;
 import com.foodpanda.urbanninja.di.module.OrderNestedFragmentModule;
+import com.foodpanda.urbanninja.di.module.TimerHelperAndOrderTypePaymentHelperModule;
 import com.foodpanda.urbanninja.ui.activity.LoginActivity;
 import com.foodpanda.urbanninja.ui.fragments.CashReportListFragment;
 import com.foodpanda.urbanninja.ui.fragments.CountryListFragment;
@@ -49,6 +50,8 @@ public interface MainComponent {
     void inject(ScheduleListFragment scheduleListFragment);
 
     void inject(ConnectionStatusReceiver connectionStatusReceiver);
+
+    void inject(VehicleDetectedActivityService vehicleDetectedActivityService);
 
     OrderNestedFragmentComponent plus(OrderNestedFragmentModule orderNestedFragmentModule);
 

@@ -2,6 +2,7 @@ package com.foodpanda.urbanninja.api.model;
 
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Model;
+import com.foodpanda.urbanninja.model.VehicleDetectedActivity;
 
 import org.joda.time.DateTime;
 
@@ -12,6 +13,7 @@ public class RiderLocation implements Model {
     private int azimuth;
     private int accuracyInMeters;
     private DateTime dateTime;
+    private VehicleDetectedActivity vehicleDetectedActivity;
 
     public void setGeoCoordinate(GeoCoordinate geoCoordinate) {
         this.geoCoordinate = geoCoordinate;
@@ -35,5 +37,9 @@ public class RiderLocation implements Model {
 
     public void setDateTime(DateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public void setVehicleDetectedActivity(VehicleDetectedActivity vehicleDetectedActivity) {
+        this.vehicleDetectedActivity = vehicleDetectedActivity;
     }
 }

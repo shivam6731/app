@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.api.service;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +25,7 @@ import com.foodpanda.urbanninja.manager.StorageManager;
 import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -76,7 +78,8 @@ public class LocationService extends Service implements
     //Interval for sending location to the server side
     //the data would be send if only location bundle is not empty
     private static final int SEND_DATA_INTERVAL = 30000;
-
+    //intent for retrieve data about rider activity
+    private PendingIntent pendingIntent;
     @Inject
     ApiManager apiManager;
     @Inject
@@ -145,6 +148,7 @@ public class LocationService extends Service implements
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         requestLocationUpdates();
+        retrieveVehicleDetectedActivity();
     }
 
     @Override
@@ -184,6 +188,7 @@ public class LocationService extends Service implements
                 .addOnConnectionFailedListener(this)
                 .addConnectionCallbacks(this)
                 .addApi(LocationServices.API)
+                .addApi(ActivityRecognition.API)
                 .build();
 
             locationRequest = new LocationRequest();
@@ -225,6 +230,38 @@ public class LocationService extends Service implements
         }
     }
 
+    /**
+     * send an API call to retrieve all rider location activities.
+     */
+    private void retrieveVehicleDetectedActivity() {
+        if (googleApiClient.isConnected()) {
+            Intent intent = new Intent(this, VehicleDetectedActivityService.class);
+            pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(googleApiClient, getUpdatePeriod(), pendingIntent);
+        }
+    }
+
+    /**
+     * remove rider activity update callback
+     */
+    private void removeActivityUpdateCallback() {
+        if (googleApiClient != null && googleApiClient.isConnected() && pendingIntent != null) {
+            ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(googleApiClient, pendingIntent);
+        }
+    }
+
+    /**
+     * We want to decrease rider battery consumption,
+     * and to do so we change update interval depend on battery level
+     * <p/>
+     * in means that riders with low battery would receive and send location and activity updates
+     * not that often to keep alive device as long as possible
+     */
+    private void requestUpToDateRiderActivity() {
+        removeActivityUpdateCallback();
+        retrieveVehicleDetectedActivity();
+    }
+
     private void getBatteryLevel() {
         batteryLevelReceiver = new BroadcastReceiver() {
             @Override
@@ -233,7 +270,8 @@ public class LocationService extends Service implements
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
                 if (currentLevel >= 0 && scale > 0) {
                     batteryLevel = (currentLevel * 100) / scale;
-                    changeUpdatePeriod();
+                    locationRequest.setInterval(getUpdatePeriod());
+                    requestUpToDateRiderActivity();
                 }
             }
         };
@@ -241,13 +279,16 @@ public class LocationService extends Service implements
         registerReceiver(batteryLevelReceiver, batteryLevelFilter);
     }
 
-    private void changeUpdatePeriod() {
+    /**
+     * get an update period for all kind of google map service to retrive both
+     */
+    private int getUpdatePeriod() {
         if (batteryLevel > BIG_BATTERY_LEVEL) {
-            locationRequest.setInterval(SMALL_UPDATE_PERIOD);
+            return SMALL_UPDATE_PERIOD;
         } else if (batteryLevel > LOW_BATTERY_LEVEL) {
-            locationRequest.setInterval(MIDDLE_UPDATE_PERIOD);
+            return MIDDLE_UPDATE_PERIOD;
         } else {
-            locationRequest.setInterval(BIG_UPDATE_PERIOD);
+            return BIG_UPDATE_PERIOD;
         }
     }
 
@@ -301,6 +342,7 @@ public class LocationService extends Service implements
         }
         riderLocation.setBatteryLevel(batteryLevel);
         riderLocation.setDateTime(DateTime.now());
+        riderLocation.setVehicleDetectedActivity(storageManager.getVehicleDetectedActivity());
 
         locationList.add(riderLocation);
 

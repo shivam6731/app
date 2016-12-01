@@ -18,6 +18,7 @@ import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.TokenData;
+import com.foodpanda.urbanninja.model.VehicleDetectedActivity;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
 import com.foodpanda.urbanninja.model.enums.Status;
 import com.google.gson.Gson;
@@ -49,6 +50,7 @@ public class StorageManager {
     private Map<Long, Status> stopStatusMap = new LinkedHashMap<>();
     private RiderLocation riderLocation;
     private Rider rider;
+    private VehicleDetectedActivity vehicleDetectedActivity;
 
     @Inject
     public StorageManager(Context context) {
@@ -324,6 +326,27 @@ public class StorageManager {
      */
     public void storeRiderLocation(@Nullable RiderLocation riderLocation) {
         this.riderLocation = riderLocation;
+    }
+
+    /**
+     * get rider detected activity
+     * BI need this data for details about rider's actions
+     *
+     * @return VehicleDetectedActivity with rider activity info
+     */
+    @Nullable
+    public VehicleDetectedActivity getVehicleDetectedActivity() {
+        return vehicleDetectedActivity;
+    }
+
+    /**
+     * store last rider activity to be sent to the server side.
+     * here in this data we have type of action that rider does and confidence of this action
+     *
+     * @param vehicleDetectedActivity container with rider information
+     */
+    public void storeVehicleDetectedActivity(@Nullable VehicleDetectedActivity vehicleDetectedActivity) {
+        this.vehicleDetectedActivity = vehicleDetectedActivity;
     }
 
     private List<Stop> getUpToDateList(List<Stop> stopList) {

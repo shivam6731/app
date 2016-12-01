@@ -8,7 +8,9 @@ import com.foodpanda.urbanninja.model.GeoCoordinate;
 import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
+import com.foodpanda.urbanninja.model.VehicleDetectedActivity;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
+import com.foodpanda.urbanninja.model.enums.VehicleDetectedActivityType;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -260,5 +262,13 @@ public class StorageManagerTest {
         storageManager.storeRider(rider);
 
         assertEquals(rider, storageManager.getRider());
+    }
+
+    @Test
+    public void testStore() {
+        VehicleDetectedActivity vehicleDetectedActivity = new VehicleDetectedActivity(VehicleDetectedActivityType.fromInteger(10), 10);
+        storageManager.storeVehicleDetectedActivity(vehicleDetectedActivity);
+
+        assertEquals(vehicleDetectedActivity, storageManager.getVehicleDetectedActivity());
     }
 }
