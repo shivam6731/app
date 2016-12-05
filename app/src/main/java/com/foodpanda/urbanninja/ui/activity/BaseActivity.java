@@ -1,6 +1,7 @@
 package com.foodpanda.urbanninja.ui.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,8 +12,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.foodpanda.urbanninja.App;
+import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.di.component.MainComponent;
+import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.Tracking;
@@ -102,6 +105,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         hideProgress();
 
         switch (status) {
+            case HttpURLConnection.HTTP_CONFLICT:
+                sendCancellationAction();
+                break;
             case HttpURLConnection.HTTP_UNAUTHORIZED:
 
             case HttpURLConnection.HTTP_NOT_FOUND:
@@ -120,6 +126,19 @@ public abstract class BaseActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * In case when rider trying to send an action to the canceled order
+     * we need to let him know that this order is not up-to-date and we need to update route stop plan
+     * <p/>
+     * this is the same scenario as we have with cancellation push notifications,
+     * so we are using the same code as for this push.
+     */
+    private void sendCancellationAction() {
+        Intent intent = new Intent(Constants.PUSH_NOTIFICATION_RECEIVED);
+        intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE, PushNotificationType.ROUTE_CANCELED);
+        sendBroadcast(intent);
     }
 
     private void checkForCrashes() {
