@@ -66,7 +66,7 @@ public class StorageManager {
         setStatusMap();
     }
 
-    public boolean storeToken(Token token) {
+    boolean storeToken(Token token) {
         this.token = token;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String json = gson.toJson(token);
@@ -96,7 +96,7 @@ public class StorageManager {
         return getToken() != null;
     }
 
-    public TokenData getTokenData() {
+    TokenData getTokenData() {
         if (getToken() != null && !TextUtils.isEmpty(getToken().getAccessToken())) {
             byte[] bytes = getToken().getAccessToken().split("\\.")[1].getBytes();
             byte[] valueDecoded = Base64.decode(bytes, Base64.DEFAULT);
@@ -169,12 +169,12 @@ public class StorageManager {
     }
 
 
-    public void storeStopList(List<Stop> stopList) {
+    void storeStopList(List<Stop> stopList) {
         this.stopList = getUpToDateList(stopList);
         cleanStatusMap();
     }
 
-    public List<Stop> getStopList() {
+    List<Stop> getStopList() {
         return stopList == null ? new LinkedList<>() : stopList;
     }
 
@@ -201,7 +201,7 @@ public class StorageManager {
         return null;
     }
 
-    public boolean storeStatus(long routeId, Status status) {
+    boolean storeStatus(long routeId, Status status) {
         stopStatusMap.put(routeId, status);
         String json = gson.toJson(stopStatusMap);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -218,6 +218,16 @@ public class StorageManager {
         }
     }
 
+    /**
+     * @return true if rider route stop plan is not empty
+     */
+    public boolean hasCurrentStop() {
+        return !stopList.isEmpty();
+    }
+
+    /**
+     * @return true if rider has more then one rout in a stop plan
+     */
     public boolean hasNextStop() {
         return stopList != null && stopList.size() > 1;
     }
@@ -230,7 +240,7 @@ public class StorageManager {
         }
     }
 
-    public Stop removeCurrentStop() {
+    Stop removeCurrentStop() {
         if (stopList.isEmpty()) {
             return null;
         }
@@ -240,7 +250,7 @@ public class StorageManager {
         return stop;
     }
 
-    public boolean storeStatusApiRequests(Queue<StorableStatus> requestsQueue) {
+    boolean storeStatusApiRequests(Queue<StorableStatus> requestsQueue) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         String json = gson.toJson(requestsQueue);
         editor.putString(Constants.Preferences.STATUS_REQUEST_LIST, json);
@@ -248,7 +258,7 @@ public class StorageManager {
         return editor.commit();
     }
 
-    public Queue<StorableStatus> getStatusApiRequestList() {
+    Queue<StorableStatus> getStatusApiRequestList() {
         Queue<StorableStatus> requestsQueue = new LinkedList<>();
         String json = cachedRequestPreferences.getString(Constants.Preferences.STATUS_REQUEST_LIST, "");
         Queue<StorableStatus> calls = gson.fromJson(json, new TypeToken<Queue<StorableStatus>>() {
@@ -257,7 +267,7 @@ public class StorageManager {
         return calls != null ? calls : requestsQueue;
     }
 
-    public boolean storeLocationApiRequests(Queue<RiderLocation> requestsQueue) {
+    boolean storeLocationApiRequests(Queue<RiderLocation> requestsQueue) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         String json = gson.toJson(requestsQueue);
         editor.putString(Constants.Preferences.LOCATION_REQUEST_LIST, json);
@@ -265,7 +275,7 @@ public class StorageManager {
         return editor.commit();
     }
 
-    public Queue<RiderLocation> getLocationApiRequestList() {
+    Queue<RiderLocation> getLocationApiRequestList() {
         Queue<RiderLocation> requestsQueue = new LinkedList<>();
         String json = cachedRequestPreferences.getString(Constants.Preferences.LOCATION_REQUEST_LIST, "");
         Queue<RiderLocation> calls = gson.fromJson(json, new TypeToken<Queue<RiderLocation>>() {
@@ -274,14 +284,14 @@ public class StorageManager {
         return calls != null ? calls : requestsQueue;
     }
 
-    public boolean storeVehicleId(int vehicleId) {
+    boolean storeVehicleId(int vehicleId) {
         SharedPreferences.Editor editor = cachedRequestPreferences.edit();
         editor.putInt(Constants.Preferences.VEHICLE_ID, vehicleId);
 
         return editor.commit();
     }
 
-    public int getVehicleId() {
+    int getVehicleId() {
         return cachedRequestPreferences.getInt(Constants.Preferences.VEHICLE_ID, 0);
     }
 

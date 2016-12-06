@@ -34,7 +34,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
@@ -209,7 +208,7 @@ public class ApiExecutorTest {
         Stop routeStop = new Stop(1, "xxxx-yyyy");
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
-        when(storageManager.getCurrentStop()).thenReturn(routeStop);
+        when(storageManager.hasCurrentStop()).thenReturn(true);
 
         Status status = Status.COMPLETED;
         assertNotNull(apiExecutor);
@@ -225,10 +224,7 @@ public class ApiExecutorTest {
     public void testOpenCurrentFragmentWithRoute() {
         Stop routeStop = new Stop(1, "xxxx-yyyy");
 
-        List<Stop> stopList = new LinkedList<>();
-        stopList.add(routeStop);
-
-        when(storageManager.getStopList()).thenReturn(stopList);
+        when(storageManager.getStopList()).thenReturn(Collections.singletonList(routeStop));
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
 
         apiExecutor.openCurrentFragment();
@@ -421,6 +417,7 @@ public class ApiExecutorTest {
         Stop routeStop = new Stop(1, "xxxx-yyyy");
 
         when(storageManager.getCurrentStop()).thenReturn(routeStop);
+        when(storageManager.hasCurrentStop()).thenReturn(true);
 
         apiExecutor.reportCollectionIssue(1, CollectionIssueReason.WRONG_ITEMS);
 

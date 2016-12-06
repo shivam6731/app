@@ -304,7 +304,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     public void openRoute(Stop stop) {
         switch (stop.getStatus()) {
             case UNASSIGNED:
-            case ASSIGNED:
             case VIEWED:
                 userStatus = UserStatus.VIEWING;
                 notifyActionPerformed(Status.VIEWED);

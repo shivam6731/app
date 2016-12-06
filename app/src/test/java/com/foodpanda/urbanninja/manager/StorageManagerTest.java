@@ -20,6 +20,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
@@ -78,6 +79,17 @@ public class StorageManagerTest {
         storageManager.storeStopList(new LinkedList<>());
 
         assertNull(storageManager.getCurrentStop());
+    }
+
+    @Test
+    public void testHasCurrentStop() {
+        storageManager.storeStopList(new LinkedList<>());
+
+        assertFalse(storageManager.hasCurrentStop());
+
+        storageManager.storeStopList(Collections.singletonList(new Stop(1, "abcd-1234")));
+
+        assertTrue(storageManager.hasCurrentStop());
     }
 
     @Test

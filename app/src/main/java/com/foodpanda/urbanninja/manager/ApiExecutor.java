@@ -113,7 +113,7 @@ public class ApiExecutor {
      * @param reason           reason of an issue
      */
     public void reportCollectionIssue(double collectionAmount, CollectionIssueReason reason) {
-        if (storageManager.getCurrentStop() == null) {
+        if (!storageManager.hasCurrentStop()) {
             return;
         }
         BaseApiCallback<CashCollectionIssueList> baseApiCallback = new BaseApiCallback<CashCollectionIssueList>() {
@@ -180,7 +180,7 @@ public class ApiExecutor {
         //In case of multi pickup we need to finish each order one by one
         //and to do so we need to check COMPLETED status and not allow to finish
         //order from the same place together
-        if (status == Status.COMPLETED && storageManager.getCurrentStop() != null) {
+        if (status == Status.COMPLETED && storageManager.hasCurrentStop()) {
             sendAndStoreAction(storageManager.getCurrentStop().getId(), status);
             finishWithCurrentRoute();
 

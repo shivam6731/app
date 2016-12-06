@@ -593,7 +593,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
 
     @Override
     public void showIssueDialog(DialogType dialogType) {
-        if (storageManager.getCurrentStop() != null) {
+        if (storageManager.hasCurrentStop()) {
             IssueVendorCustomerDialog issueVendorCustomerDialog = IssueVendorCustomerDialog.newInstance(
                 dialogType,
                 storageManager.getCurrentStop(),
