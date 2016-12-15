@@ -23,6 +23,7 @@ import java.util.List;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -81,6 +82,8 @@ public interface LogisticsService {
     Observable<CashCollectionIssueList> reportCollectionIssue(@Body List<CashCollectionIssueWrapper> cashCollectionIssueWrappers);
 
     @DELETE(ApiTag.REGISTER_UN_REGISTER_PUSH_NOTIFICATION)
-    Observable<Rider> unregisterDeviceId(@Path(ApiTag.USER_TAG) int riderId);
+    Observable<Rider> unregisterDeviceId(
+        @Header(ApiTag.AUTHORIZATION) String header,
+        @Path(ApiTag.USER_TAG) int riderId);
 
 }

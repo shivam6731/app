@@ -264,9 +264,10 @@ public class ApiManager {
      * in case he logouts we need to delete all data and un-subscribe from push notifications
      */
     private void unregisterDevice() {
+        Token token = storageManager.getToken();
         TokenData tokenData = storageManager.getTokenData();
-        if (tokenData != null) {
-            wrapRetryObservable(service.unregisterDeviceId(tokenData.getUserId()))
+        if (token != null && tokenData != null) {
+            wrapRetryObservable(service.unregisterDeviceId(concatHeaderData(token), tokenData.getUserId()))
                 .subscribe(new BackgroundSubscriber<>());
         }
     }
@@ -412,7 +413,7 @@ public class ApiManager {
                 Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
                 Token token = storageManager.getToken();
                 if (token != null) {
-                    build.addHeader("Authorization", token.getTokenType() + " " + token.getAccessToken()).build();
+                    build.addHeader(ApiTag.AUTHORIZATION, concatHeaderData(token)).build();
                 }
 
                 return chain.proceed(build.build());
@@ -478,6 +479,16 @@ public class ApiManager {
             requestsLocationQueue.clear();
             storageManager.storeLocationApiRequests(requestsLocationQueue);
         }
+    }
+
+    /**
+     * Concat authorization header for each API request
+     *
+     * @param token rider token
+     * @return http header
+     */
+    private String concatHeaderData(@NonNull Token token) {
+        return token.getTokenType() + " " + token.getAccessToken();
     }
 
 }

@@ -24,6 +24,7 @@ public class ApiTag {
     public static final String SCHEDULE_ID_TAG = "schedule_id";
     public static final String ROUTE_STOP_ID_TAG = "route_stop_id";
     public static final String ORDER_REPORT_TIME_ZONE = "timezone";
+    public static final String AUTHORIZATION = "Authorization";
 
     public static final class ApiHockeyAppTag {
         public static final String APP_VERSIONS_URL = "api/2/apps/{api_key}/app_versions";
