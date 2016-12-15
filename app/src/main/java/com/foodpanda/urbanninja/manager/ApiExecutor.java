@@ -199,7 +199,7 @@ public class ApiExecutor {
      */
     private void sendAndStoreAction(long routeId, Status status) {
         storageManager.storeStatus(routeId, status);
-        apiManager.notifyActionPerformed(routeId, status);
+        apiManager.notifyActionPerformed(routeId, status, activity);
 
     }
 

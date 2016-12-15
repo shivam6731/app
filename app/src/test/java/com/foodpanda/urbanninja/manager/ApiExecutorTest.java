@@ -41,7 +41,6 @@ import rx.observers.TestSubscriber;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
@@ -178,7 +177,7 @@ public class ApiExecutorTest {
         apiExecutor.notifyActionPerformed(status);
 
         verify(storageManager, never()).storeStatus(anyLong(), eq(status));
-        verify(apiManager, never()).notifyActionPerformed(anyLong(), eq(status));
+        verify(apiManager, never()).notifyActionPerformed(anyLong(), eq(status), eq(activity));
     }
 
     @Test
@@ -192,8 +191,8 @@ public class ApiExecutorTest {
         Status status = Status.ON_THE_WAY;
         apiExecutor.notifyActionPerformed(status);
 
-        verify(storageManager).storeStatus(eq(routeStop.getId()), eq(status));
-        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(status));
+        verify(storageManager).storeStatus(routeStop.getId(), status);
+        verify(apiManager).notifyActionPerformed(routeStop.getId(), status, activity);
     }
 
     @Test
@@ -211,11 +210,10 @@ public class ApiExecutorTest {
         when(storageManager.hasCurrentStop()).thenReturn(true);
 
         Status status = Status.COMPLETED;
-        assertNotNull(apiExecutor);
         apiExecutor.notifyActionPerformed(status);
 
-        verify(storageManager).storeStatus(eq(routeStop.getId()), eq(status));
-        verify(apiManager).notifyActionPerformed(eq(routeStop.getId()), eq(status));
+        verify(storageManager).storeStatus(routeStop.getId(), status);
+        verify(apiManager).notifyActionPerformed(routeStop.getId(), status, activity);
 
         verify(storageManager).removeCurrentStop();
     }

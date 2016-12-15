@@ -11,6 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import okhttp3.MediaType;
@@ -42,6 +43,23 @@ public class ApiUtilsTest {
 
         assertTrue(errorMessage.getStatus() == 401);
         assertEquals("251: Authentication failed, invalid credentials.", errorMessage.getMessage());
+    }
+
+
+    @Test
+    public void testIOExceptionHandle() {
+        ErrorMessage errorMessage = ApiUtils.handleError(new IOException("message"));
+
+        assertTrue(errorMessage.getStatus() == 500);
+        assertEquals("message", errorMessage.getMessage());
+    }
+
+    @Test
+    public void testUnknownExceptionHandle() {
+        ErrorMessage errorMessage = ApiUtils.handleError(new Exception());
+
+        assertTrue(errorMessage.getStatus() == 500);
+        assertEquals("Unknown error", errorMessage.getMessage());
     }
 
     @Test

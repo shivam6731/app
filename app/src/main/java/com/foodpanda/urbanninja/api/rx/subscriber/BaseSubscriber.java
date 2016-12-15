@@ -13,14 +13,14 @@ public abstract class BaseSubscriber<T extends Model> extends Subscriber<T> {
     private static final String TAG = BaseSubscriber.class.getSimpleName();
     protected BaseApiCallback<T> baseApiCallback;
 
-    public BaseSubscriber(BaseApiCallback<T> baseApiCallback) {
+    protected BaseSubscriber(BaseApiCallback<T> baseApiCallback) {
         this.baseApiCallback = baseApiCallback;
     }
 
     @Override
     public void onError(Throwable throwable) {
-        ErrorMessage errorMessage = ApiUtils.handleError(throwable);
         if (baseApiCallback != null) {
+            ErrorMessage errorMessage = ApiUtils.handleError(throwable);
             baseApiCallback.onError(errorMessage);
         }
 

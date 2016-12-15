@@ -1,17 +1,22 @@
 package com.foodpanda.urbanninja.api.utils;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.foodpanda.urbanninja.api.model.ErrorMessage;
 import com.foodpanda.urbanninja.ui.activity.BaseActivity;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.adapter.rxjava.HttpException;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -43,24 +48,19 @@ public class ApiUtils {
      * @return error message that should be shown to the user
      */
     public static ErrorMessage handleError(@NonNull Throwable throwable) {
-        ErrorMessage errorMessage;
+        ErrorMessage errorMessage = null;
         try {
             if (throwable instanceof HttpException) {
+                // We had non-2XX http error
                 HttpException httpException = (HttpException) throwable;
-                errorMessage = new GsonBuilder().create().fromJson(httpException.response().errorBody().string(), ErrorMessage.class);
-                if (errorMessage == null) {
-                    errorMessage = new ErrorMessage(500, throwable.getMessage());
-                }
-            } else {
-                errorMessage = new ErrorMessage(500, throwable.getMessage());
+                errorMessage = getErrorBodyAs(httpException.response());
             }
             Log.e(TAG, throwable.getMessage());
         } catch (IOException | JsonSyntaxException e) {
             Log.e(TAG, e.getMessage());
-            errorMessage = parseError(throwable);
         }
 
-        return errorMessage;
+        return errorMessage == null ? parseError(throwable) : errorMessage;
     }
 
     /**
@@ -82,5 +82,29 @@ public class ApiUtils {
     public static void showErrorMessage(Throwable throwable, BaseActivity baseActivity) {
         ErrorMessage errorMessage = handleError(throwable);
         baseActivity.onError(errorMessage.getStatus(), errorMessage.getMessage());
+    }
+
+    /**
+     * Method to convert error message json to the real object with details about throwable
+     * <p/>
+     * https://github.com/square/retrofit/blob/master/retrofit-converters/gson/src/main/java/retrofit2/converter/gson/GsonConverterFactory.java
+     * (@decoursin and @kotya341 found that this is just badly designed class and I'm planing to create a PR for them to get rid of unused params,
+     * because if use check https://github.com/square/retrofit/blob/master/retrofit/src/main/java/retrofit2/Retrofit.java#L310
+     * second class that does the same you would find that it has generic type)
+     *
+     * @param response API response to parse error message from
+     * @return ErrorMessage object of null if something was wrong
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    private static ErrorMessage getErrorBodyAs(Response response) throws IOException, JsonSyntaxException {
+        if (response == null || response.errorBody() == null) {
+            return null;
+        }
+
+        Converter<ResponseBody, ErrorMessage> converter =
+            (Converter<ResponseBody, ErrorMessage>) GsonConverterFactory.create().responseBodyConverter(ErrorMessage.class, new Annotation[0], null);
+
+        return converter.convert(response.errorBody());
     }
 }

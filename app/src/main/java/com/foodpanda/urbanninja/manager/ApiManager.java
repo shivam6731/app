@@ -30,6 +30,7 @@ import com.foodpanda.urbanninja.api.rx.action.RetryLocation;
 import com.foodpanda.urbanninja.api.rx.action.RetryWithDelay;
 import com.foodpanda.urbanninja.api.rx.subscriber.BackgroundSubscriber;
 import com.foodpanda.urbanninja.api.rx.subscriber.BaseSubscriber;
+import com.foodpanda.urbanninja.api.rx.subscriber.ErrorHandlingSubscriber;
 import com.foodpanda.urbanninja.api.serializer.DateTimeDeserializer;
 import com.foodpanda.urbanninja.api.utils.ApiUtils;
 import com.foodpanda.urbanninja.model.Token;
@@ -37,6 +38,7 @@ import com.foodpanda.urbanninja.model.TokenData;
 import com.foodpanda.urbanninja.model.VehicleDeliveryAreaRiderBundle;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.Status;
+import com.foodpanda.urbanninja.ui.activity.BaseActivity;
 import com.foodpanda.urbanninja.utils.DateUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -144,10 +146,9 @@ public class ApiManager {
                 subscribe(baseSubscriber));
     }
 
-    void notifyActionPerformed(long routeId, Status status) {
+    void notifyActionPerformed(long routeId, Status status, BaseActivity baseActivity) {
         PerformActionWrapper performActionWrapper = new PerformActionWrapper(status, new DateTime(), storageManager.getRiderLocation());
-
-        sendRiderAction(performActionWrapper, routeId);
+        sendRiderAction(performActionWrapper, routeId, baseActivity);
     }
 
     public void sendLocation(
@@ -433,6 +434,17 @@ public class ApiManager {
     }
 
     /**
+     * Overloaded method {@link #sendRiderAction(PerformActionWrapper, long, BaseActivity)}
+     * to get rid of sending null as an argument
+     *
+     * @param performActionWrapper rider action that was done (included time, type of action and location)
+     * @param routeId              id of route stop
+     */
+    private void sendRiderAction(final PerformActionWrapper performActionWrapper, final long routeId) {
+        sendRiderAction(performActionWrapper, routeId, null);
+    }
+
+    /**
      * Send rider action to the server.
      * </p>
      * in case if this API call would fail this action would be stored to #apiQueue.
@@ -440,13 +452,18 @@ public class ApiManager {
      *
      * @param performActionWrapper rider action that was done (included time, type of action and location)
      * @param routeId              id of route stop
+     * @param baseActivity         activity to handle error message if it needs
      */
-    private void sendRiderAction(PerformActionWrapper performActionWrapper, long routeId) {
+    private void sendRiderAction(
+        final PerformActionWrapper performActionWrapper,
+        final long routeId,
+        final BaseActivity baseActivity
+    ) {
         compositeSubscription.add(
             wrapRetryObservable(
                 service.notifyActionPerformed(routeId, performActionWrapper),
                 new RetryAction(routeId, performActionWrapper, apiQueue)).
-                subscribe(new BackgroundSubscriber<>()));
+                subscribe(baseActivity == null ? new BackgroundSubscriber<>() : new ErrorHandlingSubscriber<>(baseActivity)));
     }
 
     /**
