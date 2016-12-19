@@ -412,7 +412,9 @@ public class ApiManager {
             addInterceptor(chain -> {
                 Request.Builder build = chain.request().newBuilder().addHeader("Accept", "application/json");
                 Token token = storageManager.getToken();
-                if (token != null) {
+                //during logout we added custom header and we can have a conflict with duplicated header
+                //to get rid of this issue we need to check if this AUTHORIZATION header is unique
+                if (token != null && TextUtils.isEmpty(chain.request().headers().get(ApiTag.AUTHORIZATION))) {
                     build.addHeader(ApiTag.AUTHORIZATION, concatHeaderData(token)).build();
                 }
 
