@@ -14,7 +14,7 @@ import com.foodpanda.urbanninja.ui.activity.MainActivity;
 import javax.inject.Inject;
 
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
-    private static boolean isInterestingActivityVisible;
+    private boolean isMainActivityVisible;
 
     private MainComponent mainComponent;
 
@@ -52,14 +52,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onActivityResumed(Activity activity) {
         if (activity instanceof MainActivity) {
-            isInterestingActivityVisible = true;
+            isMainActivityVisible = true;
         }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
         if (activity instanceof MainActivity) {
-            isInterestingActivityVisible = false;
+            isMainActivityVisible = false;
         }
     }
 
@@ -78,8 +78,16 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     }
 
-    public static boolean isInterestingActivityVisible() {
-        return isInterestingActivityVisible;
+    /**
+     * Give a status of main activity.
+     * <p/>
+     * If android.app.{@link Activity#onResume()} was called flag become true,
+     * when android.app.{@link Activity#onPause()} flag is false
+     *
+     * @return true if main activity is in a current screen right now
+     */
+    public boolean isMainActivityVisible() {
+        return isMainActivityVisible;
     }
 
     /**

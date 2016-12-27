@@ -193,7 +193,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
      */
     private void navigateToMainFragmentIfNecessary() {
         Fragment fragment = fragmentManager.findFragmentById(R.id.container);
-        if (App.isInterestingActivityVisible() &&
+        if (App.get(this).isMainActivityVisible() &&
             fragment != null &&
             !(fragment instanceof OrdersNestedFragment)) {
             onBackPressed();

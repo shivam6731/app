@@ -10,6 +10,7 @@ import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.Token;
 import com.foodpanda.urbanninja.model.VehicleDetectedActivity;
 import com.foodpanda.urbanninja.model.enums.RouteStopTask;
+import com.foodpanda.urbanninja.model.enums.Status;
 import com.foodpanda.urbanninja.model.enums.VehicleDetectedActivityType;
 
 import org.joda.time.DateTime;
@@ -282,5 +283,18 @@ public class StorageManagerTest {
         storageManager.storeVehicleDetectedActivity(vehicleDetectedActivity);
 
         assertEquals(vehicleDetectedActivity, storageManager.getVehicleDetectedActivity());
+    }
+
+    @Test
+    public void testStoreStatus() {
+        Stop stop = new Stop(1, "code-code");
+
+        storageManager.storeStatus(stop.getId(), Status.ARRIVED);
+
+        stop.setStatus(Status.ON_THE_WAY);
+        storageManager.storeStopList(Collections.singletonList(stop));
+
+        assertEquals(storageManager.getCurrentStop().getStatus(), Status.ARRIVED);
+        assertEquals(storageManager.getStopList().get(0).getStatus(), Status.ARRIVED);
     }
 }

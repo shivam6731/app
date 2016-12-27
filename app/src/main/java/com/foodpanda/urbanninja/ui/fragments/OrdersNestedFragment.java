@@ -37,6 +37,8 @@ import com.foodpanda.urbanninja.ui.util.ActionLayoutHelper;
 
 import javax.inject.Inject;
 
+import static java.util.Arrays.asList;
+
 /**
  * To encapsulate all logic according to current rider's orders in one separate navigation menu item
  * this order wrapper fragment was created.
@@ -117,6 +119,12 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         activity.registerReceiver(locationChangeReceiver, new IntentFilter(Constants.LOCATION_UPDATED));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        sendViewedStatusIfNeeds();
+    }
+
     @Nullable
     @Override
     public View onCreateView(
@@ -124,7 +132,6 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
         ViewGroup container,
         Bundle savedInstanceState
     ) {
-
         return inflater.inflate(R.layout.order_nested_fragment, container, false);
     }
 
@@ -197,6 +204,23 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
     public void onDestroyView() {
         super.onDestroyView();
         actionLayoutHelper.saveActionButtonState();
+    }
+
+    /**
+     * we found a bug with sending rider notify method (you can find it here https://foodpanda.atlassian.net/browse/LOGI-1067).
+     * in case when rider receive new order push notification and update route stop plan with locked device or with app in a background
+     * we use to automatically send view status for route stop that was not viewed yet.
+     * <p/>
+     * from now we send viewed status every time when rider open device from background and
+     * route stop was not viewed.
+     */
+    private void sendViewedStatusIfNeeds() {
+        Stop stop = storageManager.getCurrentStop();
+        if (stop != null &&
+            stop.getStatus() != null &&
+            asList(Status.UNASSIGNED, Status.VIEWED).contains(stop.getStatus())) {
+            notifyViewed();
+        }
     }
 
     private void changeStatus() {
@@ -306,7 +330,7 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             case UNASSIGNED:
             case VIEWED:
                 userStatus = UserStatus.VIEWING;
-                notifyActionPerformed(Status.VIEWED);
+                notifyViewed();
                 openRouteStopDetails(stop);
                 actionLayoutHelper.setDrivingHereStatusActionButton();
                 break;
@@ -355,6 +379,15 @@ public class OrdersNestedFragment extends BaseFragment implements NestedFragment
             webUrl,
             dialogType
         );
+    }
+
+    /**
+     * check if app right now in a foreground and send vieved status of the route stop to the server side
+     */
+    private void notifyViewed() {
+        if (App.get(activity).isMainActivityVisible()) {
+            notifyActionPerformed(Status.VIEWED);
+        }
     }
 
     private void replaceFragment(BaseFragment baseFragment) {

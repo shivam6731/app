@@ -23,6 +23,6 @@ public class BaseApplicationTest {
         assertNotNull(testBaseApplication);
         assertNotNull(App.get(testBaseApplication));
         assertNotNull(App.get(testBaseApplication).getMainComponent());
-        assertFalse(App.isInterestingActivityVisible());
+        assertFalse(App.get(testBaseApplication).isMainActivityVisible());
     }
 }
