@@ -74,7 +74,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             showNotification(pushNotificationType);
         }
 
-        sendPushNotificationContentToActivity(pushNotificationType);
+        sendPushNotificationContentToActivity(pushNotificationType, pushNotificationPriority);
     }
 
     /**
@@ -126,14 +126,19 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
      * BroadcastReceiver is only one good way to inform about notification
      * to the Activity without clicking to notification view in the bar
      *
-     * @param pushNotificationType type of notification
+     * @param pushNotificationType     type of notification
+     * @param pushNotificationPriority priority of push notification
      */
-    private void sendPushNotificationContentToActivity(PushNotificationType pushNotificationType) {
+    private void sendPushNotificationContentToActivity(
+        PushNotificationType pushNotificationType,
+        PushNotificationPriority pushNotificationPriority
+    ) {
         if (pushNotificationType == null) {
             return;
         }
         Intent intent = new Intent(Constants.PUSH_NOTIFICATION_RECEIVED);
         intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE, pushNotificationType);
+        intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_PRIORITY, pushNotificationPriority);
 
         sendBroadcast(intent);
     }

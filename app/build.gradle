@@ -27,8 +27,8 @@ android {
         applicationId "com.foodpanda.urbanninja"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 46
-        versionName "1.0.26"
+        versionCode 47
+        versionName "1.0.27"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 

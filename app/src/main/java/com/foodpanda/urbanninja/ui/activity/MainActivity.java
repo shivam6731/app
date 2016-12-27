@@ -42,6 +42,7 @@ import com.foodpanda.urbanninja.model.Rider;
 import com.foodpanda.urbanninja.model.Stop;
 import com.foodpanda.urbanninja.model.enums.CollectionIssueReason;
 import com.foodpanda.urbanninja.model.enums.DialogType;
+import com.foodpanda.urbanninja.model.enums.PushNotificationPriority;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 import com.foodpanda.urbanninja.ui.dialog.InformationDialogFragment;
 import com.foodpanda.urbanninja.ui.dialog.IssueCollectedDialog;
@@ -170,6 +171,10 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
         }
         PushNotificationType pushNotificationType = (PushNotificationType)
             intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE);
+
+        PushNotificationPriority pushNotificationPriority = (PushNotificationPriority)
+            intent.getSerializableExtra(Constants.BundleKeys.PUSH_NOTIFICATION_PRIORITY);
+
         showProgress();
         if (pushNotificationType != null) {
             switch (pushNotificationType) {
@@ -177,7 +182,7 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
                     updateRiderSchedule();
                     break;
                 case ROUTE_CANCELED:
-                    showSnackbar();
+                    showSnackbar(pushNotificationPriority);
                 case ROUTE_UPDATED:
                     updateRiderRoutes();
                     break;
@@ -321,10 +326,15 @@ public class MainActivity extends BaseActivity implements MainActivityCallback {
     }
 
     /**
-     * Show error message in the snackBar and after
+     * for foreground cancellation push notification
+     * we have to show snack bar with error message
+     *
+     * @param pushNotificationPriority priority of push notification
      */
-    private void showSnackbar() {
-        new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
+    private void showSnackbar(PushNotificationPriority pushNotificationPriority) {
+        if (PushNotificationPriority.FOREGROUND_UPDATE == pushNotificationPriority) {
+            new SnackbarHelper(this, toolbar).showOrderCanceledSnackbar();
+        }
     }
 
     private void setSelectedNavigationItem() {
