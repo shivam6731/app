@@ -103,6 +103,10 @@
         <item name="android:singleLine">false</item>
     </style>
 
+    <style name="TextView.Title.Multiline.MaxTwoLines">
+        <item name="android:maxLines">@integer/max_lines_number_address_title</item>
+    </style>
+
     <style name="TextView.Title.Multiline.NotBold">
         <item name="android:textStyle">normal</item>
     </style>

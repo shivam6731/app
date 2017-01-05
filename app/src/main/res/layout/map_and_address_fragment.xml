@@ -21,7 +21,7 @@
 
             <com.foodpanda.urbanninja.ui.widget.OpenSansTextView
                 android:id="@+id/txt_name"
-                style="@style/TextView.Title"
+                style="@style/TextView.Title.Multiline.MaxTwoLines"
                 android:drawableLeft="@drawable/icon_goto_dark"
                 android:padding="@dimen/padding_default"/>
 

@@ -2,4 +2,5 @@
 <resources>
     <integer name="max_lines_number_address">30</integer>
     <integer name="action_button_animation_duration">500</integer>
+    <integer name="max_lines_number_address_title">2</integer>
 </resources>
