@@ -15,6 +15,7 @@ import com.foodpanda.urbanninja.App;
 import com.foodpanda.urbanninja.Constants;
 import com.foodpanda.urbanninja.R;
 import com.foodpanda.urbanninja.di.component.MainComponent;
+import com.foodpanda.urbanninja.model.enums.PushNotificationPriority;
 import com.foodpanda.urbanninja.model.enums.PushNotificationType;
 
 import net.hockeyapp.android.CrashManager;
@@ -138,6 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void sendCancellationAction() {
         Intent intent = new Intent(Constants.PUSH_NOTIFICATION_RECEIVED);
         intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_TYPE, PushNotificationType.ROUTE_CANCELED);
+        intent.putExtra(Constants.BundleKeys.PUSH_NOTIFICATION_PRIORITY, PushNotificationPriority.FOREGROUND_UPDATE);
         sendBroadcast(intent);
     }
 
