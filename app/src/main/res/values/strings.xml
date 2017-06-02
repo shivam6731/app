@@ -86,7 +86,7 @@
     <string name="schedule_list_tomorrow">Tomorrow</string>
 
     <!-- GCM -->
-    <string name="gcm_defaultSenderId">975393205483</string>
+    <string name="gcm_defaultSenderId">242732254269</string>
 
     <!-- Route Actions  -->
     <string name="route_action_pay">Pay %1$s</string>

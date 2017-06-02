@@ -85,9 +85,6 @@
     <string name="schedule_list_today">今天</string>
     <string name="schedule_list_tomorrow">明天</string>
 
-    <!-- GCM -->
-    <string name="gcm_defaultSenderId">975393205483</string>
-
     <!-- Route Actions  -->
     <string name="route_action_pay">付款 %1$s</string>
     <string name="route_action_pick_up">取 %1$s 項目</string>

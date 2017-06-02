@@ -9,13 +9,13 @@ public class Config {
     public static class ApiBaseUrl {
 
         public static String getBaseUrl(Country country) {
-            if (country != null && !TextUtils.isEmpty(country.getUrl())) {
-
-                return country.getUrl();
-            } else {
+//            if (country != null && !TextUtils.isEmpty(country.getUrl())) {
+//
+//                return country.getUrl();
+//            } else {
 
                 return UrbanNinjaApiUrl.BASE_URL;
-            }
+//            }
         }
     }
 
